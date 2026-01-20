@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Styled Layout with Form</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Left Side with Gradient */
+    .background-div {
+      height: 100vh; /* Full height */
+      position: relative; /* Needed for positioning the image */
+      color: white;
+      overflow: hidden; /* To hide overflow */
+    }
+
+    /* Gradient Background */
+    .gradient-background {
+        background: linear-gradient(0deg, rgba(16,185,129,1) 0%, rgba(37,65,112,1) 100%);
+      position: absolute; /* Positioning */
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1; /* Behind the image */
+    }
+
+    /* Small Top-left Image Styling */
+    .top-left-image {
+      background: url(./image/circle-removebg-preview.png) no-repeat; /* Small image */
+      background-size: contain; /* Keep the original size of the image */
+      position: absolute; /* Positioning */
+      top: 0px; /* Adjust as needed */
+      left: 0px; /* Adjust as needed */
+      width: 650px; /* Adjust width */
+      height: 550px; /* Adjust height */
+      z-index: 2; /* Ensure this image is above the gradient */
+    }
+
+    /* Increased Form Width */
+    .small-form {
+      width: 600px; 
+      border: 1px solid #ddd;
+      background-color: white;
+      position: relative; 
+      z-index: 2;
+      padding: 48px !important;
+    }
+
+    /* Additional form styling */
+    form {
+      border-radius: 10px;
+    }
+
+    /* Z-index for Welcome Text */
+    .welcome-text {
+      position: relative;
+      z-index: 2; /* Ensure this text appears above other elements */
+    }
+
+    /* Styling for the paragraph */
+    .welcome-paragraph {
+      font-size: 1.1rem; /* Slightly larger font size */
+      line-height: 1.5; /* Better line spacing */
+      text-align: center; /* Centered text */
+      max-width: 600px; /* Limit the width */
+      margin: 20px auto; /* Center with margin */
+    }
+    
+    /* Image Styling */
+    .welcome-image {
+      width: 100%; /* Responsive image */
+      max-width: 400px; /* Maximum width */
+      margin: 20px auto; /* Centering with margin */
+      display: block; /* Ensure it's block-level */
+    }
+    .font-one {
+      color: black;
+    }
+    .col-form-label {
+    color: black;
+}
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <div class="row background-div">
+      <div class="gradient-background"></div> <!-- Gradient Background Layer -->
+      <div class="top-left-image"></div> <!-- Top-left Image Layer -->
+
+      <!-- Left Side Div with Background Image and Gradient (Left to Right) -->
+      <div class="col-md-6 d-flex flex-column align-items-center justify-content-center">
+        <!-- Welcome Text -->
+        <img src="http://127.0.0.1:8000/assets/img/logo.png" alt="Welcome Image" class="welcome-image welcome-text"> 
+        <h1 class="text-white text-center welcome-text">Welcome to Our Service</h1>
+        
+        <!-- Paragraph below the image -->
+        <p class="text-white welcome-paragraph welcome-text">
+          We are delighted to have you here. Our platform offers a variety of services to help you achieve your goals. Join us today and start your journey!
+        </p>
+      </div>
+
+      <!-- Right Side Form (Increased Size) -->
+      <div class="col-md-6 d-flex justify-content-center align-items-center">
+        <form class="p-3 rounded shadow bg-white small-form">
+            <h2 class="mb-3 text-center text-primary">Welcome, Please Login....</h2>
+
+            
+            <div class="mb-3 row">
+                <label for="username" class="col-form-label col-md-2">Username</label>
+                <div class="col-md-8">
+                    <input type="text" class="form-control" id="username" placeholder="Enter your username">
+                </div>
+            </div>
+    
+            <div class="mb-3 row">
+                <label for="password" class="col-form-label col-md-2">Password</label>
+                <div class="col-md-8">
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                </div>
+            </div>
+    
+            <div class="d-flex gap-2">
+                <button type="submit" class="btn btn-primary">Login</button>
+                <button type="reset" class="btn btn-secondary">Clear</button>
+            </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
