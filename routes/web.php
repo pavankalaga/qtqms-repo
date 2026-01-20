@@ -68,9 +68,12 @@ use App\Http\Controllers\GeneralFormsNextController;
 use App\Http\Livewire\BusinessInfo;
 use App\Http\Livewire\EditBusinessInfo;
 use App\Http\Controllers\GeneralFormsController;
+use App\Http\Controllers\AS\AsFormController;
+use App\Http\Controllers\BE\BEFormsController;
 // use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+
 
 
 
@@ -355,10 +358,10 @@ Route::middleware('auth')->group(callback: function () {
   Route::get('/dashboard', [QualityController::class, 'dashboard'])->name('quality.dashboard');
   Route::get('/dashboard/welcome', [AuthController::class, 'welcomeDashboard'])->name('welcome.dashboard');
 
-// search externalQualityAMnagemt 
+// search externalQualityAMnagemt
 
 Route::get('/dashboard/external-quality-management/table', [QualityController::class, 'externalQualityTable'])->name('external-quality.table');
- 
+
 Route::get('/get-examination-numerator-details', [QualityController::class, 'getExaminationNumeratorDetails']);
   Route::post('/save-examination-numerator-details', [QualityController::class, 'saveExaminationNumeratorDetails']);
   Route::delete('/delete-examination-numerator-detail/{id}', [QualityController::class, 'deleteExaminationNumeratorDetail']);
@@ -877,3 +880,98 @@ Route::get('/get-examination-numerator-details', [QualityController::class, 'get
   Route::post('/save-permissions', [DocumentController::class, 'savePermissions'])->name('save.permissions');
 
 });
+
+Route::prefix('as')->name('as.')->group(function () {
+    Route::post('/forms/submit', [AsFormController::class, 'store'])
+        ->name('forms.submit');
+    Route::get('/sample-volume-check/load', [AsFormController::class, 'loadSampleVolumeCheck'])
+        ->name('sample-volume-check.load');
+    Route::get(
+        '/sample-receiving-register/load',
+        [AsFormController::class, 'loadSampleReceivingRegister']
+    )->name('sample-receiving-register.load');
+
+    Route::get(
+        '/sample-delivery-register/load',
+        [AsFormController::class, 'loadSampleDeliveryRegister']
+    )->name('sample-delivery-register.load');
+
+    Route::post(
+        '/sample-delivery-inline-update',
+        [AsFormController::class, 'inlineUpdateSampleDelivery']
+    )->name('sample-delivery.inline-update');
+
+
+    Route::get(
+        '/ice-gel-register/load',
+        [AsFormController::class, 'loadIceGelRegister']
+    )->name('ice-gel-register.load');
+
+    Route::get(
+        '/sample-outsource-register/load',
+        [AsFormController::class, 'loadSampleOutsourceRegister']
+    )->name('sample-outsource-register.load');
+});
+
+Route::prefix('be')
+    ->name('be.')
+    ->group(function () {
+
+        Route::post('/forms/submit', [BEFormsController::class, 'store'])
+            ->name('forms.submit');
+
+        Route::get('/hot-plate-qc/load', [BEFormsController::class, 'loadHotPlateQc'])
+            ->name('hotplateqc.load');
+
+        Route::post('/forms/inline', [BEFormsController::class, 'inlineSave'])
+            ->name('forms.inline');
+
+
+        Route::get('/bsc/load', [BEFormsController::class, 'loadBioSafetyCabinet'])
+            ->name('bsc.load');
+
+        Route::get('/hot-air-oven/load', [BEFormsController::class, 'loadHotAirOven'])
+            ->name('/hot-air-oven/load');
+
+
+        Route::get('/incubator/load', [BEFormsController::class, 'loadIncubator'])
+            ->name('/incubator/load');
+
+        Route::get('/laf/load', [BEFormsController::class, 'loadLaminarAirFlow'])
+            ->name('laf.load');
+
+        Route::get('/autoclave/load', [BEFormsController::class, 'loadAutoclave'])
+            ->name('autoclave.load');
+
+        Route::get('/hao-maintenance/load', [BEFormsController::class, 'loadHaoMaintenance'])
+            ->name('hao.maintenance.load');
+
+        Route::get(
+            '/incubator-maintenance/load',
+            [BEFormsController::class, 'loadIncubatorMaintenance']
+        )->name('incubator.maintenance.load');
+
+        Route::get('/centrifuge/load', [BEFormsController::class, 'loadCentrifuge'])
+            ->name('centrifuge.load');
+
+        Route::get('/dxc/load', [BEFormsController::class, 'loadDxcForm'])
+            ->name('dxc.load');
+
+        Route::get('/dxi800/load', [BEFormsController::class, 'loadDxiMaintenance'])
+            ->name('dxi800.load');
+
+        Route::get('/st200/load', [BEFormsController::class, 'loadSt200'])
+            ->name('st200.load');
+
+        Route::get('/h550/load', [BEFormsController::class, 'loadH550'])
+            ->name('h550.load');
+
+        Route::get('/d10/load', [BEFormsController::class, 'loadD10'])
+            ->name('d10.load');
+
+        Route::get(
+            '/atp/load',
+            [BEFormsController::class, 'loadAutomaticTissueProcessor']
+        )->name('atp.load');
+    });
+
