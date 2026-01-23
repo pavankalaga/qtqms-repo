@@ -377,8 +377,19 @@
 
     <x-formTemplete id="TDPL-BC-FOM-001" docNo="TDPL-BC-FOM-001" docName="Matermal Marker & Pre-eclampsia TRF"
         issueNo="1.0" issueDate="01/10/2024" action="{{ route('be.forms.submit') }}" buttonText="Submit">
+        <input type="hidden" id="mm_form_id" name="form_id">
+
 
         <p><strong>MATERNAL SERUM / PRE-ECLAMPSIA SCREENING</strong></p>
+
+        <!-- EXTRA PATIENT MOBILE FILTER -->
+        <div style="margin-bottom:10px;">
+            <strong>Patient Mobile (Filter):</strong>
+            <input type="text" id="filter_patient_mobile" name="filter_patient_mobile"
+                placeholder="Enter Patient Mobile" oninput="handlePatientMobileFilter(event)"
+                onkeydown="return blockEnter(event)">
+
+        </div>
 
         <table style="width:100%; border-collapse: collapse;" border="1" cellpadding="6">
             <tbody>
@@ -390,11 +401,18 @@
 
                 <tr>
                     <td colspan="3">
-                        Physician's Name: <input type="text" class="border p-1 w-48">
-                        Mobile No: <input type="text" class="border p-1 w-40"><br>
+                        Physician's Name:
+                        <input type="text" class="border p-1 w-48" id="physician_name" name="physician_name">
 
-                        Client Name: <input type="text" class="border p-1 w-48">
-                        Client Code: <input type="text" class="border p-1 w-40">
+                        Mobile No:
+                        <input type="text" class="border p-1 w-40" id="physician_mobile" name="physician_mobile">
+                        <br>
+
+                        Client Name:
+                        <input type="text" class="border p-1 w-48" id="client_name" name="client_name">
+
+                        Client Code:
+                        <input type="text" class="border p-1 w-40" id="client_code" name="client_code">
                     </td>
                 </tr>
 
@@ -406,17 +424,24 @@
                 <tr>
                     <td colspan="3">
                         <p>
-                            <input type="checkbox"> Maternal Screening &nbsp;
-                            <input type="checkbox"> First Trimester - Dual Marker &nbsp;
-                            <input type="checkbox"> Second Trimester - Triple Marker &nbsp;
-                            <input type="checkbox"> Quad Marker (15–20 Weeks)
+                            <input type="checkbox" id="test_maternal" name="test_panels[]" value="maternal_screening">
+                            Maternal Screening &nbsp;
+                            <input type="checkbox" id="test_dual" name="test_panels[]" value="dual_marker">
+                            First Trimester - Dual Marker &nbsp;
+                            <input type="checkbox" id="test_triple" name="test_panels[]" value="triple_marker">
+                            Second Trimester - Triple Marker &nbsp;
+                            <input type="checkbox" id="test_quad" name="test_panels[]" value="quad_marker">
+                            Quad Marker (15–20 Weeks)
                         </p>
                         <p>
-                            <input type="checkbox"> Pre-Eclampsia Screening &nbsp;
-                            <input type="checkbox"> 1T Quad Test
+                            <input type="checkbox" id="test_preeclampsia" name="test_panels[]" value="pre_eclampsia">
+                            Pre-Eclampsia Screening &nbsp;
+                            <input type="checkbox" id="test_1t_quad" name="test_panels[]" value="1t_quad">
+                            1T Quad Test
                         </p>
                         <p>
-                            <input type="checkbox"> PAPP-A, Free BHCG, PLGF, NT (11–13 Weeks + 6 days)
+                            <input type="checkbox" id="test_pappa" name="test_panels[]" value="pappa_panel">
+                            PAPP-A, Free BHCG, PLGF, NT (11–13 Weeks + 6 days)
                         </p>
                     </td>
                 </tr>
@@ -428,38 +453,67 @@
 
                 <tr>
                     <td colspan="3">
-                        Name of Patient: <input type="text" class="border p-1 w-48">
-                        Age: <input type="number" class="border p-1 w-20">
-                        DOB: <input type="date" class="border p-1 w-40">
-                        Mobile: <input type="text" class="border p-1 w-40">
-                        Email: <input type="email" class="border p-1 w-48"><br><br>
+                        Name of Patient:
+                        <input type="text" class="border p-1 w-48" id="patient_name" name="patient_name">
 
-                        Weight (kgs): <input type="number" class="border p-1 w-24">
-                        Ethnicity: <input type="text" class="border p-1 w-40">
-                        LMP: <input type="date" class="border p-1 w-40"><br><br>
+                        Age:
+                        <input type="number" class="border p-1 w-20" id="patient_age" name="patient_age">
 
-                        Diabetic Status: <input type="text" class="border p-1 w-32">
-                        Chronic Hypertension: <input type="text" class="border p-1 w-40"><br><br>
+                        DOB:
+                        <input type="date" class="border p-1 w-40" id="patient_dob" name="patient_dob">
+
+                        Mobile:
+                        <input type="text" class="border p-1 w-40" id="patient_mobile" name="patient_mobile">
+
+                        Email:
+                        <input type="email" class="border p-1 w-48" id="patient_email" name="patient_email">
+                        <br><br>
+
+                        Weight (kgs):
+                        <input type="number" class="border p-1 w-24" id="patient_weight" name="patient_weight">
+
+                        Ethnicity:
+                        <input type="text" class="border p-1 w-40" id="ethnicity" name="ethnicity">
+
+                        LMP:
+                        <input type="date" class="border p-1 w-40" id="lmp" name="lmp">
+                        <br><br>
+
+                        Diabetic Status:
+                        <input type="text" class="border p-1 w-32" id="diabetic_status" name="diabetic_status">
+
+                        Chronic Hypertension:
+                        <input type="text" class="border p-1 w-40" id="chronic_hypertension"
+                            name="chronic_hypertension">
+                        <br><br>
 
                         On Medication (Y/N):
-                        <select class="border p-1">
+                        <select class="border p-1" id="on_medication" name="on_medication">
                             <option value="No">No</option>
                             <option value="Yes">Yes</option>
                         </select>
 
-                        If Yes, Specify: <input type="text" class="border p-1 w-64"><br><br>
+                        If Yes, Specify:
+                        <input type="text" class="border p-1 w-64" id="medication_details" name="medication_details">
+                        <br><br>
 
                         Smoking:
-                        <select class="border p-1">
+                        <select class="border p-1" id="smoking_status" name="smoking_status">
                             <option>Not Known</option>
                             <option>Non-Smoker</option>
                             <option>Smoker</option>
-                        </select><br><br>
+                        </select>
+                        <br><br>
 
                         <strong>Blood Pressure:</strong>
-                        Date: <input type="date" class="border p-1">
-                        Right Arm: <input type="text" class="border p-1 w-32">
-                        Left Arm: <input type="text" class="border p-1 w-32">
+                        Date:
+                        <input type="date" class="border p-1" id="bp_date" name="bp_date">
+
+                        Right Arm:
+                        <input type="text" class="border p-1 w-32" id="bp_right" name="bp_right">
+
+                        Left Arm:
+                        <input type="text" class="border p-1 w-32" id="bp_left" name="bp_left">
                     </td>
                 </tr>
 
@@ -470,9 +524,16 @@
 
                 <tr>
                     <td colspan="3">
-                        Date of Sample Collection: <input type="date" class="border p-1">
-                        Time: <input type="time" class="border p-1">
-                        Date of Ultrasound: <input type="date" class="border p-1">
+                        Date of Sample Collection:
+                        <input type="date" class="border p-1" id="sample_collection_date"
+                            name="sample_collection_date">
+
+                        Time:
+                        <input type="time" class="border p-1" id="sample_collection_time"
+                            name="sample_collection_time">
+
+                        Date of Ultrasound:
+                        <input type="date" class="border p-1" id="ultrasound_date" name="ultrasound_date">
                     </td>
                 </tr>
 
@@ -485,34 +546,36 @@
 
                 <tr>
                     <td>CRL (MM)</td>
-                    <td><input type="text" class="border p-1 w-full"></td>
-                    <td><input type="text" class="border p-1 w-full"></td>
+                    <td><input type="text" class="border p-1 w-full" id="crl_a" name="crl_a"></td>
+                    <td><input type="text" class="border p-1 w-full" id="crl_b" name="crl_b"></td>
                 </tr>
 
                 <tr>
                     <td>NT</td>
-                    <td><input type="text" class="border p-1 w-full"></td>
-                    <td><input type="text" class="border p-1 w-full"></td>
+                    <td><input type="text" class="border p-1 w-full" id="nt_a" name="nt_a"></td>
+                    <td><input type="text" class="border p-1 w-full" id="nt_b" name="nt_b"></td>
                 </tr>
 
                 <tr>
                     <td>NB</td>
-                    <td><input type="text" class="border p-1 w-full"></td>
-                    <td><input type="text" class="border p-1 w-full"></td>
+                    <td><input type="text" class="border p-1 w-full" id="nb_a" name="nb_a"></td>
+                    <td><input type="text" class="border p-1 w-full" id="nb_b" name="nb_b"></td>
                 </tr>
 
                 <tr>
                     <td>BPD</td>
-                    <td><input type="text" class="border p-1 w-full"></td>
-                    <td><input type="text" class="border p-1 w-full"></td>
+                    <td><input type="text" class="border p-1 w-full" id="bpd_a" name="bpd_a"></td>
+                    <td><input type="text" class="border p-1 w-full" id="bpd_b" name="bpd_b"></td>
                 </tr>
 
                 <!-- Uterine Artery -->
                 <tr>
                     <td colspan="3">
                         <strong>Uterine Artery PI</strong>
-                        Left: <input type="text" class="border p-1 w-24">
-                        Right: <input type="text" class="border p-1 w-24">
+                        Left:
+                        <input type="text" class="border p-1 w-24" id="uterine_left" name="uterine_left">
+                        Right:
+                        <input type="text" class="border p-1 w-24" id="uterine_right" name="uterine_right">
                     </td>
                 </tr>
 
@@ -523,19 +586,30 @@
 
                 <tr>
                     <td colspan="3">
-                        Donor Age: <input type="number" class="border p-1 w-20">
-                        Donor DOB: <input type="date" class="border p-1">
-                        Type of IVF: <input type="text" class="border p-1 w-40"><br><br>
+                        Donor Age:
+                        <input type="number" class="border p-1 w-20" id="donor_age" name="donor_age">
 
-                        Extraction Date: <input type="date" class="border p-1">
-                        Transfer Date: <input type="date" class="border p-1">
+                        Donor DOB:
+                        <input type="date" class="border p-1" id="donor_dob" name="donor_dob">
+
+                        Type of IVF:
+                        <input type="text" class="border p-1 w-40" id="ivf_type" name="ivf_type">
+                        <br><br>
+
+                        Extraction Date:
+                        <input type="date" class="border p-1" id="extraction_date" name="extraction_date">
+
+                        Transfer Date:
+                        <input type="date" class="border p-1" id="transfer_date" name="transfer_date">
+
                         HCG Injection Taken:
-                        <select class="border p-1">
+                        <select class="border p-1" id="hcg_taken" name="hcg_taken">
                             <option>No</option>
                             <option>Yes</option>
                         </select>
 
-                        If Yes, Date: <input type="date" class="border p-1">
+                        If Yes, Date:
+                        <input type="date" class="border p-1" id="hcg_date" name="hcg_date">
                     </td>
                 </tr>
 
@@ -546,7 +620,8 @@
 
         <!-- Consent -->
         <p><strong>Patient's Consent</strong></p>
-        <p class="border p-2 w-full" rows="8">I have read and understood your prenatal screening consent form. I
+        <p class="border p-2 w-full" rows="8">
+            I have read and understood your prenatal screening consent form. I
             understand that this test represents only the risks and not actual diagnostic outcomes - Increased risk does
             not mean that the baby is affected and further tests must be performed before a ﬁrm diagnosis can be made; A
             low risk does not exclude possibility of Down’s syndrome or other abnormalities, as risk assessment does not
@@ -558,13 +633,15 @@
             fax, telephone or mobile. I also know that I may be called to give follow up information about the pregnancy
             and I give my consent for the same. The referring doctor has explained the details of the screening program
             to me, and I herewith give my consent for this test.
-
         </p>
 
         <br><br>
 
-        Patient’s Signature: <input type="text" class="border p-1 w-48">
-        Date: <input type="date" class="border p-1">
+        Patient’s Signature:
+        <input type="text" class="border p-1 w-48" id="patient_signature" name="patient_signature">
+
+        Date:
+        <input type="date" class="border p-1" id="patient_signature_date" name="patient_signature_date">
 
         <br><br>
 
@@ -581,6 +658,7 @@
         </p>
 
     </x-formTemplete>
+
 
     <x-formTemplete id="TDPL/BE/FOM-0##" docNo="TDPL/BE/FOM-0##" docName="Daily QC Form for Hot Plate Maintenance"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
@@ -1795,8 +1873,8 @@
 
             <div style="display:flex; flex-direction:column;">
                 <label><strong>Location:</strong></label>
-                <input list="dxiLocationList" class="qc-input" style="min-width:200px; height:34px;" name="dxi_location"
-                    id="dxi_location" placeholder="All" oninput="loadDxiForm()">
+                <input list="dxiLocationList" class="qc-input" style="min-width:200px; height:34px;"
+                    name="dxi_location" id="dxi_location" placeholder="All" oninput="loadDxiForm()">
 
                 <datalist id="dxiLocationList">
                     <option value="Hyderabad">
@@ -1808,8 +1886,8 @@
 
             <div style="display:flex; flex-direction:column;">
                 <label><strong>Department:</strong></label>
-                <input list="dxiDeptList" class="qc-input" style="min-width:220px; height:34px;" name="dxi_department"
-                    id="dxi_department" placeholder="All" oninput="loadDxiForm()">
+                <input list="dxiDeptList" class="qc-input" style="min-width:220px; height:34px;"
+                    name="dxi_department" id="dxi_department" placeholder="All" oninput="loadDxiForm()">
 
                 <datalist id="dxiDeptList">
                     <option value="Biochemistry">
@@ -2032,7 +2110,28 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-018" docNo="TDPL/BE/FOM-018" docName="Tosoh HLC-723GX Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+
+        {{-- 🔑 INLINE EDIT ID --}}
+        <input type="hidden" name="form_id" id="tosoh_form_id">
+
+        <p>
+            <strong>Month &amp; Year:</strong>
+            <input type="month" name="tosoh_month_year" id="tosoh_month_year" class="qc-input"
+                style="width:180px;" onchange="loadTosohForm()">
+
+            &nbsp;&nbsp;
+
+            <strong>Instrument S. No.:</strong>
+            <input list="tosohEquipList" class="qc-input" style="width:180px;" name="tosoh_instrument_serial"
+                id="tosoh_instrument_serial" placeholder="All" oninput="loadTosohForm()">
+
+            <datalist id="tosohEquipList">
+                <option value="HLC-723GX-001">
+                <option value="HLC-723GX-002">
+                <option value="HLC-723GX-003">
+            </datalist>
+        </p>
 
         <table class="table table-bordered" style="border-collapse: collapse; width: 100%;">
             <tbody>
@@ -2040,7 +2139,6 @@
                 {{-- DATE ROW --}}
                 <tr>
                     <td colspan="2"><strong>Date 🡺</strong></td>
-
                     @for ($i = 1; $i <= 31; $i++)
                         <td><strong>{{ $i }}</strong></td>
                     @endfor
@@ -2058,8 +2156,10 @@
                         <td><strong>Check</strong></td>
 
                         @for ($i = 1; $i <= 31; $i++)
-                            <td><input type="text" name="{{ Str::slug($section) }}_check_{{ $i }}"
-                                    class="form-control"></td>
+                            <td>
+                                <input type="text" name="{{ Str::slug($section) }}_check_{{ $i }}"
+                                    class="form-control qc-input">
+                            </td>
                         @endfor
                     </tr>
 
@@ -2068,8 +2168,10 @@
                         <td><strong>Change</strong></td>
 
                         @for ($i = 1; $i <= 31; $i++)
-                            <td><input type="text" name="{{ Str::slug($section) }}_change_{{ $i }}"
-                                    class="form-control"></td>
+                            <td>
+                                <input type="text" name="{{ Str::slug($section) }}_change_{{ $i }}"
+                                    class="form-control qc-input">
+                            </td>
                         @endfor
                     </tr>
 
@@ -2082,7 +2184,9 @@
                 <tr>
                     <td colspan="2"><strong>Operator's Sign</strong></td>
                     @for ($i = 1; $i <= 31; $i++)
-                        <td><input type="text" name="operator_sign_{{ $i }}" class="form-control">
+                        <td>
+                            <input type="text" name="operator_sign_{{ $i }}"
+                                class="form-control qc-input">
                         </td>
                     @endfor
                 </tr>
@@ -2095,174 +2199,180 @@
                 <tr>
                     <td colspan="2"><strong>Reviewed By</strong></td>
                     @for ($i = 1; $i <= 31; $i++)
-                        <td><input type="text" name="reviewed_by_{{ $i }}" class="form-control"></td>
+                        <td>
+                            <input type="text" name="reviewed_by_{{ $i }}"
+                                class="form-control qc-input">
+                        </td>
                     @endfor
                 </tr>
 
             </tbody>
         </table>
 
-
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-019" docNo="TDPL/BE/FOM-019" docName="Beckman Coulter DXH560 Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
+        {{-- 🔑 UNIQUE FORM ID (INLINE EDIT SUPPORT) --}}
         <input type="hidden" name="dxh560_form_id" id="dxh560_form_id">
 
-        <form>
-            @csrf
+        @csrf
 
-            <p>
-                <strong>Month &amp; Year:</strong>
-                <input type="month" name="dxh560_month_year" id="dxh560_month_year" class="qc-input"
-                    style="width:180px;" onchange="loadDxh560Form()">
+        {{-- FILTERS --}}
+        <p>
+            <strong>Month &amp; Year:</strong>
+            <input type="month" name="dxh560_month_year" id="dxh560_month_year" class="qc-input"
+                style="width:180px;" onchange="loadDxh560Form()">
 
-                &nbsp;&nbsp;
+            &nbsp;&nbsp;
 
-                <strong>Instrument S. No.:</strong>
-                <input type="text" name="dxh560_instrument_serial" id="dxh560_instrument_serial" class="qc-input"
-                    style="width:180px;" oninput="loadDxh560Form()">
-            </p>
+            <strong>Instrument S. No.:</strong>
+            <input list="dxh560EquipList" name="dxh560_instrument_serial" id="dxh560_instrument_serial"
+                class="qc-input" style="width:180px;" placeholder="All" oninput="loadDxh560Form()">
 
-            <table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse; width:100%;">
-                <tbody>
+            <datalist id="dxh560EquipList">
+                <option value="DXH560-001">
+                <option value="DXH560-002">
+                <option value="DXH560-003">
+            </datalist>
+        </p>
 
-                    {{-- HEADER --}}
-                    @php $doubleCols = [8,16,17,24]; @endphp
+        <table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse; width:100%;">
+            <tbody>
 
+                {{-- DATE HEADER --}}
+                <tr>
+                    <td><strong>Date</strong></td>
+                    @for ($i = 1; $i <= 31; $i++)
+                        <td><strong>{{ $i }}</strong></td>
+                    @endfor
+                </tr>
+
+                {{-- DAILY MAINTENANCE --}}
+                <tr>
+                    <td colspan="32"><strong>Daily Maintenance</strong></td>
+                </tr>
+
+                @php
+                    $dailyRows = [
+                        'Cleaning of Baths' => 'cleaning_of_baths',
+                        'Remove any dust on the machine, by dusting / pat drying the analyzer' => 'dust_cleaning',
+                        'Staff Initial' => 'staff_initial',
+                    ];
+                @endphp
+
+                @foreach ($dailyRows as $label => $key)
                     <tr>
-                        <td><strong>Date</strong></td>
+                        <td><strong>{{ $label }}</strong></td>
                         @for ($i = 1; $i <= 31; $i++)
-                            @if (in_array($i, $doubleCols))
-                                <td colspan="2"><strong>{{ $i }}</strong></td>
-                            @else
-                                <td><strong>{{ $i }}</strong></td>
-                            @endif
+                            <td>
+                                <input type="text" name="dxh560_daily[{{ $key }}][{{ $i }}]"
+                                    id="dxh560_daily_{{ $key }}_{{ $i }}" class="qc-input"
+                                    style="width:100%;">
+                            </td>
                         @endfor
                     </tr>
+                @endforeach
 
-                    {{-- DAILY MAINTENANCE --}}
+                {{-- WEEKLY MAINTENANCE --}}
+                <tr>
+                    <td colspan="32"><strong>Weekly Maintenance</strong></td>
+                </tr>
+
+                <tr>
+                    <td></td>
+                    <td colspan="8"><strong>Week 1 - Date:</strong></td>
+                    <td colspan="8"><strong>Week 2 - Date:</strong></td>
+                    <td colspan="8"><strong>Week 3 - Date:</strong></td>
+                    <td colspan="7"><strong>Week 4 - Date:</strong></td>
+                </tr>
+
+                @php
+                    $weeklyRows = [
+                        'Rinsing of Baths' => 'rinsing_of_baths',
+                        'Draining the Baths' => 'draining_baths',
+                        'Flushing the aperture' => 'flushing_aperture',
+                        'Initial of the person who conducted the maintenance' => 'maintenance_initial',
+                    ];
+                @endphp
+
+                @foreach ($weeklyRows as $label => $key)
                     <tr>
-                        <td colspan="36"><strong>Daily Maintenance</strong></td>
-                    </tr>
+                        <td><strong>{{ $label }}</strong></td>
 
-                    @php
-                        $dailyRows = [
-                            'Cleaning of Baths' => 'cleaning_of_baths',
-                            'Remove any dust on the machine, by dusting / pat drying the analyzer' => 'dust_cleaning',
-                            'Staff Initial' => 'staff_initial',
-                        ];
-                    @endphp
-
-                    @foreach ($dailyRows as $label => $key)
-                        <tr>
-                            <td><strong>{{ $label }}</strong></td>
-
-                            @for ($i = 1; $i <= 31; $i++)
-                                @if (in_array($i, $doubleCols))
-                                    <td colspan="2">
-                                        <input type="text"
-                                            name="dxh560_daily[{{ $key }}][{{ $i }}]"
-                                            id="dxh560_daily_{{ $key }}_{{ $i }}"
-                                            class="qc-input" style="width:100%;">
-                                    </td>
-                                @else
-                                    <td>
-                                        <input type="text"
-                                            name="dxh560_daily[{{ $key }}][{{ $i }}]"
-                                            id="dxh560_daily_{{ $key }}_{{ $i }}"
-                                            class="qc-input" style="width:100%;">
-                                    </td>
-                                @endif
-                            @endfor
-                        </tr>
-                    @endforeach
-
-                    {{-- WEEKLY MAINTENANCE --}}
-                    <tr>
-                        <td colspan="36"><strong>Weekly Maintenance</strong></td>
-                    </tr>
-
-                    <tr>
-                        <td></td>
-                        <td colspan="8"><strong>Week 1 - Date:</strong></td>
-                        <td colspan="9"><strong>Week 2 - Date:</strong></td>
-                        <td colspan="10"><strong>Week 3 - Date:</strong></td>
-                        <td colspan="8"><strong>Week 4 - Date:</strong></td>
-                    </tr>
-
-                    @php
-                        $weeklyRows = [
-                            'Rinsing of Baths' => 'rinsing_of_baths',
-                            'Draining the Baths' => 'draining_baths',
-                            'Flushing the aperture' => 'flushing_aperture',
-                            'Initial of the person who conducted the maintenance' => 'maintenance_initial',
-                        ];
-                    @endphp
-
-                    @foreach ($weeklyRows as $label => $key)
-                        <tr>
-                            <td><strong>{{ $label }}</strong></td>
-
-                            @foreach (['week1', 'week2', 'week3', 'week4'] as $week)
-                                <td colspan="{{ $week == 'week3' ? 10 : ($week == 'week2' ? 9 : 8) }}">
-                                    <input type="text"
-                                        name="dxh560_weekly[{{ $key }}][{{ $week }}]"
-                                        id="dxh560_weekly_{{ $key }}_{{ $week }}" class="qc-input"
-                                        style="width:100%;">
-                                </td>
-                            @endforeach
-                        </tr>
-                    @endforeach
-
-                    {{-- MONTHLY MAINTENANCE --}}
-                    <tr>
-                        <td colspan="36"><strong>Monthly Maintenance</strong></td>
-                    </tr>
-
-                    <tr>
-                        <td colspan="36"><strong>Depends on the usage cycles/day</strong></td>
-                    </tr>
-
-                    <tr>
-                        <td>
-                            <strong>Perform Bleaching cycle
-                                (Use 5ml Bleach + 5ml D/W, filter and use)
-                            </strong>
+                        <td colspan="8">
+                            <input type="text" name="dxh560_weekly[{{ $key }}][week1]" class="qc-input"
+                                style="width:100%;">
                         </td>
 
-                        <td colspan="19">
-                            <input type="text" name="dxh560_monthly[bleach_cycle][notes]"
-                                id="dxh560_bleach_cycle_notes" class="qc-input" style="width:100%;">
+                        <td colspan="8">
+                            <input type="text" name="dxh560_weekly[{{ $key }}][week2]" class="qc-input"
+                                style="width:100%;">
                         </td>
 
-                        <td colspan="16">
-                            <input type="text" name="dxh560_monthly[bleach_cycle][dates]"
-                                id="dxh560_bleach_cycle_dates" class="qc-input" style="width:100%;">
-                        </td>
-                    </tr>
-
-                    {{-- TECHNICIAN SIGNATURE --}}
-                    <tr>
-                        <td><strong>Technician Signature</strong></td>
-
-                        <td colspan="19">
-                            <input type="text" name="dxh560_technician[name]" id="dxh560_technician_name"
-                                class="qc-input" style="width:100%;">
+                        <td colspan="8">
+                            <input type="text" name="dxh560_weekly[{{ $key }}][week3]" class="qc-input"
+                                style="width:100%;">
                         </td>
 
-                        <td colspan="16">
-                            <input type="text" name="dxh560_technician[date]" id="dxh560_technician_date"
-                                class="qc-input" style="width:100%;">
+                        <td colspan="7">
+                            <input type="text" name="dxh560_weekly[{{ $key }}][week4]" class="qc-input"
+                                style="width:100%;">
                         </td>
                     </tr>
+                @endforeach
 
-                </tbody>
-            </table>
-        </form>
+                {{-- 🔒 GRID RESET (INVISIBLE – DO NOT REMOVE) --}}
+                <tr>
+                    <td colspan="32" style="padding:0;border:none;height:0;"></td>
+                </tr>
+
+                {{-- MONTHLY MAINTENANCE --}}
+                <tr>
+                    <td colspan="32"><strong>Monthly Maintenance</strong></td>
+                </tr>
+
+                <tr>
+                    <td colspan="32"><strong>Depends on the usage cycles/day</strong></td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <strong>
+                            Perform Bleaching cycle
+                            (Use 5ml Bleach + 5ml D/W, filter and use)
+                        </strong>
+                    </td>
+
+                    <td colspan="15">
+                        <input type="text" name="dxh560_monthly[bleach_cycle][notes]" class="qc-input"
+                            style="width:100%;">
+                    </td>
+
+                    <td colspan="16">
+                        <input type="text" name="dxh560_monthly[bleach_cycle][dates]" class="qc-input"
+                            style="width:100%;">
+                    </td>
+                </tr>
+
+                {{-- TECHNICIAN SIGNATURE --}}
+                <tr>
+                    <td><strong>Technician Signature</strong></td>
+
+                    <td colspan="15">
+                        <input type="text" name="dxh560_technician[name]" class="qc-input" style="width:100%;">
+                    </td>
+
+                    <td colspan="16">
+                        <input type="text" name="dxh560_technician[date]" class="qc-input" style="width:100%;">
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
     </x-formTemplete>
+
 
 
     <x-formTemplete id="TDPL/BE/FOM-020" docNo="TDPL/BE/FOM-020" docName="HORIBA Yumizen H550 Maintenance Form"
@@ -2673,65 +2783,105 @@
         </form>
     </x-formTemplete>
 
-
     <x-formTemplete id="TDPL/BE/FOM-023" docNo="TDPL/BE/FOM-023"
         docName="Tissue Embedding Console System Equipment Maintenance Form" issueNo="2.0" issueDate="01/10/2024"
-        buttonText="Submit" action="{{ route('be.forms.submit') }}">>
-        <p>
-            <strong>Month/Year:</strong>
-            <input type="text" name="month_year" class="qc-input" style="width:120px;">
+        buttonText="Submit" action="{{ route('be.forms.submit') }}">
 
-            <strong>Instrument ID/S. No.:</strong>
-            <input type="text" name="instrument_id" class="qc-input" style="width:150px;">
-        </p>
+        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
+        <input type="hidden" name="tec_form_id" id="tec_form_id">
 
-        <table style="width: 100%;">
-            <tbody>
-                <tr>
-                    <td colspan="6" style="text-align: center;">
-                        <strong>Daily Maintenance Log</strong>
-                    </td>
-                </tr>
+        <form method="POST" action="">
+            @csrf
 
-                <tr>
-                    <td><strong>Date</strong></td>
-                    <td><strong>Cold Plate Temperature (°C)</strong></td>
-                    <td><strong>Hot Plate Temperature (°C)</strong></td>
-                    <td><strong>Wax Bath Temperature (°C)</strong></td>
-                    <td><strong>Check Cleaning</strong></td>
-                    <td><strong>Technician Signature</strong></td>
-                </tr>
+            <p>
+                <strong>Month/Year:</strong>
+                <input type="month" name="tec_month_year" id="tec_month_year" class="qc-input"
+                    style="width:120px;" onchange="loadTecForm()">
 
-                @for ($i = 1; $i <= 31; $i++)
+                <strong>Instrument ID/S. No.:</strong>
+                <input list="tecEquipList" name="tec_instrument_id" id="tec_instrument_id" class="qc-input"
+                    style="width:150px;" placeholder="All" oninput="loadTecForm()">
+
+                <datalist id="tecEquipList">
+                    <option value="TEC-001">
+                    <option value="TEC-002">
+                    <option value="TEC-003">
+                </datalist>
+
+            </p>
+
+            <table style="width: 100%;" border="1" cellspacing="0" cellpadding="6">
+                <tbody>
                     <tr>
-                        <td><strong>{{ $i }}</strong></td>
-                        <td> <input type="text" name="instrument_id" class="qc-input" style="width:150px;">
-                        </td>
-                        <td> <input type="text" name="instrument_id" class="qc-input" style="width:150px;">
-                        </td>
-                        <td> <input type="text" name="instrument_id" class="qc-input" style="width:150px;">
-                        </td>
-                        <td> <input type="text" name="instrument_id" class="qc-input" style="width:150px;">
-                        </td>
-                        <td> <input type="text" name="instrument_id" class="qc-input" style="width:150px;">
+                        <td colspan="6" style="text-align: center;">
+                            <strong>Daily Maintenance Log</strong>
                         </td>
                     </tr>
-                @endfor
-            </tbody>
-        </table>
 
+                    <tr>
+                        <td><strong>Date</strong></td>
+                        <td><strong>Cold Plate Temperature (°C)</strong></td>
+                        <td><strong>Hot Plate Temperature (°C)</strong></td>
+                        <td><strong>Wax Bath Temperature (°C)</strong></td>
+                        <td><strong>Check Cleaning</strong></td>
+                        <td><strong>Technician Signature</strong></td>
+                    </tr>
 
+                    @for ($i = 1; $i <= 31; $i++)
+                        <tr>
+                            <td><strong>{{ $i }}</strong></td>
 
-        <p><strong>Note:</strong>
-            Optimum temperature ranges:
-            Cold plate -5 to -9°C; Hotplate 80 to 90°C; Wax bath 65 to 75°C
-        </p>
+                            <td>
+                                <input type="text" name="tec_daily[cold_plate_temp][{{ $i }}]"
+                                    id="tec_daily_cold_plate_temp_{{ $i }}" class="qc-input"
+                                    style="width:100%;">
+                            </td>
 
+                            <td>
+                                <input type="text" name="tec_daily[hot_plate_temp][{{ $i }}]"
+                                    id="tec_daily_hot_plate_temp_{{ $i }}" class="qc-input"
+                                    style="width:100%;">
+                            </td>
 
+                            <td>
+                                <input type="text" name="tec_daily[wax_bath_temp][{{ $i }}]"
+                                    id="tec_daily_wax_bath_temp_{{ $i }}" class="qc-input"
+                                    style="width:100%;">
+                            </td>
+
+                            <td>
+                                <input type="text" name="tec_daily[check_cleaning][{{ $i }}]"
+                                    id="tec_daily_check_cleaning_{{ $i }}" class="qc-input"
+                                    style="width:100%;">
+                            </td>
+
+                            <td>
+                                <input type="text" name="tec_daily[technician_signature][{{ $i }}]"
+                                    id="tec_daily_technician_signature_{{ $i }}" class="qc-input"
+                                    style="width:100%;">
+                            </td>
+                        </tr>
+                    @endfor
+                </tbody>
+            </table>
+
+            <p>
+                <strong>Note:</strong>
+                Optimum temperature ranges:
+                Cold plate -5 to -9°C;
+                Hotplate 80 to 90°C;
+                Wax bath 65 to 75°C
+            </p>
+
+        </form>
     </x-formTemplete>
 
+
     <x-formTemplete id="TDPL/BE/FOM-024" docNo="TDPL/BE/FOM-024" docName="Bact Alert Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+
+        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
+        <input type="hidden" name="ba_form_id" id="ba_form_id">
 
         @php
             // Define the fields for the maintenance log
@@ -2748,40 +2898,65 @@
             $days = range(1, 31);
         @endphp
 
-        <div class="mb-4">
-            <label class="font-bold">Month & Year:</label>
-            <input type="month" name="month_year" class="border p-1 rounded ml-2">
+        {{-- ===================== TOP DETAILS ===================== --}}
+        <div class="mb-4" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
 
-            <label class="font-bold ml-4">Instrument ID / S. No:</label>
-            <input type="text" name="instrument_id" class="border p-1 rounded ml-2">
+            <label class="font-bold">Month &amp; Year:</label>
+            <input type="month" name="ba_month_year" id="ba_month_year" class="qc-input" style="width:150px;"
+                onchange="loadBactAlertForm()">
+
+            <label class="font-bold">Instrument ID / S. No:</label>
+            <input list="baEquipList" name="ba_instrument_id" id="ba_instrument_id" class="qc-input"
+                style="width:180px;" placeholder="All" oninput="loadBactAlertForm()">
+
+            <datalist id="baEquipList">
+                <option value="BACT-001">
+                <option value="BACT-002">
+                <option value="BACT-003">
+            </datalist>
+
         </div>
 
+
+        {{-- ===================== DAILY MAINTENANCE TABLE ===================== --}}
         <table class="border-collapse border border-gray-400 w-full text-center">
             <thead class="bg-gray-100">
                 <tr>
                     <th class="border border-gray-300 p-2">Date</th>
                     @foreach ($days as $day)
-                        <th class="border border-gray-300 p-2 ">{{ $day }}</th>
+                        <th class="border border-gray-300 p-2">{{ $day }}</th>
                     @endforeach
                 </tr>
             </thead>
+
             <tbody>
                 @foreach ($fields as $field)
+                    @php
+                        $slug = Str::slug($field);
+                    @endphp
                     <tr>
-                        <td class="border border-gray-300 p-2 font-semibold text-left w-48"
-                            style="    min-width: 176px;">{{ $field }}</td>
+                        <td class="border border-gray-300 p-2 font-semibold text-left w-48" style="min-width:176px;">
+                            {{ $field }}
+                        </td>
+
                         @foreach ($days as $day)
                             <td class="border border-gray-300 p-1">
+
                                 @if (str_contains(strtolower($field), 'signature'))
-                                    <input type="text" name="{{ Str::slug($field) }}[{{ $day }}]"
-                                        class="border rounded w-full p-1" placeholder="Sign">
+                                    <input type="text" name="ba_daily[{{ $slug }}][{{ $day }}]"
+                                        id="ba_daily_{{ $slug }}_{{ $day }}"
+                                        class="border rounded w-full p-1 qc-input" placeholder="Sign">
                                 @elseif(str_contains(strtolower($field), 'check temp'))
-                                    <input type="number" name="{{ Str::slug($field) }}[{{ $day }}]"
-                                        class="border rounded w-full p-1" step="0.1" placeholder="°C">
+                                    <input type="number" step="0.1"
+                                        name="ba_daily[{{ $slug }}][{{ $day }}]"
+                                        id="ba_daily_{{ $slug }}_{{ $day }}"
+                                        class="border rounded w-full p-1 qc-input" placeholder="°C">
                                 @else
-                                    <input type="text" name="{{ Str::slug($field) }}[{{ $day }}]"
-                                        class="border rounded w-full p-1">
+                                    <input type="text" name="ba_daily[{{ $slug }}][{{ $day }}]"
+                                        id="ba_daily_{{ $slug }}_{{ $day }}"
+                                        class="border rounded w-full p-1 qc-input">
                                 @endif
+
                             </td>
                         @endforeach
                     </tr>
@@ -2792,10 +2967,12 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-025" docNo="TDPL/BE/FOM-025" docName="Vitek 2 Maintenance Form" issueNo="2.0"
-        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
+        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+
+        {{-- 🔑 INLINE EDIT SUPPORT --}}
+        <input type="hidden" name="vitek_form_id" id="vitek_form_id">
 
         @php
-            // Define the maintenance fields
             $dailyFields = [
                 'Clean Waste bin',
                 'Densi-check calibration',
@@ -2817,25 +2994,44 @@
                 'Signature of HOD',
             ];
 
-            // Days in a month
             $days = range(1, 31);
 
-            // Helper function to generate slug names for inputs
             function fieldSlug($field)
             {
-                return \Illuminate\Support\Str::slug($field);
+                return \Illuminate\Support\Str::slug($field, '_');
             }
         @endphp
 
         <div class="mb-4">
-            <label class="font-bold">Month & Year:</label>
-            <input type="month" name="month_year" class="border p-1 rounded ml-2">
 
-            <label class="font-bold ml-4">Instrument ID / S. No:</label>
-            <input type="text" name="instrument_id" class="border p-1 rounded ml-2">
+            <label class="font-bold" style="margin-right:8px;">
+                Month &amp; Year:
+            </label>
+
+            <input type="month" name="vitek_month_year" id="vitek_month_year" class="border p-1 rounded qc-input"
+                style="width:180px;" onchange="loadVitekForm()">
+
+            &nbsp;&nbsp;&nbsp;&nbsp;
+
+            <label class="font-bold" style="margin-right:8px;">
+                Instrument ID / S. No:
+            </label>
+
+            <input list="vitekInstrumentList" name="vitek_instrument_id" id="vitek_instrument_id"
+                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All"
+                onchange="loadVitekForm()">
+
+            <datalist id="vitekInstrumentList">
+                <option value="VITEK2-001">
+                <option value="VITEK2-002">
+                <option value="VITEK2-003">
+            </datalist>
+
         </div>
 
-        {{-- Daily Maintenance Table --}}
+
+
+        {{-- DAILY --}}
         <h2 class="text-lg font-bold mb-2">Daily Maintenance</h2>
         <table class="border-collapse border border-gray-400 w-full text-center mb-6">
             <thead class="bg-gray-100">
@@ -2848,20 +3044,16 @@
             </thead>
             <tbody>
                 @foreach ($dailyFields as $field)
+                    @php $slug = fieldSlug($field); @endphp
                     <tr>
                         <td class="border border-gray-300 p-2 font-semibold text-left">{{ $field }}</td>
                         @foreach ($days as $day)
                             <td class="border border-gray-300 p-1">
-                                @if (str_contains(strtolower($field), 'signature'))
-                                    <input type="text" name="{{ fieldSlug($field) }}[{{ $day }}]"
-                                        class="border rounded w-full p-1" placeholder="Sign">
-                                @elseif(str_contains(strtolower($field), 'temperature'))
-                                    <input type="number" name="{{ fieldSlug($field) }}[{{ $day }}]"
-                                        class="border rounded w-full p-1" step="0.1" placeholder="°C">
-                                @else
-                                    <input type="text" name="{{ fieldSlug($field) }}[{{ $day }}]"
-                                        class="border rounded w-full p-1">
-                                @endif
+                                <input type="{{ str_contains(strtolower($field), 'temperature') ? 'number' : 'text' }}"
+                                    step="0.1" name="vitek_daily[{{ $slug }}][{{ $day }}]"
+                                    id="vitek_daily_{{ $slug }}_{{ $day }}"
+                                    class="border rounded w-full p-1 qc-input"
+                                    placeholder="{{ str_contains(strtolower($field), 'signature') ? 'Sign' : '' }}">
                             </td>
                         @endforeach
                     </tr>
@@ -2869,7 +3061,7 @@
             </tbody>
         </table>
 
-        {{-- Monthly Maintenance Table --}}
+        {{-- MONTHLY --}}
         <h2 class="text-lg font-bold mb-2">Monthly Maintenance</h2>
         <table class="border-collapse border border-gray-400 w-full text-center">
             <thead class="bg-gray-100">
@@ -2882,17 +3074,15 @@
             </thead>
             <tbody>
                 @foreach ($monthlyFields as $field)
+                    @php $slug = fieldSlug($field); @endphp
                     <tr>
                         <td class="border border-gray-300 p-2 font-semibold text-left">{{ $field }}</td>
                         @foreach ($days as $day)
                             <td class="border border-gray-300 p-1">
-                                @if (str_contains(strtolower($field), 'signature'))
-                                    <input type="text" name="{{ fieldSlug($field) }}[{{ $day }}]"
-                                        class="border rounded w-full p-1" placeholder="Sign">
-                                @else
-                                    <input type="text" name="{{ fieldSlug($field) }}[{{ $day }}]"
-                                        class="border rounded w-full p-1">
-                                @endif
+                                <input type="text" name="vitek_monthly[{{ $slug }}][{{ $day }}]"
+                                    id="vitek_monthly_{{ $slug }}_{{ $day }}"
+                                    class="border rounded w-full p-1 qc-input"
+                                    placeholder="{{ str_contains(strtolower($field), 'signature') ? 'Sign' : '' }}">
                             </td>
                         @endforeach
                     </tr>
@@ -2903,17 +3093,33 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-026" docNo="TDPL/BE/FOM-026" docName="Elisa Reader Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
-        <div class="mb-4">
-            <label class="font-bold">MONTH & YEAR:</label>
-            <input type="month" name="month_year" class="border p-1 rounded ml-2">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
 
-            <label class="font-bold ml-4">INSTRUMENT ID / S. No:</label>
-            <input type="text" name="instrument_id" class="border p-1 rounded ml-2">
+        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
+        <input type="hidden" name="elisa_form_id" id="elisa_form_id">
+
+        {{-- ===================== TOP DETAILS ===================== --}}
+        <div class="mb-4" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <label class="font-bold">MONTH &amp; YEAR:</label>
+            <input type="month" name="elisa_month_year" id="elisa_month_year" class="qc-input"
+                style="width:150px;" onchange="loadElisaForm()">
+            <label class="font-bold">INSTRUMENT ID / S. No:</label>
+            <input list="elisaEquipList" name="elisa_instrument_id" id="elisa_instrument_id" class="qc-input"
+                style="width:180px;" placeholder="All" oninput="loadElisaForm()">
+
+            <datalist id="elisaEquipList">
+                <option value="ELISA-001">
+                <option value="ELISA-002">
+                <option value="ELISA-003">
+            </datalist>
+
         </div>
 
-        <p class="mb-2">Put a tick mark (✓) against each maintenance activity after performance</p>
+        <p class="mb-2">
+            Put a tick mark (✓) against each maintenance activity after performance
+        </p>
 
+        {{-- ===================== DAILY MAINTENANCE TABLE ===================== --}}
         <table class="border-collapse border border-gray-400 w-full text-center">
             <thead class="bg-gray-100">
                 <tr>
@@ -2923,44 +3129,80 @@
                     @endfor
                 </tr>
             </thead>
+
             <tbody>
-                @foreach (['Is the power source secure', 'Is the power cord safe', 'Is the power plug tightly inserted', 'Is the outside of the system free from contamination', 'Is the microplate absorbance system clean', 'Signature of Operator'] as $field)
+                @php
+                    $fields = [
+                        'Is the power source secure',
+                        'Is the power cord safe',
+                        'Is the power plug tightly inserted',
+                        'Is the outside of the system free from contamination',
+                        'Is the microplate absorbance system clean',
+                        'Signature of Operator',
+                    ];
+                @endphp
+
+                @foreach ($fields as $field)
+                    @php
+                        $slug = \Illuminate\Support\Str::slug($field);
+                    @endphp
                     <tr>
-                        <td class="border border-gray-300 p-2 font-semibold text-left">{{ $field }}</td>
+                        <td class="border border-gray-300 p-2 font-semibold text-left">
+                            {{ $field }}
+                        </td>
+
                         @for ($day = 1; $day <= 31; $day++)
                             <td class="border border-gray-300 p-1">
+
                                 @if (str_contains(strtolower($field), 'signature'))
                                     <input type="text"
-                                        name="{{ \Illuminate\Support\Str::slug($field) }}[{{ $day }}]"
-                                        class="border rounded w-full p-1" placeholder="Sign">
+                                        name="elisa_daily[{{ $slug }}][{{ $day }}]"
+                                        id="elisa_daily_{{ $slug }}_{{ $day }}" class="qc-input"
+                                        style="width:100%;" placeholder="Sign">
                                 @else
-                                    <input type="checkbox"
-                                        name="{{ \Illuminate\Support\Str::slug($field) }}[{{ $day }}]"
-                                        value="1" class="mx-auto">
+                                    <input type="checkbox" class="qc-input"
+                                        name="elisa_daily[{{ $slug }}][{{ $day }}]"
+                                        id="elisa_daily_{{ $slug }}_{{ $day }}" value="1">
                                 @endif
+
                             </td>
                         @endfor
                     </tr>
                 @endforeach
             </tbody>
         </table>
-
 
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-028" docNo="TDPL/BE/FOM-028" docName="Real Time PCR Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
 
-        <div class="mb-4">
-            <label class="font-bold">MONTH & YEAR:</label>
-            <input type="month" name="month_year" class="border p-1 rounded ml-2">
+        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
+        <input type="hidden" name="rtpcr_form_id" id="rtpcr_form_id">
 
-            <label class="font-bold ml-4">INSTRUMENT ID / S. No:</label>
-            <input type="text" name="instrument_id" class="border p-1 rounded ml-2">
+        {{-- ===================== TOP DETAILS ===================== --}}
+        <div class="mb-4" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+            <label class="font-bold">MONTH &amp; YEAR:</label>
+            <input type="month" name="rtpcr_month_year" id="rtpcr_month_year" class="qc-input"
+                style="width:150px;" onchange="loadRtpcrForm()">
+
+            <label class="font-bold">INSTRUMENT ID / S. No:</label>
+            <input list="rtpcrEquipList" name="rtpcr_instrument_id" id="rtpcr_instrument_id" class="qc-input"
+                style="width:180px;" placeholder="All" oninput="loadRtpcrForm()">
+
+            <datalist id="rtpcrEquipList">
+                <option value="RTPCR-001">
+                <option value="RTPCR-002">
+                <option value="RTPCR-003">
+            </datalist>
+
         </div>
 
-        <p class="mb-2">Put a tick mark (✓) against each maintenance activity after performance</p>
+        <p class="mb-2">
+            Put a tick mark (✓) against each maintenance activity after performance
+        </p>
 
+        {{-- ===================== DAILY MAINTENANCE TABLE ===================== --}}
         <table class="border-collapse border border-gray-400 w-full text-center">
             <thead class="bg-gray-100">
                 <tr>
@@ -2970,21 +3212,43 @@
                     @endfor
                 </tr>
             </thead>
+
             <tbody>
-                @foreach (['Sample stand Cleaning', 'Rotor Cleaning', 'Power cord attached', 'Laptop screen cleaning', 'Check Cord of laptop', 'Check Fuse', 'Signature'] as $field)
+                @php
+                    $fields = [
+                        'Sample stand Cleaning',
+                        'Rotor Cleaning',
+                        'Power cord attached',
+                        'Laptop screen cleaning',
+                        'Check Cord of laptop',
+                        'Check Fuse',
+                        'Signature',
+                    ];
+                @endphp
+
+                @foreach ($fields as $field)
+                    @php
+                        $slug = \Illuminate\Support\Str::slug($field);
+                    @endphp
                     <tr>
-                        <td class="border border-gray-300 p-2 font-semibold text-left">{{ $field }}</td>
+                        <td class="border border-gray-300 p-2 font-semibold text-left">
+                            {{ $field }}
+                        </td>
+
                         @for ($day = 1; $day <= 31; $day++)
                             <td class="border border-gray-300 p-1">
+
                                 @if (str_contains(strtolower($field), 'signature'))
                                     <input type="text"
-                                        name="{{ \Illuminate\Support\Str::slug($field) }}[{{ $day }}]"
-                                        class="border rounded w-full p-1" placeholder="Sign">
+                                        name="rtpcr_daily[{{ $slug }}][{{ $day }}]"
+                                        id="rtpcr_daily_{{ $slug }}_{{ $day }}" class="qc-input"
+                                        style="width:100%;" placeholder="Sign">
                                 @else
-                                    <input type="checkbox"
-                                        name="{{ \Illuminate\Support\Str::slug($field) }}[{{ $day }}]"
-                                        value="1" class="mx-auto">
+                                    <input type="checkbox" class="qc-input"
+                                        name="rtpcr_daily[{{ $slug }}][{{ $day }}]"
+                                        id="rtpcr_daily_{{ $slug }}_{{ $day }}" value="1">
                                 @endif
+
                             </td>
                         @endfor
                     </tr>
@@ -2994,13 +3258,42 @@
 
     </x-formTemplete>
 
+
     <x-formTemplete id="TDPL/BE/FOM-029" docNo="TDPL/BE/FOM-029" docName="Cooling Centrifuge Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
-        <p><strong>Month/Year:</strong> <input type="month" name="month_year" class="border p-1 rounded">
-            <strong>Department:</strong> <input type="text" name="department" class="border p-1 rounded">
-            <strong>Instrument ID/S. No.:</strong> <input type="text" name="instrument_id"
-                class="border p-1 rounded">
-        </p>
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+
+        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
+        <input type="hidden" name="cc_form_id" id="cc_form_id">
+
+        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:10px;">
+
+            <strong>Month/Year:</strong>
+            <input type="month" name="cc_month_year" id="cc_month_year" class="border p-1 rounded qc-input"
+                style="width:150px;" onchange="loadCcForm()">
+
+            <strong>Department:</strong>
+            <input list="ccDepartmentList" name="cc_department" id="cc_department"
+                class="border p-1 rounded qc-input" style="width:160px;" placeholder="All" oninput="loadCcForm()">
+
+            <datalist id="ccDepartmentList">
+                <option value="Hematology">
+                <option value="Biochemistry">
+                <option value="Microbiology">
+                <option value="Pathology">
+            </datalist>
+
+            <strong>Instrument ID/S. No.:</strong>
+            <input list="ccEquipList" name="cc_instrument_id" id="cc_instrument_id"
+                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All" oninput="loadCcForm()">
+
+            <datalist id="ccEquipList">
+                <option value="CC-001">
+                <option value="CC-002">
+                <option value="CC-003">
+            </datalist>
+
+        </div>
+
 
         <table class="border-collapse border border-gray-400 w-full text-center">
             <thead>
@@ -3011,56 +3304,101 @@
                     @endfor
                 </tr>
             </thead>
+
             <tbody>
 
-
                 @foreach (['Buckets Cleaned', 'Power Cord', 'Dusting', 'Signature'] as $item)
+                    @php
+                        $slug = \Illuminate\Support\Str::slug($item);
+                    @endphp
                     <tr>
                         <td class="border border-gray-400 font-semibold">{{ $item }}</td>
+
                         @for ($day = 1; $day <= 31; $day++)
                             <td class="border border-gray-400 p-1">
-                                @if ($item == 'Signature')
-                                    <input type="text" name="{{ Str::slug($item) }}[{{ $day }}]"
-                                        class="w-full border p-1 rounded" placeholder="Sign">
+
+                                @if ($item === 'Signature')
+                                    <input type="text" name="cc_daily[{{ $slug }}][{{ $day }}]"
+                                        id="cc_daily_{{ $slug }}_{{ $day }}"
+                                        class="w-full border p-1 rounded qc-input" placeholder="Sign">
                                 @else
-                                    <input type="checkbox" name="{{ Str::slug($item) }}[{{ $day }}]"
-                                        class="mx-auto">
+                                    <input type="checkbox" name="cc_daily[{{ $slug }}][{{ $day }}]"
+                                        id="cc_daily_{{ $slug }}_{{ $day }}" value="1"
+                                        class="qc-input mx-auto">
                                 @endif
+
                             </td>
                         @endfor
                     </tr>
                 @endforeach
 
-                <!-- Monthly Maintenance -->
+                {{-- ===================== MONTHLY MAINTENANCE ===================== --}}
                 <tr>
-                    <td colspan="32" class="border border-gray-400 font-semibold text-left p-2">Monthly
-                        Maintenance</td>
+                    <td colspan="32" class="border border-gray-400 font-semibold text-left p-2">
+                        Monthly Maintenance
+                    </td>
                 </tr>
+
                 <tr>
-                    <td class="border border-gray-400 font-semibold">Bushes Checked</td>
-                    <td colspan="6" class="border border-gray-400"><input type="text"
-                            name="bushes_checked_notes" class="w-full border p-1 rounded"></td>
-                    <td colspan="14" class="border border-gray-400"><strong>Date:</strong> <input type="date"
-                            name="bushes_checked_date" class="border p-1 rounded"></td>
-                    <td colspan="11" class="border border-gray-400"><strong>Next Due Date:</strong> <input
-                            type="date" name="bushes_next_due" class="border p-1 rounded"></td>
+                    <td class="border border-gray-400 font-semibold">
+                        Bushes Checked
+                    </td>
+
+                    <td colspan="6" class="border border-gray-400">
+                        <input type="text" name="cc_monthly[bushes_checked_notes]"
+                            id="cc_monthly_bushes_checked_notes" class="w-full border p-1 rounded qc-input">
+                    </td>
+
+                    <td colspan="14" class="border border-gray-400">
+                        <strong>Date:</strong>
+                        <input type="date" name="cc_monthly[bushes_checked_date]"
+                            id="cc_monthly_bushes_checked_date" class="border p-1 rounded qc-input">
+                    </td>
+
+                    <td colspan="11" class="border border-gray-400">
+                        <strong>Next Due Date:</strong>
+                        <input type="date" name="cc_monthly[bushes_next_due]" id="cc_monthly_bushes_next_due"
+                            class="border p-1 rounded qc-input">
+                    </td>
                 </tr>
+
                 <tr>
-                    <td class="border border-gray-400 font-semibold">Signature</td>
-                    <td colspan="31" class="border border-gray-400"><input type="text" name="monthly_signature"
-                            class="w-full border p-1 rounded"></td>
+                    <td class="border border-gray-400 font-semibold">
+                        Signature
+                    </td>
+                    <td colspan="31" class="border border-gray-400">
+                        <input type="text" name="cc_monthly[signature]" id="cc_monthly_signature"
+                            class="w-full border p-1 rounded qc-input">
+                    </td>
                 </tr>
+
             </tbody>
         </table>
 
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-034" docNo="TDPL/BE/FOM-034" docName="Microscope Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
-        <p>
-            <strong>Month & Year:</strong> <input type="month" name="month_year" class="border p-1 rounded">
-            <strong>Instrument ID/S. No.:</strong> <input type="text" name="instrument_id"
-                class="border p-1 rounded">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+
+        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
+        <input type="hidden" name="mic_form_id" id="mic_form_id">
+
+        <p style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+
+            <strong>Month & Year:</strong>
+            <input type="month" name="mic_month_year" id="mic_month_year" class="border p-1 rounded qc-input"
+                style="width:150px;" onchange="loadMicForm()">
+
+            <strong>Instrument ID/S. No.:</strong>
+            <input list="micEquipList" name="mic_instrument_id" id="mic_instrument_id"
+                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All" oninput="loadMicForm()">
+
+            <datalist id="micEquipList">
+                <option value="MIC-001">
+                <option value="MIC-002">
+                <option value="MIC-003">
+            </datalist>
+
         </p>
 
         <table class="border-collapse border border-gray-400 w-full text-center">
@@ -3072,19 +3410,42 @@
                     @endfor
                 </tr>
             </thead>
+
             <tbody>
-                @foreach (['Cleaning outside & inside', 'Check mechanical stage', 'Check fine & adjustment', 'Cleaning of lens', 'Check light source', 'Check plug cord', 'Lab Staff Signature', 'Lab Supervisor Signature'] as $item)
+                @php
+                    $items = [
+                        'Cleaning outside & inside',
+                        'Check mechanical stage',
+                        'Check fine & adjustment',
+                        'Cleaning of lens',
+                        'Check light source',
+                        'Check plug cord',
+                        'Lab Staff Signature',
+                        'Lab Supervisor Signature',
+                    ];
+                @endphp
+
+                @foreach ($items as $item)
+                    @php
+                        $slug = \Illuminate\Support\Str::slug($item);
+                    @endphp
                     <tr>
                         <td class="border border-gray-400 font-semibold">{{ $item }}</td>
+
                         @for ($day = 1; $day <= 31; $day++)
                             <td class="border border-gray-400 p-1">
+
                                 @if (str_contains($item, 'Signature'))
-                                    <input type="text" name="{{ Str::slug($item) }}[{{ $day }}]"
-                                        class="w-full border p-1 rounded" placeholder="Sign">
+                                    <input type="text" name="mic_daily[{{ $slug }}][{{ $day }}]"
+                                        id="mic_daily_{{ $slug }}_{{ $day }}"
+                                        class="w-full border p-1 rounded qc-input" placeholder="Sign">
                                 @else
-                                    <input type="checkbox" name="{{ Str::slug($item) }}[{{ $day }}]"
-                                        class="mx-auto">
+                                    <input type="checkbox"
+                                        name="mic_daily[{{ $slug }}][{{ $day }}]"
+                                        id="mic_daily_{{ $slug }}_{{ $day }}" value="1"
+                                        class="qc-input mx-auto">
                                 @endif
+
                             </td>
                         @endfor
                     </tr>
@@ -3095,12 +3456,29 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-035" docNo="TDPL/BE/FOM-035" docName="Laura M Maintenance Form" issueNo="2.0"
-        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
-        <p>
-            <strong>Month & Year:</strong> <input type="month" name="month_year" class="border p-1 rounded">
-            <strong>Instrument ID/S. No.:</strong> <input type="text" name="instrument_id"
-                class="border p-1 rounded">
-        </p>
+        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+
+        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
+        <input type="hidden" name="lauram_form_id" id="lauram_form_id">
+
+        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px;">
+
+            <strong>Month & Year:</strong>
+            <input type="month" name="lauram_month_year" id="lauram_month_year"
+                class="border p-1 rounded qc-input" style="width:150px;" onchange="loadLauramForm()">
+
+            <strong>Instrument ID/S. No.:</strong>
+            <input list="lauramEquipList" name="lauram_instrument_id" id="lauram_instrument_id"
+                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All"
+                oninput="loadLauramForm()">
+
+            <datalist id="lauramEquipList">
+                <option value="LAURAM-001">
+                <option value="LAURAM-002">
+                <option value="LAURAM-003">
+            </datalist>
+
+        </div>
 
         <table class="border-collapse border border-gray-400 text-center w-full">
             <thead>
@@ -3111,60 +3489,86 @@
                     @endfor
                 </tr>
             </thead>
+
             <tbody>
                 @foreach ([
             'Cleaning procedure of Plastic Feeder' => ['1. Rinse the feeder with water and wipe it with wet cloth', '2. Dry the plastic feeder, and insert into analyzer (Correct position)'],
             'Cleaning procedure of Waste Container' => ['1. Remove the waste container with used strips from the analyzer.', '2. Empty the container and rinse it with water', '3. Wipe with a dry cloth.', '4. Insert the waste container back and ensure it is positioned correctly'],
         ] as $section => $steps)
+                    @php $sectionSlug = Str::slug($section); @endphp
+
                     <tr>
-                        <td class="border border-gray-400 font-semibold text-left" style="min-width: 250px;">
-                            {{ $section }}</td>
+                        <td class="border border-gray-400 font-semibold text-left" style="min-width:250px;">
+                            {{ $section }}
+                        </td>
                         <td colspan="31" class="border border-gray-400">&nbsp;</td>
                     </tr>
 
                     @foreach ($steps as $step)
+                        @php $stepSlug = Str::slug($step); @endphp
                         <tr>
-                            <td class="border border-gray-400 text-left" style="min-width: 250px;">
-                                {{ $step }}</td>
+                            <td class="border border-gray-400 text-left" style="min-width:250px;">
+                                {{ $step }}
+                            </td>
                             @for ($day = 1; $day <= 31; $day++)
                                 <td class="border border-gray-400 p-1">
-                                    <input type="checkbox" name="{{ Str::slug($section) }}[{{ $day }}]"
-                                        class="mx-auto">
+                                    <input type="checkbox"
+                                        name="lauram_daily[{{ $sectionSlug }}][{{ $stepSlug }}][{{ $day }}]"
+                                        id="lauram_daily_{{ $sectionSlug }}_{{ $stepSlug }}_{{ $day }}"
+                                        value="1" class="qc-input mx-auto">
                                 </td>
                             @endfor
                         </tr>
                     @endforeach
                 @endforeach
 
-                {{-- Signature Rows --}}
+                {{-- SIGNATURES --}}
                 @foreach (['Technician Signature', 'Supervisor Signature'] as $signature)
+                    @php $sigSlug = Str::slug($signature); @endphp
                     <tr>
-                        <td class="border border-gray-400 font-semibold text-left" style="min-width: 250px;">
-                            {{ $signature }}</td>
+                        <td class="border border-gray-400 font-semibold text-left" style="min-width:250px;">
+                            {{ $signature }}
+                        </td>
                         @for ($day = 1; $day <= 31; $day++)
                             <td class="border border-gray-400 p-1">
-                                <input type="text" name="{{ Str::slug($signature) }}[{{ $day }}]"
-                                    class="w-full border p-1 rounded" placeholder="Sign">
+                                <input type="text" name="lauram_daily[{{ $sigSlug }}][{{ $day }}]"
+                                    id="lauram_daily_{{ $sigSlug }}_{{ $day }}"
+                                    class="w-full border p-1 rounded qc-input" placeholder="Sign">
                             </td>
                         @endfor
                     </tr>
                 @endforeach
+
             </tbody>
         </table>
-
 
     </x-formTemplete>
 
 
     <x-formTemplete id="TDPL/BE/FOM-036" docNo="TDPL/BE/FOM-036" docName="Microtome Maintenance Form" issueNo="2.0"
-        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
+        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
 
-        <p>
-            <strong>Month & Year:</strong>
-            <input type="month" name="month_year" class="border p-1 rounded">
-            <strong>Instrument ID/S. No.:</strong>
-            <input type="text" name="instrument_id" class="border p-1 rounded">
-        </p>
+        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
+        <input type="hidden" name="microtome_form_id" id="microtome_form_id">
+
+        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
+
+            <label style="font-weight:bold;">Month &amp; Year:</label>
+            <input type="month" name="microtome_month_year" id="microtome_month_year"
+                class="border p-1 rounded qc-input" style="width:150px;" onchange="loadMicrotomeForm()">
+
+            <label style="font-weight:bold;">Instrument ID/S. No.:</label>
+            <input list="microtomeEquipList" name="microtome_instrument_id" id="microtome_instrument_id"
+                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All"
+                oninput="loadMicrotomeForm()">
+
+            <datalist id="microtomeEquipList">
+                <option value="MICROTOME-001">
+                <option value="MICROTOME-002">
+                <option value="MICROTOME-003">
+            </datalist>
+
+        </div>
 
         <table class="border-collapse border border-gray-400 w-full text-center">
             <thead>
@@ -3173,36 +3577,51 @@
                     <th class="border border-gray-400 p-4">Blade Change</th>
                     <th class="border border-gray-400 p-4">Lubrication</th>
                     <th class="border border-gray-400 p-4">Clean Knife Holder</th>
-                    <th class="border border-gray-400 p-4">Remove Accumulated Paraffin / Tissue & Clean Material Parts
+                    <th class="border border-gray-400 p-4">
+                        Remove Accumulated Paraffin / Tissue & Clean Material Parts
                     </th>
                     <th class="border border-gray-400 p-4">Technician Signature</th>
                 </tr>
             </thead>
+
             <tbody>
-                <!-- Loop for 31 days -->
-                <!-- Replace this with a server-side loop if using Blade / PHP -->
-                <!-- Example static version below -->
-                <?php for ($day = 1; $day <= 31; $day++): ?>
-                <tr>
-                    <td class="border border-gray-400 font-semibold"><?= str_pad($day, 2, '0', STR_PAD_LEFT) ?></td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="checkbox" name="blade_change[<?= $day ?>]">
-                    </td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="checkbox" name="lubrication[<?= $day ?>]">
-                    </td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="checkbox" name="clean_knife[<?= $day ?>]">
-                    </td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="checkbox" name="remove_paraffin[<?= $day ?>]">
-                    </td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="text" name="technician_signature[<?= $day ?>]"
-                            class="w-full border p-1 rounded" placeholder="Sign">
-                    </td>
-                </tr>
-                <?php endfor; ?>
+                @for ($day = 1; $day <= 31; $day++)
+                    <tr>
+                        <td class="border border-gray-400 font-semibold">
+                            {{ str_pad($day, 2, '0', STR_PAD_LEFT) }}
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="checkbox" name="microtome_daily[blade_change][{{ $day }}]"
+                                id="microtome_daily_blade_change_{{ $day }}" value="1"
+                                class="qc-input">
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="checkbox" name="microtome_daily[lubrication][{{ $day }}]"
+                                id="microtome_daily_lubrication_{{ $day }}" value="1"
+                                class="qc-input">
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="checkbox" name="microtome_daily[clean_knife][{{ $day }}]"
+                                id="microtome_daily_clean_knife_{{ $day }}" value="1"
+                                class="qc-input">
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="checkbox" name="microtome_daily[remove_paraffin][{{ $day }}]"
+                                id="microtome_daily_remove_paraffin_{{ $day }}" value="1"
+                                class="qc-input">
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="text" name="microtome_daily[technician_signature][{{ $day }}]"
+                                id="microtome_daily_technician_signature_{{ $day }}"
+                                class="w-full border p-1 rounded qc-input" placeholder="Sign">
+                        </td>
+                    </tr>
+                @endfor
             </tbody>
         </table>
 
@@ -3210,13 +3629,28 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-037" docNo="TDPL/BE/FOM-037" docName="Flotation Bath Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
-        <p>
-            <strong>Month & Year:</strong>
-            <input type="month" name="month_year" class="border p-1 rounded">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+
+        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
+        <input type="hidden" name="fb_form_id" id="fb_form_id">
+        <p style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+
+            <strong>Month &amp; Year:</strong>
+            <input type="month" name="fb_month_year" id="fb_month_year" class="border p-1 rounded qc-input"
+                style="width:150px;" onchange="loadFbForm()">
+
             <strong>Instrument ID/S. No.:</strong>
-            <input type="text" name="instrument_id" class="border p-1 rounded">
+            <input list="fbEquipList" name="fb_instrument_id" id="fb_instrument_id"
+                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All" oninput="loadFbForm()">
+
+            <datalist id="fbEquipList">
+                <option value="FB-001">
+                <option value="FB-002">
+                <option value="FB-003">
+            </datalist>
+
         </p>
+
 
         <p>Note: Optimum temperature range is 52 - 56°C.</p>
 
@@ -3232,59 +3666,91 @@
                     <th class="border border-gray-400 p-4">Signature</th>
                 </tr>
             </thead>
+
             <tbody>
-                <!-- Loop for 31 days -->
-                <?php for ($day = 1; $day <= 31; $day++): ?>
-                <tr>
-                    <td class="border border-gray-400 font-semibold"><?= str_pad($day, 2, '0', STR_PAD_LEFT) ?></td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="checkbox" name="clean_exterior[<?= $day ?>]">
-                    </td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="number" name="temp_morning[<?= $day ?>]" class="w-full border p-1 rounded"
-                            placeholder="°C">
-                    </td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="checkbox" name="water_changed[<?= $day ?>]">
-                    </td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="text" name="signature_morning[<?= $day ?>]" class="w-full border p-1 rounded"
-                            placeholder="Sign">
-                    </td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="number" name="temp_evening[<?= $day ?>]" class="w-full border p-1 rounded"
-                            placeholder="°C">
-                    </td>
-                    <td class="border border-gray-400 p-1">
-                        <input type="text" name="signature_evening[<?= $day ?>]" class="w-full border p-1 rounded"
-                            placeholder="Sign">
-                    </td>
-                </tr>
-                <?php endfor; ?>
+                @for ($day = 1; $day <= 31; $day++)
+                    <tr>
+                        <td class="border border-gray-400 font-semibold">
+                            {{ str_pad($day, 2, '0', STR_PAD_LEFT) }}
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="checkbox" name="fb_daily[clean_exterior][{{ $day }}]"
+                                id="fb_daily_clean_exterior_{{ $day }}" value="1" class="qc-input">
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="number" name="fb_daily[temp_morning][{{ $day }}]"
+                                id="fb_daily_temp_morning_{{ $day }}"
+                                class="w-full border p-1 rounded qc-input" placeholder="°C">
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="checkbox" name="fb_daily[water_changed][{{ $day }}]"
+                                id="fb_daily_water_changed_{{ $day }}" value="1" class="qc-input">
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="text" name="fb_daily[signature_morning][{{ $day }}]"
+                                id="fb_daily_signature_morning_{{ $day }}"
+                                class="w-full border p-1 rounded qc-input" placeholder="Sign">
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="number" name="fb_daily[temp_evening][{{ $day }}]"
+                                id="fb_daily_temp_evening_{{ $day }}"
+                                class="w-full border p-1 rounded qc-input" placeholder="°C">
+                        </td>
+
+                        <td class="border border-gray-400 p-1">
+                            <input type="text" name="fb_daily[signature_evening][{{ $day }}]"
+                                id="fb_daily_signature_evening_{{ $day }}"
+                                class="w-full border p-1 rounded qc-input" placeholder="Sign">
+                        </td>
+                    </tr>
+                @endfor
             </tbody>
         </table>
 
     </x-formTemplete>
 
-    <x-formTemplete id="TDPL/BE/FOM-038" docNo="TDPL/BE/FOM-038" docName="Grossing Station Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
 
+    <x-formTemplete id="TDPL/BE/FOM-038" docNo="TDPL/BE/FOM-038" docName="Grossing Station Maintenance Form"
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+
+        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
+        <input type="hidden" name="gs_form_id" id="gs_form_id">
 
         <div class="p-4">
 
-            <form action="" method="POST">
+            {{-- ⚠️ DO NOT REMOVE – FORM WRAPPER KEPT AS IS --}}
+            <form method="POST">
                 @csrf
 
-                <span class="mb-4">
-                    <label class="block font-semibold">Month & Year:</label>
-                    <input type="month" name="month_year" class="border rounded px-2 py-1 w-40">
-                </span>
-                <span class="mb-4">
-                    <label class="block font-semibold">Instrument ID/S. No.:</label>
-                    <input type="text" name="instrument_id" class="border rounded px-2 py-1 w-40">
-                </span>
+                <p style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
 
-                <h2 class="text-xl font-bold" style="margin: 20px 0;">Daily Maintenance</h2>
+                    <strong>Month &amp; Year:</strong>
+                    <input type="month" name="gs_month_year" id="gs_month_year"
+                        class="border p-1 rounded qc-input" style="width:150px;" onchange="loadGsForm()">
+
+                    <strong>Instrument ID/S. No.:</strong>
+                    <input list="gsEquipList" name="gs_instrument_id" id="gs_instrument_id"
+                        class="border p-1 rounded qc-input" style="width:180px;" placeholder="All"
+                        oninput="loadGsForm()">
+
+                    <datalist id="gsEquipList">
+                        <option value="GS-001">
+                        <option value="GS-002">
+                        <option value="GS-003">
+                    </datalist>
+
+                </p>
+
+
+                <h2 class="text-xl font-bold" style="margin: 20px 0;">
+                    Daily Maintenance
+                </h2>
+
                 <table class="table-auto border-collapse border border-gray-300 w-full text-center">
                     <thead>
                         <tr class="bg-gray-200">
@@ -3298,15 +3764,20 @@
                             <th class="border px-2 py-1">Technician Signature</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @for ($day = 1; $day <= 31; $day++)
                             <tr>
-                                <td class="border px-2 py-1">{{ $day }}</td>
+                                <td class="border px-2 py-1 font-semibold">
+                                    {{ $day }}
+                                </td>
+
                                 @foreach (['clean', 'filters', 'power_cord', 'airflow', 'uv_lamp', 'fuse', 'technician'] as $field)
                                     <td class="border px-2 py-1">
                                         <input type="text"
-                                            name="maintenance[{{ $day }}][{{ $field }}]"
-                                            class="border rounded px-1 py-1 w-full">
+                                            name="gs_daily[{{ $field }}][{{ $day }}]"
+                                            id="gs_daily_{{ $field }}_{{ $day }}"
+                                            class="border rounded px-1 py-1 w-full qc-input">
                                     </td>
                                 @endforeach
                             </tr>
@@ -3314,94 +3785,117 @@
                     </tbody>
                 </table>
 
-
             </form>
         </div>
 
-
     </x-formTemplete>
-
 
 
     <x-formTemplete id="TDPL/BE/REG-001" docNo="TDPL/BE/REG-001" docName="Equipment Breakdown Maintenance Register"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">>
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+
+        {{-- 🔑 INLINE EDIT SUPPORT --}}
+        <input type="hidden" name="eb_form_id" id="eb_form_id">
+
         <div class="p-4">
+            @csrf
+
+            {{-- 🔹 FILTERS --}}
+            <div class="flex gap-6 mb-4 items-end">
+
+                <span>
+                    <label class="block font-semibold">From Date:</label>
+                    <input type="date" id="eb_from_date" class="border rounded px-2 py-1 w-44"
+                        onchange="loadEquipmentBreakdownRegister()">
+                </span>
+
+                <span>
+                    <label class="block font-semibold">To Date:</label>
+                    <input type="date" id="eb_to_date" class="border rounded px-2 py-1 w-44"
+                        onchange="loadEquipmentBreakdownRegister()">
+                </span>
 
 
-            <form action="" method="POST">
-                @csrf
 
-                <div class="flex gap-4 mb-4">
-                    <span>
-                        <label class="block font-semibold">Month & Year:</label>
-                        <input type="month" name="month_year" class="border rounded px-2 py-1 w-40">
-                    </span>
-                    <span>
-                        <label class="block font-semibold">Location:</label>
-                        <input type="text" name="location" class="border rounded px-2 py-1 w-60">
-                    </span>
-                </div>
+                <span>
+                    <label class="block font-semibold">Location:</label>
 
-                <table class="table-auto border-collapse border border-gray-300 w-full text-center">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th rowspan="2" class="border px-2 py-1">Date</th>
-                            <th rowspan="2" class="border px-2 py-1">Equipment Name & ID</th>
-                            <th rowspan="2" class="border px-2 py-1">Problem Identified</th>
-                            <th colspan="3" class="border px-2 py-1">Time attended & Other details</th>
-                            <th rowspan="2" class="border px-2 py-1">Total Downtime</th>
-                            <th rowspan="2" class="border px-2 py-1">Remarks if any</th>
-                            <th rowspan="2" class="border px-2 py-1">Signature</th>
-                        </tr>
-                        <tr class="bg-gray-200">
-                            <th class="border px-2 py-1">Breakdown Time</th>
-                            <th class="border px-2 py-1">Action Taken</th>
-                            <th class="border px-2 py-1">Name of Engineer</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @for ($row = 1; $row <= 10; $row++)
-                            <tr>
-                                <td class="border px-2 py-1">
-                                    <input type="date" name="logs[{{ $row }}][date]"
-                                        class="border rounded px-1 py-1 w-full">
-                                </td>
-                                <td class="border px-2 py-1">
-                                    <input type="text" name="logs[{{ $row }}][equipment]"
-                                        class="border rounded px-1 py-1 w-full">
-                                </td>
-                                <td class="border px-2 py-1">
-                                    <input type="text" name="logs[{{ $row }}][problem]"
-                                        class="border rounded px-1 py-1 w-full">
-                                </td>
-                                @foreach (['breakdown_time', 'action_taken', 'engineer_name'] as $field)
-                                    <td class="border px-2 py-1">
-                                        <input type="text" name="logs[{{ $row }}][{{ $field }}]"
-                                            class="border rounded px-1 py-1 w-full">
-                                    </td>
-                                @endforeach
-                                <td class="border px-2 py-1">
-                                    <input type="text" name="logs[{{ $row }}][total_downtime]"
-                                        class="border rounded px-1 py-1 w-full">
-                                </td>
-                                <td class="border px-2 py-1">
-                                    <input type="text" name="logs[{{ $row }}][remarks]"
-                                        class="border rounded px-1 py-1 w-full">
-                                </td>
-                                <td class="border px-2 py-1">
-                                    <input type="text" name="logs[{{ $row }}][signature]"
-                                        class="border rounded px-1 py-1 w-full">
-                                </td>
-                            </tr>
-                        @endfor
-                    </tbody>
-                </table>
+                    <input list="ebLocationList" id="eb_location" name="eb_location"
+                        class="border rounded px-2 py-1 w-60" placeholder="All"
+                        oninput="handleDatalistInput(this,'ebLocationList',loadEquipmentBreakdownRegister)">
 
+                    <datalist id="ebLocationList">
+                        <option value="Hyderabad">
+                        <option value="Bangalore">
+                        <option value="Chennai">
+                        <option value="Mumbai">
+                        <option value="Delhi">
+                    </datalist>
+                </span>
 
-            </form>
+            </div>
+
+            {{-- 🔹 REGISTER TABLE --}}
+            <table id="equipmentBreakdownTable"
+                class="table-auto border-collapse border border-gray-300 w-full text-center">
+
+                <thead>
+                    <tr class="bg-gray-200">
+                        <th rowspan="2" class="border px-2 py-1">Date</th>
+                        <th rowspan="2" class="border px-2 py-1">Equipment Name & ID</th>
+                        <th rowspan="2" class="border px-2 py-1">Problem Identified</th>
+                        <th colspan="3" class="border px-2 py-1">Time attended & Other details</th>
+                        <th rowspan="2" class="border px-2 py-1">Total Downtime</th>
+                        <th rowspan="2" class="border px-2 py-1">Remarks if any</th>
+                        <th rowspan="2" class="border px-2 py-1">Signature</th>
+                    </tr>
+                    <tr class="bg-gray-200">
+                        <th class="border px-2 py-1">Breakdown Time</th>
+                        <th class="border px-2 py-1">Action Taken</th>
+                        <th class="border px-2 py-1">Name of Engineer</th>
+                    </tr>
+                </thead>
+
+                {{-- ✅ IMPORTANT --}}
+                <tbody id="equipmentBreakdownBody">
+
+                    {{-- ✅ INITIAL EMPTY ROW (NEW ENTRY) --}}
+                    <tr>
+                        <td class="border px-2 py-1">
+                            <input type="date" name="eb_date" class="border rounded px-1 py-1 w-full">
+                        </td>
+                        <td class="border px-2 py-1">
+                            <input type="text" name="eb_equipment" class="border rounded px-1 py-1 w-full">
+                        </td>
+                        <td class="border px-2 py-1">
+                            <input type="text" name="eb_problem" class="border rounded px-1 py-1 w-full">
+                        </td>
+                        <td class="border px-2 py-1">
+                            <input type="text" name="eb_breakdown_time" class="border rounded px-1 py-1 w-full">
+                        </td>
+                        <td class="border px-2 py-1">
+                            <input type="text" name="eb_action_taken" class="border rounded px-1 py-1 w-full">
+                        </td>
+                        <td class="border px-2 py-1">
+                            <input type="text" name="eb_engineer_name" class="border rounded px-1 py-1 w-full">
+                        </td>
+                        <td class="border px-2 py-1">
+                            <input type="text" name="eb_total_downtime" class="border rounded px-1 py-1 w-full">
+                        </td>
+                        <td class="border px-2 py-1">
+                            <input type="text" name="eb_remarks" class="border rounded px-1 py-1 w-full">
+                        </td>
+                        <td class="border px-2 py-1">
+                            <input type="text" name="eb_signature" class="border rounded px-1 py-1 w-full">
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
         </div>
-
     </x-formTemplete>
+
+
     {{-- </body> --}}
     <script>
         function showSection(sectionId) {
@@ -4440,24 +4934,1115 @@
         });
     }
 
-    function fillNestedRows(prefix, data) {
+    function loadTecForm() {
+
+        const monthYear = document.getElementById('tec_month_year').value;
+        const instrument = document.getElementById('tec_instrument_id').value;
+
+        // ❗ SAME RULE AS ALL BE FORMS
+        if (!monthYear) return;
+
+        fetch(`/be/tec/load?tec_month_year=${monthYear}&tec_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearTecForm(); // 🔑 always clear first
+
+                if (!res.data) {
+                    document.getElementById('tec_form_id').value = '';
+                    return;
+                }
+
+                // ✅ SET FORM ID (INLINE UPDATE)
+                document.getElementById('tec_form_id').value = res.data.id;
+
+                // ✅ DAILY JSON
+                fillNestedRows('tec_daily', res.data.tec_daily);
+            });
+    }
+
+    function clearTecForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'tec_month_year' ||
+                input.id === 'tec_instrument_id'
+            ) {
+                return;
+            }
+
+            input.value = '';
+        });
+    }
+
+    function loadBactAlertForm() {
+
+        const monthYear = document.getElementById('ba_month_year').value;
+        const instrument = document.getElementById('ba_instrument_id').value;
+
+        // ❗ SAME RULE AS ALL FORMS
+        if (!monthYear) return;
+
+        fetch(`/be/ba/load?ba_month_year=${monthYear}&ba_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearBactAlertForm(); // 🔑 always clear first
+
+                if (!res.data) {
+                    document.getElementById('ba_form_id').value = '';
+                    return;
+                }
+
+                // ✅ SET FORM ID (INLINE UPDATE)
+                document.getElementById('ba_form_id').value = res.data.id;
+
+                // ✅ FILL DAILY JSON
+                fillNestedRows('ba_daily', res.data.ba_daily);
+            });
+    }
+
+    function clearBactAlertForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'ba_month_year' ||
+                input.id === 'ba_instrument_id'
+            ) {
+                return;
+            }
+
+            input.value = '';
+        });
+    }
+
+
+    function loadElisaForm() {
+
+        const monthYear = document.getElementById('elisa_month_year').value;
+        const instrument = document.getElementById('elisa_instrument_id').value;
+
+        // ❗ SAME RULE AS ALL FORMS
+        if (!monthYear) return;
+
+        fetch(`/be/elisa/load?elisa_month_year=${monthYear}&elisa_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearElisaForm(); // 🔑 always clear first
+
+                if (!res.data) {
+                    document.getElementById('elisa_form_id').value = '';
+                    return;
+                }
+
+                // ✅ SET FORM ID (INLINE UPDATE)
+                document.getElementById('elisa_form_id').value = res.data.id;
+
+                // ✅ DAILY JSON
+                fillNestedRows('elisa_daily', res.data.elisa_daily);
+            });
+    }
+
+    function clearElisaForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'elisa_month_year' ||
+                input.id === 'elisa_instrument_id'
+            ) {
+                return;
+            }
+
+            // for checkbox + text
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+    }
+
+
+    function loadRtpcrForm() {
+
+        const monthYear = document.getElementById('rtpcr_month_year').value;
+        const instrument = document.getElementById('rtpcr_instrument_id').value;
+
+        // ❗ SAME RULE AS ALL FORMS
+        if (!monthYear) return;
+
+        fetch(`/be/rtpcr/load?rtpcr_month_year=${monthYear}&rtpcr_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearRtpcrForm(); // 🔑 always clear first
+
+                if (!res.data) {
+                    document.getElementById('rtpcr_form_id').value = '';
+                    return;
+                }
+
+                // ✅ SET FORM ID (INLINE UPDATE)
+                document.getElementById('rtpcr_form_id').value = res.data.id;
+
+                // ✅ FILL DAILY JSON (checkbox + text safe)
+                fillNestedRows('rtpcr_daily', res.data.rtpcr_daily);
+            });
+    }
+
+    function clearRtpcrForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'rtpcr_month_year' ||
+                input.id === 'rtpcr_instrument_id'
+            ) {
+                return;
+            }
+
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+    }
+
+
+    function loadCcForm() {
+
+        const monthYear = document.getElementById('cc_month_year').value;
+        const instrument = document.getElementById('cc_instrument_id').value;
+
+        if (!monthYear) return;
+
+        fetch(`/be/cc/load?cc_month_year=${monthYear}&cc_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearCcForm();
+
+                if (!res.data) {
+                    document.getElementById('cc_form_id').value = '';
+                    return;
+                }
+
+                document.getElementById('cc_form_id').value = res.data.id;
+
+                // ✅ HEADER
+                document.getElementById('cc_department').value =
+                    res.data.cc_department ?? '';
+
+                // ✅ DAILY JSON
+                fillNestedRows('cc_daily', res.data.cc_daily);
+
+                // ✅ MONTHLY (FLAT)
+                document.getElementById('cc_monthly_bushes_checked_notes').value =
+                    res.data.cc_bushes_checked_notes ?? '';
+
+                document.getElementById('cc_monthly_bushes_checked_date').value =
+                    res.data.cc_bushes_checked_date ?? '';
+
+                document.getElementById('cc_monthly_bushes_next_due').value =
+                    res.data.cc_bushes_next_due ?? '';
+
+                document.getElementById('cc_monthly_signature').value =
+                    res.data.cc_monthly_signature ?? '';
+            });
+    }
+
+    function clearCcForm() {
+        document.querySelectorAll('.qc-input').forEach(input => {
+            if (
+                input.id === 'cc_month_year' ||
+                input.id === 'cc_instrument_id'
+            ) return;
+
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+    }
+
+
+    function loadMicForm() {
+
+        const monthYear = document.getElementById('mic_month_year').value;
+        const instrument = document.getElementById('mic_instrument_id').value;
+
+        // ❗ SAME RULE AS ALL FORMS
+        if (!monthYear) return;
+
+        fetch(`/be/mic/load?mic_month_year=${monthYear}&mic_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearMicForm(); // 🔑 always clear first
+
+                if (!res.data) {
+                    document.getElementById('mic_form_id').value = '';
+                    return;
+                }
+
+                // ✅ SET FORM ID (INLINE UPDATE)
+                document.getElementById('mic_form_id').value = res.data.id;
+
+                // ✅ FILL DAILY JSON
+                fillNestedRows('mic_daily', res.data.mic_daily);
+            });
+    }
+
+    function clearMicForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'mic_month_year' ||
+                input.id === 'mic_instrument_id'
+            ) {
+                return;
+            }
+
+            // checkbox vs text
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+    }
+
+
+    function loadLauramForm() {
+
+        const monthYear = document.getElementById('lauram_month_year').value;
+        const instrument = document.getElementById('lauram_instrument_id').value;
+
+        // ❗ GLOBAL RULE – Month mandatory
+        if (!monthYear) return;
+
+        fetch(`/be/lauram/load?lauram_month_year=${monthYear}&lauram_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearLauramForm(); // 🔑 always clear first
+
+                if (!res.data) {
+                    document.getElementById('lauram_form_id').value = '';
+                    return;
+                }
+
+                // ✅ SET FORM ID (INLINE UPDATE)
+                document.getElementById('lauram_form_id').value = res.data.id;
+
+                // ✅ FILL DAILY JSON (DEEP NESTED)
+                fillLauramDaily(res.data.lauram_daily);
+            });
+    }
+
+    function clearLauramForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'lauram_month_year' ||
+                input.id === 'lauram_instrument_id'
+            ) {
+                return;
+            }
+
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+    }
+
+
+    function loadEquipmentBreakdownRegister() {
+
+        const fromDate = document.getElementById('eb_from_date').value;
+        const toDate = document.getElementById('eb_to_date').value;
+        const location = document.getElementById('eb_location').value;
+
+        // ❗ At least ONE date required
+        if (!fromDate && !toDate) return;
+
+        fetch(`/be/equipment-breakdown/load?eb_from_date=${fromDate}&eb_to_date=${toDate}&eb_location=${location}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearEquipmentBreakdownRegister();
+
+                if (!res.data) {
+                    document.getElementById('eb_form_id').value = '';
+                    return;
+                }
+
+                // ✅ INLINE EDIT ID
+                document.getElementById('eb_form_id').value = res.data.id;
+
+                // ✅ SIMPLE FIELD BINDING
+                Object.keys(res.data).forEach(key => {
+                    const el = document.getElementById(key);
+                    if (el) el.value = res.data[key] ?? '';
+                });
+            });
+    }
+
+
+
+
+    function clearEquipmentBreakdownRegister() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'eb_from_date' ||
+                input.id === 'eb_to_date' ||
+                input.id === 'eb_location'
+            ) {
+                return;
+            }
+
+            input.value = '';
+        });
+    }
+
+
+
+
+    function fillLauramDaily(data) {
 
         if (!data) return;
 
-        Object.keys(data).forEach(key => {
+        Object.keys(data).forEach(section => {
 
-            Object.keys(data[key]).forEach(subKey => {
+            const sectionData = data[section];
 
-                const input = document.getElementById(
-                    `${prefix}_${key}_${subKey}`
-                );
+            Object.keys(sectionData).forEach(key => {
 
-                if (input) {
-                    input.value = data[key][subKey] ?? '';
+                const value = sectionData[key];
+
+                // 🔹 CASE 1: SIGNATURES (section → day)
+                if (typeof value === 'string') {
+
+                    const day = key;
+                    const inputId = `lauram_daily_${section}_${day}`;
+                    const input = document.getElementById(inputId);
+
+                    if (input) {
+                        input.value = value;
+                    }
+
+                }
+
+                // 🔹 CASE 2: CLEANING STEPS (section → step → day)
+                else if (typeof value === 'object') {
+
+                    const step = key;
+
+                    Object.keys(value).forEach(day => {
+
+                        const inputId =
+                            `lauram_daily_${section}_${step}_${day}`;
+
+                        const input = document.getElementById(inputId);
+
+                        if (!input) return;
+
+                        if (input.type === 'checkbox') {
+                            input.checked = value[day] == 1;
+                        } else {
+                            input.value = value[day] ?? '';
+                        }
+                    });
                 }
             });
         });
     }
+
+
+
+    function loadMicrotomeForm() {
+
+        const monthYear = document.getElementById('microtome_month_year').value;
+        const instrument = document.getElementById('microtome_instrument_id').value;
+
+        // ❗ GLOBAL RULE – Month mandatory
+        if (!monthYear) return;
+
+        fetch(`/be/microtome/load?microtome_month_year=${monthYear}&microtome_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearMicrotomeForm(); // 🔑 always clear first
+
+                if (!res.data) {
+                    document.getElementById('microtome_form_id').value = '';
+                    return;
+                }
+
+                // ✅ SET FORM ID (INLINE UPDATE)
+                document.getElementById('microtome_form_id').value = res.data.id;
+
+                // ✅ FILL DAILY JSON
+                fillNestedRows('microtome_daily', res.data.microtome_daily);
+            });
+    }
+
+    function clearMicrotomeForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'microtome_month_year' ||
+                input.id === 'microtome_instrument_id'
+            ) {
+                return;
+            }
+
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+    }
+
+    function loadFbForm() {
+
+        const monthYear = document.getElementById('fb_month_year').value;
+        const instrument = document.getElementById('fb_instrument_id').value;
+
+        // ❗ GLOBAL RULE – month mandatory
+        if (!monthYear) return;
+
+        fetch(`/be/fb/load?fb_month_year=${monthYear}&fb_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearFbForm(); // 🔑 always clear first
+
+                if (!res.data) {
+                    document.getElementById('fb_form_id').value = '';
+                    return;
+                }
+
+                // ✅ INLINE UPDATE ID
+                document.getElementById('fb_form_id').value = res.data.id;
+
+                // ✅ FILL DAILY JSON
+                fillNestedRows('fb_daily', res.data.fb_daily);
+            });
+    }
+
+    /* ---------------- CLEAR FORM ---------------- */
+    function clearFbForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'fb_month_year' ||
+                input.id === 'fb_instrument_id'
+            ) {
+                return;
+            }
+
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+    }
+
+    function loadGsForm() {
+
+        const monthYear = document.getElementById('gs_month_year').value;
+        const instrument = document.getElementById('gs_instrument_id').value;
+
+        // ❗ GLOBAL RULE – Month mandatory
+        if (!monthYear) return;
+
+        fetch(`/be/gs/load?gs_month_year=${monthYear}&gs_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearGsForm(); // 🔑 always clear first
+
+                if (!res.data) {
+                    document.getElementById('gs_form_id').value = '';
+                    return;
+                }
+
+                // ✅ INLINE EDIT ID
+                document.getElementById('gs_form_id').value = res.data.id;
+
+                // ✅ FILL DAILY JSON
+                fillNestedRows('gs_daily', res.data.gs_daily);
+            });
+    }
+
+    function clearGsForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'gs_month_year' ||
+                input.id === 'gs_instrument_id'
+            ) {
+                return;
+            }
+
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+    }
+
+    function handlePatientMobileFilter(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        loadMaternalMarkerForm();
+    }
+
+    function blockEnter(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            return false; // ⛔ STOP submit
+        }
+    }
+
+
+
+    function loadMaternalMarkerForm() {
+
+        const mobile = document.getElementById('filter_patient_mobile').value;
+
+        // ❗ GLOBAL RULE – filter mandatory
+        if (!mobile) return;
+
+        fetch(`/be/maternal-marker/load?filter_patient_mobile=${mobile}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearMaternalMarkerForm(); // 🔑 clear first
+
+                if (!res.data) {
+                    document.getElementById('mm_form_id').value = '';
+                    return;
+                }
+
+                // ✅ SET INLINE EDIT ID (MOST IMPORTANT)
+                document.getElementById('mm_form_id').value = res.data.id;
+
+                // ✅ FILL SIMPLE INPUTS
+                Object.keys(res.data).forEach(key => {
+
+                    const el = document.getElementById(key);
+                    if (!el) return;
+
+                    if (el.type === 'checkbox') {
+                        el.checked = true;
+                    } else {
+                        el.value = res.data[key] ?? '';
+                    }
+                });
+
+                // ✅ TEST PANELS (ARRAY CHECKBOXES)
+                if (Array.isArray(res.data.test_panels)) {
+                    res.data.test_panels.forEach(val => {
+                        const cb = document.querySelector(
+                            `input[name="test_panels[]"][value="${val}"]`
+                        );
+                        if (cb) cb.checked = true;
+                    });
+                }
+            });
+    }
+
+    /* ---------------- CLEAR FORM ---------------- */
+    function clearMaternalMarkerForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER
+            if (input.id === 'filter_patient_mobile') return;
+
+            // ❌ DO NOT CLEAR form_id
+            if (input.id === 'mm_form_id') return;
+
+            if (input.type === 'checkbox') {
+                input.checked = false;
+            } else {
+                input.value = '';
+            }
+        });
+    }
+
+
+
+    function loadTosohForm() {
+
+        const monthYear = document.getElementById('tosoh_month_year').value;
+        const serial = document.getElementById('tosoh_instrument_serial').value;
+
+        // ❗ SAME GLOBAL RULE AS OTHER FORMS
+        if (!monthYear) return;
+
+        fetch(`/be/tosoh/load?tosoh_month_year=${monthYear}&tosoh_instrument_serial=${serial}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearTosohForm(); // 🔑 same pattern
+
+                if (!res.data) {
+                    document.getElementById('tosoh_form_id').value = '';
+                    return;
+                }
+
+                // ✅ INLINE EDIT ID
+                document.getElementById('tosoh_form_id').value = res.data.id;
+
+                // ✅ USE EXISTING COMMON FILL FUNCTION
+                fillTosohDaily(res.data.tosoh_daily);
+
+            });
+    }
+
+    function clearTosohForm() {
+
+        document.querySelectorAll('.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTER FIELDS
+            if (
+                input.id === 'tosoh_month_year' ||
+                input.id === 'tosoh_instrument_serial'
+            ) {
+                return;
+            }
+
+            input.value = '';
+        });
+    }
+
+
+    function fillTosohDaily(data) {
+
+        if (!data) return;
+
+        Object.keys(data).forEach(section => {
+
+            Object.keys(data[section]).forEach(type => {
+
+                Object.keys(data[section][type]).forEach(day => {
+
+                    const inputName = `${section}_${type}_${day}`;
+
+                    const input = document.querySelector(
+                        `input[name="${inputName}"]`
+                    );
+
+                    if (!input) return;
+
+                    input.value = data[section][type][day] ?? '';
+                });
+            });
+        });
+    }
+
+
+
+    function loadDxh560Form() {
+
+        const monthYear = document.getElementById('dxh560_month_year').value;
+        const instrument = document.getElementById('dxh560_instrument_serial').value;
+
+        // ❗ GLOBAL RULE – Month mandatory
+        if (!monthYear) return;
+
+        fetch(`/be/dxh560/load?dxh560_month_year=${monthYear}&dxh560_instrument_serial=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearDxh560Form(); // 🔑 clear FIRST
+
+                if (!res.data) {
+                    document.getElementById('dxh560_form_id').value = '';
+                    return;
+                }
+
+                // ✅ INLINE EDIT ID
+                document.getElementById('dxh560_form_id').value = res.data.id;
+
+                /* =========================
+                   DAILY MAINTENANCE
+                ========================= */
+                fillNestedRows('dxh560_daily', res.data.dxh560_daily);
+
+                /* =========================
+                   WEEKLY MAINTENANCE
+                ========================= */
+                if (res.data.dxh560_weekly) {
+                    Object.keys(res.data.dxh560_weekly).forEach(field => {
+                        fillWeeklyRow(
+                            `dxh560_weekly[${field}]`,
+                            res.data.dxh560_weekly[field]
+                        );
+                    });
+                }
+
+                /* =========================
+                   MONTHLY MAINTENANCE
+                ========================= */
+                if (res.data.dxh560_monthly && res.data.dxh560_monthly.bleach_cycle) {
+
+                    const bc = res.data.dxh560_monthly.bleach_cycle;
+
+                    const notesEl = document.querySelector(
+                        `[name="dxh560_monthly[bleach_cycle][notes]"]`
+                    );
+                    if (notesEl) notesEl.value = bc.notes ?? '';
+
+                    const datesEl = document.querySelector(
+                        `[name="dxh560_monthly[bleach_cycle][dates]"]`
+                    );
+                    if (datesEl) datesEl.value = bc.dates ?? '';
+                }
+
+                /* =========================
+                   TECHNICIAN SIGNATURE
+                ========================= */
+                if (res.data.dxh560_technician) {
+
+                    const nameEl = document.querySelector(
+                        `[name="dxh560_technician[name]"]`
+                    );
+                    if (nameEl) nameEl.value = res.data.dxh560_technician.name ?? '';
+
+                    const dateEl = document.querySelector(
+                        `[name="dxh560_technician[date]"]`
+                    );
+                    if (dateEl) dateEl.value = res.data.dxh560_technician.date ?? '';
+                }
+            });
+    }
+
+
+    function clearVitekForm() {
+
+        document.querySelectorAll('input.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTERS OR FORM ID
+            if (
+                input.id === 'vitek_month_year' ||
+                input.id === 'vitek_instrument_id' ||
+                input.id === 'vitek_form_id'
+            ) {
+                return;
+            }
+
+            input.value = '';
+        });
+    }
+
+
+
+
+
+    function clearDxh560Form() {
+
+        document.querySelectorAll('input.qc-input').forEach(input => {
+
+            // ❌ DO NOT CLEAR FILTERS OR FORM ID
+            if (
+                input.id === 'dxh560_month_year' ||
+                input.id === 'dxh560_instrument_serial' ||
+                input.id === 'dxh560_form_id'
+            ) {
+                return;
+            }
+
+            input.value = '';
+        });
+    }
+
+
+    function loadVitekForm() {
+
+        const monthYear = document.getElementById('vitek_month_year').value;
+        const instrument = document.getElementById('vitek_instrument_id').value;
+
+        // ❗ GLOBAL RULE – Month mandatory
+        if (!monthYear) return;
+
+        fetch(`/be/vitek/load?vitek_month_year=${monthYear}&vitek_instrument_id=${instrument}`, {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                credentials: 'same-origin'
+            })
+            .then(res => res.json())
+            .then(res => {
+
+                clearVitekForm(); // 🔑 always clear first
+
+                if (!res.data) {
+                    document.getElementById('vitek_form_id').value = '';
+                    return;
+                }
+
+                // ✅ INLINE EDIT ID
+                document.getElementById('vitek_form_id').value = res.data.id;
+
+                // ✅ DAILY JSON
+                fillNestedRows('vitek_daily', res.data.vitek_daily);
+
+                // ✅ MONTHLY JSON
+                fillNestedRows('vitek_monthly', res.data.vitek_monthly);
+            });
+    }
+
+    function clearTbody(tbody) {
+        while (tbody.firstChild) {
+            tbody.removeChild(tbody.firstChild);
+        }
+    }
+
+    /* 🔹 Create input cell */
+    function createInputCell(name, value = '', type = 'text') {
+
+        const td = document.createElement('td');
+        td.className = 'border px-2 py-1';
+
+        const input = document.createElement('input');
+        input.type = type;
+        input.name = name;
+        input.value = value ?? '';
+        input.className = 'border rounded px-1 py-1 w-full';
+
+        td.appendChild(input);
+        return td;
+    }
+
+    /* 🔹 Create one row (new / existing) */
+    function createEquipmentBreakdownRow(row = {}, index = 0) {
+
+        const tr = document.createElement('tr');
+
+        // 🔑 hidden id for inline edit
+        if (row.id) {
+            const hidden = document.createElement('input');
+            hidden.type = 'hidden';
+            hidden.name = `rows[${index}][id]`;
+            hidden.value = row.id;
+            tr.appendChild(hidden);
+        }
+
+        tr.appendChild(createInputCell(`rows[${index}][eb_date]`, row.eb_date, 'date'));
+        tr.appendChild(createInputCell(`rows[${index}][eb_equipment]`, row.eb_equipment));
+        tr.appendChild(createInputCell(`rows[${index}][eb_problem]`, row.eb_problem));
+        tr.appendChild(createInputCell(`rows[${index}][eb_breakdown_time]`, row.eb_breakdown_time));
+        tr.appendChild(createInputCell(`rows[${index}][eb_action_taken]`, row.eb_action_taken));
+        tr.appendChild(createInputCell(`rows[${index}][eb_engineer_name]`, row.eb_engineer_name));
+        tr.appendChild(createInputCell(`rows[${index}][eb_total_downtime]`, row.eb_total_downtime));
+        tr.appendChild(createInputCell(`rows[${index}][eb_remarks]`, row.eb_remarks));
+        tr.appendChild(createInputCell(`rows[${index}][eb_signature]`, row.eb_signature));
+
+        return tr;
+    }
+
+    function loadEquipmentBreakdownRegister() {
+
+        const fromDate = document.getElementById('eb_from_date').value;
+        const toDate = document.getElementById('eb_to_date').value;
+        const location = document.getElementById('eb_location').value;
+
+        // ✅ Allow load if ANY filter is present
+        if (!fromDate && !toDate && !location) return;
+
+        fetch(
+                `/be/equipment-breakdown/load?` +
+                `eb_from_date=${fromDate}` +
+                `&eb_to_date=${toDate}` +
+                `&eb_location=${location}`, {
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }
+            )
+            .then(res => res.json())
+            .then(res => {
+
+                const tbody = document.getElementById('equipmentBreakdownBody');
+                clearTbody(tbody);
+
+                // No data → keep one empty row
+                if (!res.data || res.data.length === 0) {
+                    tbody.appendChild(createEquipmentBreakdownRow({}, 0));
+                    return;
+                }
+
+                res.data.forEach((row, index) => {
+                    tbody.appendChild(createEquipmentBreakdownRow(row, index));
+                });
+            })
+            .catch(console.error);
+    }
+
+
+
+    function handleDatalistInput(input, datalistId, callback) {
+        const list = document.getElementById(datalistId);
+        const options = Array.from(list.options).map(o => o.value);
+
+        // ✅ Only when user selects a valid option
+        if (options.includes(input.value)) {
+            if (typeof callback === 'function') {
+                callback();
+            }
+        }
+    }
+
+
+
+    function fillNestedRows(prefix, data) {
+
+        if (!data) return;
+
+        Object.keys(data).forEach(field => {
+
+            Object.keys(data[field]).forEach(day => {
+
+                const input = document.getElementById(
+                    `${prefix}_${field}_${day}`
+                );
+
+                if (!input) return;
+
+                // ✅ ONLY checkbox → use checked
+                if (input.type === 'checkbox') {
+                    input.checked = String(data[field][day]) === '1';
+                }
+                // ✅ ALL other inputs (text, number, etc.)
+                else {
+                    input.value = data[field][day] ?? '';
+                }
+            });
+        });
+    }
+
+
+
+    // function fillNestedRows(prefix, data) {
+
+    // if (!data) return;
+
+    // Object.keys(data).forEach(key => {
+
+    // Object.keys(data[key]).forEach(subKey => {
+
+    // const input = document.getElementById(
+    // `${prefix}_${key}_${subKey}`
+    // );
+
+    // if (input) {
+    // input.value = data[key][subKey] ?? '';
+    // }
+    // });
+    // });
+    // }
 
 
 

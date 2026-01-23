@@ -21,6 +21,22 @@ use App\Models\BeckmanDxh560MaintenanceForm;
 use App\Models\HoribaH550MaintenanceForm;
 use App\Models\BioRadD10MaintenanceForm;
 use App\Models\AutomaticTissueProcessorMaintenanceForm;
+use App\Models\TissueEmbeddingConsoleMaintenanceForm;
+use App\Models\BactAlertMaintenanceForm;
+use App\Models\ElisaReaderMaintenanceForm;
+use App\Models\RealTimePcrMaintenanceForm;
+use App\Models\CoolingCentrifugeMaintenanceForm;
+use App\Models\MicroscopeMaintenanceForm;
+use App\Models\LauramMaintenanceForm;
+use App\Models\MicrotomeMaintenanceForm;
+use App\Models\FlotationBathMaintenanceForm;
+use App\Models\GrossingStationMaintenanceForm;
+use App\Models\MaternalMarkerTrf;
+use App\Models\TosohHlc723gxMaintenanceForm;
+use App\Models\Vitek2MaintenanceForm;
+use App\Models\EquipmentBreakdownRegister;
+
+
 
 class BEFormsController extends Controller
 {
@@ -37,6 +53,10 @@ class BEFormsController extends Controller
         $formCode = last(explode('/', $docNo));
 
         switch ($formCode) {
+
+            case 'TDPL-BC-FOM-001':
+                return $this->storeMaternalMarkerTrf($request);
+
 
             case 'FOM-0##': // Hot Plate QC Form
                 return $this->storeHotPlateQcForm($request);
@@ -75,6 +95,9 @@ class BEFormsController extends Controller
             case 'FOM-017':
                 return $this->storeSt200Maintenance($request);
 
+            case 'FOM-018':
+                return $this->storeTosohHlc723gxMaintenance($request);
+
             case 'FOM-019':
                 return $this->storeDxh560Maintenance($request);
 
@@ -87,12 +110,192 @@ class BEFormsController extends Controller
             case 'FOM-022':
                 return $this->storeAutomaticTissueProcessorMaintenance($request);
 
+            case 'FOM-023':
+                return $this->storeTecMaintenance($request);
+
+            case 'FOM-024':
+                return $this->storeBactAlertMaintenance($request);
+
+            case 'FOM-025':
+                return $this->storeVitek2Maintenance($request);
+
+
+            case 'FOM-026':
+                return $this->storeElisaMaintenance($request);
+
+            case 'FOM-028':
+                return $this->storeRtpcrMaintenance($request);
+
+            case 'FOM-029':
+                return $this->storeCoolingCentrifugeMaintenance($request);
+
+            case 'FOM-034':
+                return $this->storeMicroscopeMaintenance($request);
+
+            case 'FOM-035':
+                return $this->storeLauramMaintenance($request);
+
+            case 'FOM-036':
+                return $this->storeMicrotomeMaintenance($request);
+
+            case 'FOM-037':
+                return $this->storeFlotationBathMaintenance($request);
+
+            case 'FOM-038':
+                return $this->storeGrossingStationMaintenance($request);
+
+            case 'REG-001':
+                return $this->storeEquipmentBreakdownRegister($request);
 
 
             default:
                 return back()->with('error', 'Unknown BE form');
         }
     }
+
+    /**
+     * ==========================================
+     * BC-FOM-001 – Maternal Marker & Pre-Eclampsia TRF
+     * Supports:
+     * - Inline edit
+     * - Full submit
+     * ==========================================
+     */
+    protected function storeMaternalMarkerTrf(Request $request)
+    {
+
+        // ✅ BASIC VALIDATION (SAFE, SAME STYLE)
+        $request->validate([
+            'patient_mobile' => 'nullable|string|max:20',
+        ]);
+
+        // 🔑 COMMON PAYLOAD (MATCHES BLADE EXACTLY)
+        $payload = [
+
+            // 🔹 Top Filter
+            'filter_patient_mobile' => $request->filter_patient_mobile,
+
+            // 🔹 Requester Information
+            'physician_name'   => $request->physician_name,
+            'physician_mobile' => $request->physician_mobile,
+            'client_name'      => $request->client_name,
+            'client_code'      => $request->client_code,
+
+            // 🔹 Test Panels (JSON)
+            'test_panels' => array_filter($request->test_panels ?? []),
+
+            // 🔹 Patient Details
+            'patient_name'   => $request->patient_name,
+            'patient_age'    => $request->patient_age,
+            'patient_dob'    => $request->patient_dob,
+            'patient_mobile' => $request->patient_mobile,
+            'patient_email'  => $request->patient_email,
+
+            'patient_weight' => $request->patient_weight,
+            'ethnicity'      => $request->ethnicity,
+            'lmp'            => $request->lmp,
+
+            'diabetic_status'       => $request->diabetic_status,
+            'chronic_hypertension' => $request->chronic_hypertension,
+
+            'on_medication'      => $request->on_medication,
+            'medication_details' => $request->medication_details,
+
+            'smoking_status' => $request->smoking_status,
+
+            // 🔹 Blood Pressure
+            'bp_date'  => $request->bp_date,
+            'bp_right' => $request->bp_right,
+            'bp_left'  => $request->bp_left,
+
+            // 🔹 USG
+            'sample_collection_date' => $request->sample_collection_date,
+            'sample_collection_time' => $request->sample_collection_time,
+            'ultrasound_date'        => $request->ultrasound_date,
+
+            // 🔹 Markers
+            'crl_a' => $request->crl_a,
+            'crl_b' => $request->crl_b,
+
+            'nt_a' => $request->nt_a,
+            'nt_b' => $request->nt_b,
+
+            'nb_a' => $request->nb_a,
+            'nb_b' => $request->nb_b,
+
+            'bpd_a' => $request->bpd_a,
+            'bpd_b' => $request->bpd_b,
+
+            // 🔹 Uterine Artery
+            'uterine_left'  => $request->uterine_left,
+            'uterine_right' => $request->uterine_right,
+
+            // 🔹 IVF
+            'donor_age' => $request->donor_age,
+            'donor_dob' => $request->donor_dob,
+            'ivf_type'  => $request->ivf_type,
+
+            'extraction_date' => $request->extraction_date,
+            'transfer_date'   => $request->transfer_date,
+            'hcg_taken'       => $request->hcg_taken,
+            'hcg_date'        => $request->hcg_date,
+
+            // 🔹 Consent
+            'patient_signature'      => $request->patient_signature,
+            'patient_signature_date' => $request->patient_signature_date,
+        ];
+
+        /**
+         * ==========================================
+         * UPDATE (INLINE EDIT / FULL SUBMIT)
+         * ==========================================
+         */
+        if ($request->filled('form_id')) {
+
+            MaternalMarkerTrf::where('id', $request->form_id)
+                ->update($payload);
+
+            return back()->with(
+                'success',
+                'Maternal Marker & Pre-Eclampsia TRF updated successfully'
+            );
+        }
+
+        /**
+         * ==========================================
+         * CREATE (FIRST TIME SUBMIT)
+         * ==========================================
+         */
+        MaternalMarkerTrf::create($payload);
+
+        return back()->with(
+            'success',
+            'Maternal Marker & Pre-Eclampsia TRF saved successfully'
+        );
+    }
+
+    /**
+     * ==========================================
+     * LOAD – Maternal Marker TRF (Patient Mobile)
+     * ==========================================
+     */
+    public function loadMaternalMarker(Request $request)
+    {
+        if (!$request->filled('filter_patient_mobile')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = MaternalMarkerTrf::where(
+            'patient_mobile',
+            $request->filter_patient_mobile
+        )->latest()->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+
 
     /**
      * ==========================================
@@ -981,22 +1184,260 @@ class BEFormsController extends Controller
         ]);
     }
 
-    protected function storeDxh560Maintenance(Request $request)
+    protected function storeTosohHlc723gxMaintenance(Request $request)
     {
-
-        // ❗ Month-Year mandatory (same rule everywhere)
+        // ❗ Month-Year mandatory (global rule)
         $request->validate([
-            'dxh560_month_year' => 'required|string|max:7',
+            'tosoh_month_year' => 'required|string|max:7', // YYYY-MM
         ]);
 
-        // ✅ FILTERS
+        // ✅ FILTER FIELDS
+        $filters = [
+            'tosoh_month_year'        => $request->tosoh_month_year,
+            'tosoh_instrument_serial' => $request->tosoh_instrument_serial,
+        ];
+
+        // ✅ FIND EXISTING FORM (INLINE EDIT)
+        $form = TosohHlc723gxMaintenanceForm::where(
+            'tosoh_month_year',
+            $request->tosoh_month_year
+        )
+            ->when(
+                $request->filled('tosoh_instrument_serial'),
+                fn($q) => $q->where(
+                    'tosoh_instrument_serial',
+                    $request->tosoh_instrument_serial
+                )
+            )
+            ->first();
+
+        // ✅ CLEAN DAILY DATA (FLAT INPUTS → JSON)
+        $daily = [];
+
+        foreach ($request->all() as $key => $value) {
+
+            // skip filters & token
+            if (
+                in_array($key, [
+                    '_token',
+                    'form_id',
+                    'tosoh_month_year',
+                    'tosoh_instrument_serial'
+                ])
+            ) {
+                continue;
+            }
+
+            // skip empty values
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            /**
+             * Expected input format:
+             * buffer-1_check_1
+             * buffer-1_change_1
+             * operator_sign_5
+             * reviewed_by_10
+             */
+            if (preg_match('/^(.*)_(check|change|sign|by)_(\d+)$/', $key, $m)) {
+                $section = $m[1];
+                $type    = $m[2];
+                $day     = $m[3];
+
+                $daily[$section][$type][$day] = $value;
+            }
+        }
+
+        // ✅ FINAL PAYLOAD
+        $payload = array_merge($filters, [
+            'tosoh_daily' => !empty($daily) ? $daily : null,
+        ]);
+
+        // ✅ CREATE OR UPDATE
+        if ($form) {
+            $form->update($payload);
+        } else {
+            TosohHlc723gxMaintenanceForm::create($payload);
+        }
+
+        // ✅ SAME RESPONSE STYLE
+        return back()->with(
+            'success',
+            'Tosoh HLC-723GX Maintenance Form saved successfully'
+        );
+    }
+
+    public function loadTosohForm(Request $request)
+    {
+        $request->validate([
+            'tosoh_month_year' => 'required|string|max:7',
+        ]);
+
+        $form = TosohHlc723gxMaintenanceForm::where(
+            'tosoh_month_year',
+            $request->tosoh_month_year
+        )
+            ->when(
+                $request->filled('tosoh_instrument_serial'),
+                fn($q) => $q->where(
+                    'tosoh_instrument_serial',
+                    $request->tosoh_instrument_serial
+                )
+            )
+            ->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+    /**
+     * ==========================================
+     * FOM-019 – Beckman Coulter DXH560 Maintenance
+     * Inline Edit + Full Submit (Same Method)
+     * ==========================================
+     */
+    protected function storeDxh560Maintenance(Request $request)
+    {
+        // ❗ Month-Year mandatory (same rule everywhere)
+        $request->validate([
+            'dxh560_month_year' => 'required|string|max:7', // YYYY-MM
+        ]);
+
+        // ✅ COMMON FILTERS
         $filters = [
             'dxh560_month_year'        => $request->dxh560_month_year,
             'dxh560_instrument_serial' => $request->dxh560_instrument_serial,
         ];
 
-        // ✅ FIND EXISTING (INLINE EDIT)
-        $form = BeckmanDxh560MaintenanceForm::where('dxh560_month_year', $request->dxh560_month_year)
+        /**
+         * ==========================================
+         * FIND EXISTING FORM (INLINE EDIT SUPPORT)
+         * ==========================================
+         */
+        $form = BeckmanDxh560MaintenanceForm::where(
+            'dxh560_month_year',
+            $request->dxh560_month_year
+        )
+            ->when(
+                $request->filled('dxh560_instrument_serial'),
+                fn($q) =>
+                $q->where(
+                    'dxh560_instrument_serial',
+                    $request->dxh560_instrument_serial
+                )
+            )
+            ->first();
+
+        /**
+         * ==========================================
+         * CLEAN DAILY JSON (FIELD → DAY)
+         * ==========================================
+         */
+        $daily = [];
+        if (is_array($request->dxh560_daily)) {
+            foreach ($request->dxh560_daily as $field => $days) {
+                if (!is_array($days)) continue;
+
+                $filteredDays = array_filter($days, fn($v) => $v !== null && $v !== '');
+                if (!empty($filteredDays)) {
+                    $daily[$field] = $filteredDays;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * CLEAN WEEKLY JSON (FIELD → WEEK)
+         * ==========================================
+         */
+        $weekly = [];
+        if (is_array($request->dxh560_weekly)) {
+            foreach ($request->dxh560_weekly as $field => $weeks) {
+                if (!is_array($weeks)) continue;
+
+                $filteredWeeks = array_filter($weeks, fn($v) => $v !== null && $v !== '');
+                if (!empty($filteredWeeks)) {
+                    $weekly[$field] = $filteredWeeks;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * CLEAN MONTHLY JSON
+         * ==========================================
+         */
+        $monthly = [];
+        if (is_array($request->dxh560_monthly)) {
+            foreach ($request->dxh560_monthly as $field => $values) {
+                if (!is_array($values)) continue;
+
+                $filtered = array_filter($values, fn($v) => $v !== null && $v !== '');
+                if (!empty($filtered)) {
+                    $monthly[$field] = $filtered;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * TECHNICIAN SIGNATURE
+         * ==========================================
+         */
+        $technician = array_filter(
+            $request->dxh560_technician ?? [],
+            fn($v) => $v !== null && $v !== ''
+        );
+
+        /**
+         * ==========================================
+         * FINAL PAYLOAD
+         * ==========================================
+         */
+        $payload = array_merge($filters, [
+            'dxh560_daily'      => !empty($daily) ? $daily : null,
+            'dxh560_weekly'     => !empty($weekly) ? $weekly : null,
+            'dxh560_monthly'    => !empty($monthly) ? $monthly : null,
+            'dxh560_technician' => !empty($technician) ? $technician : null,
+        ]);
+
+        /**
+         * ==========================================
+         * CREATE OR UPDATE (SAME METHOD)
+         * ==========================================
+         */
+        if ($form) {
+            // 🔄 INLINE EDIT / UPDATE
+            $form->update($payload);
+        } else {
+            // 🆕 FIRST TIME SUBMIT
+            BeckmanDxh560MaintenanceForm::create($payload);
+        }
+
+        return back()->with(
+            'success',
+            'Beckman Coulter DXH560 Maintenance Form saved successfully'
+        );
+    }
+
+    /**
+     * ==========================================
+     * LOAD – DXH560 (MONTH + INSTRUMENT)
+     * ==========================================
+     */
+    public function loadDxh560(Request $request)
+    {
+        // ❗ GLOBAL RULE – Month mandatory
+        if (!$request->filled('dxh560_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = BeckmanDxh560MaintenanceForm::where(
+            'dxh560_month_year',
+            $request->dxh560_month_year
+        )
             ->when(
                 $request->filled('dxh560_instrument_serial'),
                 fn($q) => $q->where(
@@ -1006,43 +1447,13 @@ class BEFormsController extends Controller
             )
             ->first();
 
-        // ✅ PAYLOAD (JSON CLEANED)
-        $payload = array_merge($filters, [
-
-            // DAILY
-            'dxh560_daily' => array_filter(
-                $request->dxh560_daily ?? [],
-                fn($row) => array_filter($row)
-            ),
-
-            // WEEKLY
-            'dxh560_weekly' => array_filter(
-                $request->dxh560_weekly ?? [],
-                fn($row) => array_filter($row)
-            ),
-
-            // MONTHLY
-            'dxh560_monthly' => array_filter(
-                $request->dxh560_monthly ?? [],
-                fn($row) => array_filter($row)
-            ),
-
-            // TECHNICIAN
-            'dxh560_technician' => array_filter(
-                $request->dxh560_technician ?? []
-            ),
+        return response()->json([
+            'data' => $form
         ]);
-
-        // ✅ CREATE OR UPDATE (SAME METHOD)
-        if ($form) {
-            $form->update($payload);
-        } else {
-            $form = BeckmanDxh560MaintenanceForm::create($payload);
-        }
-
-        // ✅ SAME RESPONSE STYLE
-        return back()->with('success', 'Beckman Dxh560 Maintenance Form Register successfully');
     }
+
+
+
 
     protected function storeH550Maintenance(Request $request)
     {
@@ -1274,6 +1685,1135 @@ class BEFormsController extends Controller
 
         return response()->json([
             'data' => $form
+        ]);
+    }
+
+    protected function storeTecMaintenance(Request $request)
+    {
+        // ❗ Month-Year mandatory (same rule everywhere)
+        $request->validate([
+            'tec_month_year' => 'required|string|max:7', // YYYY-MM
+        ]);
+
+        // ✅ COMMON FILTERS (USED FOR FINDING EXISTING FORM)
+        $filters = [
+            'tec_month_year'    => $request->tec_month_year,
+            'tec_instrument_id' => $request->tec_instrument_id,
+        ];
+
+        /**
+         * ==========================================
+         * FIND EXISTING FORM (INLINE EDIT SUPPORT)
+         * ==========================================
+         */
+        $form = TissueEmbeddingConsoleMaintenanceForm::where(
+            'tec_month_year',
+            $request->tec_month_year
+        )
+            ->when(
+                $request->filled('tec_instrument_id'),
+                fn($q) => $q->where(
+                    'tec_instrument_id',
+                    $request->tec_instrument_id
+                )
+            )
+            ->first();
+
+        /**
+         * ==========================================
+         * PAYLOAD (JSON CLEANED – SAME STYLE)
+         * ==========================================
+         */
+        $payload = array_merge($filters, [
+
+            // DAILY JSON (31 days)
+            'tec_daily' => array_filter(
+                $request->tec_daily ?? [],
+                fn($row) => array_filter($row)
+            ),
+
+            // DOC META (AUTO FROM FORM TEMPLATE)
+            'doc_no'     => $request->doc_no ?? null,
+            'issue_no'   => $request->issue_no ?? null,
+            'issue_date' => $request->issue_date ?? null,
+        ]);
+
+        /**
+         * ==========================================
+         * CREATE OR UPDATE (SAME METHOD)
+         * ==========================================
+         */
+        if ($form) {
+            // ✅ INLINE UPDATE
+            $form->update($payload);
+        } else {
+            // ✅ FIRST TIME SUBMIT
+            TissueEmbeddingConsoleMaintenanceForm::create($payload);
+        }
+
+        // ✅ SAME RESPONSE STYLE AS OTHER BE FORMS
+        return back()->with(
+            'success',
+            'Tissue Embedding Console Maintenance Form saved successfully'
+        );
+    }
+
+    public function loadTec(Request $request)
+    {
+        // ❗ SAME STYLE VALIDATION (like others)
+        if (!$request->filled('tec_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        // ✅ FIND FORM (MONTH + OPTIONAL INSTRUMENT)
+        $form = TissueEmbeddingConsoleMaintenanceForm::where(
+            'tec_month_year',
+            $request->tec_month_year
+        )
+            ->when(
+                $request->filled('tec_instrument_id'),
+                fn($q) => $q->where(
+                    'tec_instrument_id',
+                    $request->tec_instrument_id
+                )
+            )
+            ->first();
+
+        // ✅ SAME RESPONSE STRUCTURE
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+    protected function storeBactAlertMaintenance(Request $request)
+    {
+        // ❗ Month-Year mandatory (same rule everywhere)
+        $request->validate([
+            'ba_month_year' => 'required|string|max:7', // YYYY-MM
+        ]);
+
+        // ✅ COMMON FILTERS
+        $filters = [
+            'ba_month_year'   => $request->ba_month_year,
+            'ba_instrument_id' => $request->ba_instrument_id,
+        ];
+
+        // ✅ FIND EXISTING FORM (INLINE EDIT SUPPORT)
+        $form = BactAlertMaintenanceForm::where(
+            'ba_month_year',
+            $request->ba_month_year
+        )
+            ->when(
+                $request->filled('ba_instrument_id'),
+                fn($q) => $q->where(
+                    'ba_instrument_id',
+                    $request->ba_instrument_id
+                )
+            )
+            ->first();
+
+        // ✅ PAYLOAD (JSON CLEANED – SAME STYLE AS OTHERS)
+        $payload = array_merge($filters, [
+
+            // DAILY JSON (nested fields)
+            'ba_daily' => array_filter(
+                $request->ba_daily ?? [],
+                fn($row) => array_filter($row)
+            ),
+
+            // DOC META (SAFE)
+            'doc_no'    => $request->doc_no,
+            'issue_no'  => $request->issue_no,
+            'issue_date' => $request->issue_date,
+        ]);
+
+        // ✅ CREATE OR UPDATE (SAME METHOD)
+        if ($form) {
+            $form->update($payload);
+        } else {
+            BactAlertMaintenanceForm::create($payload);
+        }
+
+        // ✅ SAME RESPONSE STYLE
+        return back()->with(
+            'success',
+            'Bact Alert Maintenance Form saved successfully'
+        );
+    }
+
+    public function loadBactAlert(Request $request)
+    {
+        // ❗ SAME STYLE VALIDATION
+        if (!$request->filled('ba_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        // ✅ FIND FORM
+        $form = BactAlertMaintenanceForm::where(
+            'ba_month_year',
+            $request->ba_month_year
+        )
+            ->when(
+                $request->filled('ba_instrument_id'),
+                fn($q) => $q->where(
+                    'ba_instrument_id',
+                    $request->ba_instrument_id
+                )
+            )
+            ->first();
+
+        // ✅ SAME RESPONSE STRUCTURE
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+    /**
+     * ==========================================
+     * FOM-025 – Vitek 2 Maintenance Form
+     * STORE / UPDATE (INLINE + FULL SUBMIT)
+     * ==========================================
+     */
+    protected function storeVitek2Maintenance(Request $request)
+    {
+        // ❗ GLOBAL RULE – Month-Year mandatory
+        $request->validate([
+            'vitek_month_year' => 'required|string|max:7', // YYYY-MM
+        ]);
+
+        // 🔑 COMMON FILTERS
+        $filters = [
+            'vitek_month_year'    => $request->vitek_month_year,
+            'vitek_instrument_id' => $request->vitek_instrument_id,
+        ];
+
+        /**
+         * ==========================================
+         * FIND EXISTING FORM (INLINE EDIT SUPPORT)
+         * ==========================================
+         */
+        $form = Vitek2MaintenanceForm::where(
+            'vitek_month_year',
+            $request->vitek_month_year
+        )
+            ->when(
+                $request->filled('vitek_instrument_id'),
+                fn($q) => $q->where(
+                    'vitek_instrument_id',
+                    $request->vitek_instrument_id
+                )
+            )
+            ->first();
+
+        /**
+         * ==========================================
+         * CLEAN DAILY JSON (FIELD → DAY)
+         * ==========================================
+         */
+        $cleanDaily = [];
+
+        if (is_array($request->vitek_daily)) {
+            foreach ($request->vitek_daily as $field => $days) {
+
+                if (!is_array($days)) continue;
+
+                $filteredDays = array_filter(
+                    $days,
+                    fn($v) => $v !== null && $v !== ''
+                );
+
+                if (!empty($filteredDays)) {
+                    $cleanDaily[$field] = $filteredDays;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * CLEAN MONTHLY JSON (FIELD → DAY)
+         * ==========================================
+         */
+        $cleanMonthly = [];
+
+        if (is_array($request->vitek_monthly)) {
+            foreach ($request->vitek_monthly as $field => $days) {
+
+                if (!is_array($days)) continue;
+
+                $filteredDays = array_filter(
+                    $days,
+                    fn($v) => $v !== null && $v !== ''
+                );
+
+                if (!empty($filteredDays)) {
+                    $cleanMonthly[$field] = $filteredDays;
+                }
+            }
+        }
+
+        /**
+         * ==========================================
+         * FINAL PAYLOAD
+         * ==========================================
+         */
+        $payload = array_merge($filters, [
+            'vitek_daily'   => !empty($cleanDaily) ? $cleanDaily : null,
+            'vitek_monthly' => !empty($cleanMonthly) ? $cleanMonthly : null,
+        ]);
+
+        /**
+         * ==========================================
+         * CREATE OR UPDATE (SAME METHOD)
+         * ==========================================
+         */
+        if ($form) {
+            // 🔄 INLINE EDIT / RE-SUBMIT
+            $form->update($payload);
+        } else {
+            // 🆕 FIRST TIME SUBMIT
+            Vitek2MaintenanceForm::create($payload);
+        }
+
+        return back()->with(
+            'success',
+            'Vitek 2 Maintenance Form saved successfully'
+        );
+    }
+
+
+    /**
+     * ==========================================
+     * LOAD – Vitek 2 (ONCHANGE)
+     * ==========================================
+     */
+    public function loadVitekForm(Request $request)
+    {
+        if (!$request->filled('vitek_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = Vitek2MaintenanceForm::where(
+            'vitek_month_year',
+            $request->vitek_month_year
+        )
+            ->when(
+                $request->filled('vitek_instrument_id'),
+                fn($q) => $q->where(
+                    'vitek_instrument_id',
+                    $request->vitek_instrument_id
+                )
+            )
+            ->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+
+    protected function storeElisaMaintenance(Request $request)
+    {
+        // ❗ Month-Year mandatory (same rule everywhere)
+        $request->validate([
+            'elisa_month_year' => 'required|string|max:7', // YYYY-MM
+        ]);
+
+        // ✅ COMMON FILTERS (INLINE IDENTIFIER)
+        $filters = [
+            'elisa_month_year'    => $request->elisa_month_year,
+            'elisa_instrument_id' => $request->elisa_instrument_id,
+        ];
+
+        // ✅ FIND EXISTING FORM (INLINE EDIT)
+        $form = ElisaReaderMaintenanceForm::where(
+            'elisa_month_year',
+            $request->elisa_month_year
+        )
+            ->when(
+                $request->filled('elisa_instrument_id'),
+                fn($q) => $q->where(
+                    'elisa_instrument_id',
+                    $request->elisa_instrument_id
+                )
+            )
+            ->first();
+
+        // ✅ PAYLOAD (CLEAN JSON – SAME STYLE)
+        $payload = array_merge($filters, [
+
+            // DAILY JSON (31 days)
+            'elisa_daily' => array_filter(
+                $request->elisa_daily ?? [],
+                fn($row) => array_filter($row)
+            ),
+        ]);
+
+        // ✅ CREATE OR UPDATE (SAME METHOD)
+        if ($form) {
+            $form->update($payload);
+        } else {
+            ElisaReaderMaintenanceForm::create($payload);
+        }
+
+        // ✅ SAME RESPONSE STYLE
+        return back()->with(
+            'success',
+            'Elisa Reader Maintenance Form saved successfully'
+        );
+    }
+
+    public function loadElisa(Request $request)
+    {
+        if (!$request->filled('elisa_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = ElisaReaderMaintenanceForm::where(
+            'elisa_month_year',
+            $request->elisa_month_year
+        )
+            ->when(
+                $request->filled('elisa_instrument_id'),
+                fn($q) => $q->where(
+                    'elisa_instrument_id',
+                    $request->elisa_instrument_id
+                )
+            )
+            ->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+    protected function storeRtpcrMaintenance(Request $request)
+    {
+        // ❗ Month-Year mandatory (same rule everywhere)
+        $request->validate([
+            'rtpcr_month_year' => 'required|string|max:7', // YYYY-MM
+        ]);
+
+        // ✅ COMMON FILTERS
+        $filters = [
+            'rtpcr_month_year'   => $request->rtpcr_month_year,
+            'rtpcr_instrument_id' => $request->rtpcr_instrument_id,
+        ];
+
+        // ✅ FIND EXISTING FORM (INLINE EDIT SUPPORT)
+        $form = RealTimePcrMaintenanceForm::where(
+            'rtpcr_month_year',
+            $request->rtpcr_month_year
+        )
+            ->when(
+                $request->filled('rtpcr_instrument_id'),
+                fn($q) => $q->where(
+                    'rtpcr_instrument_id',
+                    $request->rtpcr_instrument_id
+                )
+            )
+            ->first();
+
+        // ✅ PAYLOAD (JSON CLEANED – SAME STYLE AS OTHERS)
+        $payload = array_merge($filters, [
+
+            'rtpcr_daily' => array_filter(
+                $request->rtpcr_daily ?? [],
+                fn($row) => array_filter($row)
+            ),
+
+        ]);
+
+        /**
+         * ==========================================
+         * CREATE OR UPDATE (INLINE / FULL SUBMIT)
+         * ==========================================
+         */
+        if ($form) {
+            $form->update($payload);
+        } else {
+            RealTimePcrMaintenanceForm::create($payload);
+        }
+
+        // ✅ SAME RESPONSE STYLE
+        return back()->with(
+            'success',
+            'Real Time PCR Maintenance Form saved successfully'
+        );
+    }
+
+    public function loadRtpcr(Request $request)
+    {
+        // ❗ SAME RULE AS ALL FORMS
+        if (!$request->filled('rtpcr_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = RealTimePcrMaintenanceForm::where(
+            'rtpcr_month_year',
+            $request->rtpcr_month_year
+        )
+            ->when(
+                $request->filled('rtpcr_instrument_id'),
+                fn($q) => $q->where(
+                    'rtpcr_instrument_id',
+                    $request->rtpcr_instrument_id
+                )
+            )
+            ->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+    protected function storeCoolingCentrifugeMaintenance(Request $request)
+    {
+        $request->validate([
+            'cc_month_year' => 'required|string|max:7',
+        ]);
+
+        $filters = [
+            'cc_month_year'    => $request->cc_month_year,
+            'cc_department'    => $request->cc_department,
+            'cc_instrument_id' => $request->cc_instrument_id,
+        ];
+
+        $form = CoolingCentrifugeMaintenanceForm::where(
+            'cc_month_year',
+            $request->cc_month_year
+        )
+            ->when(
+                $request->filled('cc_instrument_id'),
+                fn($q) => $q->where(
+                    'cc_instrument_id',
+                    $request->cc_instrument_id
+                )
+            )
+            ->first();
+
+        $payload = array_merge($filters, [
+
+            // ✅ DAILY JSON (grid)
+            'cc_daily' => array_filter(
+                $request->cc_daily ?? [],
+                fn($row) => is_array($row) && array_filter($row)
+            ),
+
+            // ✅ MONTHLY (FLAT FIELDS – NOT JSON)
+            'cc_bushes_checked_notes' =>
+            $request->cc_monthly['bushes_checked_notes'] ?? null,
+
+            'cc_bushes_checked_date' =>
+            $request->cc_monthly['bushes_checked_date'] ?? null,
+
+            'cc_bushes_next_due' =>
+            $request->cc_monthly['bushes_next_due'] ?? null,
+
+            'cc_monthly_signature' =>
+            $request->cc_monthly['signature'] ?? null,
+        ]);
+
+        if ($form) {
+            $form->update($payload);
+        } else {
+            CoolingCentrifugeMaintenanceForm::create($payload);
+        }
+
+        return back()->with(
+            'success',
+            'Cooling Centrifuge Maintenance Form saved successfully'
+        );
+    }
+
+    public function loadCoolingCentrifuge(Request $request)
+    {
+        if (!$request->filled('cc_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = CoolingCentrifugeMaintenanceForm::where(
+            'cc_month_year',
+            $request->cc_month_year
+        )
+            ->when(
+                $request->filled('cc_instrument_id'),
+                fn($q) => $q->where(
+                    'cc_instrument_id',
+                    $request->cc_instrument_id
+                )
+            )
+            ->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+    protected function storeMicroscopeMaintenance(Request $request)
+    {
+        // ❗ Month-Year mandatory (global rule)
+        $request->validate([
+            'mic_month_year' => 'required|string|max:7', // YYYY-MM
+        ]);
+
+        // ✅ COMMON FILTERS
+        $filters = [
+            'mic_month_year'     => $request->mic_month_year,
+            'mic_instrument_id'  => $request->mic_instrument_id,
+        ];
+
+        // ✅ FIND EXISTING FORM (INLINE EDIT)
+        $form = MicroscopeMaintenanceForm::where(
+            'mic_month_year',
+            $request->mic_month_year
+        )
+            ->when(
+                $request->filled('mic_instrument_id'),
+                fn($q) => $q->where(
+                    'mic_instrument_id',
+                    $request->mic_instrument_id
+                )
+            )
+            ->first();
+
+        // ✅ CLEAN DAILY JSON
+        $daily = [];
+        if (is_array($request->mic_daily)) {
+            foreach ($request->mic_daily as $field => $days) {
+                if (is_array($days)) {
+                    $filteredDays = array_filter($days, fn($v) => $v !== null && $v !== '');
+                    if (!empty($filteredDays)) {
+                        $daily[$field] = $filteredDays;
+                    }
+                }
+            }
+        }
+
+        // ✅ PAYLOAD
+        $payload = array_merge($filters, [
+            'mic_daily' => !empty($daily) ? $daily : null,
+        ]);
+
+        // ✅ CREATE OR UPDATE (SAME METHOD)
+        if ($form) {
+            $form->update($payload);
+        } else {
+            MicroscopeMaintenanceForm::create($payload);
+        }
+
+        // ✅ RESPONSE
+        return back()->with(
+            'success',
+            'Microscope Maintenance Form saved successfully'
+        );
+    }
+
+    public function loadMic(Request $request)
+    {
+        // ❗ SAME VALIDATION STYLE
+        if (!$request->filled('mic_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = MicroscopeMaintenanceForm::where(
+            'mic_month_year',
+            $request->mic_month_year
+        )
+            ->when(
+                $request->filled('mic_instrument_id'),
+                fn($q) => $q->where(
+                    'mic_instrument_id',
+                    $request->mic_instrument_id
+                )
+            )
+            ->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+    public function storeLauramMaintenance(Request $request)
+    {
+        $request->validate([
+            'lauram_month_year' => 'required|string|max:7',
+        ]);
+
+        // 🔹 COMMON FILTERS
+        $filters = [
+            'lauram_month_year'    => $request->lauram_month_year,
+            'lauram_instrument_id' => $request->lauram_instrument_id,
+        ];
+
+        // 🔹 INLINE EDIT FIND
+        $form = LauramMaintenanceForm::where(
+            'lauram_month_year',
+            $request->lauram_month_year
+        )
+            ->when(
+                $request->filled('lauram_instrument_id'),
+                fn($q) => $q->where(
+                    'lauram_instrument_id',
+                    $request->lauram_instrument_id
+                )
+            )
+            ->first();
+
+        // 🔹 CLEAN DAILY DATA (STEP + SIGNATURE SAFE)
+        $cleanDaily = [];
+
+        if (is_array($request->lauram_daily)) {
+            foreach ($request->lauram_daily as $section => $sectionData) {
+
+                if (!is_array($sectionData)) continue;
+
+                // 🟢 SIGNATURE CASE (SECTION → DAY)
+                if (!is_array(reset($sectionData))) {
+                    $filtered = array_filter($sectionData);
+                    if ($filtered) {
+                        $cleanDaily[$section] = $filtered;
+                    }
+                    continue;
+                }
+
+                // 🟢 STEP CASE (SECTION → STEP → DAY)
+                foreach ($sectionData as $step => $stepData) {
+                    if (!is_array($stepData)) continue;
+
+                    $filteredDays = array_filter($stepData);
+                    if ($filteredDays) {
+                        $cleanDaily[$section][$step] = $filteredDays;
+                    }
+                }
+            }
+        }
+
+        // 🔹 PAYLOAD
+        $payload = array_merge($filters, [
+            'lauram_daily' => $cleanDaily ?: null,
+        ]);
+
+        // 🔹 SAVE
+        if ($form) {
+            $form->update($payload);
+        } else {
+            LauramMaintenanceForm::create($payload);
+        }
+
+        return back()->with(
+            'success',
+            'Laura M Maintenance Form saved successfully'
+        );
+    }
+
+
+    public function loadLauram(Request $request)
+    {
+        if (!$request->filled('lauram_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = LauramMaintenanceForm::where(
+            'lauram_month_year',
+            $request->lauram_month_year
+        )
+            ->when(
+                $request->filled('lauram_instrument_id'),
+                fn($q) => $q->where(
+                    'lauram_instrument_id',
+                    $request->lauram_instrument_id
+                )
+            )
+            ->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+
+    protected function storeMicrotomeMaintenance(Request $request)
+    {
+        // ❗ GLOBAL RULE – Month/Year mandatory
+        $request->validate([
+            'microtome_month_year' => 'required|string|max:7', // YYYY-MM
+        ]);
+
+        // ✅ COMMON FILTERS
+        $filters = [
+            'microtome_month_year'    => $request->microtome_month_year,
+            'microtome_instrument_id' => $request->microtome_instrument_id,
+        ];
+
+        // ✅ FIND EXISTING FORM (INLINE EDIT)
+        $form = MicrotomeMaintenanceForm::where(
+            'microtome_month_year',
+            $request->microtome_month_year
+        )
+            ->when(
+                $request->filled('microtome_instrument_id'),
+                fn($q) => $q->where(
+                    'microtome_instrument_id',
+                    $request->microtome_instrument_id
+                )
+            )
+            ->first();
+
+        // ✅ CLEAN DAILY JSON (FIELD → DAY)
+        $cleanDaily = [];
+
+        if (is_array($request->microtome_daily)) {
+            foreach ($request->microtome_daily as $field => $days) {
+
+                if (!is_array($days)) continue;
+
+                $filteredDays = array_filter($days);
+
+                if (!empty($filteredDays)) {
+                    $cleanDaily[$field] = $filteredDays;
+                }
+            }
+        }
+
+        // ✅ FINAL PAYLOAD
+        $payload = array_merge($filters, [
+            'microtome_daily' => !empty($cleanDaily) ? $cleanDaily : null,
+        ]);
+
+        // ✅ CREATE OR UPDATE (SAME METHOD)
+        if ($form) {
+            $form->update($payload);
+        } else {
+            MicrotomeMaintenanceForm::create($payload);
+        }
+
+        // ✅ SAME RESPONSE STYLE
+        return back()->with(
+            'success',
+            'Microtome Maintenance Form saved successfully'
+        );
+    }
+
+    public function loadMicrotome(Request $request)
+    {
+        if (!$request->filled('microtome_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = MicrotomeMaintenanceForm::where(
+            'microtome_month_year',
+            $request->microtome_month_year
+        )
+            ->when(
+                $request->filled('microtome_instrument_id'),
+                fn($q) => $q->where(
+                    'microtome_instrument_id',
+                    $request->microtome_instrument_id
+                )
+            )
+            ->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+    protected function storeFlotationBathMaintenance(Request $request)
+    {
+
+        // ❗ Month-Year mandatory (GLOBAL RULE – SAME AS ALL FORMS)
+        $request->validate([
+            'fb_month_year' => 'required|string|max:7', // YYYY-MM
+        ]);
+
+        // ✅ COMMON FILTER FIELDS
+        $filters = [
+            'fb_month_year'    => $request->fb_month_year,
+            'fb_instrument_id' => $request->fb_instrument_id,
+        ];
+
+        // ✅ FIND EXISTING FORM (INLINE EDIT SUPPORT)
+        $form = FlotationBathMaintenanceForm::where(
+            'fb_month_year',
+            $request->fb_month_year
+        )
+            ->when(
+                $request->filled('fb_instrument_id'),
+                fn($q) => $q->where(
+                    'fb_instrument_id',
+                    $request->fb_instrument_id
+                )
+            )
+            ->first();
+
+        $cleanDaily = [];
+
+        if (is_array($request->fb_daily)) {
+            foreach ($request->fb_daily as $field => $days) {
+
+                if (!is_array($days)) continue;
+
+                $filteredDays = array_filter($days, function ($val) {
+                    return $val !== null && $val !== '';
+                });
+
+                if (!empty($filteredDays)) {
+                    $cleanDaily[$field] = $filteredDays;
+                }
+            }
+        }
+
+        // ✅ FINAL PAYLOAD
+        $payload = array_merge($filters, [
+            'fb_daily' => !empty($cleanDaily) ? $cleanDaily : null,
+        ]);
+
+        // ✅ CREATE OR UPDATE (SAME METHOD – NO SEPARATE UPDATE)
+        if ($form) {
+            $form->update($payload);
+        } else {
+            FlotationBathMaintenanceForm::create($payload);
+        }
+
+        // ✅ STANDARD RESPONSE (SAME AS OTHER FORMS)
+        return back()->with(
+            'success',
+            'Flotation Bath Maintenance Form saved successfully'
+        );
+    }
+
+    public function loadFlotationBath(Request $request)
+    {
+        if (!$request->filled('fb_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = FlotationBathMaintenanceForm::where(
+            'fb_month_year',
+            $request->fb_month_year
+        )
+            ->when(
+                $request->filled('fb_instrument_id'),
+                fn($q) => $q->where(
+                    'fb_instrument_id',
+                    $request->fb_instrument_id
+                )
+            )
+            ->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+
+    protected function storeGrossingStationMaintenance(Request $request)
+    {
+        // ❗ GLOBAL RULE — Month mandatory
+        $request->validate([
+            'gs_month_year' => 'required|string|max:7', // YYYY-MM
+        ]);
+
+        // ✅ COMMON FILTERS
+        $filters = [
+            'gs_month_year'    => $request->gs_month_year,
+            'gs_instrument_id' => $request->gs_instrument_id,
+        ];
+
+        // ✅ FIND EXISTING FORM (INLINE EDIT SUPPORT)
+        $form = GrossingStationMaintenanceForm::where(
+            'gs_month_year',
+            $request->gs_month_year
+        )
+            ->when(
+                $request->filled('gs_instrument_id'),
+                fn($q) => $q->where(
+                    'gs_instrument_id',
+                    $request->gs_instrument_id
+                )
+            )
+            ->first();
+
+        // ✅ CLEAN DAILY JSON (FIELD → DAY)
+        $cleanDaily = [];
+
+        if (is_array($request->gs_daily)) {
+            foreach ($request->gs_daily as $field => $days) {
+
+                if (!is_array($days)) continue;
+
+                $filteredDays = array_filter($days, fn($v) => $v !== null && $v !== '');
+
+                if (!empty($filteredDays)) {
+                    $cleanDaily[$field] = $filteredDays;
+                }
+            }
+        }
+
+        // ✅ FINAL PAYLOAD
+        $payload = array_merge($filters, [
+            'gs_daily' => !empty($cleanDaily) ? $cleanDaily : null,
+        ]);
+
+        // ✅ CREATE OR UPDATE (SAME METHOD)
+        if ($form) {
+            $form->update($payload);
+        } else {
+            GrossingStationMaintenanceForm::create($payload);
+        }
+
+        // ✅ SAME RESPONSE STYLE AS ALL OTHER FORMS
+        return back()->with(
+            'success',
+            'Grossing Station Maintenance Form saved successfully'
+        );
+    }
+
+    public function loadGrossingStation(Request $request)
+    {
+        if (!$request->filled('gs_month_year')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = GrossingStationMaintenanceForm::where(
+            'gs_month_year',
+            $request->gs_month_year
+        )
+            ->when(
+                $request->filled('gs_instrument_id'),
+                fn($q) => $q->where(
+                    'gs_instrument_id',
+                    $request->gs_instrument_id
+                )
+            )
+            ->first();
+
+        return response()->json([
+            'data' => $form
+        ]);
+    }
+
+    protected function storeEquipmentBreakdownRegister(Request $request)
+    {
+        /**
+         * ============================================
+         * 🔵 INLINE EDIT / MULTI-ROW SAVE
+         * rows[index][field]
+         * ============================================
+         */
+        if ($request->has('rows') && is_array($request->rows)) {
+
+            foreach ($request->rows as $row) {
+
+                // 🛑 Skip empty rows
+                if (
+                    empty($row['eb_date']) &&
+                    empty($row['eb_equipment'])
+                ) {
+                    continue;
+                }
+
+                $data = [
+                    'eb_date'            => $row['eb_date'] ?? null,
+                    'eb_equipment'       => $row['eb_equipment'] ?? null,
+                    'eb_problem'         => $row['eb_problem'] ?? null,
+                    'eb_breakdown_time'  => $row['eb_breakdown_time'] ?? null,
+                    'eb_action_taken'    => $row['eb_action_taken'] ?? null,
+                    'eb_engineer_name'   => $row['eb_engineer_name'] ?? null,
+                    'eb_total_downtime'  => $row['eb_total_downtime'] ?? null,
+                    'eb_remarks'         => $row['eb_remarks'] ?? null,
+                    'eb_signature'       => $row['eb_signature'] ?? null,
+
+                    // 🔍 FILTER FIELDS
+                    'eb_location'        => $request->eb_location ?? null,
+                ];
+
+                // 🔁 UPDATE
+                if (!empty($row['id'])) {
+                    EquipmentBreakdownRegister::where('id', $row['id'])->update($data);
+                }
+                // ➕ INSERT
+                else {
+                    EquipmentBreakdownRegister::create($data);
+                }
+            }
+
+            // 🔥 INLINE SAVE → NO PAGE JUMP
+            return back()->with(
+                'success',
+                'Equipment Breakdown Register updated successfully'
+            );
+        }
+
+        /**
+         * ============================================
+         * 🟢 NORMAL FORM SUBMIT (SINGLE ROW)
+         * ============================================
+         */
+        if (
+            empty($request->eb_date) &&
+            empty($request->eb_equipment)
+        ) {
+            return back();
+        }
+
+        EquipmentBreakdownRegister::create([
+            'eb_date'           => $request->eb_date,
+            'eb_equipment'      => $request->eb_equipment,
+            'eb_problem'        => $request->eb_problem,
+            'eb_breakdown_time' => $request->eb_breakdown_time,
+            'eb_action_taken'   => $request->eb_action_taken,
+            'eb_engineer_name'  => $request->eb_engineer_name,
+            'eb_total_downtime' => $request->eb_total_downtime,
+            'eb_remarks'        => $request->eb_remarks,
+            'eb_signature'      => $request->eb_signature,
+            'eb_location'       => $request->eb_location,
+        ]);
+
+        return back()->with(
+            'success',
+            'Equipment Breakdown Register saved successfully'
+        );
+    }
+
+    public function loadEquipmentBreakdownRegister(Request $request)
+    {
+        // ❌ REMOVE date-only restriction
+        if (
+            !$request->filled('eb_from_date') &&
+            !$request->filled('eb_to_date') &&
+            !$request->filled('eb_location')
+        ) {
+            return response()->json(['data' => []]);
+        }
+
+        $query = EquipmentBreakdownRegister::query();
+
+        // FROM only
+        if ($request->filled('eb_from_date') && !$request->filled('eb_to_date')) {
+            $query->whereDate('eb_date', $request->eb_from_date);
+        }
+
+        // TO only
+        if (!$request->filled('eb_from_date') && $request->filled('eb_to_date')) {
+            $query->whereDate('eb_date', $request->eb_to_date);
+        }
+
+        // FROM – TO
+        if ($request->filled('eb_from_date') && $request->filled('eb_to_date')) {
+            $query->whereBetween('eb_date', [
+                $request->eb_from_date,
+                $request->eb_to_date
+            ]);
+        }
+
+        // ✅ Location-only OR combined
+        if ($request->filled('eb_location')) {
+            $query->where('eb_location', $request->eb_location);
+        }
+
+        return response()->json([
+            'data' => $query->orderBy('eb_date')->get()
         ]);
     }
 }
