@@ -663,247 +663,501 @@
     <x-formTemplete id="TDPL/BE/FOM-0##" docNo="TDPL/BE/FOM-0##" docName="Daily QC Form for Hot Plate Maintenance"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        <style>
-            .qc-table,
-            .qc-table td,
-            .qc-table th {
-                border: 1px solid #000;
-                border-collapse: collapse;
-            }
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month & Year:</strong>
+                <input type="month" name="month_year" id="hotplate_month_year"
+                    style="border:1px solid #000; padding:5px;"
+                    onchange="loadHotPlateQc()">
+            </div>
+            <div>
+                <strong>Instrument S. No.:</strong>
+                <input type="text" name="instrument_serial_no" id="hotplate_instrument_serial_no"
+                    style="border:1px solid #000; padding:5px; width:150px;">
+            </div>
+            <button type="button" onclick="clearHotPlateQc()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-            .qc-table td {
-                padding: 4px;
-                text-align: center;
-            }
+        <input type="hidden" name="form_id" id="hotplate_form_id">
 
-            .qc-input {
-                width: 70px;
-                padding: 4px;
-                border: 1px solid #aaa;
-                border-radius: 4px;
-            }
-        </style>
-
-        <!-- HEADER -->
-        <p>
-            <strong>Month & Year:</strong>
-            <input type="month" class="qc-input" id="month_year" name="month_year" onchange="loadHotPlateQc()">
-
-            &nbsp;&nbsp;
-
-            <strong>Instrument S. No.:</strong>
-            <input type="text" class="qc-input" id="instrument_serial_no" name="instrument_serial_no">
-        </p>
-
-        <!-- TABLE -->
-        <table class="qc-table" style="width:100%;">
-            <input type="hidden" name="form_id" id="form_id">
-
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <tbody>
-
                 <tr>
-                    <th>Date</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Date</th>
                     @for ($d = 1; $d <= 31; $d++)
-                        <th>{{ $d }}</th>
+                        <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $d }}</th>
                     @endfor
                 </tr>
 
-                <!-- Cleaning -->
                 <tr>
-                    <td><strong>Cleaning From Outside</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Cleaning From Outside</strong></td>
                     @for ($d = 1; $d <= 31; $d++)
-                        <td>
-                            <input type="text" class="qc-input hotplate-input"
-                                id="cleaning_outside_{{ $d }}" name="cleaning_outside[{{ $d }}]">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="hotplate_cleaning_outside_{{ $d }}" name="cleaning_outside[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     @endfor
                 </tr>
 
-                <!-- Temperature -->
                 <tr>
-                    <td><strong>Temperature Check</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Temperature Check</strong></td>
                     @for ($d = 1; $d <= 31; $d++)
-                        <td>
-                            <input type="text" class="qc-input hotplate-input"
-                                id="temperature_check_{{ $d }}" name="temperature_check[{{ $d }}]">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="hotplate_temperature_check_{{ $d }}" name="temperature_check[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     @endfor
                 </tr>
 
-                <!-- Lab Staff -->
                 <tr>
-                    <td><strong>Lab Staff Signature</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Lab Staff Signature</strong></td>
                     @for ($d = 1; $d <= 31; $d++)
-                        <td>
-                            <input type="text" class="qc-input hotplate-input"
-                                id="lab_staff_signature_{{ $d }}"
-                                name="lab_staff_signature[{{ $d }}]">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="hotplate_lab_staff_signature_{{ $d }}" name="lab_staff_signature[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     @endfor
                 </tr>
 
-                <!-- Supervisor -->
                 <tr>
-                    <td><strong>Lab Supervisor Signature</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Lab Supervisor Signature</strong></td>
                     @for ($d = 1; $d <= 31; $d++)
-                        <td>
-                            <input type="text" class="qc-input hotplate-input"
-                                id="lab_supervisor_signature_{{ $d }}"
-                                name="lab_supervisor_signature[{{ $d }}]">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="hotplate_lab_supervisor_signature_{{ $d }}" name="lab_supervisor_signature[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     @endfor
                 </tr>
-
             </tbody>
         </table>
+
+        <script>
+            function loadHotPlateQc() {
+                const monthYear = document.getElementById('hotplate_month_year').value;
+                const instrument = document.getElementById('hotplate_instrument_serial_no').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('month_year', monthYear);
+                if (instrument) params.append('instrument_serial_no', instrument);
+
+                fetch(`/newforms/be/hot-plate-qc/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    // Clear all inputs first
+                    clearHotPlateQcInputs();
+
+                    if (!res.data) {
+                        document.getElementById('hotplate_form_id').value = '';
+                        return;
+                    }
+
+                    // Set form ID for update
+                    document.getElementById('hotplate_form_id').value = res.data.id;
+
+                    // Populate rows
+                    const fields = ['cleaning_outside', 'temperature_check', 'lab_staff_signature', 'lab_supervisor_signature'];
+                    fields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`hotplate_${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearHotPlateQcInputs() {
+                const fields = ['cleaning_outside', 'temperature_check', 'lab_staff_signature', 'lab_supervisor_signature'];
+                for (let d = 1; d <= 31; d++) {
+                    fields.forEach(field => {
+                        const el = document.getElementById(`hotplate_${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+                document.getElementById('hotplate_form_id').value = '';
+            }
+
+            function clearHotPlateQc() {
+                document.getElementById('hotplate_month_year').value = '';
+                document.getElementById('hotplate_instrument_serial_no').value = '';
+                clearHotPlateQcInputs();
+            }
+
+            // AJAX Submit for Hot Plate QC
+            (function() {
+                function initHotPlateQcForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-0##"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastHotPlate('success', result.message || 'Saved successfully!');
+                                // Update form_id if returned
+                                if (result.form_id) {
+                                    document.getElementById('hotplate_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastHotPlate('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastHotPlate('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastHotPlate(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initHotPlateQcForm);
+                } else {
+                    initHotPlateQcForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-006" docNo="TDPL/BE/FOM-006" docName="Bio Safety Cabinet Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
+
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Department:</strong>
+                <input type="text" name="bsc_department" id="bsc_department" list="bscDeptList"
+                    style="border:1px solid #000; padding:5px; width:200px;" placeholder="All"
+                    onchange="loadBscForm()" onblur="loadBscForm()">
+                <datalist id="bscDeptList">
+                    <option value="Biochemistry">
+                    <option value="Pathology">
+                    <option value="Hematology">
+                    <option value="Microbiology">
+                </datalist>
+            </div>
+            <div>
+                <strong>Month & Year:</strong>
+                <input type="month" name="bsc_month_year" id="bsc_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadBscForm()">
+            </div>
+            <div>
+                <strong>Equipment ID:</strong>
+                <input type="text" name="bsc_equipment_id" id="bsc_equipment_id" list="bscEquipList"
+                    style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                    onchange="loadBscForm()" onblur="loadBscForm()">
+                <datalist id="bscEquipList">
+                    <option value="BSC-001">
+                    <option value="BSC-002">
+                    <option value="BSC-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearBscForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
+
         <input type="hidden" name="bsc_form_id" id="bsc_form_id">
-        <!-- ================= FILTER / HEADER DETAILS ================= -->
 
-        <p>
-            <strong>Department:</strong>
-            <input list="bscDeptList" class="qc-input" name="bsc_department" id="bsc_department" style="width:200px;"
-                placeholder="All" oninput="loadBscForm()">
-
-            <datalist id="bscDeptList">
-                <option value="Biochemistry">
-                <option value="Pathology">
-                <option value="Hematology">
-                <option value="Microbiology">
-            </datalist>
-
-            &nbsp;&nbsp;&nbsp;
-
-            <strong>Month & Year:</strong>
-            <input type="month" class="qc-input" name="bsc_month_year" id="bsc_month_year" style="width:180px;"
-                onchange="loadBscForm()">
-
-            &nbsp;&nbsp;&nbsp;
-
-            <strong>Equipment ID:</strong>
-            <input list="bscEquipList" class="qc-input" name="bsc_equipment_id" id="bsc_equipment_id"
-                style="width:180px;" placeholder="All" oninput="loadBscForm()">
-
-            <datalist id="bscEquipList">
-                <option value="BSC-001">
-                <option value="BSC-002">
-                <option value="BSC-003">
-            </datalist>
-
-        </p>
-
-        <br>
-
-        <!-- ================= MAIN TABLE ================= -->
-
-        <table class="qc-table" style="width:100%;">
-
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <tbody>
-
                 <!-- HEADER ROW 1 -->
                 <tr>
-                    <th rowspan="3">Date</th>
-                    <th rowspan="3">Clean with 70% IPA</th>
-                    <th rowspan="3">UV Light 15 mins</th>
-                    <th rowspan="3">Manometer Reading (10±1)</th>
-                    <th rowspan="3">Done By Sign</th>
-                    <th rowspan="3">1% Hypo Available</th>
-                    <th></th>
-                    <th></th>
-                    <th colspan="3">Weekly Maintenance</th>
-                    <th></th>
-                    <th></th>
+                    <th style="border:1px solid #000; padding:4px;" rowspan="3">Date</th>
+                    <th style="border:1px solid #000; padding:4px;" rowspan="3">Clean with 70% IPA</th>
+                    <th style="border:1px solid #000; padding:4px;" rowspan="3">UV Light 15 mins</th>
+                    <th style="border:1px solid #000; padding:4px;" rowspan="3">Manometer Reading (10&plusmn;1)</th>
+                    <th style="border:1px solid #000; padding:4px;" rowspan="3">Done By Sign</th>
+                    <th style="border:1px solid #000; padding:4px;" rowspan="3">1% Hypo Available</th>
+                    <th style="border:1px solid #000; padding:4px;"></th>
+                    <th style="border:1px solid #000; padding:4px;"></th>
+                    <th style="border:1px solid #000; padding:4px;" colspan="3">Weekly Maintenance</th>
+                    <th style="border:1px solid #000; padding:4px;"></th>
+                    <th style="border:1px solid #000; padding:4px;"></th>
                 </tr>
-
                 <!-- HEADER ROW 2 -->
                 <tr>
-                    <th rowspan="2">Settle Plate Date</th>
-                    <th colspan="3">Settle Plate Results (0–5 CFU)</th>
-                    <th rowspan="2">UV Efficacy</th>
-                    <th rowspan="2">Checked By</th>
-                    <th rowspan="2">Remarks</th>
+                    <th style="border:1px solid #000; padding:4px;" rowspan="2">Settle Plate Date</th>
+                    <th style="border:1px solid #000; padding:4px;" colspan="3">Settle Plate Results (0-5 CFU)</th>
+                    <th style="border:1px solid #000; padding:4px;" rowspan="2">UV Efficacy</th>
+                    <th style="border:1px solid #000; padding:4px;" rowspan="2">Checked By</th>
+                    <th style="border:1px solid #000; padding:4px;" rowspan="2">Remarks</th>
                 </tr>
-
                 <!-- HEADER ROW 3 -->
                 <tr>
-                    <th>Yes</th>
-                    <th>No</th>
-                    <th>CFU</th>
+                    <th style="border:1px solid #000; padding:4px;">Yes</th>
+                    <th style="border:1px solid #000; padding:4px;">No</th>
+                    <th style="border:1px solid #000; padding:4px;">CFU</th>
                 </tr>
 
-                <!-- ================= DAYS 1–31 ================= -->
                 @for ($d = 1; $d <= 31; $d++)
                     <tr>
-                        <td><strong>{{ $d }}</strong></td>
-
-                        <td>
-                            <input type="text" class="qc-input" name="bsc_clean_ipa[{{ $d }}]"
-                                id="bsc_clean_ipa_{{ $d }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $d }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="bsc_clean_ipa_{{ $d }}" name="bsc_clean_ipa[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="qc-input" name="bsc_uv_light[{{ $d }}]"
-                                id="bsc_uv_light_{{ $d }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="bsc_uv_light_{{ $d }}" name="bsc_uv_light[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="qc-input" name="bsc_manometer[{{ $d }}]"
-                                id="bsc_manometer_{{ $d }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="bsc_manometer_{{ $d }}" name="bsc_manometer[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="qc-input" name="bsc_done_by[{{ $d }}]"
-                                id="bsc_done_by_{{ $d }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="bsc_done_by_{{ $d }}" name="bsc_done_by[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="qc-input" name="bsc_hypo_available[{{ $d }}]"
-                                id="bsc_hypo_available_{{ $d }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="bsc_hypo_available_{{ $d }}" name="bsc_hypo_available[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="date" class="qc-input" name="bsc_settle_plate_date[{{ $d }}]"
-                                id="bsc_settle_plate_date_{{ $d }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="date" id="bsc_settle_plate_date_{{ $d }}" name="bsc_settle_plate_date[{{ $d }}]"
+                                style="padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="checkbox" name="bsc_settle_yes[{{ $d }}]"
-                                id="bsc_settle_yes_{{ $d }}" value="1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="checkbox" id="bsc_settle_yes_{{ $d }}" name="bsc_settle_yes[{{ $d }}]" value="1">
                         </td>
-
-                        <td>
-                            <input type="checkbox" name="bsc_settle_no[{{ $d }}]"
-                                id="bsc_settle_no_{{ $d }}" value="1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="checkbox" id="bsc_settle_no_{{ $d }}" name="bsc_settle_no[{{ $d }}]" value="1">
                         </td>
-
-                        <td>
-                            <input type="text" class="qc-input" name="bsc_settle_cfu[{{ $d }}]"
-                                id="bsc_settle_cfu_{{ $d }}" placeholder="0–5">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="bsc_settle_cfu_{{ $d }}" name="bsc_settle_cfu[{{ $d }}]"
+                                placeholder="0-5" style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="qc-input" name="bsc_uv_efficacy[{{ $d }}]"
-                                id="bsc_uv_efficacy_{{ $d }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="bsc_uv_efficacy_{{ $d }}" name="bsc_uv_efficacy[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="qc-input" name="bsc_checked_by[{{ $d }}]"
-                                id="bsc_checked_by_{{ $d }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="bsc_checked_by_{{ $d }}" name="bsc_checked_by[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="qc-input" name="bsc_remarks[{{ $d }}]"
-                                id="bsc_remarks_{{ $d }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="bsc_remarks_{{ $d }}" name="bsc_remarks[{{ $d }}]"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     </tr>
                 @endfor
-
             </tbody>
         </table>
+
+        <script>
+            function loadBscForm() {
+                const monthYear = document.getElementById('bsc_month_year').value;
+                const department = document.getElementById('bsc_department').value;
+                const equipment = document.getElementById('bsc_equipment_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('bsc_month_year', monthYear);
+                if (department) params.append('bsc_department', department);
+                if (equipment) params.append('bsc_equipment_id', equipment);
+
+                fetch(`/newforms/be/bsc/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearBscInputs();
+
+                    if (!res.data) {
+                        document.getElementById('bsc_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('bsc_form_id').value = res.data.id;
+
+                    // Text fields
+                    const textFields = [
+                        'bsc_clean_ipa', 'bsc_uv_light', 'bsc_manometer', 'bsc_done_by',
+                        'bsc_hypo_available', 'bsc_settle_plate_date', 'bsc_settle_cfu',
+                        'bsc_uv_efficacy', 'bsc_checked_by', 'bsc_remarks'
+                    ];
+                    textFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+
+                    // Checkbox fields
+                    ['bsc_settle_yes', 'bsc_settle_no'].forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.checked = true;
+                            });
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearBscInputs() {
+                const textFields = [
+                    'bsc_clean_ipa', 'bsc_uv_light', 'bsc_manometer', 'bsc_done_by',
+                    'bsc_hypo_available', 'bsc_settle_plate_date', 'bsc_settle_cfu',
+                    'bsc_uv_efficacy', 'bsc_checked_by', 'bsc_remarks'
+                ];
+                for (let d = 1; d <= 31; d++) {
+                    textFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                    // Checkboxes
+                    ['bsc_settle_yes', 'bsc_settle_no'].forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.checked = false;
+                    });
+                }
+                document.getElementById('bsc_form_id').value = '';
+            }
+
+            function clearBscForm() {
+                document.getElementById('bsc_month_year').value = '';
+                document.getElementById('bsc_department').value = '';
+                document.getElementById('bsc_equipment_id').value = '';
+                clearBscInputs();
+            }
+
+            // AJAX Submit for BSC Form
+            (function() {
+                function initBscForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-006"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastBSC('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('bsc_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastBSC('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastBSC('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastBSC(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initBscForm);
+                } else {
+                    initBscForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -911,107 +1165,204 @@
     <x-formTemplete id="TDPL/BE-FOM-007" docNo="TDPL/BE-FOM-007" docName="Hot Air Oven Temperature Monitoring Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month / Year:</strong>
+                <input type="month" name="hao_month_year" id="hao_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadHotAirOven()">
+            </div>
+            <div>
+                <strong>Instrument ID / No.:</strong>
+                <input type="text" name="hao_instrument_id" id="hao_instrument_id" list="haoEquipList"
+                    style="border:1px solid #000; padding:5px; width:200px;" placeholder="All"
+                    onchange="loadHotAirOven()" onblur="loadHotAirOven()">
+                <datalist id="haoEquipList">
+                    <option value="HAO-001">
+                    <option value="HAO-002">
+                    <option value="HAO-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearHotAirOven()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
+
         <input type="hidden" name="hao_form_id" id="hao_form_id">
 
-        <style>
-            .tlog-table,
-            .tlog-table td,
-            .tlog-table th {
-                border: 1px solid #000;
-                border-collapse: collapse;
-            }
-
-            .tlog-table td,
-            .tlog-table th {
-                padding: 4px;
-                text-align: center;
-            }
-
-            .tlog-input {
-                width: 100%;
-                padding: 4px;
-                border: 1px solid #999;
-                border-radius: 4px;
-            }
-        </style>
-
-        <!-- ================= FILTERS ================= -->
-
-        <p>
-            <strong>Month / Year:</strong>
-            <input type="month" class="tlog-input" style="width:180px;" name="hao_month_year" id="hao_month_year"
-                onchange="loadHotAirOven()">
-
-            &nbsp;&nbsp;&nbsp;
-            <strong>Instrument ID / No.:</strong>
-            <input list="haoEquipList" class="tlog-input" style="width:200px;" name="hao_instrument_id"
-                id="hao_instrument_id" placeholder="All" oninput="loadHotAirOven()">
-
-            <datalist id="haoEquipList">
-                <option value="HAO-001">
-                <option value="HAO-002">
-                <option value="HAO-003">
-            </datalist>
-
-
-        </p>
-
-        <br>
-
-        <!-- ================= MAIN TABLE ================= -->
-
-        <table class="tlog-table" style="width:100%;">
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <tbody>
-
-                <!-- HEADER -->
                 <tr>
-                    <th rowspan="2">Date</th>
-                    <th colspan="2">Morning</th>
-                    <th colspan="2">Evening</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;" rowspan="2">Date</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;" colspan="2">Morning</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;" colspan="2">Evening</th>
                 </tr>
                 <tr>
-                    <th>Temperature (°C)</th>
-                    <th>Signature</th>
-                    <th>Temperature (°C)</th>
-                    <th>Signature</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Temperature (&deg;C)</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Signature</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Temperature (&deg;C)</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Signature</th>
                 </tr>
 
-                <!-- DAYS 1–31 -->
                 @for ($day = 1; $day <= 31; $day++)
                     <tr>
-                        <td><strong>{{ $day }}</strong></td>
-
-                        <td>
-                            <input type="text" class="tlog-input" name="hao_morning_temp[{{ $day }}]"
-                                id="hao_morning_temp_{{ $day }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $day }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="hao_morning_temp_{{ $day }}" name="hao_morning_temp[{{ $day }}]"
+                                style="width:100%; padding:4px; border:1px solid #999; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="tlog-input" name="hao_morning_sign[{{ $day }}]"
-                                id="hao_morning_sign_{{ $day }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="hao_morning_sign_{{ $day }}" name="hao_morning_sign[{{ $day }}]"
+                                style="width:100%; padding:4px; border:1px solid #999; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="tlog-input" name="hao_evening_temp[{{ $day }}]"
-                                id="hao_evening_temp_{{ $day }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="hao_evening_temp_{{ $day }}" name="hao_evening_temp[{{ $day }}]"
+                                style="width:100%; padding:4px; border:1px solid #999; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="tlog-input" name="hao_evening_sign[{{ $day }}]"
-                                id="hao_evening_sign_{{ $day }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="hao_evening_sign_{{ $day }}" name="hao_evening_sign[{{ $day }}]"
+                                style="width:100%; padding:4px; border:1px solid #999; border-radius:4px;">
                         </td>
                     </tr>
                 @endfor
-
             </tbody>
         </table>
 
-        <br>
+        <p><strong>Acceptable Temperature:</strong> +10&deg;C to +25&deg;C</p>
 
-        <p>
-            <strong>Acceptable Temperature:</strong> +10°C to +25°C
-        </p>
+        <script>
+            function loadHotAirOven() {
+                const monthYear = document.getElementById('hao_month_year').value;
+                const instrument = document.getElementById('hao_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('hao_month_year', monthYear);
+                if (instrument) params.append('hao_instrument_id', instrument);
+
+                fetch(`/newforms/be/hot-air-oven/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearHotAirOvenInputs();
+
+                    if (!res.data) {
+                        document.getElementById('hao_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('hao_form_id').value = res.data.id;
+
+                    const fields = ['hao_morning_temp', 'hao_morning_sign', 'hao_evening_temp', 'hao_evening_sign'];
+                    fields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearHotAirOvenInputs() {
+                const fields = ['hao_morning_temp', 'hao_morning_sign', 'hao_evening_temp', 'hao_evening_sign'];
+                for (let d = 1; d <= 31; d++) {
+                    fields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+                document.getElementById('hao_form_id').value = '';
+            }
+
+            function clearHotAirOven() {
+                document.getElementById('hao_month_year').value = '';
+                document.getElementById('hao_instrument_id').value = '';
+                clearHotAirOvenInputs();
+            }
+
+            // AJAX Submit for Hot Air Oven
+            (function() {
+                function initHotAirOvenForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE-FOM-007"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastHAO('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('hao_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastHAO('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastHAO('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastHAO(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initHotAirOvenForm);
+                } else {
+                    initHotAirOvenForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -1019,380 +1370,756 @@
     <x-formTemplete id="TDPL/BE-FOM-008" docNo="TDPL/BE-FOM-008" docName="Incubator Temperature Monitoring Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month / Year:</strong>
+                <input type="month" name="inc_month_year" id="inc_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadIncubator()">
+            </div>
+            <div>
+                <strong>Instrument ID / No.:</strong>
+                <input type="text" name="inc_instrument_id" id="inc_instrument_id" list="incEquipList"
+                    style="border:1px solid #000; padding:5px; width:200px;" placeholder="All"
+                    onchange="loadIncubator()" onblur="loadIncubator()">
+                <datalist id="incEquipList">
+                    <option value="INC-001">
+                    <option value="INC-002">
+                    <option value="INC-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearIncubator()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
+
         <input type="hidden" name="inc_form_id" id="inc_form_id">
 
-        <!-- ================= FILTERS ================= -->
-
-        <p>
-            <strong>Month / Year:</strong>
-            <input type="month" class="tlog-input" style="width:180px;" name="inc_month_year" id="inc_month_year"
-                onchange="loadIncubator()">
-
-            &nbsp;&nbsp;&nbsp;
-
-            <strong>Instrument ID / No.:</strong>
-            <input list="incEquipList" class="tlog-input" style="width:200px;" name="inc_instrument_id"
-                id="inc_instrument_id" placeholder="All" oninput="loadIncubator()">
-
-            <datalist id="incEquipList">
-                <option value="INC-001">
-                <option value="INC-002">
-                <option value="INC-003">
-            </datalist>
-
-        </p>
-
-        <br>
-
-        <!-- ================= MAIN TABLE ================= -->
-
-        <table class="tlog-table" style="width:100%;">
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <tbody>
-
-                <!-- HEADER -->
                 <tr>
-                    <th rowspan="2">Date</th>
-                    <th colspan="2">Morning</th>
-                    <th colspan="2">Evening</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;" rowspan="2">Date</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;" colspan="2">Morning</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;" colspan="2">Evening</th>
                 </tr>
                 <tr>
-                    <th>Temperature (°C)</th>
-                    <th>Signature</th>
-                    <th>Temperature (°C)</th>
-                    <th>Signature</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Temperature (&deg;C)</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Signature</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Temperature (&deg;C)</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Signature</th>
                 </tr>
 
-                <!-- DAYS 1–31 -->
                 @for ($day = 1; $day <= 31; $day++)
                     <tr>
-                        <td><strong>{{ $day }}</strong></td>
-
-                        <td>
-                            <input type="text" class="tlog-input" name="inc_morning_temp[{{ $day }}]"
-                                id="inc_morning_temp_{{ $day }}"
-                                onblur="inlineSaveInc(this,'inc_morning_temp',{{ $day }})">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $day }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="inc_morning_temp_{{ $day }}" name="inc_morning_temp[{{ $day }}]"
+                                style="width:100%; padding:4px; border:1px solid #999; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="tlog-input" name="inc_morning_sign[{{ $day }}]"
-                                id="inc_morning_sign_{{ $day }}"
-                                onblur="inlineSaveInc(this,'inc_morning_sign',{{ $day }})">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="inc_morning_sign_{{ $day }}" name="inc_morning_sign[{{ $day }}]"
+                                style="width:100%; padding:4px; border:1px solid #999; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="tlog-input" name="inc_evening_temp[{{ $day }}]"
-                                id="inc_evening_temp_{{ $day }}"
-                                onblur="inlineSaveInc(this,'inc_evening_temp',{{ $day }})">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="inc_evening_temp_{{ $day }}" name="inc_evening_temp[{{ $day }}]"
+                                style="width:100%; padding:4px; border:1px solid #999; border-radius:4px;">
                         </td>
-
-                        <td>
-                            <input type="text" class="tlog-input" name="inc_evening_sign[{{ $day }}]"
-                                id="inc_evening_sign_{{ $day }}"
-                                onblur="inlineSaveInc(this,'inc_evening_sign',{{ $day }})">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" id="inc_evening_sign_{{ $day }}" name="inc_evening_sign[{{ $day }}]"
+                                style="width:100%; padding:4px; border:1px solid #999; border-radius:4px;">
                         </td>
                     </tr>
                 @endfor
-
             </tbody>
         </table>
 
-        <br>
+        <p><strong>Acceptable Temperature:</strong> ~37&deg;C</p>
 
-        <p>
-            <strong>Acceptable Temperature:</strong> ~37°C
-        </p>
+        <script>
+            function loadIncubator() {
+                const monthYear = document.getElementById('inc_month_year').value;
+                const instrument = document.getElementById('inc_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('inc_month_year', monthYear);
+                if (instrument) params.append('inc_instrument_id', instrument);
+
+                fetch(`/newforms/be/incubator/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearIncubatorInputs();
+
+                    if (!res.data) {
+                        document.getElementById('inc_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('inc_form_id').value = res.data.id;
+
+                    const fields = ['inc_morning_temp', 'inc_morning_sign', 'inc_evening_temp', 'inc_evening_sign'];
+                    fields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearIncubatorInputs() {
+                const fields = ['inc_morning_temp', 'inc_morning_sign', 'inc_evening_temp', 'inc_evening_sign'];
+                for (let d = 1; d <= 31; d++) {
+                    fields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+                document.getElementById('inc_form_id').value = '';
+            }
+
+            function clearIncubator() {
+                document.getElementById('inc_month_year').value = '';
+                document.getElementById('inc_instrument_id').value = '';
+                clearIncubatorInputs();
+            }
+
+            // AJAX Submit for Incubator
+            (function() {
+                function initIncubatorForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE-FOM-008"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastINC('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('inc_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastINC('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastINC('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastINC(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initIncubatorForm);
+                } else {
+                    initIncubatorForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE-FOM-009" docNo="TDPL/BE-FOM-009" docName="Laminar Air Flow Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="laf_form_id" id="laf_form_id">
 
-        <style>
-            .maint-table,
-            .maint-table th,
-            .maint-table td {
-                border: 1px solid #000;
-                border-collapse: collapse;
-                text-align: center;
-                padding: 4px;
-            }
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Department:</strong>
+                <input list="lafDeptList" name="laf_department" id="laf_department"
+                    style="border:1px solid #000; padding:5px; width:200px;"
+                    placeholder="All" oninput="loadLafForm()">
+                <datalist id="lafDeptList">
+                    <option value="Biochemistry">
+                    <option value="Pathology">
+                    <option value="Hematology">
+                    <option value="Microbiology">
+                </datalist>
+            </div>
+            <div>
+                <strong>Month & Year:</strong>
+                <input type="month" name="laf_month_year" id="laf_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadLafForm()">
+            </div>
+            <div>
+                <strong>Equipment ID:</strong>
+                <input list="lafEquipList" name="laf_equipment_id" id="laf_equipment_id"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    placeholder="All" oninput="loadLafForm()">
+                <datalist id="lafEquipList">
+                    <option value="LAF-001">
+                    <option value="LAF-002">
+                    <option value="LAF-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearLafForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-            .input-box {
-                width: 100%;
-                padding: 4px;
-                border: 1px solid #888;
-                border-radius: 4px;
-            }
-        </style>
-
-        <!-- ================= HEADER ================= -->
-
-        <p>
-            <strong>Department:</strong>
-            <input list="lafDeptList" class="input-box" style="width:200px;" name="laf_department" id="laf_department"
-                placeholder="All" oninput="loadLafForm()">
-
-            <datalist id="lafDeptList">
-                <option value="Biochemistry">
-                <option value="Pathology">
-                <option value="Hematology">
-                <option value="Microbiology">
-            </datalist>
-
-
-            &nbsp;&nbsp;&nbsp;&nbsp;
-
-            <strong>Month & Year:</strong>
-            <input type="month" class="input-box" style="width:180px;" name="laf_month_year" id="laf_month_year"
-                onchange="loadLafForm()">
-
-            &nbsp;&nbsp;&nbsp;&nbsp;
-
-            <strong>Equipment ID:</strong>
-            <input list="lafEquipList" class="input-box" style="width:180px;" name="laf_equipment_id"
-                id="laf_equipment_id" placeholder="All" oninput="loadLafForm()">
-
-            <datalist id="lafEquipList">
-                <option value="LAF-001">
-                <option value="LAF-002">
-                <option value="LAF-003">
-            </datalist>
-
-        </p>
-
-        <br>
-
-        <!-- ================= TABLE ================= -->
-
-        <table class="maint-table" style="width:100%;">
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <tbody>
-
-                {{-- HEADERS (UNCHANGED) --}}
                 <tr>
-                    <th rowspan="3">Date</th>
-                    <th rowspan="3">Clean<br>with 70% IPA</th>
-                    <th rowspan="3">UV<br>Light<br>15 mins</th>
-                    <th rowspan="3">Manometer Reading<br>(10±1)</th>
-                    <th rowspan="3">Done by<br>Sign</th>
-                    <th rowspan="3">Availability of<br>1% Hypo</th>
-                    <th colspan="4">Weekly Maintenance</th>
-                    <th rowspan="3" colspan="2">Checked by<br>Sign</th>
-                    <th rowspan="3">Remarks</th>
+                    <th rowspan="3" style="border:1px solid #000; padding:4px; text-align:center;">Date</th>
+                    <th rowspan="3" style="border:1px solid #000; padding:4px; text-align:center;">Clean<br>with 70% IPA</th>
+                    <th rowspan="3" style="border:1px solid #000; padding:4px; text-align:center;">UV<br>Light<br>15 mins</th>
+                    <th rowspan="3" style="border:1px solid #000; padding:4px; text-align:center;">Manometer Reading<br>(10±1)</th>
+                    <th rowspan="3" style="border:1px solid #000; padding:4px; text-align:center;">Done by<br>Sign</th>
+                    <th rowspan="3" style="border:1px solid #000; padding:4px; text-align:center;">Availability of<br>1% Hypo</th>
+                    <th colspan="4" style="border:1px solid #000; padding:4px; text-align:center;">Weekly Maintenance</th>
+                    <th rowspan="3" colspan="2" style="border:1px solid #000; padding:4px; text-align:center;">Checked by<br>Sign</th>
+                    <th rowspan="3" style="border:1px solid #000; padding:4px; text-align:center;">Remarks</th>
+                </tr>
+                <tr>
+                    <th rowspan="2" style="border:1px solid #000; padding:4px; text-align:center;">Test for Settle Plate<br>Done Date</th>
+                    <th colspan="2" style="border:1px solid #000; padding:4px; text-align:center;">Settle Plate Result<br>(0–5 CFU)</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">UV Efficacy</th>
+                </tr>
+                <tr>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Yes</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">No</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;"></th>
                 </tr>
 
-                <tr>
-                    <th rowspan="2">Test for Settle Plate<br>Done Date</th>
-                    <th colspan="2">Settle Plate Result<br>(0–5 CFU)</th>
-                    <th>UV Efficacy</th>
-                </tr>
-
-                <tr>
-                    <th>Yes</th>
-                    <th>No</th>
-                    <th></th>
-                </tr>
-
-                {{-- DAYS 1–31 --}}
                 @for ($i = 1; $i <= 31; $i++)
                     <tr>
-                        <td><strong>{{ $i }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $i }}</strong></td>
 
-                        {{-- Clean with 70% IPA --}}
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="laf_clean_ipa[{{ $i }}]"
                                 id="laf_clean_ipa_{{ $i }}" value="1">
                         </td>
 
-                        {{-- UV Light --}}
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="laf_uv_light[{{ $i }}]"
                                 id="laf_uv_light_{{ $i }}" value="1">
                         </td>
 
-                        {{-- Manometer --}}
-                        <td>
-                            <input type="text" class="input-box" name="laf_manometer[{{ $i }}]"
-                                id="laf_manometer_{{ $i }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="laf_manometer[{{ $i }}]"
+                                id="laf_manometer_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        {{-- Done by --}}
-                        <td>
-                            <input type="text" class="input-box" name="laf_done_by[{{ $i }}]"
-                                id="laf_done_by_{{ $i }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="laf_done_by[{{ $i }}]"
+                                id="laf_done_by_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        {{-- Hypo --}}
-                        <td>
-                            <select class="input-box" name="laf_hypo_available[{{ $i }}]"
-                                id="laf_hypo_available_{{ $i }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <select name="laf_hypo_available[{{ $i }}]"
+                                id="laf_hypo_available_{{ $i }}"
+                                style="padding:4px; border:1px solid #aaa; border-radius:4px;">
                                 <option value="">Select</option>
                                 <option value="Available">Available</option>
                                 <option value="Not Available">Not Available</option>
                             </select>
                         </td>
 
-                        {{-- Settle plate date --}}
-                        <td>
-                            <input type="date" class="input-box" name="laf_settle_plate_date[{{ $i }}]"
-                                id="laf_settle_plate_date_{{ $i }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="date" name="laf_settle_plate_date[{{ $i }}]"
+                                id="laf_settle_plate_date_{{ $i }}"
+                                style="padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        {{-- Settle plate yes --}}
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="radio" name="laf_settle_result[{{ $i }}]"
                                 id="laf_settle_yes_{{ $i }}" value="yes">
                         </td>
 
-                        {{-- Settle plate no --}}
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="radio" name="laf_settle_result[{{ $i }}]"
                                 id="laf_settle_no_{{ $i }}" value="no">
                         </td>
 
-                        {{-- UV efficacy --}}
-                        <td>
-                            <select class="input-box" name="laf_uv_efficacy[{{ $i }}]"
-                                id="laf_uv_efficacy_{{ $i }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <select name="laf_uv_efficacy[{{ $i }}]"
+                                id="laf_uv_efficacy_{{ $i }}"
+                                style="padding:4px; border:1px solid #aaa; border-radius:4px;">
                                 <option value="">Select</option>
                                 <option value="OK">OK</option>
                                 <option value="Not OK">Not OK</option>
                             </select>
                         </td>
 
-                        {{-- Checked by --}}
-                        <td colspan="2">
-                            <input type="text" class="input-box" name="laf_checked_by[{{ $i }}]"
-                                id="laf_checked_by_{{ $i }}">
+                        <td colspan="2" style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="laf_checked_by[{{ $i }}]"
+                                id="laf_checked_by_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        {{-- Remarks --}}
-                        <td>
-                            <input type="text" class="input-box" name="laf_remarks[{{ $i }}]"
-                                id="laf_remarks_{{ $i }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="laf_remarks[{{ $i }}]"
+                                id="laf_remarks_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     </tr>
                 @endfor
-
             </tbody>
         </table>
+
+        <script>
+            function loadLafForm() {
+                const monthYear = document.getElementById('laf_month_year').value;
+                const department = document.getElementById('laf_department').value;
+                const equipment = document.getElementById('laf_equipment_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('laf_month_year', monthYear);
+                if (department) params.append('laf_department', department);
+                if (equipment) params.append('laf_equipment_id', equipment);
+
+                fetch(`/newforms/be/laf/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearLafInputs();
+
+                    if (!res.data) {
+                        document.getElementById('laf_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('laf_form_id').value = res.data.id;
+
+                    // Checkbox fields
+                    const checkboxFields = ['laf_clean_ipa', 'laf_uv_light'];
+                    checkboxFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.checked = true;
+                            });
+                        }
+                    });
+
+                    // Text / date / select fields
+                    const textFields = ['laf_manometer', 'laf_done_by', 'laf_hypo_available', 'laf_settle_plate_date', 'laf_uv_efficacy', 'laf_checked_by', 'laf_remarks'];
+                    textFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+
+                    // Radio fields
+                    if (res.data.laf_settle_result) {
+                        Object.keys(res.data.laf_settle_result).forEach(day => {
+                            const val = res.data.laf_settle_result[day];
+                            if (val === 'yes') {
+                                const el = document.getElementById(`laf_settle_yes_${day}`);
+                                if (el) el.checked = true;
+                            } else if (val === 'no') {
+                                const el = document.getElementById(`laf_settle_no_${day}`);
+                                if (el) el.checked = true;
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearLafInputs() {
+                const textFields = ['laf_manometer', 'laf_done_by', 'laf_hypo_available', 'laf_settle_plate_date', 'laf_uv_efficacy', 'laf_checked_by', 'laf_remarks'];
+                const checkboxFields = ['laf_clean_ipa', 'laf_uv_light'];
+
+                for (let d = 1; d <= 31; d++) {
+                    textFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                    checkboxFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.checked = false;
+                    });
+                    // Radio buttons
+                    const yesEl = document.getElementById(`laf_settle_yes_${d}`);
+                    const noEl = document.getElementById(`laf_settle_no_${d}`);
+                    if (yesEl) yesEl.checked = false;
+                    if (noEl) noEl.checked = false;
+                }
+                document.getElementById('laf_form_id').value = '';
+            }
+
+            function clearLafForm() {
+                document.getElementById('laf_department').value = '';
+                document.getElementById('laf_month_year').value = '';
+                document.getElementById('laf_equipment_id').value = '';
+                clearLafInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initLafForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE-FOM-009"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastLaf('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('laf_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastLaf('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastLaf('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastLaf(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initLafForm);
+                } else {
+                    initLafForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-010" docNo="TDPL/BE/FOM-010" docName="Autoclave Maintenance Form" issueNo="2.0"
         issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="aut_form_id" id="aut_form_id">
 
-        <style>
-            .clean-table,
-            .clean-table th,
-            .clean-table td {
-                border: 1px solid #000;
-                border-collapse: collapse;
-                text-align: center;
-                padding: 4px;
-            }
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month & Year:</strong>
+                <input type="month" name="aut_month_year" id="aut_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadAutoclave()">
+            </div>
+            <div>
+                <strong>Instrument ID / S. No.:</strong>
+                <input list="autEquipList" name="aut_instrument_id" id="aut_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:200px;"
+                    placeholder="All" oninput="loadAutoclave()">
+                <datalist id="autEquipList">
+                    <option value="AUTO-001">
+                    <option value="AUTO-002">
+                    <option value="AUTO-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearAutoclaveForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-            .input-box {
-                width: 100%;
-                padding: 4px;
-                border: 1px solid #777;
-                border-radius: 4px;
-            }
-        </style>
-
-        <!-- ================= FILTERS ================= -->
-
-        <p>
-            <strong>Month & Year:</strong>
-            <input type="month" class="input-box" style="width:180px;" name="aut_month_year" id="aut_month_year"
-                onchange="loadAutoclave()">
-
-            &nbsp;&nbsp;&nbsp;&nbsp;
-
-            <strong>Instrument ID / S. No.:</strong>
-            <input list="autEquipList" class="input-box" style="width:200px;" name="aut_instrument_id"
-                id="aut_instrument_id" placeholder="All" oninput="loadAutoclave()">
-
-            <datalist id="autEquipList">
-                <option value="AUTO-001">
-                <option value="AUTO-002">
-                <option value="AUTO-003">
-            </datalist>
-
-            <datalist id="autEquipList">
-                <option value="AUTO-001">
-                <option value="AUTO-002">
-                <option value="AUTO-003">
-            </datalist>
-        </p>
-
-        <br>
-
-        <!-- ================= TABLE ================= -->
-
-        <table class="clean-table" style="width:100%;">
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <tbody>
-
                 <tr>
-                    <th>Date</th>
-                    <th>Cleaning of the Outside</th>
-                    <th>Chamber Water Change</th>
-                    <th>Cleaning of the Inside</th>
-                    <th>Check Power ON with Light</th>
-                    <th>Lab Staff Signature</th>
-                    <th>Lab Supervisor Signature</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Date</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Cleaning of the Outside</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Chamber Water Change</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Cleaning of the Inside</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Check Power ON with Light</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Lab Staff Signature</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Lab Supervisor Signature</th>
                 </tr>
 
                 @for ($i = 1; $i <= 31; $i++)
                     <tr>
-                        <td><strong>{{ $i }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $i }}</strong></td>
 
-                        <!-- Cleaning Outside -->
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="aut_clean_outside[{{ $i }}]"
                                 id="aut_clean_outside_{{ $i }}" value="1">
                         </td>
 
-                        <!-- Chamber Water Change -->
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="aut_chamber_water[{{ $i }}]"
                                 id="aut_chamber_water_{{ $i }}" value="1">
                         </td>
 
-                        <!-- Cleaning Inside -->
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="aut_clean_inside[{{ $i }}]"
                                 id="aut_clean_inside_{{ $i }}" value="1">
                         </td>
 
-                        <!-- Power ON Check -->
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="aut_power_check[{{ $i }}]"
                                 id="aut_power_check_{{ $i }}" value="1">
                         </td>
 
-                        <!-- Lab Staff Signature -->
-                        <td>
-                            <input type="text" class="input-box" name="aut_lab_staff_sign[{{ $i }}]"
-                                id="aut_lab_staff_sign_{{ $i }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="aut_lab_staff_sign[{{ $i }}]"
+                                id="aut_lab_staff_sign_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <!-- Lab Supervisor Signature -->
-                        <td>
-                            <input type="text" class="input-box" name="aut_lab_supervisor_sign[{{ $i }}]"
-                                id="aut_lab_supervisor_sign_{{ $i }}">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="aut_lab_supervisor_sign[{{ $i }}]"
+                                id="aut_lab_supervisor_sign_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     </tr>
                 @endfor
-
             </tbody>
         </table>
+
+        <script>
+            function loadAutoclave() {
+                const monthYear = document.getElementById('aut_month_year').value;
+                const instrument = document.getElementById('aut_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('aut_month_year', monthYear);
+                if (instrument) params.append('aut_instrument_id', instrument);
+
+                fetch(`/newforms/be/autoclave/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearAutoclaveInputs();
+
+                    if (!res.data) {
+                        document.getElementById('aut_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('aut_form_id').value = res.data.id;
+
+                    // Checkbox fields
+                    const checkboxFields = ['aut_clean_outside', 'aut_chamber_water', 'aut_clean_inside', 'aut_power_check'];
+                    checkboxFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.checked = true;
+                            });
+                        }
+                    });
+
+                    // Text fields
+                    const textFields = ['aut_lab_staff_sign', 'aut_lab_supervisor_sign'];
+                    textFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearAutoclaveInputs() {
+                const textFields = ['aut_lab_staff_sign', 'aut_lab_supervisor_sign'];
+                const checkboxFields = ['aut_clean_outside', 'aut_chamber_water', 'aut_clean_inside', 'aut_power_check'];
+
+                for (let d = 1; d <= 31; d++) {
+                    textFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                    checkboxFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.checked = false;
+                    });
+                }
+                document.getElementById('aut_form_id').value = '';
+            }
+
+            function clearAutoclaveForm() {
+                document.getElementById('aut_month_year').value = '';
+                document.getElementById('aut_instrument_id').value = '';
+                clearAutoclaveInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initAutoclaveForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-010"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastAutoclave('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('aut_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastAutoclave('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastAutoclave('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastAutoclave(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initAutoclaveForm);
+                } else {
+                    initAutoclaveForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -1400,39 +2127,46 @@
     <x-formTemplete id="TDPL/BE/FOM-012" docNo="TDPL/BE/FOM-012" docName="Hot Air Oven Maintenance Form" issueNo="2.0"
         issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="hao_maint_form_id" id="hao_maint_form_id">
 
-        <p>
-            <strong>Month & Year:</strong>
-            <input type="month" name="hao_maint_month_year" id="hao_maint_month_year" onchange="loadHaoMaintenance()">
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month & Year:</strong>
+                <input type="month" name="hao_maint_month_year" id="hao_maint_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadHaoMaintenance()">
+            </div>
+            <div>
+                <strong>Instrument ID / S. No.:</strong>
+                <input list="haoMaintEquipList" name="hao_maint_instrument_id" id="hao_maint_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:200px;"
+                    placeholder="All" oninput="loadHaoMaintenance()">
+                <datalist id="haoMaintEquipList">
+                    <option value="HAO-001">
+                    <option value="HAO-002">
+                    <option value="HAO-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearHaoMaintForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-            <strong>Instrument ID / S. No.:</strong>
-            <input list="haoMaintEquipList" name="hao_maint_instrument_id" id="hao_maint_instrument_id"
-                placeholder="All" oninput="loadHaoMaintenance()">
-
-            <datalist id="haoMaintEquipList">
-                <option value="HAO-001">
-                <option value="HAO-002">
-                <option value="HAO-003">
-            </datalist>
-
-        </p>
-
-        <table border="1" cellpadding="5" cellspacing="0" width="100%"
-            style="border-collapse: collapse; text-align:center;">
-
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <tr>
-                <td><strong>Date</strong></td>
+                <th style="border:1px solid #000; padding:4px; text-align:center;">Date</th>
                 @for ($i = 1; $i <= 31; $i++)
-                    <td><strong>{{ $i }}</strong></td>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $i }}</th>
                 @endfor
             </tr>
 
             <tr>
-                <td><strong>Cleaning from Outside</strong></td>
+                <td style="border:1px solid #000; padding:4px;"><strong>Cleaning from Outside</strong></td>
                 @for ($i = 1; $i <= 31; $i++)
-                    <td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center;">
                         <input type="checkbox" name="hao_maint_clean_outside[{{ $i }}]"
                             id="hao_maint_clean_outside_{{ $i }}" value="1">
                     </td>
@@ -1440,9 +2174,9 @@
             </tr>
 
             <tr>
-                <td><strong>Cleaning from Inside with Isopropyl Alcohol</strong></td>
+                <td style="border:1px solid #000; padding:4px;"><strong>Cleaning from Inside with Isopropyl Alcohol</strong></td>
                 @for ($i = 1; $i <= 31; $i++)
-                    <td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center;">
                         <input type="checkbox" name="hao_maint_clean_inside[{{ $i }}]"
                             id="hao_maint_clean_inside_{{ $i }}" value="1">
                     </td>
@@ -1450,9 +2184,9 @@
             </tr>
 
             <tr>
-                <td><strong>Temperature Check</strong></td>
+                <td style="border:1px solid #000; padding:4px;"><strong>Temperature Check</strong></td>
                 @for ($i = 1; $i <= 31; $i++)
-                    <td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center;">
                         <input type="checkbox" name="hao_maint_temperature_check[{{ $i }}]"
                             id="hao_maint_temperature_check_{{ $i }}" value="1">
                     </td>
@@ -1460,9 +2194,9 @@
             </tr>
 
             <tr>
-                <td><strong>Check Power ON with Light</strong></td>
+                <td style="border:1px solid #000; padding:4px;"><strong>Check Power ON with Light</strong></td>
                 @for ($i = 1; $i <= 31; $i++)
-                    <td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center;">
                         <input type="checkbox" name="hao_maint_power_check[{{ $i }}]"
                             id="hao_maint_power_check_{{ $i }}" value="1">
                     </td>
@@ -1470,29 +2204,176 @@
             </tr>
 
             <tr>
-                <td><strong>Lab Staff Signature</strong></td>
+                <td style="border:1px solid #000; padding:4px;"><strong>Lab Staff Signature</strong></td>
                 @for ($i = 1; $i <= 31; $i++)
-                    <td>
-                        <input type="text" style="width: 70px;" name="hao_maint_lab_staff_sign[{{ $i }}]"
-                            id="hao_maint_lab_staff_sign_{{ $i }}">
+                    <td style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="hao_maint_lab_staff_sign[{{ $i }}]"
+                            id="hao_maint_lab_staff_sign_{{ $i }}"
+                            style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
                 @endfor
             </tr>
 
             <tr>
-                <td><strong>Lab Supervisor Signature</strong></td>
+                <td style="border:1px solid #000; padding:4px;"><strong>Lab Supervisor Signature</strong></td>
                 @for ($i = 1; $i <= 31; $i++)
-                    <td>
-                        <input type="text" style="width: 70px;"
-                            name="hao_maint_lab_supervisor_sign[{{ $i }}]"
-                            id="hao_maint_lab_supervisor_sign_{{ $i }}">
+                    <td style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="hao_maint_lab_supervisor_sign[{{ $i }}]"
+                            id="hao_maint_lab_supervisor_sign_{{ $i }}"
+                            style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
                 @endfor
             </tr>
-
         </table>
 
-        <br><br>
+        <script>
+            function loadHaoMaintenance() {
+                const monthYear = document.getElementById('hao_maint_month_year').value;
+                const instrument = document.getElementById('hao_maint_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('hao_maint_month_year', monthYear);
+                if (instrument) params.append('hao_maint_instrument_id', instrument);
+
+                fetch(`/newforms/be/hao-maintenance/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearHaoMaintInputs();
+
+                    if (!res.data) {
+                        document.getElementById('hao_maint_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('hao_maint_form_id').value = res.data.id;
+
+                    // Checkbox fields
+                    const checkboxFields = ['hao_maint_clean_outside', 'hao_maint_clean_inside', 'hao_maint_temperature_check', 'hao_maint_power_check'];
+                    checkboxFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.checked = true;
+                            });
+                        }
+                    });
+
+                    // Text fields
+                    const textFields = ['hao_maint_lab_staff_sign', 'hao_maint_lab_supervisor_sign'];
+                    textFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearHaoMaintInputs() {
+                const checkboxFields = ['hao_maint_clean_outside', 'hao_maint_clean_inside', 'hao_maint_temperature_check', 'hao_maint_power_check'];
+                const textFields = ['hao_maint_lab_staff_sign', 'hao_maint_lab_supervisor_sign'];
+
+                for (let d = 1; d <= 31; d++) {
+                    checkboxFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.checked = false;
+                    });
+                    textFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+                document.getElementById('hao_maint_form_id').value = '';
+            }
+
+            function clearHaoMaintForm() {
+                document.getElementById('hao_maint_month_year').value = '';
+                document.getElementById('hao_maint_instrument_id').value = '';
+                clearHaoMaintInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initHaoMaintForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-012"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastHaoMaint('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('hao_maint_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastHaoMaint('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastHaoMaint('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastHaoMaint(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initHaoMaintForm);
+                } else {
+                    initHaoMaintForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -1500,136 +2381,275 @@
     <x-formTemplete id="TDPL/BE/FOM-013" docNo="TDPL/BE/FOM-013" docName="Incubator Maintenance Form" issueNo="2.0"
         issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="inc_maint_form_id" id="inc_maint_form_id">
 
-        <p style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
-
-            <span style="display:flex; align-items:center; gap:8px;">
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
                 <strong>Month & Year:</strong>
-                <input type="month" class="qc-input" name="inc_maint_month_year" id="inc_maint_month_year"
-                    style="width:180px;" onchange="loadIncubatorMaintenance()">
-            </span>
-
-            <span style="display:flex; align-items:center; gap:8px;">
+                <input type="month" name="inc_maint_month_year" id="inc_maint_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadIncubatorMaintenance()">
+            </div>
+            <div>
                 <strong>Instrument S. No.:</strong>
-                <input list="incMaintEquipList" class="qc-input" name="inc_maint_instrument_id"
-                    id="inc_maint_instrument_id" placeholder="All" style="width:220px;"
-                    oninput="loadIncubatorMaintenance()">
-
+                <input list="incMaintEquipList" name="inc_maint_instrument_id" id="inc_maint_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:200px;"
+                    placeholder="All" oninput="loadIncubatorMaintenance()">
                 <datalist id="incMaintEquipList">
                     <option value="INC-001">
                     <option value="INC-002">
                     <option value="INC-003">
                 </datalist>
-            </span>
+            </div>
+            <button type="button" onclick="clearIncMaintForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-        </p>
-
-        <table border="1" cellpadding="6" cellspacing="0"
-            style="border-collapse: collapse; width: 100%; text-align: center;">
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <tbody>
-                <tr style="background:#f2f2f2;">
-                    <td><strong>Date</strong></td>
-                    <td><strong>Cleaning of the Outside</strong></td>
-                    <td><strong>Cleaning of the Inside</strong></td>
-                    <td><strong>Temperature Check</strong></td>
-                    <td><strong>Check Power On with Light</strong></td>
-                    <td><strong>Lab Staff Signature</strong></td>
-                    <td><strong>Lab Supervisor Signature</strong></td>
+                <tr>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Date</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Cleaning of the Outside</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Cleaning of the Inside</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Temperature Check</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Check Power On with Light</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Lab Staff Signature</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Lab Supervisor Signature</th>
                 </tr>
 
                 @for ($i = 1; $i <= 31; $i++)
                     <tr>
-                        <td><strong>{{ $i }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $i }}</strong></td>
 
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="inc_maint_clean_outside[{{ $i }}]"
-                                id="inc_maint_clean_outside_{{ $i }}" style="width:100%;">
+                                id="inc_maint_clean_outside_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="inc_maint_clean_inside[{{ $i }}]"
-                                id="inc_maint_clean_inside_{{ $i }}" style="width:100%;">
+                                id="inc_maint_clean_inside_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="inc_maint_temperature_check[{{ $i }}]"
-                                id="inc_maint_temperature_check_{{ $i }}" style="width:100%;">
+                                id="inc_maint_temperature_check_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="inc_maint_power_check[{{ $i }}]"
-                                id="inc_maint_power_check_{{ $i }}" style="width:100%;">
+                                id="inc_maint_power_check_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="inc_maint_lab_staff_sign[{{ $i }}]"
-                                id="inc_maint_lab_staff_sign_{{ $i }}" style="width:100%;">
+                                id="inc_maint_lab_staff_sign_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="inc_maint_lab_supervisor_sign[{{ $i }}]"
-                                id="inc_maint_lab_supervisor_sign_{{ $i }}" style="width:100%;">
+                                id="inc_maint_lab_supervisor_sign_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     </tr>
                 @endfor
-
             </tbody>
         </table>
+
+        <script>
+            function loadIncubatorMaintenance() {
+                const monthYear = document.getElementById('inc_maint_month_year').value;
+                const instrument = document.getElementById('inc_maint_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('inc_maint_month_year', monthYear);
+                if (instrument) params.append('inc_maint_instrument_id', instrument);
+
+                fetch(`/newforms/be/incubator-maintenance/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearIncMaintInputs();
+
+                    if (!res.data) {
+                        document.getElementById('inc_maint_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('inc_maint_form_id').value = res.data.id;
+
+                    const fields = ['inc_maint_clean_outside', 'inc_maint_clean_inside', 'inc_maint_temperature_check', 'inc_maint_power_check', 'inc_maint_lab_staff_sign', 'inc_maint_lab_supervisor_sign'];
+                    fields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearIncMaintInputs() {
+                const fields = ['inc_maint_clean_outside', 'inc_maint_clean_inside', 'inc_maint_temperature_check', 'inc_maint_power_check', 'inc_maint_lab_staff_sign', 'inc_maint_lab_supervisor_sign'];
+                for (let d = 1; d <= 31; d++) {
+                    fields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+                document.getElementById('inc_maint_form_id').value = '';
+            }
+
+            function clearIncMaintForm() {
+                document.getElementById('inc_maint_month_year').value = '';
+                document.getElementById('inc_maint_instrument_id').value = '';
+                clearIncMaintInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initIncMaintForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-013"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastIncMaint('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('inc_maint_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastIncMaint('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastIncMaint('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastIncMaint(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initIncMaintForm);
+                } else {
+                    initIncMaintForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-014" docNo="TDPL/BE/FOM-014" docName="Centrifuge Maintenance Form" issueNo="2.0"
         issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="cen_form_id" id="cen_form_id">
 
-        <p style="display:flex; align-items:center; gap:24px; flex-wrap:wrap;">
-
-            <span style="display:flex; align-items:center; gap:8px;">
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
                 <strong>Month & Year:</strong>
-                <input type="month" class="qc-input" name="cen_month_year" id="cen_month_year" style="width:180px;"
+                <input type="month" name="cen_month_year" id="cen_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
                     onchange="loadCentrifuge()">
-            </span>
-
-            <span style="display:flex; align-items:center; gap:8px;">
+            </div>
+            <div>
                 <strong>Instrument S. No.:</strong>
-                <input list="cenEquipList" class="qc-input" name="cen_instrument_id" id="cen_instrument_id"
-                    placeholder="All" style="width:220px;" oninput="loadCentrifuge()">
-
+                <input list="cenEquipList" name="cen_instrument_id" id="cen_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:200px;"
+                    placeholder="All" oninput="loadCentrifuge()">
                 <datalist id="cenEquipList">
                     <option value="CEN-001">
                     <option value="CEN-002">
                     <option value="CEN-003">
                 </datalist>
-            </span>
+            </div>
+            <button type="button" onclick="clearCenForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-        </p>
-
-        <table border="1" cellpadding="6" cellspacing="0"
-            style="border-collapse: collapse; width:100%; text-align:center;">
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <tbody>
 
                 <!-- DATE HEADER -->
                 <tr>
-                    <td><strong>Date</strong></td>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Date</th>
                     @for ($d = 1; $d <= 31; $d++)
                         @if (in_array($d, [8, 16, 24]))
-                            <td colspan="2"><strong>{{ $d }}</strong></td>
+                            <th colspan="2" style="border:1px solid #000; padding:4px; text-align:center;">{{ $d }}</th>
                         @else
-                            <td><strong>{{ $d }}</strong></td>
+                            <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $d }}</th>
                         @endif
                     @endfor
                 </tr>
 
                 <tr>
-                    <td colspan="35"><strong>Daily Maintenance</strong></td>
+                    <td colspan="35" style="border:1px solid #000; padding:4px; text-align:center;"><strong>Daily Maintenance</strong></td>
                 </tr>
 
                 @php
-                    $rows = [
+                    $cenDailyRows = [
                         'Cleaning from outside' => 'clean_outside',
                         'Cleaning from Inside' => 'clean_inside',
                         'Check Power Cord & Switch' => 'power_check',
@@ -1639,22 +2659,24 @@
                     ];
                 @endphp
 
-                @foreach ($rows as $label => $key)
+                @foreach ($cenDailyRows as $label => $key)
                     <tr>
-                        <td><strong>{{ $label }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $label }}</strong></td>
 
                         @for ($d = 1; $d <= 31; $d++)
                             @if (in_array($d, [8, 16, 24]))
-                                <td colspan="2">
-                                    <input type="text" class="qc-input"
+                                <td colspan="2" style="border:1px solid #000; padding:4px; text-align:center;">
+                                    <input type="text"
                                         name="cen_{{ $key }}[{{ $d }}]"
-                                        id="cen_{{ $key }}_{{ $d }}">
+                                        id="cen_{{ $key }}_{{ $d }}"
+                                        style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                                 </td>
                             @else
-                                <td>
-                                    <input type="text" class="qc-input"
+                                <td style="border:1px solid #000; padding:4px; text-align:center;">
+                                    <input type="text"
                                         name="cen_{{ $key }}[{{ $d }}]"
-                                        id="cen_{{ $key }}_{{ $d }}">
+                                        id="cen_{{ $key }}_{{ $d }}"
+                                        style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                                 </td>
                             @endif
                         @endfor
@@ -1662,56 +2684,248 @@
                 @endforeach
 
                 <tr>
-                    <td colspan="35"><strong>Weekly Maintenance</strong></td>
+                    <td colspan="35" style="border:1px solid #000; padding:4px; text-align:center;"><strong>Weekly Maintenance</strong></td>
                 </tr>
 
                 <tr>
-                    <td><strong>Clean Tube holders with 1% Sodium Hypochlorite</strong></td>
-                    <td colspan="8"><input type="text" class="qc-input" name="cen_week1_date"></td>
-                    <td colspan="9"><input type="text" class="qc-input" name="cen_week2_date"></td>
-                    <td colspan="9"><input type="text" class="qc-input" name="cen_week3_date"></td>
-                    <td colspan="8"><input type="text" class="qc-input" name="cen_week4_date"></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Clean Tube holders with 1% Sodium Hypochlorite</strong></td>
+                    <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week1_date" id="cen_week1_date"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
+                    <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week2_date" id="cen_week2_date"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
+                    <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week3_date" id="cen_week3_date"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
+                    <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week4_date" id="cen_week4_date"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
                 </tr>
 
                 <tr>
-                    <td><strong>Lab Staff Signature</strong></td>
-                    <td colspan="8"><input type="text" class="qc-input" name="cen_week1_staff"></td>
-                    <td colspan="9"><input type="text" class="qc-input" name="cen_week2_staff"></td>
-                    <td colspan="9"><input type="text" class="qc-input" name="cen_week3_staff"></td>
-                    <td colspan="8"><input type="text" class="qc-input" name="cen_week4_staff"></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Lab Staff Signature</strong></td>
+                    <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week1_staff" id="cen_week1_staff"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
+                    <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week2_staff" id="cen_week2_staff"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
+                    <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week3_staff" id="cen_week3_staff"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
+                    <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week4_staff" id="cen_week4_staff"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
                 </tr>
 
                 <tr>
-                    <td><strong>Lab Supervisor Signature</strong></td>
-                    <td colspan="8"><input type="text" class="qc-input" name="cen_week1_supervisor"></td>
-                    <td colspan="9"><input type="text" class="qc-input" name="cen_week2_supervisor"></td>
-                    <td colspan="9"><input type="text" class="qc-input" name="cen_week3_supervisor"></td>
-                    <td colspan="8"><input type="text" class="qc-input" name="cen_week4_supervisor"></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Lab Supervisor Signature</strong></td>
+                    <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week1_supervisor" id="cen_week1_supervisor"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
+                    <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week2_supervisor" id="cen_week2_supervisor"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
+                    <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week3_supervisor" id="cen_week3_supervisor"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
+                    <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="cen_week4_supervisor" id="cen_week4_supervisor"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                    </td>
                 </tr>
 
             </tbody>
         </table>
+
+        <script>
+            function loadCentrifuge() {
+                const monthYear = document.getElementById('cen_month_year').value;
+                const instrument = document.getElementById('cen_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('cen_month_year', monthYear);
+                if (instrument) params.append('cen_instrument_id', instrument);
+
+                fetch(`/newforms/be/centrifuge/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearCenInputs();
+
+                    if (!res.data) {
+                        document.getElementById('cen_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('cen_form_id').value = res.data.id;
+
+                    // Daily fields (array by day)
+                    const dailyFields = ['cen_clean_outside', 'cen_clean_inside', 'cen_power_check', 'cen_carbon_brush', 'cen_lab_staff_sign', 'cen_lab_supervisor_sign'];
+                    dailyFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+
+                    // Weekly fields (scalar values)
+                    const weeklyFields = [
+                        'cen_week1_date', 'cen_week2_date', 'cen_week3_date', 'cen_week4_date',
+                        'cen_week1_staff', 'cen_week2_staff', 'cen_week3_staff', 'cen_week4_staff',
+                        'cen_week1_supervisor', 'cen_week2_supervisor', 'cen_week3_supervisor', 'cen_week4_supervisor'
+                    ];
+                    weeklyFields.forEach(field => {
+                        const el = document.getElementById(field);
+                        if (el) el.value = res.data[field] ?? '';
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearCenInputs() {
+                // Daily fields
+                const dailyFields = ['cen_clean_outside', 'cen_clean_inside', 'cen_power_check', 'cen_carbon_brush', 'cen_lab_staff_sign', 'cen_lab_supervisor_sign'];
+                for (let d = 1; d <= 31; d++) {
+                    dailyFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+
+                // Weekly fields
+                const weeklyFields = [
+                    'cen_week1_date', 'cen_week2_date', 'cen_week3_date', 'cen_week4_date',
+                    'cen_week1_staff', 'cen_week2_staff', 'cen_week3_staff', 'cen_week4_staff',
+                    'cen_week1_supervisor', 'cen_week2_supervisor', 'cen_week3_supervisor', 'cen_week4_supervisor'
+                ];
+                weeklyFields.forEach(field => {
+                    const el = document.getElementById(field);
+                    if (el) el.value = '';
+                });
+
+                document.getElementById('cen_form_id').value = '';
+            }
+
+            function clearCenForm() {
+                document.getElementById('cen_month_year').value = '';
+                document.getElementById('cen_instrument_id').value = '';
+                clearCenInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initCenForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-014"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastCen('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('cen_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastCen('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastCen('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastCen(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initCenForm);
+                } else {
+                    initCenForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-015" docNo="TDPL/BE/FOM-015" docName="Beckman Coulter DXC700AU Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="dxc_form_id" id="dxc_form_id">
-        <div style="display:flex; gap:24px; align-items:center; flex-wrap:wrap; margin-bottom:12px;">
 
-            <div style="display:flex; align-items:center; gap:8px;">
-                <label><strong>Month/Year:</strong></label>
-                <input type="month" class="qc-input" name="dxc_month_year" id="dxc_month_year" style="width:180px;"
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month/Year:</strong>
+                <input type="month" name="dxc_month_year" id="dxc_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
                     onchange="loadDxcForm()">
             </div>
-
-            <div style="display:flex; align-items:center; gap:8px;">
-                <label><strong>Location:</strong></label>
-                <input list="dxcLocationList" class="qc-input" name="dxc_location" id="dxc_location" placeholder="All"
-                    style="width:220px;" oninput="loadDxcForm()">
-
+            <div>
+                <strong>Location:</strong>
+                <input list="dxcLocationList" name="dxc_location" id="dxc_location"
+                    style="border:1px solid #000; padding:5px; width:200px;"
+                    placeholder="All" oninput="loadDxcForm()">
                 <datalist id="dxcLocationList">
                     <option value="Hyderabad">
                     <option value="Bangalore">
@@ -1719,12 +2933,11 @@
                     <option value="Mumbai">
                 </datalist>
             </div>
-
-            <div style="display:flex; align-items:center; gap:8px;">
-                <label><strong>Department:</strong></label>
-                <input list="dxcDeptList" class="qc-input" name="dxc_department" id="dxc_department" placeholder="All"
-                    style="width:220px;" oninput="loadDxcForm()">
-
+            <div>
+                <strong>Department:</strong>
+                <input list="dxcDeptList" name="dxc_department" id="dxc_department"
+                    style="border:1px solid #000; padding:5px; width:200px;"
+                    placeholder="All" oninput="loadDxcForm()">
                 <datalist id="dxcDeptList">
                     <option value="Biochemistry">
                     <option value="Pathology">
@@ -1732,33 +2945,35 @@
                     <option value="Microbiology">
                 </datalist>
             </div>
-
+            <button type="button" onclick="clearDxcForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </div>
 
-
-        <table class="w-full border-collapse" border="1">
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <tbody>
 
                 <!-- DATE HEADER -->
                 <tr>
-                    <td><strong>Date</strong></td>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Date</th>
                     @for ($i = 1; $i <= 31; $i++)
                         @if ($i == 9 || $i == 17 || $i == 24)
-                            <td colspan="2"><strong>{{ $i }}</strong></td>
+                            <th colspan="2" style="border:1px solid #000; padding:4px; text-align:center;">{{ $i }}</th>
                         @else
-                            <td><strong>{{ $i }}</strong></td>
+                            <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $i }}</th>
                         @endif
                     @endfor
                 </tr>
 
                 <!-- Daily Maintenance Header -->
                 <tr>
-                    <td colspan="35"><strong>Daily Maintenance</strong></td>
+                    <td colspan="35" style="border:1px solid #000; padding:4px; text-align:center;"><strong>Daily Maintenance</strong></td>
                 </tr>
 
-                {{-- DAILY ROWS --}}
                 @php
-                    $dailyRows = [
+                    $dxcDailyRows = [
                         'Inspect the Syringes for Leaks' => 'inspect_syringes',
                         'Inspect the Wash Solution Roller Pump for Leaks' => 'inspect_roller_pump',
                         'Inspect The Sample Probe, Reagent Probe, and Mix Bars' => 'inspect_probes',
@@ -1771,22 +2986,24 @@
                     ];
                 @endphp
 
-                @foreach ($dailyRows as $label => $key)
+                @foreach ($dxcDailyRows as $label => $key)
                     <tr>
-                        <td><strong>{{ $label }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $label }}</strong></td>
 
                         @for ($i = 1; $i <= 31; $i++)
                             @if ($i == 9 || $i == 17 || $i == 24)
-                                <td colspan="2">
-                                    <input type="text" class="qc-input"
+                                <td colspan="2" style="border:1px solid #000; padding:4px; text-align:center;">
+                                    <input type="text"
                                         name="dxc_{{ $key }}[{{ $i }}]"
-                                        id="dxc_{{ $key }}_{{ $i }}">
+                                        id="dxc_{{ $key }}_{{ $i }}"
+                                        style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                                 </td>
                             @else
-                                <td>
-                                    <input type="text" class="qc-input"
+                                <td style="border:1px solid #000; padding:4px; text-align:center;">
+                                    <input type="text"
                                         name="dxc_{{ $key }}[{{ $i }}]"
-                                        id="dxc_{{ $key }}_{{ $i }}">
+                                        id="dxc_{{ $key }}_{{ $i }}"
+                                        style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                                 </td>
                             @endif
                         @endfor
@@ -1795,62 +3012,226 @@
 
                 <!-- Weekly Header -->
                 <tr>
-                    <td><strong>Weekly Maintenance</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Weekly Maintenance</strong></td>
 
-                    <td colspan="9">
+                    <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
                         <strong>1st Week – Date:</strong>
-                        <input type="text" class="qc-input" name="dxc_week_date[1]">
+                        <input type="text" name="dxc_week_date[1]" id="dxc_week_date_1"
+                            style="width:80px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
 
-                    <td colspan="9">
+                    <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
                         <strong>2nd Week – Date:</strong>
-                        <input type="text" class="qc-input" name="dxc_week_date[2]">
+                        <input type="text" name="dxc_week_date[2]" id="dxc_week_date_2"
+                            style="width:80px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
 
-                    <td colspan="8">
+                    <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
                         <strong>3rd Week – Date:</strong>
-                        <input type="text" class="qc-input" name="dxc_week_date[3]">
+                        <input type="text" name="dxc_week_date[3]" id="dxc_week_date_3"
+                            style="width:80px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
 
-                    <td colspan="8">
+                    <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
                         <strong>4th Week – Date:</strong>
-                        <input type="text" class="qc-input" name="dxc_week_date[4]">
+                        <input type="text" name="dxc_week_date[4]" id="dxc_week_date_4"
+                            style="width:80px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
                 </tr>
 
-                {{-- WEEKLY ROWS --}}
                 @php
-                    $weeklyRows = [
+                    $dxcWeeklyRows = [
                         'Clean the Sample Probe and Mix Bars' => 'clean_probe_mix',
                         'Perform a W2' => 'perform_w2',
                         'Performed by Supervisor' => 'performed_supervisor',
                     ];
                 @endphp
 
-                @foreach ($weeklyRows as $label => $key)
+                @foreach ($dxcWeeklyRows as $label => $key)
                     <tr>
-                        <td><strong>{{ $label }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $label }}</strong></td>
 
-                        <td colspan="9">
-                            <input type="text" class="qc-input-wide" name="dxc_{{ $key }}[1]">
+                        <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="dxc_{{ $key }}[1]" id="dxc_{{ $key }}_1"
+                                style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td colspan="9">
-                            <input type="text" class="qc-input-wide" name="dxc_{{ $key }}[2]">
+                        <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="dxc_{{ $key }}[2]" id="dxc_{{ $key }}_2"
+                                style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td colspan="8">
-                            <input type="text" class="qc-input-wide" name="dxc_{{ $key }}[3]">
+                        <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="dxc_{{ $key }}[3]" id="dxc_{{ $key }}_3"
+                                style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td colspan="8">
-                            <input type="text" class="qc-input-wide" name="dxc_{{ $key }}[4]">
+                        <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="dxc_{{ $key }}[4]" id="dxc_{{ $key }}_4"
+                                style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     </tr>
                 @endforeach
 
             </tbody>
         </table>
+
+        <script>
+            function loadDxcForm() {
+                const monthYear = document.getElementById('dxc_month_year').value;
+                const location = document.getElementById('dxc_location').value;
+                const department = document.getElementById('dxc_department').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('dxc_month_year', monthYear);
+                if (location) params.append('dxc_location', location);
+                if (department) params.append('dxc_department', department);
+
+                fetch(`/newforms/be/dxc/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearDxcInputs();
+
+                    if (!res.data) {
+                        document.getElementById('dxc_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('dxc_form_id').value = res.data.id;
+
+                    // Daily fields (array by day 1-31)
+                    const dailyFields = ['dxc_inspect_syringes', 'dxc_inspect_roller_pump', 'dxc_inspect_probes', 'dxc_replace_diluent', 'dxc_replace_probe_wash', 'dxc_clean_ise', 'dxc_calibrate_ise', 'dxc_performed_by', 'dxc_reviewed_by'];
+                    dailyFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+
+                    // Weekly fields (array by week 1-4)
+                    const weeklyFields = ['dxc_week_date', 'dxc_clean_probe_mix', 'dxc_perform_w2', 'dxc_performed_supervisor'];
+                    weeklyFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(week => {
+                                const el = document.getElementById(`${field}_${week}`);
+                                if (el) el.value = res.data[field][week];
+                            });
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearDxcInputs() {
+                // Daily fields
+                const dailyFields = ['dxc_inspect_syringes', 'dxc_inspect_roller_pump', 'dxc_inspect_probes', 'dxc_replace_diluent', 'dxc_replace_probe_wash', 'dxc_clean_ise', 'dxc_calibrate_ise', 'dxc_performed_by', 'dxc_reviewed_by'];
+                for (let d = 1; d <= 31; d++) {
+                    dailyFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+
+                // Weekly fields
+                const weeklyFields = ['dxc_week_date', 'dxc_clean_probe_mix', 'dxc_perform_w2', 'dxc_performed_supervisor'];
+                for (let w = 1; w <= 4; w++) {
+                    weeklyFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${w}`);
+                        if (el) el.value = '';
+                    });
+                }
+
+                document.getElementById('dxc_form_id').value = '';
+            }
+
+            function clearDxcForm() {
+                document.getElementById('dxc_month_year').value = '';
+                document.getElementById('dxc_location').value = '';
+                document.getElementById('dxc_department').value = '';
+                clearDxcInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initDxcForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-015"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastDxc('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('dxc_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastDxc('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastDxc('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastDxc(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initDxcForm);
+                } else {
+                    initDxcForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -1859,23 +3240,21 @@
     <x-formTemplete id="TDPL/BE/FOM-016" docNo="TDPL/BE/FOM-016" docName="Beckman Coulter DxI800 Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="dxi_form_id" id="dxi_form_id">
 
-        <!-- Top Section -->
-        <div style="display:flex; gap:24px; align-items:flex-end; margin-bottom:16px; flex-wrap:wrap;">
-
-            <div style="display:flex; flex-direction:column;">
-                <label><strong>Month / Year:</strong></label>
-                <input type="month" class="qc-input" style="min-width:180px; height:34px;" name="dxi_month_year"
-                    id="dxi_month_year" onchange="loadDxiForm()">
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month / Year:</strong>
+                <input type="month" name="dxi_month_year" id="dxi_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadDxiForm()">
             </div>
-
-            <div style="display:flex; flex-direction:column;">
-                <label><strong>Location:</strong></label>
-                <input list="dxiLocationList" class="qc-input" style="min-width:200px; height:34px;"
-                    name="dxi_location" id="dxi_location" placeholder="All" oninput="loadDxiForm()">
-
+            <div>
+                <strong>Location:</strong>
+                <input list="dxiLocationList" name="dxi_location" id="dxi_location"
+                    style="border:1px solid #000; padding:5px; width:200px;"
+                    placeholder="All" oninput="loadDxiForm()">
                 <datalist id="dxiLocationList">
                     <option value="Hyderabad">
                     <option value="Bangalore">
@@ -1883,12 +3262,11 @@
                     <option value="Mumbai">
                 </datalist>
             </div>
-
-            <div style="display:flex; flex-direction:column;">
-                <label><strong>Department:</strong></label>
-                <input list="dxiDeptList" class="qc-input" style="min-width:220px; height:34px;"
-                    name="dxi_department" id="dxi_department" placeholder="All" oninput="loadDxiForm()">
-
+            <div>
+                <strong>Department:</strong>
+                <input list="dxiDeptList" name="dxi_department" id="dxi_department"
+                    style="border:1px solid #000; padding:5px; width:200px;"
+                    placeholder="All" oninput="loadDxiForm()">
                 <datalist id="dxiDeptList">
                     <option value="Biochemistry">
                     <option value="Pathology">
@@ -1896,28 +3274,30 @@
                     <option value="Microbiology">
                 </datalist>
             </div>
-
+            <button type="button" onclick="clearDxiForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </div>
 
-
-        <!-- Full Table -->
-        <table class="qc-table" border="1" style="width:100%; border-collapse: collapse;">
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
 
             <!-- Date Row -->
             <tr>
-                <td><strong>Date</strong></td>
+                <th style="border:1px solid #000; padding:4px; text-align:center;">Date</th>
                 @for ($d = 1; $d <= 31; $d++)
-                    <td><strong>{{ $d }}</strong></td>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $d }}</th>
                 @endfor
             </tr>
 
             <!-- Daily Maintenance Title -->
             <tr>
-                <td colspan="32"><strong>DAILY MAINTENANCE</strong></td>
+                <td colspan="32" style="border:1px solid #000; padding:4px; text-align:center;"><strong>DAILY MAINTENANCE</strong></td>
             </tr>
 
             @php
-                $dailyRows = [
+                $dxiDailyRows = [
                     'System Backup Successful' => 'system_backup',
                     'Check Zone Temperature' => 'zone_temperature',
                     'Check System Supplies' => 'system_supplies',
@@ -1930,14 +3310,15 @@
                 ];
             @endphp
 
-            @foreach ($dailyRows as $label => $key)
+            @foreach ($dxiDailyRows as $label => $key)
                 <tr>
-                    <td><strong>{{ $label }}</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>{{ $label }}</strong></td>
                     @for ($i = 1; $i <= 31; $i++)
-                        <td>
-                            <input type="text" class="qc-input"
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text"
                                 name="dxi_{{ $key }}[{{ $i }}]"
-                                id="dxi_{{ $key }}_{{ $i }}">
+                                id="dxi_{{ $key }}_{{ $i }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     @endfor
                 </tr>
@@ -1945,27 +3326,31 @@
 
             <!-- Weekly Maintenance Section -->
             <tr>
-                <td><strong>WEEKLY MAINTENANCE</strong></td>
-                <td colspan="8">
+                <td style="border:1px solid #000; padding:4px;"><strong>WEEKLY MAINTENANCE</strong></td>
+                <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
                     <strong>1st Week – Date:</strong>
-                    <input type="text" class="qc-input" name="dxi_week_date[week1]" id="dxi_week_date_week1">
+                    <input type="text" name="dxi_week_date[week1]" id="dxi_week_date_week1"
+                        style="width:80px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                 </td>
-                <td colspan="9">
+                <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
                     <strong>2nd Week – Date:</strong>
-                    <input type="text" class="qc-input" name="dxi_week_date[week2]" id="dxi_week_date_week2">
+                    <input type="text" name="dxi_week_date[week2]" id="dxi_week_date_week2"
+                        style="width:80px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                 </td>
-                <td colspan="9">
+                <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
                     <strong>3rd Week – Date:</strong>
-                    <input type="text" class="qc-input" name="dxi_week_date[week3]" id="dxi_week_date_week3">
+                    <input type="text" name="dxi_week_date[week3]" id="dxi_week_date_week3"
+                        style="width:80px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                 </td>
-                <td colspan="8">
+                <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
                     <strong>4th Week – Date:</strong>
-                    <input type="text" class="qc-input" name="dxi_week_date[week4]" id="dxi_week_date_week4">
+                    <input type="text" name="dxi_week_date[week4]" id="dxi_week_date_week4"
+                        style="width:80px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                 </td>
             </tr>
 
             @php
-                $weeklyRows = [
+                $dxiWeeklyRows = [
                     'Clean Instrument Exterior' => 'clean_exterior',
                     'Inspect / Clean Primary Probe' => 'clean_primary_probe',
                     'Check Waste Filter Bottle' => 'waste_filter',
@@ -1974,33 +3359,196 @@
                 ];
             @endphp
 
-            @foreach ($weeklyRows as $label => $key)
+            @foreach ($dxiWeeklyRows as $label => $key)
                 <tr>
-                    <td><strong>{{ $label }}</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>{{ $label }}</strong></td>
 
-                    <td colspan="8">
-                        <input type="text" class="qc-input-wide" name="dxi_{{ $key }}[week1]"
-                            id="dxi_{{ $key }}_week1">
+                    <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="dxi_{{ $key }}[week1]"
+                            id="dxi_{{ $key }}_week1"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
 
-                    <td colspan="9">
-                        <input type="text" class="qc-input-wide" name="dxi_{{ $key }}[week2]"
-                            id="dxi_{{ $key }}_week2">
+                    <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="dxi_{{ $key }}[week2]"
+                            id="dxi_{{ $key }}_week2"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
 
-                    <td colspan="9">
-                        <input type="text" class="qc-input-wide" name="dxi_{{ $key }}[week3]"
-                            id="dxi_{{ $key }}_week3">
+                    <td colspan="9" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="dxi_{{ $key }}[week3]"
+                            id="dxi_{{ $key }}_week3"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
 
-                    <td colspan="8">
-                        <input type="text" class="qc-input-wide" name="dxi_{{ $key }}[week4]"
-                            id="dxi_{{ $key }}_week4">
+                    <td colspan="8" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="text" name="dxi_{{ $key }}[week4]"
+                            id="dxi_{{ $key }}_week4"
+                            style="width:90%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
                 </tr>
             @endforeach
 
         </table>
+
+        <script>
+            function loadDxiForm() {
+                const monthYear = document.getElementById('dxi_month_year').value;
+                const location = document.getElementById('dxi_location').value;
+                const department = document.getElementById('dxi_department').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('dxi_month_year', monthYear);
+                if (location) params.append('dxi_location', location);
+                if (department) params.append('dxi_department', department);
+
+                fetch(`/newforms/be/dxi800/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearDxiInputs();
+
+                    if (!res.data) {
+                        document.getElementById('dxi_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('dxi_form_id').value = res.data.id;
+
+                    // Daily fields (array by day 1-31)
+                    const dailyFields = ['dxi_system_backup', 'dxi_zone_temperature', 'dxi_system_supplies', 'dxi_clean_probe', 'dxi_solid_waste', 'dxi_prime_substrate', 'dxi_daily_cleaning', 'dxi_performed_by', 'dxi_reviewed_by'];
+                    dailyFields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+
+                    // Weekly fields (array by week1-week4)
+                    const weeklyFields = ['dxi_week_date', 'dxi_clean_exterior', 'dxi_clean_primary_probe', 'dxi_waste_filter', 'dxi_system_check', 'dxi_supervisor_sign'];
+                    const weeks = ['week1', 'week2', 'week3', 'week4'];
+                    weeklyFields.forEach(field => {
+                        if (res.data[field]) {
+                            weeks.forEach(week => {
+                                const el = document.getElementById(`${field}_${week}`);
+                                if (el && res.data[field][week]) el.value = res.data[field][week];
+                            });
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearDxiInputs() {
+                // Daily fields
+                const dailyFields = ['dxi_system_backup', 'dxi_zone_temperature', 'dxi_system_supplies', 'dxi_clean_probe', 'dxi_solid_waste', 'dxi_prime_substrate', 'dxi_daily_cleaning', 'dxi_performed_by', 'dxi_reviewed_by'];
+                for (let d = 1; d <= 31; d++) {
+                    dailyFields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+
+                // Weekly fields
+                const weeklyFields = ['dxi_week_date', 'dxi_clean_exterior', 'dxi_clean_primary_probe', 'dxi_waste_filter', 'dxi_system_check', 'dxi_supervisor_sign'];
+                const weeks = ['week1', 'week2', 'week3', 'week4'];
+                weeklyFields.forEach(field => {
+                    weeks.forEach(week => {
+                        const el = document.getElementById(`${field}_${week}`);
+                        if (el) el.value = '';
+                    });
+                });
+
+                document.getElementById('dxi_form_id').value = '';
+            }
+
+            function clearDxiForm() {
+                document.getElementById('dxi_month_year').value = '';
+                document.getElementById('dxi_location').value = '';
+                document.getElementById('dxi_department').value = '';
+                clearDxiInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initDxiForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-016"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastDxi('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('dxi_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastDxi('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastDxi('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastDxi(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initDxiForm);
+                } else {
+                    initDxiForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -2009,103 +3557,234 @@
     <x-formTemplete id="TDPL/BE/FOM-017" docNo="TDPL/BE/FOM-017" docName="Sensa Core aQua ST-200 Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="st200_form_id" id="st200_form_id">
 
-        <form>
-
-            <p>
+        <!-- Header Section -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
                 <strong>Month & Year:</strong>
-                <input type="month" class="qc-input" style="width:150px; margin-right:40px;"
-                    name="st200_month_year" id="st200_month_year" onchange="loadSt200Form()">
-
+                <input type="month" name="st200_month_year" id="st200_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadSt200Form()">
+            </div>
+            <div>
                 <strong>Instrument S. No.:</strong>
-                <input list="st200EquipList" class="qc-input" style="width:150px;" name="st200_instrument_id"
-                    id="st200_instrument_id" placeholder="All" oninput="loadSt200Form()">
-
+                <input list="st200EquipList" name="st200_instrument_id" id="st200_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:200px;"
+                    placeholder="All" oninput="loadSt200Form()">
                 <datalist id="st200EquipList">
                     <option value="ST200-001">
                     <option value="ST200-002">
                     <option value="ST200-003">
                 </datalist>
+            </div>
+            <button type="button" onclick="clearSt200Form()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-            </p>
+        <!-- Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
+            <tbody>
+                <tr>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Date</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Clean the Instrument</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Empty Waste Container</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Check Printer & Paper Status</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Daily Cleaning Solution</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Calibration</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Shutdown</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Lab Staff Signature</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Lab Supervisor Signature</th>
+                </tr>
 
-            <table border="1" style="width:100%; border-collapse:collapse;">
-                <tbody>
-
-                    <!-- Header Row -->
+                @for ($day = 1; $day <= 31; $day++)
                     <tr>
-                        <td><strong>Date</strong></td>
-                        <td><strong>Clean the Instrument</strong></td>
-                        <td><strong>Empty Waste Container</strong></td>
-                        <td><strong>Check Printer & Paper Status</strong></td>
-                        <td><strong>Daily Cleaning Solution</strong></td>
-                        <td><strong>Calibration</strong></td>
-                        <td><strong>Shutdown</strong></td>
-                        <td><strong>Lab Staff Signature</strong></td>
-                        <td><strong>Lab Supervisor Signature</strong></td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $day }}</strong></td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="st200_clean_instrument[{{ $day }}]"
+                                id="st200_clean_instrument_{{ $day }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="st200_empty_waste[{{ $day }}]"
+                                id="st200_empty_waste_{{ $day }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="st200_printer_status[{{ $day }}]"
+                                id="st200_printer_status_{{ $day }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="st200_daily_cleaning_solution[{{ $day }}]"
+                                id="st200_daily_cleaning_solution_{{ $day }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="st200_calibration[{{ $day }}]"
+                                id="st200_calibration_{{ $day }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="st200_shutdown[{{ $day }}]"
+                                id="st200_shutdown_{{ $day }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="st200_lab_staff_sign[{{ $day }}]"
+                                id="st200_lab_staff_sign_{{ $day }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="st200_lab_supervisor_sign[{{ $day }}]"
+                                id="st200_lab_supervisor_sign_{{ $day }}"
+                                style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
                     </tr>
+                @endfor
+            </tbody>
+        </table>
 
-                    <!-- Days 1 to 31 Rows -->
-                    @for ($day = 1; $day <= 31; $day++)
-                        <tr>
-                            <td><strong>{{ $day }}</strong></td>
+        <script>
+            function loadSt200Form() {
+                const monthYear = document.getElementById('st200_month_year').value;
+                const instrument = document.getElementById('st200_instrument_id').value;
 
-                            <td>
-                                <input type="text" class="qc-input-wide"
-                                    name="st200_clean_instrument[{{ $day }}]"
-                                    id="st200_clean_instrument_{{ $day }}">
-                            </td>
+                if (!monthYear) return;
 
-                            <td>
-                                <input type="text" class="qc-input-wide"
-                                    name="st200_empty_waste[{{ $day }}]"
-                                    id="st200_empty_waste_{{ $day }}">
-                            </td>
+                const params = new URLSearchParams();
+                params.append('st200_month_year', monthYear);
+                if (instrument) params.append('st200_instrument_id', instrument);
 
-                            <td>
-                                <input type="text" class="qc-input-wide"
-                                    name="st200_printer_status[{{ $day }}]"
-                                    id="st200_printer_status_{{ $day }}">
-                            </td>
+                fetch(`/newforms/be/st200/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearSt200Inputs();
 
-                            <td>
-                                <input type="text" class="qc-input-wide"
-                                    name="st200_daily_cleaning_solution[{{ $day }}]"
-                                    id="st200_daily_cleaning_solution_{{ $day }}">
-                            </td>
+                    if (!res.data) {
+                        document.getElementById('st200_form_id').value = '';
+                        return;
+                    }
 
-                            <td>
-                                <input type="text" class="qc-input-wide"
-                                    name="st200_calibration[{{ $day }}]"
-                                    id="st200_calibration_{{ $day }}">
-                            </td>
+                    document.getElementById('st200_form_id').value = res.data.id;
 
-                            <td>
-                                <input type="text" class="qc-input-wide"
-                                    name="st200_shutdown[{{ $day }}]"
-                                    id="st200_shutdown_{{ $day }}">
-                            </td>
+                    const fields = ['st200_clean_instrument', 'st200_empty_waste', 'st200_printer_status', 'st200_daily_cleaning_solution', 'st200_calibration', 'st200_shutdown', 'st200_lab_staff_sign', 'st200_lab_supervisor_sign'];
+                    fields.forEach(field => {
+                        if (res.data[field]) {
+                            Object.keys(res.data[field]).forEach(day => {
+                                const el = document.getElementById(`${field}_${day}`);
+                                if (el) el.value = res.data[field][day];
+                            });
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
 
-                            <td>
-                                <input type="text" class="qc-input-wide"
-                                    name="st200_lab_staff_sign[{{ $day }}]"
-                                    id="st200_lab_staff_sign_{{ $day }}">
-                            </td>
+            function clearSt200Inputs() {
+                const fields = ['st200_clean_instrument', 'st200_empty_waste', 'st200_printer_status', 'st200_daily_cleaning_solution', 'st200_calibration', 'st200_shutdown', 'st200_lab_staff_sign', 'st200_lab_supervisor_sign'];
+                for (let d = 1; d <= 31; d++) {
+                    fields.forEach(field => {
+                        const el = document.getElementById(`${field}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+                document.getElementById('st200_form_id').value = '';
+            }
 
-                            <td>
-                                <input type="text" class="qc-input-wide"
-                                    name="st200_lab_supervisor_sign[{{ $day }}]"
-                                    id="st200_lab_supervisor_sign_{{ $day }}">
-                            </td>
-                        </tr>
-                    @endfor
+            function clearSt200Form() {
+                document.getElementById('st200_month_year').value = '';
+                document.getElementById('st200_instrument_id').value = '';
+                clearSt200Inputs();
+            }
 
-                </tbody>
-            </table>
+            // AJAX Submit
+            (function() {
+                function initSt200Form() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-017"]');
+                    if (!formContainer) return;
 
-        </form>
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastSt200('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('st200_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastSt200('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastSt200('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastSt200(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initSt200Form);
+                } else {
+                    initSt200Form();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -2117,20 +3796,27 @@
 
         <p>
             <strong>Month &amp; Year:</strong>
-            <input type="month" name="tosoh_month_year" id="tosoh_month_year" class="qc-input"
-                style="width:180px;" onchange="loadTosohForm()">
+            <input type="month" name="tosoh_month_year" id="tosoh_month_year"
+                style="width:180px; padding:4px; border:1px solid #aaa; border-radius:4px;" onchange="loadTosohForm()">
 
             &nbsp;&nbsp;
 
             <strong>Instrument S. No.:</strong>
-            <input list="tosohEquipList" class="qc-input" style="width:180px;" name="tosoh_instrument_serial"
-                id="tosoh_instrument_serial" placeholder="All" oninput="loadTosohForm()">
+            <input list="tosohEquipList" style="width:180px; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                name="tosoh_instrument_serial" id="tosoh_instrument_serial" placeholder="All" oninput="loadTosohForm()">
 
             <datalist id="tosohEquipList">
                 <option value="HLC-723GX-001">
                 <option value="HLC-723GX-002">
                 <option value="HLC-723GX-003">
             </datalist>
+
+            &nbsp;&nbsp;
+
+            <button type="button" onclick="clearTosohForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </p>
 
         <table class="table table-bordered" style="border-collapse: collapse; width: 100%;">
@@ -2138,9 +3824,9 @@
 
                 {{-- DATE ROW --}}
                 <tr>
-                    <td colspan="2"><strong>Date 🡺</strong></td>
+                    <td style="border:1px solid #000; padding:4px;" colspan="2"><strong>Date 🡺</strong></td>
                     @for ($i = 1; $i <= 31; $i++)
-                        <td><strong>{{ $i }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $i }}</strong></td>
                     @endfor
                 </tr>
 
@@ -2152,25 +3838,27 @@
                 @foreach ($sections as $section)
                     {{-- CHECK ROW --}}
                     <tr>
-                        <td rowspan="2"><strong>{{ $section }}</strong></td>
-                        <td><strong>Check</strong></td>
+                        <td rowspan="2" style="border:1px solid #000; padding:4px;"><strong>{{ $section }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px;"><strong>Check</strong></td>
 
                         @for ($i = 1; $i <= 31; $i++)
-                            <td>
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
                                 <input type="text" name="{{ Str::slug($section) }}_check_{{ $i }}"
-                                    class="form-control qc-input">
+                                    id="{{ Str::slug($section) }}_check_{{ $i }}"
+                                    style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
                             </td>
                         @endfor
                     </tr>
 
                     {{-- CHANGE ROW --}}
                     <tr>
-                        <td><strong>Change</strong></td>
+                        <td style="border:1px solid #000; padding:4px;"><strong>Change</strong></td>
 
                         @for ($i = 1; $i <= 31; $i++)
-                            <td>
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
                                 <input type="text" name="{{ Str::slug($section) }}_change_{{ $i }}"
-                                    class="form-control qc-input">
+                                    id="{{ Str::slug($section) }}_change_{{ $i }}"
+                                    style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
                             </td>
                         @endfor
                     </tr>
@@ -2182,11 +3870,12 @@
 
                 {{-- Operator Sign --}}
                 <tr>
-                    <td colspan="2"><strong>Operator's Sign</strong></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><strong>Operator's Sign</strong></td>
                     @for ($i = 1; $i <= 31; $i++)
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="operator_sign_{{ $i }}"
-                                class="form-control qc-input">
+                                id="operator_sign_{{ $i }}"
+                                style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     @endfor
                 </tr>
@@ -2197,17 +3886,158 @@
 
                 {{-- Reviewed By --}}
                 <tr>
-                    <td colspan="2"><strong>Reviewed By</strong></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><strong>Reviewed By</strong></td>
                     @for ($i = 1; $i <= 31; $i++)
-                        <td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="reviewed_by_{{ $i }}"
-                                class="form-control qc-input">
+                                id="reviewed_by_{{ $i }}"
+                                style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     @endfor
                 </tr>
 
             </tbody>
         </table>
+
+        <script>
+            function loadTosohForm() {
+                const monthYear = document.getElementById('tosoh_month_year').value;
+                const serial = document.getElementById('tosoh_instrument_serial').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('tosoh_month_year', monthYear);
+                if (serial) params.append('tosoh_instrument_serial', serial);
+
+                fetch(`/newforms/be/tosoh/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearTosohInputs();
+
+                    if (!res.data) {
+                        document.getElementById('tosoh_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('tosoh_form_id').value = res.data.id;
+
+                    const daily = res.data.tosoh_daily;
+                    if (daily) {
+                        Object.keys(daily).forEach(section => {
+                            Object.keys(daily[section]).forEach(type => {
+                                Object.keys(daily[section][type]).forEach(day => {
+                                    const el = document.getElementById(`${section}_${type}_${day}`);
+                                    if (el) el.value = daily[section][type][day] || '';
+                                });
+                            });
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearTosohInputs() {
+                const sections = ['buffer-1', 'buffer-2', 'buffer-3', 'h-w-soln', 'filter-count', 'column-count'];
+                const types = ['check', 'change'];
+                for (let d = 1; d <= 31; d++) {
+                    sections.forEach(section => {
+                        types.forEach(type => {
+                            const el = document.getElementById(`${section}_${type}_${d}`);
+                            if (el) el.value = '';
+                        });
+                    });
+                    const sign = document.getElementById(`operator_sign_${d}`);
+                    if (sign) sign.value = '';
+                    const rev = document.getElementById(`reviewed_by_${d}`);
+                    if (rev) rev.value = '';
+                }
+                document.getElementById('tosoh_form_id').value = '';
+            }
+
+            function clearTosohForm() {
+                document.getElementById('tosoh_month_year').value = '';
+                document.getElementById('tosoh_instrument_serial').value = '';
+                clearTosohInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initTosohForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-018"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastTosoh('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('tosoh_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastTosoh('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastTosoh('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastTosoh(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initTosohForm);
+                } else {
+                    initTosohForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -2217,25 +4047,30 @@
         {{-- 🔑 UNIQUE FORM ID (INLINE EDIT SUPPORT) --}}
         <input type="hidden" name="dxh560_form_id" id="dxh560_form_id">
 
-        @csrf
-
         {{-- FILTERS --}}
         <p>
             <strong>Month &amp; Year:</strong>
-            <input type="month" name="dxh560_month_year" id="dxh560_month_year" class="qc-input"
-                style="width:180px;" onchange="loadDxh560Form()">
+            <input type="month" name="dxh560_month_year" id="dxh560_month_year"
+                style="width:180px; padding:4px; border:1px solid #aaa; border-radius:4px;" onchange="loadDxh560Form()">
 
             &nbsp;&nbsp;
 
             <strong>Instrument S. No.:</strong>
             <input list="dxh560EquipList" name="dxh560_instrument_serial" id="dxh560_instrument_serial"
-                class="qc-input" style="width:180px;" placeholder="All" oninput="loadDxh560Form()">
+                style="width:180px; padding:4px; border:1px solid #aaa; border-radius:4px;" placeholder="All" oninput="loadDxh560Form()">
 
             <datalist id="dxh560EquipList">
                 <option value="DXH560-001">
                 <option value="DXH560-002">
                 <option value="DXH560-003">
             </datalist>
+
+            &nbsp;&nbsp;
+
+            <button type="button" onclick="clearDxh560Form()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </p>
 
         <table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse; width:100%;">
@@ -2243,15 +4078,15 @@
 
                 {{-- DATE HEADER --}}
                 <tr>
-                    <td><strong>Date</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Date</strong></td>
                     @for ($i = 1; $i <= 31; $i++)
-                        <td><strong>{{ $i }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $i }}</strong></td>
                     @endfor
                 </tr>
 
                 {{-- DAILY MAINTENANCE --}}
                 <tr>
-                    <td colspan="32"><strong>Daily Maintenance</strong></td>
+                    <td colspan="32" style="border:1px solid #000; padding:4px;"><strong>Daily Maintenance</strong></td>
                 </tr>
 
                 @php
@@ -2264,12 +4099,12 @@
 
                 @foreach ($dailyRows as $label => $key)
                     <tr>
-                        <td><strong>{{ $label }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $label }}</strong></td>
                         @for ($i = 1; $i <= 31; $i++)
-                            <td>
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
                                 <input type="text" name="dxh560_daily[{{ $key }}][{{ $i }}]"
-                                    id="dxh560_daily_{{ $key }}_{{ $i }}" class="qc-input"
-                                    style="width:100%;">
+                                    id="dxh560_daily_{{ $key }}_{{ $i }}"
+                                    style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
                             </td>
                         @endfor
                     </tr>
@@ -2277,15 +4112,15 @@
 
                 {{-- WEEKLY MAINTENANCE --}}
                 <tr>
-                    <td colspan="32"><strong>Weekly Maintenance</strong></td>
+                    <td colspan="32" style="border:1px solid #000; padding:4px;"><strong>Weekly Maintenance</strong></td>
                 </tr>
 
                 <tr>
-                    <td></td>
-                    <td colspan="8"><strong>Week 1 - Date:</strong></td>
-                    <td colspan="8"><strong>Week 2 - Date:</strong></td>
-                    <td colspan="8"><strong>Week 3 - Date:</strong></td>
-                    <td colspan="7"><strong>Week 4 - Date:</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"></td>
+                    <td colspan="8" style="border:1px solid #000; padding:4px;"><strong>Week 1 - Date:</strong></td>
+                    <td colspan="8" style="border:1px solid #000; padding:4px;"><strong>Week 2 - Date:</strong></td>
+                    <td colspan="8" style="border:1px solid #000; padding:4px;"><strong>Week 3 - Date:</strong></td>
+                    <td colspan="7" style="border:1px solid #000; padding:4px;"><strong>Week 4 - Date:</strong></td>
                 </tr>
 
                 @php
@@ -2299,26 +4134,30 @@
 
                 @foreach ($weeklyRows as $label => $key)
                     <tr>
-                        <td><strong>{{ $label }}</strong></td>
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $label }}</strong></td>
 
-                        <td colspan="8">
-                            <input type="text" name="dxh560_weekly[{{ $key }}][week1]" class="qc-input"
-                                style="width:100%;">
+                        <td colspan="8" style="border:1px solid #000; padding:4px;">
+                            <input type="text" name="dxh560_weekly[{{ $key }}][week1]"
+                                id="dxh560_weekly_{{ $key }}_week1"
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td colspan="8">
-                            <input type="text" name="dxh560_weekly[{{ $key }}][week2]" class="qc-input"
-                                style="width:100%;">
+                        <td colspan="8" style="border:1px solid #000; padding:4px;">
+                            <input type="text" name="dxh560_weekly[{{ $key }}][week2]"
+                                id="dxh560_weekly_{{ $key }}_week2"
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td colspan="8">
-                            <input type="text" name="dxh560_weekly[{{ $key }}][week3]" class="qc-input"
-                                style="width:100%;">
+                        <td colspan="8" style="border:1px solid #000; padding:4px;">
+                            <input type="text" name="dxh560_weekly[{{ $key }}][week3]"
+                                id="dxh560_weekly_{{ $key }}_week3"
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
 
-                        <td colspan="7">
-                            <input type="text" name="dxh560_weekly[{{ $key }}][week4]" class="qc-input"
-                                style="width:100%;">
+                        <td colspan="7" style="border:1px solid #000; padding:4px;">
+                            <input type="text" name="dxh560_weekly[{{ $key }}][week4]"
+                                id="dxh560_weekly_{{ $key }}_week4"
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     </tr>
                 @endforeach
@@ -2330,47 +4169,233 @@
 
                 {{-- MONTHLY MAINTENANCE --}}
                 <tr>
-                    <td colspan="32"><strong>Monthly Maintenance</strong></td>
+                    <td colspan="32" style="border:1px solid #000; padding:4px;"><strong>Monthly Maintenance</strong></td>
                 </tr>
 
                 <tr>
-                    <td colspan="32"><strong>Depends on the usage cycles/day</strong></td>
+                    <td colspan="32" style="border:1px solid #000; padding:4px;"><strong>Depends on the usage cycles/day</strong></td>
                 </tr>
 
                 <tr>
-                    <td>
+                    <td style="border:1px solid #000; padding:4px;">
                         <strong>
                             Perform Bleaching cycle
                             (Use 5ml Bleach + 5ml D/W, filter and use)
                         </strong>
                     </td>
 
-                    <td colspan="15">
-                        <input type="text" name="dxh560_monthly[bleach_cycle][notes]" class="qc-input"
-                            style="width:100%;">
+                    <td colspan="15" style="border:1px solid #000; padding:4px;">
+                        <input type="text" name="dxh560_monthly[bleach_cycle][notes]"
+                            id="dxh560_monthly_bleach_cycle_notes"
+                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
 
-                    <td colspan="16">
-                        <input type="text" name="dxh560_monthly[bleach_cycle][dates]" class="qc-input"
-                            style="width:100%;">
+                    <td colspan="16" style="border:1px solid #000; padding:4px;">
+                        <input type="text" name="dxh560_monthly[bleach_cycle][dates]"
+                            id="dxh560_monthly_bleach_cycle_dates"
+                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
                 </tr>
 
                 {{-- TECHNICIAN SIGNATURE --}}
                 <tr>
-                    <td><strong>Technician Signature</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Technician Signature</strong></td>
 
-                    <td colspan="15">
-                        <input type="text" name="dxh560_technician[name]" class="qc-input" style="width:100%;">
+                    <td colspan="15" style="border:1px solid #000; padding:4px;">
+                        <input type="text" name="dxh560_technician[name]"
+                            id="dxh560_technician_name"
+                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
 
-                    <td colspan="16">
-                        <input type="text" name="dxh560_technician[date]" class="qc-input" style="width:100%;">
+                    <td colspan="16" style="border:1px solid #000; padding:4px;">
+                        <input type="text" name="dxh560_technician[date]"
+                            id="dxh560_technician_date"
+                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
                 </tr>
 
             </tbody>
         </table>
+
+        <script>
+            function loadDxh560Form() {
+                const monthYear = document.getElementById('dxh560_month_year').value;
+                const instrument = document.getElementById('dxh560_instrument_serial').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('dxh560_month_year', monthYear);
+                if (instrument) params.append('dxh560_instrument_serial', instrument);
+
+                fetch(`/newforms/be/dxh560/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearDxh560Inputs();
+
+                    if (!res.data) {
+                        document.getElementById('dxh560_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('dxh560_form_id').value = res.data.id;
+
+                    // Daily
+                    const dailyKeys = ['cleaning_of_baths', 'dust_cleaning', 'staff_initial'];
+                    if (res.data.dxh560_daily) {
+                        dailyKeys.forEach(key => {
+                            if (res.data.dxh560_daily[key]) {
+                                Object.keys(res.data.dxh560_daily[key]).forEach(day => {
+                                    const el = document.getElementById(`dxh560_daily_${key}_${day}`);
+                                    if (el) el.value = res.data.dxh560_daily[key][day];
+                                });
+                            }
+                        });
+                    }
+
+                    // Weekly
+                    const weeklyKeys = ['rinsing_of_baths', 'draining_baths', 'flushing_aperture', 'maintenance_initial'];
+                    const weeks = ['week1', 'week2', 'week3', 'week4'];
+                    if (res.data.dxh560_weekly) {
+                        weeklyKeys.forEach(key => {
+                            if (res.data.dxh560_weekly[key]) {
+                                weeks.forEach(w => {
+                                    const el = document.getElementById(`dxh560_weekly_${key}_${w}`);
+                                    if (el) el.value = res.data.dxh560_weekly[key][w] || '';
+                                });
+                            }
+                        });
+                    }
+
+                    // Monthly
+                    if (res.data.dxh560_monthly && res.data.dxh560_monthly.bleach_cycle) {
+                        const bc = res.data.dxh560_monthly.bleach_cycle;
+                        const notesEl = document.getElementById('dxh560_monthly_bleach_cycle_notes');
+                        if (notesEl) notesEl.value = bc.notes || '';
+                        const datesEl = document.getElementById('dxh560_monthly_bleach_cycle_dates');
+                        if (datesEl) datesEl.value = bc.dates || '';
+                    }
+
+                    // Technician
+                    if (res.data.dxh560_technician) {
+                        const nameEl = document.getElementById('dxh560_technician_name');
+                        if (nameEl) nameEl.value = res.data.dxh560_technician.name || '';
+                        const dateEl = document.getElementById('dxh560_technician_date');
+                        if (dateEl) dateEl.value = res.data.dxh560_technician.date || '';
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearDxh560Inputs() {
+                const dailyKeys = ['cleaning_of_baths', 'dust_cleaning', 'staff_initial'];
+                for (let d = 1; d <= 31; d++) {
+                    dailyKeys.forEach(key => {
+                        const el = document.getElementById(`dxh560_daily_${key}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+
+                const weeklyKeys = ['rinsing_of_baths', 'draining_baths', 'flushing_aperture', 'maintenance_initial'];
+                const weeks = ['week1', 'week2', 'week3', 'week4'];
+                weeklyKeys.forEach(key => {
+                    weeks.forEach(w => {
+                        const el = document.getElementById(`dxh560_weekly_${key}_${w}`);
+                        if (el) el.value = '';
+                    });
+                });
+
+                document.getElementById('dxh560_monthly_bleach_cycle_notes').value = '';
+                document.getElementById('dxh560_monthly_bleach_cycle_dates').value = '';
+                document.getElementById('dxh560_technician_name').value = '';
+                document.getElementById('dxh560_technician_date').value = '';
+                document.getElementById('dxh560_form_id').value = '';
+            }
+
+            function clearDxh560Form() {
+                document.getElementById('dxh560_month_year').value = '';
+                document.getElementById('dxh560_instrument_serial').value = '';
+                clearDxh560Inputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initDxh560Form() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-019"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastDxh560('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('dxh560_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastDxh560('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastDxh560('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastDxh560(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initDxh560Form);
+                } else {
+                    initDxh560Form();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
 
 
@@ -2381,111 +4406,247 @@
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="h550_form_id" id="h550_form_id">
 
-        <form method="POST" action="">
-            @csrf
+        <p>
+            <strong>Month &amp; Year:</strong>
+            <input type="month" name="h550_month_year" id="h550_month_year"
+                style="width:180px; padding:4px; border:1px solid #aaa; border-radius:4px;" onchange="loadH550Form()">
 
-            <p>
-                <strong>Month &amp; Year:</strong>
-                <input type="month" name="h550_month_year" id="h550_month_year" class="qc-input"
-                    style="width:180px;" onchange="loadH550Form()">
+            &nbsp;&nbsp;
 
-                &nbsp;&nbsp;
+            <strong>Instrument S. No.:</strong>
+            <input list="h550EquipList" style="width:180px; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                name="h550_instrument_serial" id="h550_instrument_serial" placeholder="All" oninput="loadH550Form()">
 
-                <strong>Instrument S. No.:</strong>
-                <input list="h550EquipList" class="qc-input" style="width:180px;" name="h550_instrument_serial"
-                    id="h550_instrument_serial" placeholder="All" oninput="loadH550Form()">
+            <datalist id="h550EquipList">
+                <option value="H550-001">
+                <option value="H550-002">
+                <option value="H550-003">
+            </datalist>
 
-                <datalist id="h550EquipList">
-                    <option value="H550-001">
-                    <option value="H550-002">
-                    <option value="H550-003">
-                </datalist>
+            &nbsp;&nbsp;
 
-            </p>
+            <button type="button" onclick="clearH550Form()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </p>
 
-            <table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse; width:100%;">
-                <tbody>
+        <table border="1" cellpadding="4" cellspacing="0" style="border-collapse:collapse; width:100%;">
+            <tbody>
 
-                    {{-- HEADER --}}
+                {{-- HEADER --}}
+                <tr>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Date</strong></td>
+                    @for ($d = 1; $d <= 31; $d++)
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $d }}</strong></td>
+                    @endfor
+                </tr>
+
+                {{-- DAILY MAINTENANCE --}}
+                <tr>
+                    <td colspan="32" style="border:1px solid #000; padding:4px;"><strong>Daily Maintenance</strong></td>
+                </tr>
+
+                @php
+                    $dailyRows = [
+                        'Clean the Instrument' => 'clean_instrument',
+                        'Empty Waste Container' => 'empty_waste',
+                        'Check Printer and Paper status' => 'printer_status',
+                        'Check the Reagent levels in Analyzer Tab' => 'reagent_levels',
+                        'Reagent Inventory' => 'reagent_inventory',
+                        'Start up (Pass/Fail)' => 'startup_status',
+                        'Backflush LMNEB (Weekly)' => 'backflush_lmneb',
+                        'Backflush RBC/PLT (Weekly)' => 'backflush_rbc_plt',
+                        'Shutdown' => 'shutdown',
+                        'Performed By' => 'performed_by',
+                        'Verified By' => 'verified_by',
+                        'Concentrated Cleaning (Weekly or After 100 Samples)' => 'concentrated_cleaning',
+                    ];
+                @endphp
+
+                @foreach ($dailyRows as $label => $key)
                     <tr>
-                        <td><strong>Date</strong></td>
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $label }}</strong></td>
+
                         @for ($d = 1; $d <= 31; $d++)
-                            <td><strong>{{ $d }}</strong></td>
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
+                                <input type="text"
+                                    name="h550_daily[{{ $key }}][{{ $d }}]"
+                                    id="h550_daily_{{ $key }}_{{ $d }}"
+                                    style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                            </td>
                         @endfor
                     </tr>
+                @endforeach
 
-                    {{-- DAILY MAINTENANCE --}}
-                    <tr>
-                        <td colspan="32"><strong>Daily Maintenance</strong></td>
-                    </tr>
+            </tbody>
+        </table>
 
-                    @php
-                        $dailyRows = [
-                            'Clean the Instrument' => 'clean_instrument',
-                            'Empty Waste Container' => 'empty_waste',
-                            'Check Printer and Paper status' => 'printer_status',
-                            'Check the Reagent levels in Analyzer Tab' => 'reagent_levels',
-                            'Reagent Inventory' => 'reagent_inventory',
-                            'Start up (Pass/Fail)' => 'startup_status',
-                            'Backflush LMNEB (Weekly)' => 'backflush_lmneb',
-                            'Backflush RBC/PLT (Weekly)' => 'backflush_rbc_plt',
-                            'Shutdown' => 'shutdown',
-                            'Performed By' => 'performed_by',
-                            'Verified By' => 'verified_by',
-                            'Concentrated Cleaning (Weekly or After 100 Samples)' => 'concentrated_cleaning',
-                        ];
-                    @endphp
-
-                    @foreach ($dailyRows as $label => $key)
-                        <tr>
-                            <td><strong>{{ $label }}</strong></td>
-
-                            @for ($d = 1; $d <= 31; $d++)
-                                <td>
-                                    <input type="text" class="qc-input" style="width:100%;"
-                                        name="h550_daily[{{ $key }}][{{ $d }}]"
-                                        id="h550_daily_{{ $key }}_{{ $d }}">
-                                </td>
-                            @endfor
-                        </tr>
-                    @endforeach
-
-                </tbody>
+        {{-- INFO BLOCKS --}}
+        <div style="margin-top:12px;">
+            <table>
+                <tr>
+                    <td>
+                        <strong>
+                            Background Limits:
+                            WBC 0.3 &nbsp; RBC 0.03 &nbsp; HB 0.3 &nbsp; PLT 5
+                        </strong>
+                    </td>
+                </tr>
             </table>
 
-            {{-- INFO BLOCKS (UNCHANGED) --}}
-            <div style="margin-top:12px;">
-                <table>
-                    <tr>
-                        <td>
-                            <strong>
-                                Background Limits:
-                                WBC 0.3 &nbsp; RBC 0.03 &nbsp; HB 0.3 &nbsp; PLT 5
-                            </strong>
-                        </td>
-                    </tr>
-                </table>
+            <table style="margin-top:8px;">
+                <tr>
+                    <td>
+                        <strong>
+                            Backflush LMNEB or RBC/PLT →
+                            Maintenance → Hydraulic service → Back flush LMNEB or RBC/PLT
+                        </strong>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <strong>
+                            Concentrated Cleaning → Maintenance → Concentrated Cleaning
+                        </strong>
+                    </td>
+                </tr>
+            </table>
+        </div>
 
-                <table style="margin-top:8px;">
-                    <tr>
-                        <td>
-                            <strong>
-                                Backflush LMNEB or RBC/PLT →
-                                Maintenance → Hydraulic service → Back flush LMNEB or RBC/PLT
-                            </strong>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <strong>
-                                Concentrated Cleaning → Maintenance → Concentrated Cleaning
-                            </strong>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+        <script>
+            function loadH550Form() {
+                const monthYear = document.getElementById('h550_month_year').value;
+                const instrument = document.getElementById('h550_instrument_serial').value;
 
-        </form>
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('h550_month_year', monthYear);
+                if (instrument) params.append('h550_instrument_serial', instrument);
+
+                fetch(`/newforms/be/h550/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearH550Inputs();
+
+                    if (!res.data) {
+                        document.getElementById('h550_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('h550_form_id').value = res.data.id;
+
+                    const dailyKeys = ['clean_instrument', 'empty_waste', 'printer_status', 'reagent_levels', 'reagent_inventory', 'startup_status', 'backflush_lmneb', 'backflush_rbc_plt', 'shutdown', 'performed_by', 'verified_by', 'concentrated_cleaning'];
+                    if (res.data.h550_daily) {
+                        const daily = typeof res.data.h550_daily === 'string' ? JSON.parse(res.data.h550_daily) : res.data.h550_daily;
+                        dailyKeys.forEach(key => {
+                            if (daily[key]) {
+                                Object.keys(daily[key]).forEach(day => {
+                                    const el = document.getElementById(`h550_daily_${key}_${day}`);
+                                    if (el) el.value = daily[key][day];
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearH550Inputs() {
+                const dailyKeys = ['clean_instrument', 'empty_waste', 'printer_status', 'reagent_levels', 'reagent_inventory', 'startup_status', 'backflush_lmneb', 'backflush_rbc_plt', 'shutdown', 'performed_by', 'verified_by', 'concentrated_cleaning'];
+                for (let d = 1; d <= 31; d++) {
+                    dailyKeys.forEach(key => {
+                        const el = document.getElementById(`h550_daily_${key}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+                document.getElementById('h550_form_id').value = '';
+            }
+
+            function clearH550Form() {
+                document.getElementById('h550_month_year').value = '';
+                document.getElementById('h550_instrument_serial').value = '';
+                clearH550Inputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initH550Form() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-020"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastH550('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('h550_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastH550('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastH550('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastH550(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initH550Form);
+                } else {
+                    initH550Form();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete id="TDPL/BE/FOM-021" docNo="TDPL/BE/FOM-021" docName="Bio-Rad D10 Maintenance Form"
@@ -2494,198 +4655,370 @@
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="d10_form_id" id="d10_form_id">
 
-        <form method="POST" action="">
-            @csrf
+        {{-- ===================== TOP FILTERS ===================== --}}
+        <p>
+            <strong>Month/Year:</strong>
+            <input type="month" name="d10_month_year" id="d10_month_year"
+                style="width:120px; padding:4px; border:1px solid #aaa; border-radius:4px;" onchange="loadD10Form()">
 
-            {{-- ===================== TOP DETAILS ===================== --}}
-            <p>
-                <strong>Month/Year:</strong>
-                <input type="month" name="d10_month_year" id="d10_month_year" class="qc-input"
-                    style="width:120px;" onchange="loadD10Form()">
+            &nbsp;
 
+            <strong>Location:</strong>
+            <input list="d10LocationList" name="d10_location" id="d10_location"
+                style="width:120px; padding:4px; border:1px solid #aaa; border-radius:4px;" placeholder="All" oninput="loadD10Form()">
 
-                <strong>Location:</strong>
-                <input list="d10LocationList" name="d10_location" id="d10_location" class="qc-input"
-                    style="width:120px;" placeholder="All" oninput="loadD10Form()">
+            <datalist id="d10LocationList">
+                <option value="Hyderabad">
+                <option value="Bangalore">
+                <option value="Chennai">
+            </datalist>
 
-                <datalist id="d10LocationList">
-                    <option value="Hyderabad">
-                    <option value="Bangalore">
-                    <option value="Chennai">
-                </datalist>
+            &nbsp;
 
-                <strong>Department:</strong>
-                <input list="d10DepartmentList" name="d10_department" id="d10_department" class="qc-input"
-                    style="width:120px;" placeholder="All" oninput="loadD10Form()">
+            <strong>Department:</strong>
+            <input list="d10DepartmentList" name="d10_department" id="d10_department"
+                style="width:120px; padding:4px; border:1px solid #aaa; border-radius:4px;" placeholder="All" oninput="loadD10Form()">
 
-                <datalist id="d10DepartmentList">
-                    <option value="Hematology">
-                    <option value="Biochemistry">
-                    <option value="Pathology">
-                </datalist>
+            <datalist id="d10DepartmentList">
+                <option value="Hematology">
+                <option value="Biochemistry">
+                <option value="Pathology">
+            </datalist>
 
-                <strong>Instrument ID/S. No.:</strong>
-                <input list="d10InstrumentList" name="d10_instrument_serial" id="d10_instrument_serial"
-                    class="qc-input" style="width:150px;" placeholder="All" oninput="loadD10Form()">
+            &nbsp;
 
-                <datalist id="d10InstrumentList">
-                    <option value="D10-001">
-                    <option value="D10-002">
-                    <option value="D10-003">
-                </datalist>
+            <strong>Instrument ID/S. No.:</strong>
+            <input list="d10InstrumentList" name="d10_instrument_serial" id="d10_instrument_serial"
+                style="width:150px; padding:4px; border:1px solid #aaa; border-radius:4px;" placeholder="All" oninput="loadD10Form()">
 
+            <datalist id="d10InstrumentList">
+                <option value="D10-001">
+                <option value="D10-002">
+                <option value="D10-003">
+            </datalist>
 
-            </p>
+            &nbsp;&nbsp;
 
-            {{-- ===================== DAILY MAINTENANCE ===================== --}}
-            <table border="1" cellspacing="0" cellpadding="4"
-                style="border-collapse: collapse; width:100%; margin-top:10px;">
+            <button type="button" onclick="clearD10Form()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </p>
 
-                <tbody>
-                    <tr>
-                        <td colspan="13"><strong>Daily Maintenance Log</strong></td>
-                    </tr>
+        {{-- ===================== DAILY MAINTENANCE ===================== --}}
+        <table border="1" cellspacing="0" cellpadding="4"
+            style="border-collapse: collapse; width:100%; margin-top:10px;">
 
-                    <tr>
-                        <td rowspan="2">
-                            <strong>MO/YR:</strong><br><br>
-                            <strong>Date</strong>
-                        </td>
+            <tbody>
+                <tr>
+                    <td colspan="13" style="border:1px solid #000; padding:4px;"><strong>Daily Maintenance Log</strong></td>
+                </tr>
 
-                        <td colspan="9"><strong>Pre-Run</strong></td>
-                        <td colspan="2"><strong>Post-Run</strong></td>
+                <tr>
+                    <td rowspan="2" style="border:1px solid #000; padding:4px;">
+                        <strong>MO/YR:</strong><br><br>
+                        <strong>Date</strong>
+                    </td>
 
-                        <td rowspan="2">
-                            <strong>Technician</strong><br>
-                            <strong>Initials</strong>
-                        </td>
-                    </tr>
+                    <td colspan="9" style="border:1px solid #000; padding:4px;"><strong>Pre-Run</strong></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><strong>Post-Run</strong></td>
 
-                    {{-- Pre-run + Post-run column labels --}}
-                    <tr>
-                        @php
-                            $columns = [
-                                'Check Method Setting',
-                                'Check Reagent Levels 1',
-                                'Check Reagent Levels 2',
-                                'Check Reagent Onboard Expiration date(s)',
-                                'Cartridge Injection Count',
-                                'Check Waste Levels',
-                                'Pressure Reading',
-                                'Check for Leaks',
-                                'Check Paper Supply',
-                                'Remove Samples',
-                                'Wipe Spills',
-                            ];
-                        @endphp
+                    <td rowspan="2" style="border:1px solid #000; padding:4px;">
+                        <strong>Technician</strong><br>
+                        <strong>Initials</strong>
+                    </td>
+                </tr>
 
-                        @foreach ($columns as $col)
-                            <td><strong>{{ $col }}</strong></td>
-                        @endforeach
-                    </tr>
-                </tbody>
-
-                {{-- DAILY ROWS FOR DAYS 1–31 --}}
-                <tbody>
-                    @for ($day = 1; $day <= 31; $day++)
-                        <tr>
-                            {{-- DATE NUMBER --}}
-                            <td><strong>{{ $day }}</strong></td>
-
-                            {{-- Input cells --}}
-                            @foreach ($columns as $col)
-                                <td>
-                                    <input type="text" class="qc-input" style="width:100%;"
-                                        name="d10_daily[{{ Str::slug($col) }}][{{ $day }}]"
-                                        id="d10_daily_{{ Str::slug($col) }}_{{ $day }}">
-                                </td>
-                            @endforeach
-
-                            {{-- Technician Initials --}}
-                            <td>
-                                <input type="text" class="qc-input" style="width:100%;"
-                                    name="d10_daily[technician_initials][{{ $day }}]"
-                                    id="d10_daily_technician_initials_{{ $day }}">
-                            </td>
-                        </tr>
-                    @endfor
-                </tbody>
-            </table>
-
-            {{-- ===================== MONTHLY MAINTENANCE ===================== --}}
-            <p style="margin-top:20px;">
-                <strong>Year:</strong>
-                <input type="text" name="d10_year" id="d10_year" class="qc-input" style="width:120px;">
-
-                <strong>Instrument ID/S. No.:</strong>
-                <input type="text" name="d10_monthly_instrument_serial" id="d10_monthly_instrument_serial"
-                    class="qc-input" style="width:150px;">
-            </p>
-
-            <table border="1" cellspacing="0" cellpadding="4"
-                style="border-collapse: collapse; width:100%; margin-top:10px;">
-                <tbody>
-
-                    <tr>
-                        <td colspan="13"><strong>Monthly Maintenance Log</strong></td>
-                    </tr>
-
-                    {{-- Month Columns --}}
+                {{-- Pre-run + Post-run column labels --}}
+                <tr>
                     @php
-                        $months = ['JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN'];
-                    @endphp
-
-                    <tr>
-                        <td><strong>MAINTENANCE</strong></td>
-                        @foreach ($months as $m)
-                            <td><strong>{{ $m }}</strong></td>
-                        @endforeach
-                    </tr>
-
-                    {{-- Monthly maintenance tasks --}}
-                    @php
-                        $monthlyTasks = [
-                            'Clean Exterior Surfaces',
-                            'Clean Interior Surfaces',
-                            'Clean/Decontaminate',
-                            'Sampling Fluid Path',
-                            'Clean Dilution Well',
-                            'Clean Internal Waste Bottle',
-                            'Clean/Inspect Sample Racks',
-                            'Clean Rack Loader',
+                        $columns = [
+                            'Check Method Setting',
+                            'Check Reagent Levels 1',
+                            'Check Reagent Levels 2',
+                            'Check Reagent Onboard Expiration date(s)',
+                            'Cartridge Injection Count',
+                            'Check Waste Levels',
+                            'Pressure Reading',
+                            'Check for Leaks',
+                            'Check Paper Supply',
+                            'Remove Samples',
+                            'Wipe Spills',
                         ];
                     @endphp
 
-                    @foreach ($monthlyTasks as $task)
-                        <tr>
-                            <td><strong>{{ $task }}</strong></td>
-
-                            @foreach ($months as $m)
-                                <td>
-                                    <input type="text" class="qc-input" style="width:100%;"
-                                        name="d10_monthly[{{ Str::slug($task) }}][{{ strtolower($m) }}]"
-                                        id="d10_monthly_{{ Str::slug($task) }}_{{ strtolower($m) }}">
-                                </td>
-                            @endforeach
-                        </tr>
+                    @foreach ($columns as $col)
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $col }}</strong></td>
                     @endforeach
+                </tr>
+            </tbody>
 
-                    {{-- Technician initials --}}
+            {{-- DAILY ROWS FOR DAYS 1–31 --}}
+            <tbody>
+                @for ($day = 1; $day <= 31; $day++)
                     <tr>
-                        <td><strong>Technician Initials</strong></td>
+                        {{-- DATE NUMBER --}}
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $day }}</strong></td>
+
+                        {{-- Input cells --}}
+                        @foreach ($columns as $col)
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
+                                <input type="text"
+                                    name="d10_daily[{{ Str::slug($col) }}][{{ $day }}]"
+                                    id="d10_daily_{{ Str::slug($col) }}_{{ $day }}"
+                                    style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                            </td>
+                        @endforeach
+
+                        {{-- Technician Initials --}}
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text"
+                                name="d10_daily[technician_initials][{{ $day }}]"
+                                id="d10_daily_technician_initials_{{ $day }}"
+                                style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+                    </tr>
+                @endfor
+            </tbody>
+        </table>
+
+        {{-- ===================== MONTHLY MAINTENANCE ===================== --}}
+        <p style="margin-top:20px;">
+            <strong>Year:</strong>
+            <input type="text" name="d10_year" id="d10_year"
+                style="width:120px; padding:4px; border:1px solid #aaa; border-radius:4px;">
+
+            &nbsp;
+
+            <strong>Instrument ID/S. No.:</strong>
+            <input type="text" name="d10_monthly_instrument_serial" id="d10_monthly_instrument_serial"
+                style="width:150px; padding:4px; border:1px solid #aaa; border-radius:4px;">
+        </p>
+
+        <table border="1" cellspacing="0" cellpadding="4"
+            style="border-collapse: collapse; width:100%; margin-top:10px;">
+            <tbody>
+
+                <tr>
+                    <td colspan="13" style="border:1px solid #000; padding:4px;"><strong>Monthly Maintenance Log</strong></td>
+                </tr>
+
+                {{-- Month Columns --}}
+                @php
+                    $months = ['JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC', 'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN'];
+                @endphp
+
+                <tr>
+                    <td style="border:1px solid #000; padding:4px;"><strong>MAINTENANCE</strong></td>
+                    @foreach ($months as $m)
+                        <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>{{ $m }}</strong></td>
+                    @endforeach
+                </tr>
+
+                {{-- Monthly maintenance tasks --}}
+                @php
+                    $monthlyTasks = [
+                        'Clean Exterior Surfaces',
+                        'Clean Interior Surfaces',
+                        'Clean/Decontaminate',
+                        'Sampling Fluid Path',
+                        'Clean Dilution Well',
+                        'Clean Internal Waste Bottle',
+                        'Clean/Inspect Sample Racks',
+                        'Clean Rack Loader',
+                    ];
+                @endphp
+
+                @foreach ($monthlyTasks as $task)
+                    <tr>
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $task }}</strong></td>
+
                         @foreach ($months as $m)
-                            <td>
-                                <input type="text" class="qc-input" style="width:100%;"
-                                    name="d10_monthly[technician_initials][{{ strtolower($m) }}]"
-                                    id="d10_monthly_technician_initials_{{ strtolower($m) }}">
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
+                                <input type="text"
+                                    name="d10_monthly[{{ Str::slug($task) }}][{{ strtolower($m) }}]"
+                                    id="d10_monthly_{{ Str::slug($task) }}_{{ strtolower($m) }}"
+                                    style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
                             </td>
                         @endforeach
                     </tr>
+                @endforeach
 
-                </tbody>
-            </table>
+                {{-- Technician initials --}}
+                <tr>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Technician Initials</strong></td>
+                    @foreach ($months as $m)
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text"
+                                name="d10_monthly[technician_initials][{{ strtolower($m) }}]"
+                                id="d10_monthly_technician_initials_{{ strtolower($m) }}"
+                                style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+                    @endforeach
+                </tr>
 
-        </form>
+            </tbody>
+        </table>
+
+        <script>
+            function loadD10Form() {
+                const monthYear = document.getElementById('d10_month_year').value;
+                const instrument = document.getElementById('d10_instrument_serial').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('d10_month_year', monthYear);
+                if (instrument) params.append('d10_instrument_serial', instrument);
+
+                fetch(`/newforms/be/d10/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearD10Inputs();
+
+                    if (!res.data) {
+                        document.getElementById('d10_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('d10_form_id').value = res.data.id;
+
+                    // Populate data fields (not lookup filters)
+                    document.getElementById('d10_location').value = res.data.d10_location || '';
+                    document.getElementById('d10_department').value = res.data.d10_department || '';
+                    document.getElementById('d10_year').value = res.data.d10_year || '';
+                    document.getElementById('d10_monthly_instrument_serial').value = res.data.d10_monthly_instrument_serial || '';
+
+                    // Daily JSON (dynamic keys from Str::slug)
+                    if (res.data.d10_daily) {
+                        const daily = typeof res.data.d10_daily === 'string' ? JSON.parse(res.data.d10_daily) : res.data.d10_daily;
+                        Object.keys(daily).forEach(field => {
+                            if (daily[field]) {
+                                Object.keys(daily[field]).forEach(day => {
+                                    const el = document.getElementById(`d10_daily_${field}_${day}`);
+                                    if (el) el.value = daily[field][day] || '';
+                                });
+                            }
+                        });
+                    }
+
+                    // Monthly JSON (dynamic keys from Str::slug)
+                    if (res.data.d10_monthly) {
+                        const monthly = typeof res.data.d10_monthly === 'string' ? JSON.parse(res.data.d10_monthly) : res.data.d10_monthly;
+                        Object.keys(monthly).forEach(task => {
+                            if (monthly[task]) {
+                                Object.keys(monthly[task]).forEach(month => {
+                                    const el = document.getElementById(`d10_monthly_${task}_${month}`);
+                                    if (el) el.value = monthly[task][month] || '';
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearD10Inputs() {
+                // Clear all daily inputs (id starts with d10_daily_)
+                const container = document.querySelector('[id="TDPL/BE/FOM-021"]');
+                if (container) {
+                    container.querySelectorAll('input[id^="d10_daily_"]').forEach(el => el.value = '');
+                    container.querySelectorAll('input[id^="d10_monthly_"]').forEach(el => el.value = '');
+                }
+
+                // Clear data fields (NOT lookup filters)
+                document.getElementById('d10_location').value = '';
+                document.getElementById('d10_department').value = '';
+                document.getElementById('d10_year').value = '';
+                document.getElementById('d10_monthly_instrument_serial').value = '';
+                document.getElementById('d10_form_id').value = '';
+            }
+
+            function clearD10Form() {
+                // Clear lookup filters
+                document.getElementById('d10_month_year').value = '';
+                document.getElementById('d10_instrument_serial').value = '';
+                clearD10Inputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initD10Form() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-021"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastD10('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('d10_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastD10('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastD10('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastD10(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initD10Form);
+                } else {
+                    initD10Form();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-022" docNo="TDPL/BE/FOM-022" docName="Automatic Tissue Processor Maintenance Form"
@@ -2694,93 +5027,235 @@
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE) --}}
         <input type="hidden" name="atp_form_id" id="atp_form_id">
 
-        <form method="POST" action="">
-            @csrf
+        {{-- ===================== TOP FILTERS ===================== --}}
+        <p>
+            <strong>Month & Year:</strong>
+            <input type="month" name="atp_month_year" id="atp_month_year"
+                style="width:140px; padding:4px; border:1px solid #aaa; border-radius:4px; margin-right:30px;" onchange="loadAtpForm()">
 
-            {{-- ===================== TOP DETAILS ===================== --}}
-            <p>
-                <strong>Month & Year:</strong>
-                <input type="month" name="atp_month_year" id="atp_month_year" class="qc-input"
-                    style="width:140px; margin-right:30px;" onchange="loadAtpForm()">
+            <strong>Instrument ID/S. No:</strong>
+            <input type="text" name="atp_instrument_id" id="atp_instrument_id"
+                style="width:140px; padding:4px; border:1px solid #aaa; border-radius:4px;" oninput="loadAtpForm()">
 
-                <strong>Instrument ID/S. No:</strong>
-                <input type="text" name="atp_instrument_id" id="atp_instrument_id" class="qc-input"
-                    style="width:140px;" oninput="loadAtpForm()">
-            </p>
+            &nbsp;&nbsp;
 
-            {{-- ===================== DAILY MAINTENANCE ===================== --}}
-            <table border="1" cellspacing="0" cellpadding="6"
-                style="border-collapse: collapse; width:100%; margin-top:10px;">
-                <tbody>
+            <button type="button" onclick="clearAtpForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </p>
 
-                    {{-- HEADER --}}
+        {{-- ===================== DAILY MAINTENANCE ===================== --}}
+        <table border="1" cellspacing="0" cellpadding="6"
+            style="border-collapse: collapse; width:100%; margin-top:10px;">
+            <tbody>
+
+                {{-- HEADER --}}
+                <tr>
+                    <td colspan="7" style="border:1px solid #000; padding:4px;"><strong>Daily Maintenance Log</strong></td>
+                </tr>
+
+                {{-- Column Titles --}}
+                <tr>
+                    <td rowspan="2" style="border:1px solid #000; padding:4px;"><strong>Date</strong></td>
+                    <td rowspan="2" style="border:1px solid #000; padding:4px;"><strong>Clean Exterior</strong></td>
+                    <td rowspan="2" style="border:1px solid #000; padding:4px;"><strong>Change Reagent</strong></td>
+                    <td rowspan="2" style="border:1px solid #000; padding:4px;"><strong>Check Reagent Level</strong></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><strong>Wax Bath Temperature (&deg;C)</strong></td>
+                    <td rowspan="2" style="border:1px solid #000; padding:4px;"><strong>Done By</strong></td>
+                </tr>
+
+                <tr>
+                    <td style="border:1px solid #000; padding:4px;">AM</td>
+                    <td style="border:1px solid #000; padding:4px;">PM</td>
+                </tr>
+
+                {{-- BODY: Days 1-31 --}}
+                @for ($day = 1; $day <= 31; $day++)
                     <tr>
-                        <td colspan="7"><strong>Daily Maintenance Log</strong></td>
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $day }}</strong></td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text"
+                                name="atp_daily[clean_exterior][{{ $day }}]"
+                                id="atp_daily_clean_exterior_{{ $day }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text"
+                                name="atp_daily[change_reagent][{{ $day }}]"
+                                id="atp_daily_change_reagent_{{ $day }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text"
+                                name="atp_daily[check_reagent_level][{{ $day }}]"
+                                id="atp_daily_check_reagent_level_{{ $day }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text"
+                                name="atp_daily[temperature_am][{{ $day }}]"
+                                id="atp_daily_temperature_am_{{ $day }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text"
+                                name="atp_daily[temperature_pm][{{ $day }}]"
+                                id="atp_daily_temperature_pm_{{ $day }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text"
+                                name="atp_daily[done_by][{{ $day }}]"
+                                id="atp_daily_done_by_{{ $day }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
                     </tr>
+                @endfor
 
-                    {{-- Column Titles --}}
-                    <tr>
-                        <td rowspan="2"><strong>Date</strong></td>
-                        <td rowspan="2"><strong>Clean Exterior</strong></td>
-                        <td rowspan="2"><strong>Change Reagent</strong></td>
-                        <td rowspan="2"><strong>Check Reagent Level</strong></td>
-                        <td colspan="2"><strong>Wax Bath Temperature (°C)</strong></td>
-                        <td rowspan="2"><strong>Done By</strong></td>
-                    </tr>
+            </tbody>
+        </table>
 
-                    <tr>
-                        <td>AM</td>
-                        <td>PM</td>
-                    </tr>
+        <script>
+            function loadAtpForm() {
+                const monthYear = document.getElementById('atp_month_year').value;
+                const instrument = document.getElementById('atp_instrument_id').value;
 
-                    {{-- BODY: Days 1–31 --}}
-                    @for ($day = 1; $day <= 31; $day++)
-                        <tr>
-                            {{-- Date --}}
-                            <td><strong>{{ $day }}</strong></td>
+                if (!monthYear) return;
 
-                            <td>
-                                <input type="text" class="qc-input" style="width:100%;"
-                                    name="atp_daily[clean_exterior][{{ $day }}]"
-                                    id="atp_daily_clean_exterior_{{ $day }}">
-                            </td>
+                const params = new URLSearchParams();
+                params.append('atp_month_year', monthYear);
+                if (instrument) params.append('atp_instrument_id', instrument);
 
-                            <td>
-                                <input type="text" class="qc-input" style="width:100%;"
-                                    name="atp_daily[change_reagent][{{ $day }}]"
-                                    id="atp_daily_change_reagent_{{ $day }}">
-                            </td>
+                fetch(`/newforms/be/atp/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearAtpInputs();
 
-                            <td>
-                                <input type="text" class="qc-input" style="width:100%;"
-                                    name="atp_daily[check_reagent_level][{{ $day }}]"
-                                    id="atp_daily_check_reagent_level_{{ $day }}">
-                            </td>
+                    if (!res.data) {
+                        document.getElementById('atp_form_id').value = '';
+                        return;
+                    }
 
-                            <td>
-                                <input type="text" class="qc-input" style="width:100%;"
-                                    name="atp_daily[temperature_am][{{ $day }}]"
-                                    id="atp_daily_temperature_am_{{ $day }}">
-                            </td>
+                    document.getElementById('atp_form_id').value = res.data.id;
 
-                            <td>
-                                <input type="text" class="qc-input" style="width:100%;"
-                                    name="atp_daily[temperature_pm][{{ $day }}]"
-                                    id="atp_daily_temperature_pm_{{ $day }}">
-                            </td>
+                    const dailyKeys = ['clean_exterior', 'change_reagent', 'check_reagent_level', 'temperature_am', 'temperature_pm', 'done_by'];
+                    if (res.data.daily) {
+                        const daily = typeof res.data.daily === 'string' ? JSON.parse(res.data.daily) : res.data.daily;
+                        dailyKeys.forEach(key => {
+                            if (daily[key]) {
+                                Object.keys(daily[key]).forEach(day => {
+                                    const el = document.getElementById(`atp_daily_${key}_${day}`);
+                                    if (el) el.value = daily[key][day] || '';
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
 
-                            <td>
-                                <input type="text" class="qc-input" style="width:100%;"
-                                    name="atp_daily[done_by][{{ $day }}]"
-                                    id="atp_daily_done_by_{{ $day }}">
-                            </td>
-                        </tr>
-                    @endfor
+            function clearAtpInputs() {
+                const dailyKeys = ['clean_exterior', 'change_reagent', 'check_reagent_level', 'temperature_am', 'temperature_pm', 'done_by'];
+                for (let d = 1; d <= 31; d++) {
+                    dailyKeys.forEach(key => {
+                        const el = document.getElementById(`atp_daily_${key}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+                document.getElementById('atp_form_id').value = '';
+            }
 
-                </tbody>
-            </table>
+            function clearAtpForm() {
+                document.getElementById('atp_month_year').value = '';
+                document.getElementById('atp_instrument_id').value = '';
+                clearAtpInputs();
+            }
 
-        </form>
+            // AJAX Submit
+            (function() {
+                function initAtpForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-022"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastAtp('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('atp_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastAtp('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastAtp('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastAtp(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initAtpForm);
+                } else {
+                    initAtpForm();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-023" docNo="TDPL/BE/FOM-023"
@@ -2790,90 +5265,228 @@
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="tec_form_id" id="tec_form_id">
 
-        <form method="POST" action="">
-            @csrf
+        <p>
+            <strong>Month/Year:</strong>
+            <input type="month" name="tec_month_year" id="tec_month_year"
+                style="width:120px; padding:4px; border:1px solid #aaa; border-radius:4px;" onchange="loadTecForm()">
 
-            <p>
-                <strong>Month/Year:</strong>
-                <input type="month" name="tec_month_year" id="tec_month_year" class="qc-input"
-                    style="width:120px;" onchange="loadTecForm()">
+            &nbsp;&nbsp;
 
-                <strong>Instrument ID/S. No.:</strong>
-                <input list="tecEquipList" name="tec_instrument_id" id="tec_instrument_id" class="qc-input"
-                    style="width:150px;" placeholder="All" oninput="loadTecForm()">
+            <strong>Instrument ID/S. No.:</strong>
+            <input list="tecEquipList" name="tec_instrument_id" id="tec_instrument_id"
+                style="width:150px; padding:4px; border:1px solid #aaa; border-radius:4px;" placeholder="All" oninput="loadTecForm()">
 
-                <datalist id="tecEquipList">
-                    <option value="TEC-001">
-                    <option value="TEC-002">
-                    <option value="TEC-003">
-                </datalist>
+            <datalist id="tecEquipList">
+                <option value="TEC-001">
+                <option value="TEC-002">
+                <option value="TEC-003">
+            </datalist>
 
-            </p>
+            &nbsp;&nbsp;
 
-            <table style="width: 100%;" border="1" cellspacing="0" cellpadding="6">
-                <tbody>
+            <button type="button" onclick="clearTecForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </p>
+
+        <table style="width:100%; border-collapse:collapse;" border="1" cellspacing="0" cellpadding="6">
+            <tbody>
+                <tr>
+                    <td colspan="6" style="border:1px solid #000; padding:4px; text-align:center;">
+                        <strong>Daily Maintenance Log</strong>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Date</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Cold Plate Temperature (&deg;C)</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Hot Plate Temperature (&deg;C)</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Wax Bath Temperature (&deg;C)</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Check Cleaning</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><strong>Technician Signature</strong></td>
+                </tr>
+
+                @for ($i = 1; $i <= 31; $i++)
                     <tr>
-                        <td colspan="6" style="text-align: center;">
-                            <strong>Daily Maintenance Log</strong>
+                        <td style="border:1px solid #000; padding:4px;"><strong>{{ $i }}</strong></td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="tec_daily[cold_plate_temp][{{ $i }}]"
+                                id="tec_daily_cold_plate_temp_{{ $i }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="tec_daily[hot_plate_temp][{{ $i }}]"
+                                id="tec_daily_hot_plate_temp_{{ $i }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="tec_daily[wax_bath_temp][{{ $i }}]"
+                                id="tec_daily_wax_bath_temp_{{ $i }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="tec_daily[check_cleaning][{{ $i }}]"
+                                id="tec_daily_check_cleaning_{{ $i }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
+                        </td>
+
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
+                            <input type="text" name="tec_daily[technician_signature][{{ $i }}]"
+                                id="tec_daily_technician_signature_{{ $i }}"
+                                style="width:70px; padding:2px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     </tr>
+                @endfor
+            </tbody>
+        </table>
 
-                    <tr>
-                        <td><strong>Date</strong></td>
-                        <td><strong>Cold Plate Temperature (°C)</strong></td>
-                        <td><strong>Hot Plate Temperature (°C)</strong></td>
-                        <td><strong>Wax Bath Temperature (°C)</strong></td>
-                        <td><strong>Check Cleaning</strong></td>
-                        <td><strong>Technician Signature</strong></td>
-                    </tr>
+        <p>
+            <strong>Note:</strong>
+            Optimum temperature ranges:
+            Cold plate -5 to -9&deg;C;
+            Hotplate 80 to 90&deg;C;
+            Wax bath 65 to 75&deg;C
+        </p>
 
-                    @for ($i = 1; $i <= 31; $i++)
-                        <tr>
-                            <td><strong>{{ $i }}</strong></td>
+        <script>
+            function loadTecForm() {
+                const monthYear = document.getElementById('tec_month_year').value;
+                const instrument = document.getElementById('tec_instrument_id').value;
 
-                            <td>
-                                <input type="text" name="tec_daily[cold_plate_temp][{{ $i }}]"
-                                    id="tec_daily_cold_plate_temp_{{ $i }}" class="qc-input"
-                                    style="width:100%;">
-                            </td>
+                if (!monthYear) return;
 
-                            <td>
-                                <input type="text" name="tec_daily[hot_plate_temp][{{ $i }}]"
-                                    id="tec_daily_hot_plate_temp_{{ $i }}" class="qc-input"
-                                    style="width:100%;">
-                            </td>
+                const params = new URLSearchParams();
+                params.append('tec_month_year', monthYear);
+                if (instrument) params.append('tec_instrument_id', instrument);
 
-                            <td>
-                                <input type="text" name="tec_daily[wax_bath_temp][{{ $i }}]"
-                                    id="tec_daily_wax_bath_temp_{{ $i }}" class="qc-input"
-                                    style="width:100%;">
-                            </td>
+                fetch(`/newforms/be/tec/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearTecInputs();
 
-                            <td>
-                                <input type="text" name="tec_daily[check_cleaning][{{ $i }}]"
-                                    id="tec_daily_check_cleaning_{{ $i }}" class="qc-input"
-                                    style="width:100%;">
-                            </td>
+                    if (!res.data) {
+                        document.getElementById('tec_form_id').value = '';
+                        return;
+                    }
 
-                            <td>
-                                <input type="text" name="tec_daily[technician_signature][{{ $i }}]"
-                                    id="tec_daily_technician_signature_{{ $i }}" class="qc-input"
-                                    style="width:100%;">
-                            </td>
-                        </tr>
-                    @endfor
-                </tbody>
-            </table>
+                    document.getElementById('tec_form_id').value = res.data.id;
 
-            <p>
-                <strong>Note:</strong>
-                Optimum temperature ranges:
-                Cold plate -5 to -9°C;
-                Hotplate 80 to 90°C;
-                Wax bath 65 to 75°C
-            </p>
+                    const dailyKeys = ['cold_plate_temp', 'hot_plate_temp', 'wax_bath_temp', 'check_cleaning', 'technician_signature'];
+                    if (res.data.tec_daily) {
+                        const daily = typeof res.data.tec_daily === 'string' ? JSON.parse(res.data.tec_daily) : res.data.tec_daily;
+                        dailyKeys.forEach(key => {
+                            if (daily[key]) {
+                                Object.keys(daily[key]).forEach(day => {
+                                    const el = document.getElementById(`tec_daily_${key}_${day}`);
+                                    if (el) el.value = daily[key][day] || '';
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
 
-        </form>
+            function clearTecInputs() {
+                const dailyKeys = ['cold_plate_temp', 'hot_plate_temp', 'wax_bath_temp', 'check_cleaning', 'technician_signature'];
+                for (let d = 1; d <= 31; d++) {
+                    dailyKeys.forEach(key => {
+                        const el = document.getElementById(`tec_daily_${key}_${d}`);
+                        if (el) el.value = '';
+                    });
+                }
+                document.getElementById('tec_form_id').value = '';
+            }
+
+            function clearTecForm() {
+                document.getElementById('tec_month_year').value = '';
+                document.getElementById('tec_instrument_id').value = '';
+                clearTecInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initTecForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-023"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastTec('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('tec_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastTec('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastTec('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastTec(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initTecForm);
+                } else {
+                    initTecForm();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
 
 
@@ -2884,7 +5497,6 @@
         <input type="hidden" name="ba_form_id" id="ba_form_id">
 
         @php
-            // Define the fields for the maintenance log
             $fields = [
                 'Clean Outer Cover',
                 'Clean Monitor',
@@ -2894,20 +5506,22 @@
                 'Signature of HOD',
             ];
 
-            // Days in the month (1 to 31)
             $days = range(1, 31);
         @endphp
 
-        {{-- ===================== TOP DETAILS ===================== --}}
-        <div class="mb-4" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-
-            <label class="font-bold">Month &amp; Year:</label>
-            <input type="month" name="ba_month_year" id="ba_month_year" class="qc-input" style="width:150px;"
+        {{-- ===================== TOP FILTERS ===================== --}}
+        <p>
+            <strong>Month &amp; Year:</strong>
+            <input type="month" name="ba_month_year" id="ba_month_year"
+                style="width:150px; padding:4px; border:1px solid #aaa; border-radius:4px;"
                 onchange="loadBactAlertForm()">
 
-            <label class="font-bold">Instrument ID / S. No:</label>
-            <input list="baEquipList" name="ba_instrument_id" id="ba_instrument_id" class="qc-input"
-                style="width:180px;" placeholder="All" oninput="loadBactAlertForm()">
+            &nbsp;&nbsp;
+
+            <strong>Instrument ID / S. No:</strong>
+            <input list="baEquipList" name="ba_instrument_id" id="ba_instrument_id"
+                style="width:180px; padding:4px; border:1px solid #aaa; border-radius:4px;" placeholder="All"
+                oninput="loadBactAlertForm()">
 
             <datalist id="baEquipList">
                 <option value="BACT-001">
@@ -2915,16 +5529,21 @@
                 <option value="BACT-003">
             </datalist>
 
-        </div>
+            &nbsp;&nbsp;
 
+            <button type="button" onclick="clearBaForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </p>
 
         {{-- ===================== DAILY MAINTENANCE TABLE ===================== --}}
-        <table class="border-collapse border border-gray-400 w-full text-center">
-            <thead class="bg-gray-100">
+        <table style="border-collapse:collapse; width:100%; text-align:center;">
+            <thead>
                 <tr>
-                    <th class="border border-gray-300 p-2">Date</th>
+                    <th style="border:1px solid #000; padding:4px;">Date</th>
                     @foreach ($days as $day)
-                        <th class="border border-gray-300 p-2">{{ $day }}</th>
+                        <th style="border:1px solid #000; padding:4px;">{{ $day }}</th>
                     @endforeach
                 </tr>
             </thead>
@@ -2935,26 +5554,26 @@
                         $slug = Str::slug($field);
                     @endphp
                     <tr>
-                        <td class="border border-gray-300 p-2 font-semibold text-left w-48" style="min-width:176px;">
+                        <td style="border:1px solid #000; padding:4px; text-align:left; min-width:176px; font-weight:600;">
                             {{ $field }}
                         </td>
 
                         @foreach ($days as $day)
-                            <td class="border border-gray-300 p-1">
+                            <td style="border:1px solid #000; padding:2px; text-align:center;">
 
                                 @if (str_contains(strtolower($field), 'signature'))
                                     <input type="text" name="ba_daily[{{ $slug }}][{{ $day }}]"
                                         id="ba_daily_{{ $slug }}_{{ $day }}"
-                                        class="border rounded w-full p-1 qc-input" placeholder="Sign">
+                                        style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;" placeholder="Sign">
                                 @elseif(str_contains(strtolower($field), 'check temp'))
                                     <input type="number" step="0.1"
                                         name="ba_daily[{{ $slug }}][{{ $day }}]"
                                         id="ba_daily_{{ $slug }}_{{ $day }}"
-                                        class="border rounded w-full p-1 qc-input" placeholder="°C">
+                                        style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;" placeholder="&deg;C">
                                 @else
                                     <input type="text" name="ba_daily[{{ $slug }}][{{ $day }}]"
                                         id="ba_daily_{{ $slug }}_{{ $day }}"
-                                        class="border rounded w-full p-1 qc-input">
+                                        style="width:40px; padding:2px; border:1px solid #aaa; border-radius:4px;">
                                 @endif
 
                             </td>
@@ -2963,6 +5582,136 @@
                 @endforeach
             </tbody>
         </table>
+
+        <script>
+            function loadBactAlertForm() {
+                const monthYear = document.getElementById('ba_month_year').value;
+                const instrument = document.getElementById('ba_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('ba_month_year', monthYear);
+                if (instrument) params.append('ba_instrument_id', instrument);
+
+                fetch(`/newforms/be/ba/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearBaInputs();
+
+                    if (!res.data) {
+                        document.getElementById('ba_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('ba_form_id').value = res.data.id;
+
+                    if (res.data.ba_daily) {
+                        const daily = typeof res.data.ba_daily === 'string' ? JSON.parse(res.data.ba_daily) : res.data.ba_daily;
+                        Object.keys(daily).forEach(field => {
+                            if (daily[field]) {
+                                Object.keys(daily[field]).forEach(day => {
+                                    const el = document.getElementById(`ba_daily_${field}_${day}`);
+                                    if (el) el.value = daily[field][day] || '';
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearBaInputs() {
+                const container = document.querySelector('[id="TDPL/BE/FOM-024"]');
+                if (container) {
+                    container.querySelectorAll('input[id^="ba_daily_"]').forEach(el => el.value = '');
+                }
+                document.getElementById('ba_form_id').value = '';
+            }
+
+            function clearBaForm() {
+                document.getElementById('ba_month_year').value = '';
+                document.getElementById('ba_instrument_id').value = '';
+                clearBaInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initBaForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-024"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastBa('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('ba_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastBa('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastBa('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastBa(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initBaForm);
+                } else {
+                    initBaForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -2996,29 +5745,25 @@
 
             $days = range(1, 31);
 
-            function fieldSlug($field)
-            {
-                return \Illuminate\Support\Str::slug($field, '_');
+            if (!function_exists('fieldSlug')) {
+                function fieldSlug($field)
+                {
+                    return \Illuminate\Support\Str::slug($field, '_');
+                }
             }
         @endphp
 
-        <div class="mb-4">
+        <p>
+            <strong>Month &amp; Year:</strong>
+            <input type="month" name="vitek_month_year" id="vitek_month_year"
+                style="width:180px; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                onchange="loadVitekForm()">
 
-            <label class="font-bold" style="margin-right:8px;">
-                Month &amp; Year:
-            </label>
+            &nbsp;&nbsp;
 
-            <input type="month" name="vitek_month_year" id="vitek_month_year" class="border p-1 rounded qc-input"
-                style="width:180px;" onchange="loadVitekForm()">
-
-            &nbsp;&nbsp;&nbsp;&nbsp;
-
-            <label class="font-bold" style="margin-right:8px;">
-                Instrument ID / S. No:
-            </label>
-
+            <strong>Instrument ID / S. No:</strong>
             <input list="vitekInstrumentList" name="vitek_instrument_id" id="vitek_instrument_id"
-                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All"
+                style="width:180px; padding:4px; border:1px solid #aaa; border-radius:4px;" placeholder="All"
                 onchange="loadVitekForm()">
 
             <datalist id="vitekInstrumentList">
@@ -3027,18 +5772,22 @@
                 <option value="VITEK2-003">
             </datalist>
 
-        </div>
+            &nbsp;&nbsp;
 
-
+            <button type="button" onclick="clearVitekFullForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </p>
 
         {{-- DAILY --}}
-        <h2 class="text-lg font-bold mb-2">Daily Maintenance</h2>
-        <table class="border-collapse border border-gray-400 w-full text-center mb-6">
-            <thead class="bg-gray-100">
+        <p style="margin-top:14px; margin-bottom:6px;"><strong style="font-size:1.1em;">Daily Maintenance</strong></p>
+        <table style="border-collapse:collapse; width:100%; text-align:center; margin-bottom:20px;">
+            <thead>
                 <tr>
-                    <th class="border border-gray-300 p-2">Field</th>
+                    <th style="border:1px solid #000; padding:4px;">Field</th>
                     @foreach ($days as $day)
-                        <th class="border border-gray-300 p-2">{{ $day }}</th>
+                        <th style="border:1px solid #000; padding:4px;">{{ $day }}</th>
                     @endforeach
                 </tr>
             </thead>
@@ -3046,13 +5795,13 @@
                 @foreach ($dailyFields as $field)
                     @php $slug = fieldSlug($field); @endphp
                     <tr>
-                        <td class="border border-gray-300 p-2 font-semibold text-left">{{ $field }}</td>
+                        <td style="border:1px solid #000; padding:4px; font-weight:600; text-align:left;">{{ $field }}</td>
                         @foreach ($days as $day)
-                            <td class="border border-gray-300 p-1">
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
                                 <input type="{{ str_contains(strtolower($field), 'temperature') ? 'number' : 'text' }}"
                                     step="0.1" name="vitek_daily[{{ $slug }}][{{ $day }}]"
                                     id="vitek_daily_{{ $slug }}_{{ $day }}"
-                                    class="border rounded w-full p-1 qc-input"
+                                    style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;"
                                     placeholder="{{ str_contains(strtolower($field), 'signature') ? 'Sign' : '' }}">
                             </td>
                         @endforeach
@@ -3062,13 +5811,13 @@
         </table>
 
         {{-- MONTHLY --}}
-        <h2 class="text-lg font-bold mb-2">Monthly Maintenance</h2>
-        <table class="border-collapse border border-gray-400 w-full text-center">
-            <thead class="bg-gray-100">
+        <p style="margin-bottom:6px;"><strong style="font-size:1.1em;">Monthly Maintenance</strong></p>
+        <table style="border-collapse:collapse; width:100%; text-align:center;">
+            <thead>
                 <tr>
-                    <th class="border border-gray-300 p-2">Field</th>
+                    <th style="border:1px solid #000; padding:4px;">Field</th>
                     @foreach ($days as $day)
-                        <th class="border border-gray-300 p-2">{{ $day }}</th>
+                        <th style="border:1px solid #000; padding:4px;">{{ $day }}</th>
                     @endforeach
                 </tr>
             </thead>
@@ -3076,12 +5825,12 @@
                 @foreach ($monthlyFields as $field)
                     @php $slug = fieldSlug($field); @endphp
                     <tr>
-                        <td class="border border-gray-300 p-2 font-semibold text-left">{{ $field }}</td>
+                        <td style="border:1px solid #000; padding:4px; font-weight:600; text-align:left;">{{ $field }}</td>
                         @foreach ($days as $day)
-                            <td class="border border-gray-300 p-1">
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
                                 <input type="text" name="vitek_monthly[{{ $slug }}][{{ $day }}]"
                                     id="vitek_monthly_{{ $slug }}_{{ $day }}"
-                                    class="border rounded w-full p-1 qc-input"
+                                    style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;"
                                     placeholder="{{ str_contains(strtolower($field), 'signature') ? 'Sign' : '' }}">
                             </td>
                         @endforeach
@@ -3090,46 +5839,195 @@
             </tbody>
         </table>
 
+        <script>
+            function loadVitekForm() {
+                const monthYear = document.getElementById('vitek_month_year').value;
+                const instrument = document.getElementById('vitek_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('vitek_month_year', monthYear);
+                if (instrument) params.append('vitek_instrument_id', instrument);
+
+                fetch(`/newforms/be/vitek/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearVitekInputs();
+
+                    if (!res.data) {
+                        document.getElementById('vitek_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('vitek_form_id').value = res.data.id;
+
+                    // Daily JSON
+                    if (res.data.vitek_daily) {
+                        const daily = typeof res.data.vitek_daily === 'string' ? JSON.parse(res.data.vitek_daily) : res.data.vitek_daily;
+                        Object.keys(daily).forEach(field => {
+                            if (daily[field]) {
+                                Object.keys(daily[field]).forEach(day => {
+                                    const el = document.getElementById(`vitek_daily_${field}_${day}`);
+                                    if (el) el.value = daily[field][day] || '';
+                                });
+                            }
+                        });
+                    }
+
+                    // Monthly JSON
+                    if (res.data.vitek_monthly) {
+                        const monthly = typeof res.data.vitek_monthly === 'string' ? JSON.parse(res.data.vitek_monthly) : res.data.vitek_monthly;
+                        Object.keys(monthly).forEach(field => {
+                            if (monthly[field]) {
+                                Object.keys(monthly[field]).forEach(day => {
+                                    const el = document.getElementById(`vitek_monthly_${field}_${day}`);
+                                    if (el) el.value = monthly[field][day] || '';
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearVitekInputs() {
+                const container = document.querySelector('[id="TDPL/BE/FOM-025"]');
+                if (container) {
+                    container.querySelectorAll('input[id^="vitek_daily_"]').forEach(el => el.value = '');
+                    container.querySelectorAll('input[id^="vitek_monthly_"]').forEach(el => el.value = '');
+                }
+                document.getElementById('vitek_form_id').value = '';
+            }
+
+            function clearVitekFullForm() {
+                document.getElementById('vitek_month_year').value = '';
+                document.getElementById('vitek_instrument_id').value = '';
+                clearVitekInputs();
+            }
+
+            // AJAX Submit
+            (function() {
+                function initVitekForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-025"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastVitek('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('vitek_form_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastVitek('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastVitek('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastVitek(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initVitekForm);
+                } else {
+                    initVitekForm();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-026" docNo="TDPL/BE/FOM-026" docName="Elisa Reader Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="elisa_form_id" id="elisa_form_id">
 
-        {{-- ===================== TOP DETAILS ===================== --}}
-        <div class="mb-4" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-            <label class="font-bold">MONTH &amp; YEAR:</label>
-            <input type="month" name="elisa_month_year" id="elisa_month_year" class="qc-input"
-                style="width:150px;" onchange="loadElisaForm()">
-            <label class="font-bold">INSTRUMENT ID / S. No:</label>
-            <input list="elisaEquipList" name="elisa_instrument_id" id="elisa_instrument_id" class="qc-input"
-                style="width:180px;" placeholder="All" oninput="loadElisaForm()">
-
-            <datalist id="elisaEquipList">
-                <option value="ELISA-001">
-                <option value="ELISA-002">
-                <option value="ELISA-003">
-            </datalist>
-
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month &amp; Year:</strong>
+                <input type="month" name="elisa_month_year" id="elisa_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadElisaForm()">
+            </div>
+            <div>
+                <strong>Instrument ID / S. No:</strong>
+                <input list="elisaEquipList" name="elisa_instrument_id" id="elisa_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                    oninput="loadElisaForm()">
+                <datalist id="elisaEquipList">
+                    <option value="ELISA-001">
+                    <option value="ELISA-002">
+                    <option value="ELISA-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearElisaFullForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </div>
 
-        <p class="mb-2">
+        <p style="margin-bottom:8px;">
             Put a tick mark (✓) against each maintenance activity after performance
         </p>
 
-        {{-- ===================== DAILY MAINTENANCE TABLE ===================== --}}
-        <table class="border-collapse border border-gray-400 w-full text-center">
-            <thead class="bg-gray-100">
+        <table style="width:100%; border-collapse:collapse;" border="1">
+            <thead>
                 <tr>
-                    <th class="border border-gray-300 p-2">DATE 🡺</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">DATE 🡺</th>
                     @for ($day = 1; $day <= 31; $day++)
-                        <th class="border border-gray-300 p-2">{{ $day }}</th>
+                        <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $day }}</th>
                     @endfor
                 </tr>
             </thead>
-
             <tbody>
                 @php
                     $fields = [
@@ -3143,28 +6041,22 @@
                 @endphp
 
                 @foreach ($fields as $field)
-                    @php
-                        $slug = \Illuminate\Support\Str::slug($field);
-                    @endphp
+                    @php $slug = \Illuminate\Support\Str::slug($field); @endphp
                     <tr>
-                        <td class="border border-gray-300 p-2 font-semibold text-left">
-                            {{ $field }}
-                        </td>
-
+                        <td style="border:1px solid #000; padding:4px; font-weight:600; text-align:left;">{{ $field }}</td>
                         @for ($day = 1; $day <= 31; $day++)
-                            <td class="border border-gray-300 p-1">
-
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
                                 @if (str_contains(strtolower($field), 'signature'))
                                     <input type="text"
                                         name="elisa_daily[{{ $slug }}][{{ $day }}]"
-                                        id="elisa_daily_{{ $slug }}_{{ $day }}" class="qc-input"
-                                        style="width:100%;" placeholder="Sign">
+                                        id="elisa_daily_{{ $slug }}_{{ $day }}"
+                                        style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                                        placeholder="Sign">
                                 @else
-                                    <input type="checkbox" class="qc-input"
+                                    <input type="checkbox"
                                         name="elisa_daily[{{ $slug }}][{{ $day }}]"
                                         id="elisa_daily_{{ $slug }}_{{ $day }}" value="1">
                                 @endif
-
                             </td>
                         @endfor
                     </tr>
@@ -3172,47 +6064,166 @@
             </tbody>
         </table>
 
+        <script>
+            function loadElisaForm() {
+                const monthYear = document.getElementById('elisa_month_year').value;
+                const instrument = document.getElementById('elisa_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('elisa_month_year', monthYear);
+                if (instrument) params.append('elisa_instrument_id', instrument);
+
+                fetch(`/newforms/be/elisa/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearElisaInputs();
+
+                    if (!res.data) {
+                        document.getElementById('elisa_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('elisa_form_id').value = res.data.id;
+
+                    if (res.data.elisa_daily) {
+                        const daily = typeof res.data.elisa_daily === 'string'
+                            ? JSON.parse(res.data.elisa_daily) : res.data.elisa_daily;
+                        Object.keys(daily).forEach(field => {
+                            if (daily[field]) {
+                                Object.keys(daily[field]).forEach(day => {
+                                    const el = document.getElementById(`elisa_daily_${field}_${day}`);
+                                    if (el) {
+                                        if (el.type === 'checkbox') {
+                                            el.checked = !!daily[field][day];
+                                        } else {
+                                            el.value = daily[field][day] || '';
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearElisaInputs() {
+                const container = document.querySelector('[id="TDPL/BE/FOM-026"]');
+                if (!container) return;
+                container.querySelectorAll('input[id^="elisa_daily_"]').forEach(el => {
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            function clearElisaFullForm() {
+                document.getElementById('elisa_month_year').value = '';
+                document.getElementById('elisa_instrument_id').value = '';
+                document.getElementById('elisa_form_id').value = '';
+                clearElisaInputs();
+            }
+
+            (function() {
+                function initElisaForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-026"]');
+                    if (!formContainer) return;
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+                        if (submitBtn) { submitBtn.textContent = 'Saving...'; submitBtn.disabled = true; }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                        })
+                        .then(res => res.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastElisa('success', result.message || 'Saved successfully!');
+                                if (result.form_id) document.getElementById('elisa_form_id').value = result.form_id;
+                            } else {
+                                showToastElisa('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error:', err);
+                            showToastElisa('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) { submitBtn.textContent = originalText; submitBtn.disabled = false; }
+                        });
+                    });
+                }
+                function showToastElisa(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+                if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initElisaForm); } else { initElisaForm(); }
+            })();
+        </script>
+
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-028" docNo="TDPL/BE/FOM-028" docName="Real Time PCR Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="rtpcr_form_id" id="rtpcr_form_id">
 
-        {{-- ===================== TOP DETAILS ===================== --}}
-        <div class="mb-4" style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-            <label class="font-bold">MONTH &amp; YEAR:</label>
-            <input type="month" name="rtpcr_month_year" id="rtpcr_month_year" class="qc-input"
-                style="width:150px;" onchange="loadRtpcrForm()">
-
-            <label class="font-bold">INSTRUMENT ID / S. No:</label>
-            <input list="rtpcrEquipList" name="rtpcr_instrument_id" id="rtpcr_instrument_id" class="qc-input"
-                style="width:180px;" placeholder="All" oninput="loadRtpcrForm()">
-
-            <datalist id="rtpcrEquipList">
-                <option value="RTPCR-001">
-                <option value="RTPCR-002">
-                <option value="RTPCR-003">
-            </datalist>
-
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month &amp; Year:</strong>
+                <input type="month" name="rtpcr_month_year" id="rtpcr_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadRtpcrForm()">
+            </div>
+            <div>
+                <strong>Instrument ID / S. No:</strong>
+                <input list="rtpcrEquipList" name="rtpcr_instrument_id" id="rtpcr_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                    oninput="loadRtpcrForm()">
+                <datalist id="rtpcrEquipList">
+                    <option value="RTPCR-001">
+                    <option value="RTPCR-002">
+                    <option value="RTPCR-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearRtpcrFullForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </div>
 
-        <p class="mb-2">
+        <p style="margin-bottom:8px;">
             Put a tick mark (✓) against each maintenance activity after performance
         </p>
 
-        {{-- ===================== DAILY MAINTENANCE TABLE ===================== --}}
-        <table class="border-collapse border border-gray-400 w-full text-center">
-            <thead class="bg-gray-100">
+        <table style="width:100%; border-collapse:collapse;" border="1">
+            <thead>
                 <tr>
-                    <th class="border border-gray-300 p-2">DATE 🡺</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">DATE 🡺</th>
                     @for ($day = 1; $day <= 31; $day++)
-                        <th class="border border-gray-300 p-2">{{ $day }}</th>
+                        <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $day }}</th>
                     @endfor
                 </tr>
             </thead>
-
             <tbody>
                 @php
                     $fields = [
@@ -3227,34 +6238,144 @@
                 @endphp
 
                 @foreach ($fields as $field)
-                    @php
-                        $slug = \Illuminate\Support\Str::slug($field);
-                    @endphp
+                    @php $slug = \Illuminate\Support\Str::slug($field); @endphp
                     <tr>
-                        <td class="border border-gray-300 p-2 font-semibold text-left">
-                            {{ $field }}
-                        </td>
-
+                        <td style="border:1px solid #000; padding:4px; font-weight:600; text-align:left;">{{ $field }}</td>
                         @for ($day = 1; $day <= 31; $day++)
-                            <td class="border border-gray-300 p-1">
-
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
                                 @if (str_contains(strtolower($field), 'signature'))
                                     <input type="text"
                                         name="rtpcr_daily[{{ $slug }}][{{ $day }}]"
-                                        id="rtpcr_daily_{{ $slug }}_{{ $day }}" class="qc-input"
-                                        style="width:100%;" placeholder="Sign">
+                                        id="rtpcr_daily_{{ $slug }}_{{ $day }}"
+                                        style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                                        placeholder="Sign">
                                 @else
-                                    <input type="checkbox" class="qc-input"
+                                    <input type="checkbox"
                                         name="rtpcr_daily[{{ $slug }}][{{ $day }}]"
                                         id="rtpcr_daily_{{ $slug }}_{{ $day }}" value="1">
                                 @endif
-
                             </td>
                         @endfor
                     </tr>
                 @endforeach
             </tbody>
         </table>
+
+        <script>
+            function loadRtpcrForm() {
+                const monthYear = document.getElementById('rtpcr_month_year').value;
+                const instrument = document.getElementById('rtpcr_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('rtpcr_month_year', monthYear);
+                if (instrument) params.append('rtpcr_instrument_id', instrument);
+
+                fetch(`/newforms/be/rtpcr/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearRtpcrInputs();
+
+                    if (!res.data) {
+                        document.getElementById('rtpcr_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('rtpcr_form_id').value = res.data.id;
+
+                    if (res.data.rtpcr_daily) {
+                        const daily = typeof res.data.rtpcr_daily === 'string'
+                            ? JSON.parse(res.data.rtpcr_daily) : res.data.rtpcr_daily;
+                        Object.keys(daily).forEach(field => {
+                            if (daily[field]) {
+                                Object.keys(daily[field]).forEach(day => {
+                                    const el = document.getElementById(`rtpcr_daily_${field}_${day}`);
+                                    if (el) {
+                                        if (el.type === 'checkbox') {
+                                            el.checked = !!daily[field][day];
+                                        } else {
+                                            el.value = daily[field][day] || '';
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearRtpcrInputs() {
+                const container = document.querySelector('[id="TDPL/BE/FOM-028"]');
+                if (!container) return;
+                container.querySelectorAll('input[id^="rtpcr_daily_"]').forEach(el => {
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            function clearRtpcrFullForm() {
+                document.getElementById('rtpcr_month_year').value = '';
+                document.getElementById('rtpcr_instrument_id').value = '';
+                document.getElementById('rtpcr_form_id').value = '';
+                clearRtpcrInputs();
+            }
+
+            (function() {
+                function initRtpcrForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-028"]');
+                    if (!formContainer) return;
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+                        if (submitBtn) { submitBtn.textContent = 'Saving...'; submitBtn.disabled = true; }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                        })
+                        .then(res => res.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastRtpcr('success', result.message || 'Saved successfully!');
+                                if (result.form_id) document.getElementById('rtpcr_form_id').value = result.form_id;
+                            } else {
+                                showToastRtpcr('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error:', err);
+                            showToastRtpcr('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) { submitBtn.textContent = originalText; submitBtn.disabled = false; }
+                        });
+                    });
+                }
+                function showToastRtpcr(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+                if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initRtpcrForm); } else { initRtpcrForm(); }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -3262,155 +6383,287 @@
     <x-formTemplete id="TDPL/BE/FOM-029" docNo="TDPL/BE/FOM-029" docName="Cooling Centrifuge Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="cc_form_id" id="cc_form_id">
 
-        <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:10px;">
-
-            <strong>Month/Year:</strong>
-            <input type="month" name="cc_month_year" id="cc_month_year" class="border p-1 rounded qc-input"
-                style="width:150px;" onchange="loadCcForm()">
-
-            <strong>Department:</strong>
-            <input list="ccDepartmentList" name="cc_department" id="cc_department"
-                class="border p-1 rounded qc-input" style="width:160px;" placeholder="All" oninput="loadCcForm()">
-
-            <datalist id="ccDepartmentList">
-                <option value="Hematology">
-                <option value="Biochemistry">
-                <option value="Microbiology">
-                <option value="Pathology">
-            </datalist>
-
-            <strong>Instrument ID/S. No.:</strong>
-            <input list="ccEquipList" name="cc_instrument_id" id="cc_instrument_id"
-                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All" oninput="loadCcForm()">
-
-            <datalist id="ccEquipList">
-                <option value="CC-001">
-                <option value="CC-002">
-                <option value="CC-003">
-            </datalist>
-
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month / Year:</strong>
+                <input type="month" name="cc_month_year" id="cc_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadCcForm()">
+            </div>
+            <div>
+                <strong>Department:</strong>
+                <input list="ccDepartmentList" name="cc_department" id="cc_department"
+                    style="border:1px solid #000; padding:5px; width:160px;" placeholder="All"
+                    oninput="loadCcForm()">
+                <datalist id="ccDepartmentList">
+                    <option value="Hematology">
+                    <option value="Biochemistry">
+                    <option value="Microbiology">
+                    <option value="Pathology">
+                </datalist>
+            </div>
+            <div>
+                <strong>Instrument ID / S. No.:</strong>
+                <input list="ccEquipList" name="cc_instrument_id" id="cc_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                    oninput="loadCcForm()">
+                <datalist id="ccEquipList">
+                    <option value="CC-001">
+                    <option value="CC-002">
+                    <option value="CC-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearCcFullForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </div>
 
-
-        <table class="border-collapse border border-gray-400 w-full text-center">
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <thead>
                 <tr>
-                    <th class="border border-gray-400">Daily Maintenance</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Daily Maintenance</th>
                     @for ($day = 1; $day <= 31; $day++)
-                        <th class="border border-gray-400">{{ $day }}</th>
+                        <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $day }}</th>
                     @endfor
                 </tr>
             </thead>
-
             <tbody>
-
                 @foreach (['Buckets Cleaned', 'Power Cord', 'Dusting', 'Signature'] as $item)
-                    @php
-                        $slug = \Illuminate\Support\Str::slug($item);
-                    @endphp
+                    @php $slug = \Illuminate\Support\Str::slug($item); @endphp
                     <tr>
-                        <td class="border border-gray-400 font-semibold">{{ $item }}</td>
-
+                        <td style="border:1px solid #000; padding:4px; font-weight:600; text-align:left;">{{ $item }}</td>
                         @for ($day = 1; $day <= 31; $day++)
-                            <td class="border border-gray-400 p-1">
-
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
                                 @if ($item === 'Signature')
                                     <input type="text" name="cc_daily[{{ $slug }}][{{ $day }}]"
                                         id="cc_daily_{{ $slug }}_{{ $day }}"
-                                        class="w-full border p-1 rounded qc-input" placeholder="Sign">
+                                        style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                                        placeholder="Sign">
                                 @else
                                     <input type="checkbox" name="cc_daily[{{ $slug }}][{{ $day }}]"
-                                        id="cc_daily_{{ $slug }}_{{ $day }}" value="1"
-                                        class="qc-input mx-auto">
+                                        id="cc_daily_{{ $slug }}_{{ $day }}" value="1">
                                 @endif
-
                             </td>
                         @endfor
                     </tr>
                 @endforeach
 
-                {{-- ===================== MONTHLY MAINTENANCE ===================== --}}
+                {{-- MONTHLY MAINTENANCE --}}
                 <tr>
-                    <td colspan="32" class="border border-gray-400 font-semibold text-left p-2">
+                    <td colspan="32" style="border:1px solid #000; padding:6px; font-weight:600; text-align:left;">
                         Monthly Maintenance
                     </td>
                 </tr>
-
                 <tr>
-                    <td class="border border-gray-400 font-semibold">
-                        Bushes Checked
-                    </td>
-
-                    <td colspan="6" class="border border-gray-400">
+                    <td style="border:1px solid #000; padding:4px; font-weight:600;">Bushes Checked</td>
+                    <td colspan="6" style="border:1px solid #000; padding:4px;">
                         <input type="text" name="cc_monthly[bushes_checked_notes]"
-                            id="cc_monthly_bushes_checked_notes" class="w-full border p-1 rounded qc-input">
+                            id="cc_monthly_bushes_checked_notes"
+                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
-
-                    <td colspan="14" class="border border-gray-400">
+                    <td colspan="14" style="border:1px solid #000; padding:4px;">
                         <strong>Date:</strong>
                         <input type="date" name="cc_monthly[bushes_checked_date]"
-                            id="cc_monthly_bushes_checked_date" class="border p-1 rounded qc-input">
+                            id="cc_monthly_bushes_checked_date"
+                            style="padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
-
-                    <td colspan="11" class="border border-gray-400">
+                    <td colspan="11" style="border:1px solid #000; padding:4px;">
                         <strong>Next Due Date:</strong>
-                        <input type="date" name="cc_monthly[bushes_next_due]" id="cc_monthly_bushes_next_due"
-                            class="border p-1 rounded qc-input">
+                        <input type="date" name="cc_monthly[bushes_next_due]"
+                            id="cc_monthly_bushes_next_due"
+                            style="padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
                 </tr>
-
                 <tr>
-                    <td class="border border-gray-400 font-semibold">
-                        Signature
-                    </td>
-                    <td colspan="31" class="border border-gray-400">
+                    <td style="border:1px solid #000; padding:4px; font-weight:600;">Signature</td>
+                    <td colspan="31" style="border:1px solid #000; padding:4px;">
                         <input type="text" name="cc_monthly[signature]" id="cc_monthly_signature"
-                            class="w-full border p-1 rounded qc-input">
+                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                     </td>
                 </tr>
-
             </tbody>
         </table>
+
+        <script>
+            function loadCcForm() {
+                const monthYear = document.getElementById('cc_month_year').value;
+                const instrument = document.getElementById('cc_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('cc_month_year', monthYear);
+                if (instrument) params.append('cc_instrument_id', instrument);
+
+                fetch(`/newforms/be/cc/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearCcInputs();
+
+                    if (!res.data) {
+                        document.getElementById('cc_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('cc_form_id').value = res.data.id;
+
+                    // Department (data field populated from record)
+                    document.getElementById('cc_department').value = res.data.cc_department ?? '';
+
+                    // Daily JSON (checkboxes + text)
+                    if (res.data.cc_daily) {
+                        const daily = typeof res.data.cc_daily === 'string'
+                            ? JSON.parse(res.data.cc_daily) : res.data.cc_daily;
+                        Object.keys(daily).forEach(field => {
+                            if (daily[field]) {
+                                Object.keys(daily[field]).forEach(day => {
+                                    const el = document.getElementById(`cc_daily_${field}_${day}`);
+                                    if (el) {
+                                        if (el.type === 'checkbox') {
+                                            el.checked = !!daily[field][day];
+                                        } else {
+                                            el.value = daily[field][day] || '';
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+
+                    // Monthly individual columns (flat DB fields)
+                    document.getElementById('cc_monthly_bushes_checked_notes').value =
+                        res.data.cc_bushes_checked_notes ?? '';
+                    document.getElementById('cc_monthly_bushes_checked_date').value =
+                        res.data.cc_bushes_checked_date ?? '';
+                    document.getElementById('cc_monthly_bushes_next_due').value =
+                        res.data.cc_bushes_next_due ?? '';
+                    document.getElementById('cc_monthly_signature').value =
+                        res.data.cc_monthly_signature ?? '';
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearCcInputs() {
+                const container = document.querySelector('[id="TDPL/BE/FOM-029"]');
+                if (!container) return;
+                // Daily inputs
+                container.querySelectorAll('input[id^="cc_daily_"]').forEach(el => {
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+                // Monthly individual inputs
+                document.getElementById('cc_monthly_bushes_checked_notes').value = '';
+                document.getElementById('cc_monthly_bushes_checked_date').value = '';
+                document.getElementById('cc_monthly_bushes_next_due').value = '';
+                document.getElementById('cc_monthly_signature').value = '';
+            }
+
+            function clearCcFullForm() {
+                document.getElementById('cc_month_year').value = '';
+                document.getElementById('cc_department').value = '';
+                document.getElementById('cc_instrument_id').value = '';
+                document.getElementById('cc_form_id').value = '';
+                clearCcInputs();
+            }
+
+            (function() {
+                function initCcForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-029"]');
+                    if (!formContainer) return;
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+                        if (submitBtn) { submitBtn.textContent = 'Saving...'; submitBtn.disabled = true; }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                        })
+                        .then(res => res.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastCc('success', result.message || 'Saved successfully!');
+                                if (result.form_id) document.getElementById('cc_form_id').value = result.form_id;
+                            } else {
+                                showToastCc('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error:', err);
+                            showToastCc('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) { submitBtn.textContent = originalText; submitBtn.disabled = false; }
+                        });
+                    });
+                }
+                function showToastCc(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+                if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initCcForm); } else { initCcForm(); }
+            })();
+        </script>
 
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-034" docNo="TDPL/BE/FOM-034" docName="Microscope Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="mic_form_id" id="mic_form_id">
 
-        <p style="display:flex; align-items:center; gap:14px; flex-wrap:wrap;">
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month &amp; Year:</strong>
+                <input type="month" name="mic_month_year" id="mic_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadMicForm()">
+            </div>
+            <div>
+                <strong>Instrument ID / S. No.:</strong>
+                <input list="micEquipList" name="mic_instrument_id" id="mic_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                    oninput="loadMicForm()">
+                <datalist id="micEquipList">
+                    <option value="MIC-001">
+                    <option value="MIC-002">
+                    <option value="MIC-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearMicFullForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-            <strong>Month & Year:</strong>
-            <input type="month" name="mic_month_year" id="mic_month_year" class="border p-1 rounded qc-input"
-                style="width:150px;" onchange="loadMicForm()">
-
-            <strong>Instrument ID/S. No.:</strong>
-            <input list="micEquipList" name="mic_instrument_id" id="mic_instrument_id"
-                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All" oninput="loadMicForm()">
-
-            <datalist id="micEquipList">
-                <option value="MIC-001">
-                <option value="MIC-002">
-                <option value="MIC-003">
-            </datalist>
-
-        </p>
-
-        <table class="border-collapse border border-gray-400 w-full text-center">
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <thead>
                 <tr>
-                    <th class="border border-gray-400">Daily Maintenance</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Daily Maintenance</th>
                     @for ($day = 1; $day <= 31; $day++)
-                        <th class="border border-gray-400">{{ $day }}</th>
+                        <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $day }}</th>
                     @endfor
                 </tr>
             </thead>
-
             <tbody>
                 @php
                     $items = [
@@ -3426,26 +6679,21 @@
                 @endphp
 
                 @foreach ($items as $item)
-                    @php
-                        $slug = \Illuminate\Support\Str::slug($item);
-                    @endphp
+                    @php $slug = \Illuminate\Support\Str::slug($item); @endphp
                     <tr>
-                        <td class="border border-gray-400 font-semibold">{{ $item }}</td>
-
+                        <td style="border:1px solid #000; padding:4px; font-weight:600; text-align:left;">{{ $item }}</td>
                         @for ($day = 1; $day <= 31; $day++)
-                            <td class="border border-gray-400 p-1">
-
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
                                 @if (str_contains($item, 'Signature'))
                                     <input type="text" name="mic_daily[{{ $slug }}][{{ $day }}]"
                                         id="mic_daily_{{ $slug }}_{{ $day }}"
-                                        class="w-full border p-1 rounded qc-input" placeholder="Sign">
+                                        style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                                        placeholder="Sign">
                                 @else
                                     <input type="checkbox"
                                         name="mic_daily[{{ $slug }}][{{ $day }}]"
-                                        id="mic_daily_{{ $slug }}_{{ $day }}" value="1"
-                                        class="qc-input mx-auto">
+                                        id="mic_daily_{{ $slug }}_{{ $day }}" value="1">
                                 @endif
-
                             </td>
                         @endfor
                     </tr>
@@ -3453,69 +6701,188 @@
             </tbody>
         </table>
 
+        <script>
+            function loadMicForm() {
+                const monthYear = document.getElementById('mic_month_year').value;
+                const instrument = document.getElementById('mic_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('mic_month_year', monthYear);
+                if (instrument) params.append('mic_instrument_id', instrument);
+
+                fetch(`/newforms/be/mic/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearMicInputs();
+
+                    if (!res.data) {
+                        document.getElementById('mic_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('mic_form_id').value = res.data.id;
+
+                    if (res.data.mic_daily) {
+                        const daily = typeof res.data.mic_daily === 'string'
+                            ? JSON.parse(res.data.mic_daily) : res.data.mic_daily;
+                        Object.keys(daily).forEach(field => {
+                            if (daily[field]) {
+                                Object.keys(daily[field]).forEach(day => {
+                                    const el = document.getElementById(`mic_daily_${field}_${day}`);
+                                    if (el) {
+                                        if (el.type === 'checkbox') {
+                                            el.checked = !!daily[field][day];
+                                        } else {
+                                            el.value = daily[field][day] || '';
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearMicInputs() {
+                const container = document.querySelector('[id="TDPL/BE/FOM-034"]');
+                if (!container) return;
+                container.querySelectorAll('input[id^="mic_daily_"]').forEach(el => {
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            function clearMicFullForm() {
+                document.getElementById('mic_month_year').value = '';
+                document.getElementById('mic_instrument_id').value = '';
+                document.getElementById('mic_form_id').value = '';
+                clearMicInputs();
+            }
+
+            (function() {
+                function initMicForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-034"]');
+                    if (!formContainer) return;
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+                        if (submitBtn) { submitBtn.textContent = 'Saving...'; submitBtn.disabled = true; }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                        })
+                        .then(res => res.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastMic('success', result.message || 'Saved successfully!');
+                                if (result.form_id) document.getElementById('mic_form_id').value = result.form_id;
+                            } else {
+                                showToastMic('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error:', err);
+                            showToastMic('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) { submitBtn.textContent = originalText; submitBtn.disabled = false; }
+                        });
+                    });
+                }
+                function showToastMic(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+                if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMicForm); } else { initMicForm(); }
+            })();
+        </script>
+
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-035" docNo="TDPL/BE/FOM-035" docName="Laura M Maintenance Form" issueNo="2.0"
         issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="lauram_form_id" id="lauram_form_id">
 
-        <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:10px;">
-
-            <strong>Month & Year:</strong>
-            <input type="month" name="lauram_month_year" id="lauram_month_year"
-                class="border p-1 rounded qc-input" style="width:150px;" onchange="loadLauramForm()">
-
-            <strong>Instrument ID/S. No.:</strong>
-            <input list="lauramEquipList" name="lauram_instrument_id" id="lauram_instrument_id"
-                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All"
-                oninput="loadLauramForm()">
-
-            <datalist id="lauramEquipList">
-                <option value="LAURAM-001">
-                <option value="LAURAM-002">
-                <option value="LAURAM-003">
-            </datalist>
-
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month &amp; Year:</strong>
+                <input type="month" name="lauram_month_year" id="lauram_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadLauramForm()">
+            </div>
+            <div>
+                <strong>Instrument ID / S. No.:</strong>
+                <input list="lauramEquipList" name="lauram_instrument_id" id="lauram_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                    oninput="loadLauramForm()">
+                <datalist id="lauramEquipList">
+                    <option value="LAURAM-001">
+                    <option value="LAURAM-002">
+                    <option value="LAURAM-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearLauramFullForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </div>
 
-        <table class="border-collapse border border-gray-400 text-center w-full">
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <thead>
                 <tr>
-                    <th class="border border-gray-400">Daily Maintenance</th>
+                    <th style="border:1px solid #000; padding:4px; text-align:center;">Daily Maintenance</th>
                     @for ($day = 1; $day <= 31; $day++)
-                        <th class="border border-gray-400">{{ $day }}</th>
+                        <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $day }}</th>
                     @endfor
                 </tr>
             </thead>
-
             <tbody>
                 @foreach ([
-            'Cleaning procedure of Plastic Feeder' => ['1. Rinse the feeder with water and wipe it with wet cloth', '2. Dry the plastic feeder, and insert into analyzer (Correct position)'],
-            'Cleaning procedure of Waste Container' => ['1. Remove the waste container with used strips from the analyzer.', '2. Empty the container and rinse it with water', '3. Wipe with a dry cloth.', '4. Insert the waste container back and ensure it is positioned correctly'],
-        ] as $section => $steps)
+                    'Cleaning procedure of Plastic Feeder' => ['1. Rinse the feeder with water and wipe it with wet cloth', '2. Dry the plastic feeder, and insert into analyzer (Correct position)'],
+                    'Cleaning procedure of Waste Container' => ['1. Remove the waste container with used strips from the analyzer.', '2. Empty the container and rinse it with water', '3. Wipe with a dry cloth.', '4. Insert the waste container back and ensure it is positioned correctly'],
+                ] as $section => $steps)
                     @php $sectionSlug = Str::slug($section); @endphp
 
                     <tr>
-                        <td class="border border-gray-400 font-semibold text-left" style="min-width:250px;">
+                        <td style="border:1px solid #000; padding:4px; font-weight:600; text-align:left; min-width:250px;">
                             {{ $section }}
                         </td>
-                        <td colspan="31" class="border border-gray-400">&nbsp;</td>
+                        <td colspan="31" style="border:1px solid #000; padding:4px;">&nbsp;</td>
                     </tr>
 
                     @foreach ($steps as $step)
                         @php $stepSlug = Str::slug($step); @endphp
                         <tr>
-                            <td class="border border-gray-400 text-left" style="min-width:250px;">
+                            <td style="border:1px solid #000; padding:4px; text-align:left; min-width:250px;">
                                 {{ $step }}
                             </td>
                             @for ($day = 1; $day <= 31; $day++)
-                                <td class="border border-gray-400 p-1">
+                                <td style="border:1px solid #000; padding:4px; text-align:center;">
                                     <input type="checkbox"
                                         name="lauram_daily[{{ $sectionSlug }}][{{ $stepSlug }}][{{ $day }}]"
                                         id="lauram_daily_{{ $sectionSlug }}_{{ $stepSlug }}_{{ $day }}"
-                                        value="1" class="qc-input mx-auto">
+                                        value="1">
                                 </td>
                             @endfor
                         </tr>
@@ -3526,21 +6893,148 @@
                 @foreach (['Technician Signature', 'Supervisor Signature'] as $signature)
                     @php $sigSlug = Str::slug($signature); @endphp
                     <tr>
-                        <td class="border border-gray-400 font-semibold text-left" style="min-width:250px;">
+                        <td style="border:1px solid #000; padding:4px; font-weight:600; text-align:left; min-width:250px;">
                             {{ $signature }}
                         </td>
                         @for ($day = 1; $day <= 31; $day++)
-                            <td class="border border-gray-400 p-1">
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
                                 <input type="text" name="lauram_daily[{{ $sigSlug }}][{{ $day }}]"
                                     id="lauram_daily_{{ $sigSlug }}_{{ $day }}"
-                                    class="w-full border p-1 rounded qc-input" placeholder="Sign">
+                                    style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                                    placeholder="Sign">
                             </td>
                         @endfor
                     </tr>
                 @endforeach
-
             </tbody>
         </table>
+
+        <script>
+            function loadLauramForm() {
+                const monthYear = document.getElementById('lauram_month_year').value;
+                const instrument = document.getElementById('lauram_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('lauram_month_year', monthYear);
+                if (instrument) params.append('lauram_instrument_id', instrument);
+
+                fetch(`/newforms/be/lauram/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearLauramInputs();
+
+                    if (!res.data) {
+                        document.getElementById('lauram_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('lauram_form_id').value = res.data.id;
+
+                    if (res.data.lauram_daily) {
+                        const daily = typeof res.data.lauram_daily === 'string'
+                            ? JSON.parse(res.data.lauram_daily) : res.data.lauram_daily;
+
+                        Object.keys(daily).forEach(section => {
+                            const sectionData = daily[section];
+                            if (!sectionData || typeof sectionData !== 'object') return;
+
+                            const firstVal = Object.values(sectionData)[0];
+
+                            if (firstVal && typeof firstVal === 'object') {
+                                // Step case: section → step → day (checkboxes)
+                                Object.keys(sectionData).forEach(step => {
+                                    if (sectionData[step] && typeof sectionData[step] === 'object') {
+                                        Object.keys(sectionData[step]).forEach(day => {
+                                            const el = document.getElementById(`lauram_daily_${section}_${step}_${day}`);
+                                            if (el && el.type === 'checkbox') el.checked = !!sectionData[step][day];
+                                        });
+                                    }
+                                });
+                            } else {
+                                // Signature case: section → day (text)
+                                Object.keys(sectionData).forEach(day => {
+                                    const el = document.getElementById(`lauram_daily_${section}_${day}`);
+                                    if (el) el.value = sectionData[day] || '';
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearLauramInputs() {
+                const container = document.querySelector('[id="TDPL/BE/FOM-035"]');
+                if (!container) return;
+                container.querySelectorAll('input[id^="lauram_daily_"]').forEach(el => {
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            function clearLauramFullForm() {
+                document.getElementById('lauram_month_year').value = '';
+                document.getElementById('lauram_instrument_id').value = '';
+                document.getElementById('lauram_form_id').value = '';
+                clearLauramInputs();
+            }
+
+            (function() {
+                function initLauramForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-035"]');
+                    if (!formContainer) return;
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+                        if (submitBtn) { submitBtn.textContent = 'Saving...'; submitBtn.disabled = true; }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                        })
+                        .then(res => res.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastLauram('success', result.message || 'Saved successfully!');
+                                if (result.form_id) document.getElementById('lauram_form_id').value = result.form_id;
+                            } else {
+                                showToastLauram('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error:', err);
+                            showToastLauram('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) { submitBtn.textContent = originalText; submitBtn.disabled = false; }
+                        });
+                    });
+                }
+                function showToastLauram(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+                if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initLauramForm); } else { initLauramForm(); }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -3548,82 +7042,193 @@
     <x-formTemplete id="TDPL/BE/FOM-036" docNo="TDPL/BE/FOM-036" docName="Microtome Maintenance Form" issueNo="2.0"
         issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="microtome_form_id" id="microtome_form_id">
 
-        <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap;">
-
-            <label style="font-weight:bold;">Month &amp; Year:</label>
-            <input type="month" name="microtome_month_year" id="microtome_month_year"
-                class="border p-1 rounded qc-input" style="width:150px;" onchange="loadMicrotomeForm()">
-
-            <label style="font-weight:bold;">Instrument ID/S. No.:</label>
-            <input list="microtomeEquipList" name="microtome_instrument_id" id="microtome_instrument_id"
-                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All"
-                oninput="loadMicrotomeForm()">
-
-            <datalist id="microtomeEquipList">
-                <option value="MICROTOME-001">
-                <option value="MICROTOME-002">
-                <option value="MICROTOME-003">
-            </datalist>
-
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month &amp; Year:</strong>
+                <input type="month" name="microtome_month_year" id="microtome_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadMicrotomeForm()">
+            </div>
+            <div>
+                <strong>Instrument ID / S. No.:</strong>
+                <input list="microtomeEquipList" name="microtome_instrument_id" id="microtome_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                    oninput="loadMicrotomeForm()">
+                <datalist id="microtomeEquipList">
+                    <option value="MICROTOME-001">
+                    <option value="MICROTOME-002">
+                    <option value="MICROTOME-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearMicrotomeFullForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </div>
 
-        <table class="border-collapse border border-gray-400 w-full text-center">
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <thead>
                 <tr>
-                    <th class="border border-gray-400 p-4">Date</th>
-                    <th class="border border-gray-400 p-4">Blade Change</th>
-                    <th class="border border-gray-400 p-4">Lubrication</th>
-                    <th class="border border-gray-400 p-4">Clean Knife Holder</th>
-                    <th class="border border-gray-400 p-4">
-                        Remove Accumulated Paraffin / Tissue & Clean Material Parts
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Date</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Blade Change</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Lubrication</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Clean Knife Holder</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">
+                        Remove Accumulated Paraffin / Tissue &amp; Clean Material Parts
                     </th>
-                    <th class="border border-gray-400 p-4">Technician Signature</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Technician Signature</th>
                 </tr>
             </thead>
-
             <tbody>
                 @for ($day = 1; $day <= 31; $day++)
                     <tr>
-                        <td class="border border-gray-400 font-semibold">
+                        <td style="border:1px solid #000; padding:4px; font-weight:600; text-align:center;">
                             {{ str_pad($day, 2, '0', STR_PAD_LEFT) }}
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="microtome_daily[blade_change][{{ $day }}]"
-                                id="microtome_daily_blade_change_{{ $day }}" value="1"
-                                class="qc-input">
+                                id="microtome_daily_blade_change_{{ $day }}" value="1">
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="microtome_daily[lubrication][{{ $day }}]"
-                                id="microtome_daily_lubrication_{{ $day }}" value="1"
-                                class="qc-input">
+                                id="microtome_daily_lubrication_{{ $day }}" value="1">
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="microtome_daily[clean_knife][{{ $day }}]"
-                                id="microtome_daily_clean_knife_{{ $day }}" value="1"
-                                class="qc-input">
+                                id="microtome_daily_clean_knife_{{ $day }}" value="1">
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="microtome_daily[remove_paraffin][{{ $day }}]"
-                                id="microtome_daily_remove_paraffin_{{ $day }}" value="1"
-                                class="qc-input">
+                                id="microtome_daily_remove_paraffin_{{ $day }}" value="1">
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="microtome_daily[technician_signature][{{ $day }}]"
                                 id="microtome_daily_technician_signature_{{ $day }}"
-                                class="w-full border p-1 rounded qc-input" placeholder="Sign">
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                                placeholder="Sign">
                         </td>
                     </tr>
                 @endfor
             </tbody>
         </table>
+
+        <script>
+            function loadMicrotomeForm() {
+                const monthYear = document.getElementById('microtome_month_year').value;
+                const instrument = document.getElementById('microtome_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('microtome_month_year', monthYear);
+                if (instrument) params.append('microtome_instrument_id', instrument);
+
+                fetch(`/newforms/be/microtome/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearMicrotomeInputs();
+
+                    if (!res.data) {
+                        document.getElementById('microtome_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('microtome_form_id').value = res.data.id;
+
+                    if (res.data.microtome_daily) {
+                        const daily = typeof res.data.microtome_daily === 'string'
+                            ? JSON.parse(res.data.microtome_daily) : res.data.microtome_daily;
+                        Object.keys(daily).forEach(field => {
+                            if (daily[field]) {
+                                Object.keys(daily[field]).forEach(day => {
+                                    const el = document.getElementById(`microtome_daily_${field}_${day}`);
+                                    if (el) {
+                                        if (el.type === 'checkbox') {
+                                            el.checked = !!daily[field][day];
+                                        } else {
+                                            el.value = daily[field][day] || '';
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearMicrotomeInputs() {
+                const container = document.querySelector('[id="TDPL/BE/FOM-036"]');
+                if (!container) return;
+                container.querySelectorAll('input[id^="microtome_daily_"]').forEach(el => {
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            function clearMicrotomeFullForm() {
+                document.getElementById('microtome_month_year').value = '';
+                document.getElementById('microtome_instrument_id').value = '';
+                document.getElementById('microtome_form_id').value = '';
+                clearMicrotomeInputs();
+            }
+
+            (function() {
+                function initMicrotomeForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-036"]');
+                    if (!formContainer) return;
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+                        if (submitBtn) { submitBtn.textContent = 'Saving...'; submitBtn.disabled = true; }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                        })
+                        .then(res => res.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastMicrotome('success', result.message || 'Saved successfully!');
+                                if (result.form_id) document.getElementById('microtome_form_id').value = result.form_id;
+                            } else {
+                                showToastMicrotome('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error:', err);
+                            showToastMicrotome('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) { submitBtn.textContent = originalText; submitBtn.disabled = false; }
+                        });
+                    });
+                }
+                function showToastMicrotome(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+                if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initMicrotomeForm); } else { initMicrotomeForm(); }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -3631,86 +7236,204 @@
     <x-formTemplete id="TDPL/BE/FOM-037" docNo="TDPL/BE/FOM-037" docName="Flotation Bath Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="fb_form_id" id="fb_form_id">
-        <p style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
 
-            <strong>Month &amp; Year:</strong>
-            <input type="month" name="fb_month_year" id="fb_month_year" class="border p-1 rounded qc-input"
-                style="width:150px;" onchange="loadFbForm()">
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month &amp; Year:</strong>
+                <input type="month" name="fb_month_year" id="fb_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadFbForm()">
+            </div>
+            <div>
+                <strong>Instrument ID / S. No.:</strong>
+                <input list="fbEquipList" name="fb_instrument_id" id="fb_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                    oninput="loadFbForm()">
+                <datalist id="fbEquipList">
+                    <option value="FB-001">
+                    <option value="FB-002">
+                    <option value="FB-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearFbFullForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-            <strong>Instrument ID/S. No.:</strong>
-            <input list="fbEquipList" name="fb_instrument_id" id="fb_instrument_id"
-                class="border p-1 rounded qc-input" style="width:180px;" placeholder="All" oninput="loadFbForm()">
+        <p style="margin-bottom:8px;">Note: Optimum temperature range is 52 - 56°C.</p>
 
-            <datalist id="fbEquipList">
-                <option value="FB-001">
-                <option value="FB-002">
-                <option value="FB-003">
-            </datalist>
-
-        </p>
-
-
-        <p>Note: Optimum temperature range is 52 - 56°C.</p>
-
-        <table class="border-collapse border border-gray-400 w-full text-center">
+        <table style="width:100%; border-collapse:collapse;" border="1">
             <thead>
                 <tr>
-                    <th class="border border-gray-400 p-4">Date</th>
-                    <th class="border border-gray-400 p-4">Clean Exterior</th>
-                    <th class="border border-gray-400 p-4">Temperature @10:00 AM</th>
-                    <th class="border border-gray-400 p-4">Distilled Water Changed</th>
-                    <th class="border border-gray-400 p-4">Signature</th>
-                    <th class="border border-gray-400 p-4">Temperature @5:30 PM</th>
-                    <th class="border border-gray-400 p-4">Signature</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Date</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Clean Exterior</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Temperature @10:00 AM</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Distilled Water Changed</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Signature</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Temperature @5:30 PM</th>
+                    <th style="border:1px solid #000; padding:8px; text-align:center;">Signature</th>
                 </tr>
             </thead>
-
             <tbody>
                 @for ($day = 1; $day <= 31; $day++)
                     <tr>
-                        <td class="border border-gray-400 font-semibold">
+                        <td style="border:1px solid #000; padding:4px; font-weight:600; text-align:center;">
                             {{ str_pad($day, 2, '0', STR_PAD_LEFT) }}
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="fb_daily[clean_exterior][{{ $day }}]"
-                                id="fb_daily_clean_exterior_{{ $day }}" value="1" class="qc-input">
+                                id="fb_daily_clean_exterior_{{ $day }}" value="1">
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="number" name="fb_daily[temp_morning][{{ $day }}]"
                                 id="fb_daily_temp_morning_{{ $day }}"
-                                class="w-full border p-1 rounded qc-input" placeholder="°C">
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                                placeholder="°C">
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="checkbox" name="fb_daily[water_changed][{{ $day }}]"
-                                id="fb_daily_water_changed_{{ $day }}" value="1" class="qc-input">
+                                id="fb_daily_water_changed_{{ $day }}" value="1">
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="fb_daily[signature_morning][{{ $day }}]"
                                 id="fb_daily_signature_morning_{{ $day }}"
-                                class="w-full border p-1 rounded qc-input" placeholder="Sign">
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                                placeholder="Sign">
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="number" name="fb_daily[temp_evening][{{ $day }}]"
                                 id="fb_daily_temp_evening_{{ $day }}"
-                                class="w-full border p-1 rounded qc-input" placeholder="°C">
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                                placeholder="°C">
                         </td>
-
-                        <td class="border border-gray-400 p-1">
+                        <td style="border:1px solid #000; padding:4px; text-align:center;">
                             <input type="text" name="fb_daily[signature_evening][{{ $day }}]"
                                 id="fb_daily_signature_evening_{{ $day }}"
-                                class="w-full border p-1 rounded qc-input" placeholder="Sign">
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;"
+                                placeholder="Sign">
                         </td>
                     </tr>
                 @endfor
             </tbody>
         </table>
+
+        <script>
+            function loadFbForm() {
+                const monthYear = document.getElementById('fb_month_year').value;
+                const instrument = document.getElementById('fb_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('fb_month_year', monthYear);
+                if (instrument) params.append('fb_instrument_id', instrument);
+
+                fetch(`/newforms/be/fb/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearFbInputs();
+
+                    if (!res.data) {
+                        document.getElementById('fb_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('fb_form_id').value = res.data.id;
+
+                    if (res.data.fb_daily) {
+                        const daily = typeof res.data.fb_daily === 'string'
+                            ? JSON.parse(res.data.fb_daily) : res.data.fb_daily;
+                        Object.keys(daily).forEach(field => {
+                            if (daily[field]) {
+                                Object.keys(daily[field]).forEach(day => {
+                                    const el = document.getElementById(`fb_daily_${field}_${day}`);
+                                    if (el) {
+                                        if (el.type === 'checkbox') {
+                                            el.checked = !!daily[field][day];
+                                        } else {
+                                            el.value = daily[field][day] || '';
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearFbInputs() {
+                const container = document.querySelector('[id="TDPL/BE/FOM-037"]');
+                if (!container) return;
+                container.querySelectorAll('input[id^="fb_daily_"]').forEach(el => {
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            function clearFbFullForm() {
+                document.getElementById('fb_month_year').value = '';
+                document.getElementById('fb_instrument_id').value = '';
+                document.getElementById('fb_form_id').value = '';
+                clearFbInputs();
+            }
+
+            (function() {
+                function initFbForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-037"]');
+                    if (!formContainer) return;
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+                        if (submitBtn) { submitBtn.textContent = 'Saving...'; submitBtn.disabled = true; }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                        })
+                        .then(res => res.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastFb('success', result.message || 'Saved successfully!');
+                                if (result.form_id) document.getElementById('fb_form_id').value = result.form_id;
+                            } else {
+                                showToastFb('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error:', err);
+                            showToastFb('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) { submitBtn.textContent = originalText; submitBtn.disabled = false; }
+                        });
+                    });
+                }
+                function showToastFb(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+                if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initFbForm); } else { initFbForm(); }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -3718,75 +7441,171 @@
     <x-formTemplete id="TDPL/BE/FOM-038" docNo="TDPL/BE/FOM-038" docName="Grossing Station Maintenance Form"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="gs_form_id" id="gs_form_id">
 
-        <div class="p-4">
-
-            {{-- ⚠️ DO NOT REMOVE – FORM WRAPPER KEPT AS IS --}}
-            <form method="POST">
-                @csrf
-
-                <p style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-
-                    <strong>Month &amp; Year:</strong>
-                    <input type="month" name="gs_month_year" id="gs_month_year"
-                        class="border p-1 rounded qc-input" style="width:150px;" onchange="loadGsForm()">
-
-                    <strong>Instrument ID/S. No.:</strong>
-                    <input list="gsEquipList" name="gs_instrument_id" id="gs_instrument_id"
-                        class="border p-1 rounded qc-input" style="width:180px;" placeholder="All"
-                        oninput="loadGsForm()">
-
-                    <datalist id="gsEquipList">
-                        <option value="GS-001">
-                        <option value="GS-002">
-                        <option value="GS-003">
-                    </datalist>
-
-                </p>
-
-
-                <h2 class="text-xl font-bold" style="margin: 20px 0;">
-                    Daily Maintenance
-                </h2>
-
-                <table class="table-auto border-collapse border border-gray-300 w-full text-center">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th class="border px-2 py-1">Date</th>
-                            <th class="border px-2 py-1">Clean with 70% Isopropyl Alcohol</th>
-                            <th class="border px-2 py-1">Check Filters</th>
-                            <th class="border px-2 py-1">Check Power Cord</th>
-                            <th class="border px-2 py-1">Check Air Flow</th>
-                            <th class="border px-2 py-1">Check UV Lamp</th>
-                            <th class="border px-2 py-1">Check Fuse</th>
-                            <th class="border px-2 py-1">Technician Signature</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-                        @for ($day = 1; $day <= 31; $day++)
-                            <tr>
-                                <td class="border px-2 py-1 font-semibold">
-                                    {{ $day }}
-                                </td>
-
-                                @foreach (['clean', 'filters', 'power_cord', 'airflow', 'uv_lamp', 'fuse', 'technician'] as $field)
-                                    <td class="border px-2 py-1">
-                                        <input type="text"
-                                            name="gs_daily[{{ $field }}][{{ $day }}]"
-                                            id="gs_daily_{{ $field }}_{{ $day }}"
-                                            class="border rounded px-1 py-1 w-full qc-input">
-                                    </td>
-                                @endforeach
-                            </tr>
-                        @endfor
-                    </tbody>
-                </table>
-
-            </form>
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month &amp; Year:</strong>
+                <input type="month" name="gs_month_year" id="gs_month_year"
+                    style="border:1px solid #000; padding:5px; width:180px;"
+                    onchange="loadGsForm()">
+            </div>
+            <div>
+                <strong>Instrument ID / S. No.:</strong>
+                <input list="gsEquipList" name="gs_instrument_id" id="gs_instrument_id"
+                    style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                    oninput="loadGsForm()">
+                <datalist id="gsEquipList">
+                    <option value="GS-001">
+                    <option value="GS-002">
+                    <option value="GS-003">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearGsFullForm()"
+                style="background:#dc3545; color:#fff; border:none; padding:6px 18px; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </div>
+
+        <h2 style="margin:20px 0; font-size:1.25em; font-weight:bold;">Daily Maintenance</h2>
+
+        <table style="width:100%; border-collapse:collapse;" border="1">
+            <thead>
+                <tr>
+                    <th style="border:1px solid #000; padding:6px 8px; text-align:center;">Date</th>
+                    <th style="border:1px solid #000; padding:6px 8px; text-align:center;">Clean with 70% Isopropyl Alcohol</th>
+                    <th style="border:1px solid #000; padding:6px 8px; text-align:center;">Check Filters</th>
+                    <th style="border:1px solid #000; padding:6px 8px; text-align:center;">Check Power Cord</th>
+                    <th style="border:1px solid #000; padding:6px 8px; text-align:center;">Check Air Flow</th>
+                    <th style="border:1px solid #000; padding:6px 8px; text-align:center;">Check UV Lamp</th>
+                    <th style="border:1px solid #000; padding:6px 8px; text-align:center;">Check Fuse</th>
+                    <th style="border:1px solid #000; padding:6px 8px; text-align:center;">Technician Signature</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for ($day = 1; $day <= 31; $day++)
+                    <tr>
+                        <td style="border:1px solid #000; padding:4px 8px; font-weight:600; text-align:center;">
+                            {{ $day }}
+                        </td>
+                        @foreach (['clean', 'filters', 'power_cord', 'airflow', 'uv_lamp', 'fuse', 'technician'] as $field)
+                            <td style="border:1px solid #000; padding:4px 8px; text-align:center;">
+                                <input type="text"
+                                    name="gs_daily[{{ $field }}][{{ $day }}]"
+                                    id="gs_daily_{{ $field }}_{{ $day }}"
+                                    style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
+                            </td>
+                        @endforeach
+                    </tr>
+                @endfor
+            </tbody>
+        </table>
+
+        <script>
+            function loadGsForm() {
+                const monthYear = document.getElementById('gs_month_year').value;
+                const instrument = document.getElementById('gs_instrument_id').value;
+
+                if (!monthYear) return;
+
+                const params = new URLSearchParams();
+                params.append('gs_month_year', monthYear);
+                if (instrument) params.append('gs_instrument_id', instrument);
+
+                fetch(`/newforms/be/gs/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearGsInputs();
+
+                    if (!res.data) {
+                        document.getElementById('gs_form_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('gs_form_id').value = res.data.id;
+
+                    if (res.data.gs_daily) {
+                        const daily = typeof res.data.gs_daily === 'string'
+                            ? JSON.parse(res.data.gs_daily) : res.data.gs_daily;
+                        Object.keys(daily).forEach(field => {
+                            if (daily[field]) {
+                                Object.keys(daily[field]).forEach(day => {
+                                    const el = document.getElementById(`gs_daily_${field}_${day}`);
+                                    if (el) el.value = daily[field][day] || '';
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            function clearGsInputs() {
+                const container = document.querySelector('[id="TDPL/BE/FOM-038"]');
+                if (!container) return;
+                container.querySelectorAll('input[id^="gs_daily_"]').forEach(el => {
+                    el.value = '';
+                });
+            }
+
+            function clearGsFullForm() {
+                document.getElementById('gs_month_year').value = '';
+                document.getElementById('gs_instrument_id').value = '';
+                document.getElementById('gs_form_id').value = '';
+                clearGsInputs();
+            }
+
+            (function() {
+                function initGsForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/FOM-038"]');
+                    if (!formContainer) return;
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+                        if (submitBtn) { submitBtn.textContent = 'Saving...'; submitBtn.disabled = true; }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+                        })
+                        .then(res => res.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastGs('success', result.message || 'Saved successfully!');
+                                if (result.form_id) document.getElementById('gs_form_id').value = result.form_id;
+                            } else {
+                                showToastGs('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Error:', err);
+                            showToastGs('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) { submitBtn.textContent = originalText; submitBtn.disabled = false; }
+                        });
+                    });
+                }
+                function showToastGs(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+                if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', initGsForm); } else { initGsForm(); }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -3794,105 +7613,240 @@
     <x-formTemplete id="TDPL/BE/REG-001" docNo="TDPL/BE/REG-001" docName="Equipment Breakdown Maintenance Register"
         issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
-        {{-- 🔑 INLINE EDIT SUPPORT --}}
-        <input type="hidden" name="eb_form_id" id="eb_form_id">
-
-        <div class="p-4">
-            @csrf
-
-            {{-- 🔹 FILTERS --}}
-            <div class="flex gap-6 mb-4 items-end">
-
-                <span>
-                    <label class="block font-semibold">From Date:</label>
-                    <input type="date" id="eb_from_date" class="border rounded px-2 py-1 w-44"
-                        onchange="loadEquipmentBreakdownRegister()">
-                </span>
-
-                <span>
-                    <label class="block font-semibold">To Date:</label>
-                    <input type="date" id="eb_to_date" class="border rounded px-2 py-1 w-44"
-                        onchange="loadEquipmentBreakdownRegister()">
-                </span>
-
-
-
-                <span>
-                    <label class="block font-semibold">Location:</label>
-
-                    <input list="ebLocationList" id="eb_location" name="eb_location"
-                        class="border rounded px-2 py-1 w-60" placeholder="All"
-                        oninput="handleDatalistInput(this,'ebLocationList',loadEquipmentBreakdownRegister)">
-
-                    <datalist id="ebLocationList">
-                        <option value="Hyderabad">
-                        <option value="Bangalore">
-                        <option value="Chennai">
-                        <option value="Mumbai">
-                        <option value="Delhi">
-                    </datalist>
-                </span>
-
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="ebFromDate"
+                    onchange="loadEquipmentBreakdownRegister()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
             </div>
-
-            {{-- 🔹 REGISTER TABLE --}}
-            <table id="equipmentBreakdownTable"
-                class="table-auto border-collapse border border-gray-300 w-full text-center">
-
-                <thead>
-                    <tr class="bg-gray-200">
-                        <th rowspan="2" class="border px-2 py-1">Date</th>
-                        <th rowspan="2" class="border px-2 py-1">Equipment Name & ID</th>
-                        <th rowspan="2" class="border px-2 py-1">Problem Identified</th>
-                        <th colspan="3" class="border px-2 py-1">Time attended & Other details</th>
-                        <th rowspan="2" class="border px-2 py-1">Total Downtime</th>
-                        <th rowspan="2" class="border px-2 py-1">Remarks if any</th>
-                        <th rowspan="2" class="border px-2 py-1">Signature</th>
-                    </tr>
-                    <tr class="bg-gray-200">
-                        <th class="border px-2 py-1">Breakdown Time</th>
-                        <th class="border px-2 py-1">Action Taken</th>
-                        <th class="border px-2 py-1">Name of Engineer</th>
-                    </tr>
-                </thead>
-
-                {{-- ✅ IMPORTANT --}}
-                <tbody id="equipmentBreakdownBody">
-
-                    {{-- ✅ INITIAL EMPTY ROW (NEW ENTRY) --}}
-                    <tr>
-                        <td class="border px-2 py-1">
-                            <input type="date" name="eb_date" class="border rounded px-1 py-1 w-full">
-                        </td>
-                        <td class="border px-2 py-1">
-                            <input type="text" name="eb_equipment" class="border rounded px-1 py-1 w-full">
-                        </td>
-                        <td class="border px-2 py-1">
-                            <input type="text" name="eb_problem" class="border rounded px-1 py-1 w-full">
-                        </td>
-                        <td class="border px-2 py-1">
-                            <input type="text" name="eb_breakdown_time" class="border rounded px-1 py-1 w-full">
-                        </td>
-                        <td class="border px-2 py-1">
-                            <input type="text" name="eb_action_taken" class="border rounded px-1 py-1 w-full">
-                        </td>
-                        <td class="border px-2 py-1">
-                            <input type="text" name="eb_engineer_name" class="border rounded px-1 py-1 w-full">
-                        </td>
-                        <td class="border px-2 py-1">
-                            <input type="text" name="eb_total_downtime" class="border rounded px-1 py-1 w-full">
-                        </td>
-                        <td class="border px-2 py-1">
-                            <input type="text" name="eb_remarks" class="border rounded px-1 py-1 w-full">
-                        </td>
-                        <td class="border px-2 py-1">
-                            <input type="text" name="eb_signature" class="border rounded px-1 py-1 w-full">
-                        </td>
-                    </tr>
-
-                </tbody>
-            </table>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="ebToDate"
+                    onchange="loadEquipmentBreakdownRegister()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>Location</strong></label>
+                <input type="text" name="eb_location" id="ebLocation" list="ebLocList"
+                    onchange="loadEquipmentBreakdownRegister()" onblur="loadEquipmentBreakdownRegister()"
+                    style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                <datalist id="ebLocList">
+                    <option value="Hyderabad">
+                    <option value="Bangalore">
+                    <option value="Chennai">
+                    <option value="Mumbai">
+                    <option value="Delhi">
+                </datalist>
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearEquipmentBreakdownFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
         </div>
+
+        <!-- Data Table -->
+        <table style="width:100%; border-collapse:collapse;" border="1">
+            <thead>
+                <tr>
+                    <td rowspan="2" style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Date</td>
+                    <td rowspan="2" style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Equipment Name & ID</td>
+                    <td rowspan="2" style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Problem Identified</td>
+                    <td colspan="3" style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Time attended & Other details</td>
+                    <td rowspan="2" style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Total Downtime</td>
+                    <td rowspan="2" style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Remarks if any</td>
+                    <td rowspan="2" style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Signature</td>
+                </tr>
+                <tr>
+                    <td style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Breakdown Time</td>
+                    <td style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Action Taken</td>
+                    <td style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Name of Engineer</td>
+                </tr>
+            </thead>
+            <tbody id="ebTableBody">
+                <tr>
+                    <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_equipment[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_problem[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_breakdown_time[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_action_taken[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_engineer_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_total_downtime[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_signature[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <script>
+            function loadEquipmentBreakdownRegister() {
+                const fromDate = document.getElementById('ebFromDate').value;
+                const toDate = document.getElementById('ebToDate').value;
+
+                if (!fromDate && !toDate) return;
+
+                const params = new URLSearchParams();
+                if (fromDate) params.append('eb_from_date', fromDate);
+                if (toDate) params.append('eb_to_date', toDate);
+
+                const location = document.getElementById('ebLocation').value;
+                if (location) params.append('eb_location', location);
+
+                fetch(`/newforms/be/equipment-breakdown/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('ebTableBody');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowREG001();
+                        return;
+                    }
+
+                    res.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = buildREG001RowHTML(row);
+                        tbody.appendChild(tr);
+                    });
+
+                    addEmptyRowREG001();
+                })
+                .catch(error => console.error('Error loading data:', error));
+            }
+
+            function buildREG001RowHTML(row) {
+                return `
+                    <td style="border:1px solid #000; padding:4px;">
+                        <input type="hidden" name="row_id[]" value="${row.id}">
+                        <input type="date" name="row_date[]" value="${row.eb_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+                    </td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_equipment[]" value="${row.eb_equipment || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_problem[]" value="${row.eb_problem || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_breakdown_time[]" value="${row.eb_breakdown_time || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_action_taken[]" value="${row.eb_action_taken || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_engineer_name[]" value="${row.eb_engineer_name || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_total_downtime[]" value="${row.eb_total_downtime || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" value="${row.eb_remarks || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_signature[]" value="${row.eb_signature || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                `;
+            }
+
+            function addEmptyRowREG001() {
+                const tbody = document.getElementById('ebTableBody');
+                if (!tbody) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_equipment[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_problem[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_breakdown_time[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_action_taken[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_engineer_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_total_downtime[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_signature[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearEquipmentBreakdownFilters() {
+                document.getElementById('ebFromDate').value = '';
+                document.getElementById('ebToDate').value = '';
+                document.getElementById('ebLocation').value = '';
+                const tbody = document.getElementById('ebTableBody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowREG001();
+                }
+            }
+
+            // AJAX Submit for REG-001
+            (function() {
+                function initEquipmentBreakdownForm() {
+                    const formContainer = document.querySelector('[id="TDPL/BE/REG-001"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastREG001('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('ebTableBody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+                                    result.data.forEach(row => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = buildREG001RowHTML(row);
+                                        tbody.appendChild(tr);
+                                    });
+                                    addEmptyRowREG001();
+                                }
+                            } else {
+                                showToastREG001('error', result.message || 'Save failed!');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastREG001('error', 'Failed to save data');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastREG001(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initEquipmentBreakdownForm);
+                } else {
+                    initEquipmentBreakdownForm();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
 
 
@@ -4048,44 +8002,6 @@
 
 
 
-    function loadHotPlateQc() {
-        const monthYear = document.getElementById('month_year').value;
-        const instrument = document.getElementById('instrument_serial_no').value;
-        if (!monthYear) return;
-        fetch(`/newforms/be/hot-plate-qc/load?month_year=${monthYear}&instrument_serial_no=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearQcTable();
-
-                if (!res.data) {
-                    document.getElementById('form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID
-                document.getElementById('form_id').value = res.data.id;
-
-                fillRow('cleaning_outside', res.data.cleaning_outside);
-                fillRow('temperature_check', res.data.temperature_check);
-                fillRow('lab_staff_signature', res.data.lab_staff_signature);
-                fillRow('lab_supervisor_signature', res.data.lab_supervisor_signature);
-            });
-    }
-
-
-    function clearQcTable() {
-        document.querySelectorAll('.qc-input').forEach(i => {
-            if (i.id !== 'month_year' && i.id !== 'instrument_serial_no') {
-                i.value = '';
-            }
-        });
-    }
 
 
 
@@ -4173,1196 +8089,65 @@
 
     // }, true); // 👈 capture phase
 
-    function loadBscForm() {
-        const monthYear = document.getElementById('bsc_month_year').value;
-        const department = document.getElementById('bsc_department').value;
-        const equipment = document.getElementById('bsc_equipment_id').value;
-
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/bsc/load?bsc_month_year=${monthYear}&bsc_department=${department}&bsc_equipment_id=${equipment}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearBscTable(); // 🔑 separate clear for BSC
-
-                if (!res.data) {
-                    document.getElementById('bsc_form_id').value = '';
-                    return;
-                }
-
-                document.getElementById('bsc_form_id').value = res.data.id;
-
-                fillRow('bsc_clean_ipa', res.data.bsc_clean_ipa);
-                fillRow('bsc_uv_light', res.data.bsc_uv_light);
-                fillRow('bsc_manometer', res.data.bsc_manometer);
-                fillRow('bsc_done_by', res.data.bsc_done_by);
-                fillRow('bsc_hypo_available', res.data.bsc_hypo_available);
-
-                fillRow('bsc_settle_plate_date', res.data.bsc_settle_plate_date);
-                fillRow('bsc_settle_cfu', res.data.bsc_settle_cfu);
-                fillRow('bsc_uv_efficacy', res.data.bsc_uv_efficacy);
-                fillRow('bsc_checked_by', res.data.bsc_checked_by);
-                fillRow('bsc_remarks', res.data.bsc_remarks);
-
-                fillCheckboxRow('bsc_settle_yes', res.data.bsc_settle_yes);
-                fillCheckboxRow('bsc_settle_no', res.data.bsc_settle_no);
-            });
-    }
-
-    function clearBscTable() {
-        document.querySelectorAll('.qc-input').forEach(i => {
-            if (
-                i.id !== 'bsc_month_year' &&
-                i.id !== 'bsc_department' &&
-                i.id !== 'bsc_equipment_id'
-            ) {
-                i.value = '';
-            }
-        });
-
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.checked = false;
-        });
-    }
-
-
-    function loadHotAirOven() {
-
-        const month = document.getElementById('hao_month_year').value;
-        const inst = document.getElementById('hao_instrument_id').value;
-
-        if (!month) return;
-
-        fetch(`/newforms/be/hot-air-oven/load?hao_month_year=${month}&hao_instrument_id=${inst}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(r => r.json())
-            .then(res => {
-
-                clearHaoTable();
-
-                if (!res.data) {
-                    // 🟢 No record yet → NEW FORM MODE
-                    document.getElementById('hao_form_id').value = '';
-                    return;
-                }
-
-                // 🟢 Existing record → EDIT MODE
-                document.getElementById('hao_form_id').value = res.data.id;
-
-                fillRow('hao_morning_temp', res.data.hao_morning_temp);
-                fillRow('hao_morning_sign', res.data.hao_morning_sign);
-                fillRow('hao_evening_temp', res.data.hao_evening_temp);
-                fillRow('hao_evening_sign', res.data.hao_evening_sign);
-            });
-    }
-
-    function clearHaoTable() {
-        document.querySelectorAll('.tlog-input').forEach(i => {
-            if (i.id !== 'hao_month_year' && i.id !== 'hao_instrument_id') {
-                i.value = '';
-            }
-        });
-    }
-
-    function loadIncubator() {
-        const month = document.getElementById('inc_month_year').value;
-        const inst = document.getElementById('inc_instrument_id').value;
-
-        if (!month) return;
-
-        fetch(`/newforms/be/incubator/load?inc_month_year=${month}&inc_instrument_id=${inst}`)
-            .then(res => res.json())
-            .then(res => {
-
-                clearIncTable();
-
-                if (!res.data) {
-                    document.getElementById('inc_form_id').value = '';
-                    return;
-                }
-
-                document.getElementById('inc_form_id').value = res.data.id;
-
-                fillRow('inc_morning_temp', res.data.inc_morning_temp);
-                fillRow('inc_morning_sign', res.data.inc_morning_sign);
-                fillRow('inc_evening_temp', res.data.inc_evening_temp);
-                fillRow('inc_evening_sign', res.data.inc_evening_sign);
-            });
-    }
-
-    function clearIncTable() {
-
-        // 🔹 Clear all incubator text inputs (except filters)
-        document.querySelectorAll('.tlog-input').forEach(input => {
-            if (
-                input.id !== 'inc_month_year' &&
-                input.id !== 'inc_instrument_id'
-            ) {
-                input.value = '';
-            }
-        });
-    }
-
-    function loadLafForm() {
-
-        const monthYear = document.getElementById('laf_month_year').value;
-        const department = document.getElementById('laf_department').value;
-        const equipment = document.getElementById('laf_equipment_id').value;
-
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/laf/load?laf_month_year=${monthYear}&laf_department=${department}&laf_equipment_id=${equipment}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearLafTable();
-
-                if (!res.data) {
-                    document.getElementById('laf_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID
-                document.getElementById('laf_form_id').value = res.data.id;
-
-                fillCheckboxRow('laf_clean_ipa', res.data.laf_clean_ipa);
-                fillCheckboxRow('laf_uv_light', res.data.laf_uv_light);
-
-                fillRow('laf_manometer', res.data.laf_manometer);
-                fillRow('laf_done_by', res.data.laf_done_by);
-                fillRow('laf_hypo_available', res.data.laf_hypo_available);
-                fillRow('laf_settle_plate_date', res.data.laf_settle_plate_date);
-                fillRow('laf_uv_efficacy', res.data.laf_uv_efficacy);
-                fillRow('laf_checked_by', res.data.laf_checked_by);
-                fillRow('laf_remarks', res.data.laf_remarks);
-
-                fillRadioRow('laf_settle_result', res.data.laf_settle_result);
-            });
-    }
-
-    function clearLafTable() {
-
-        document.querySelectorAll('.input-box').forEach(i => {
-            if (
-                i.id !== 'laf_month_year' &&
-                i.id !== 'laf_department' &&
-                i.id !== 'laf_equipment_id'
-            ) {
-                i.value = '';
-            }
-        });
-
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
-        document.querySelectorAll('input[type="radio"]').forEach(r => r.checked = false);
-    }
-
-
-    function loadAutoclave() {
-
-        const monthYear = document.getElementById('aut_month_year').value;
-        const instrument = document.getElementById('aut_instrument_id').value;
-
-        // ❗ very important – do not load without month
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/autoclave/load?aut_month_year=${monthYear}&aut_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearAutoclaveTable();
-
-                if (!res.data) {
-                    document.getElementById('aut_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID FOR INLINE + UPDATE
-                document.getElementById('aut_form_id').value = res.data.id;
-
-                // ✅ FILL DATA
-                fillCheckboxRow('aut_clean_outside', res.data.aut_clean_outside);
-                fillCheckboxRow('aut_chamber_water', res.data.aut_chamber_water);
-                fillCheckboxRow('aut_clean_inside', res.data.aut_clean_inside);
-                fillCheckboxRow('aut_power_check', res.data.aut_power_check);
-
-                fillRow('aut_lab_staff_sign', res.data.aut_lab_staff_sign);
-                fillRow('aut_lab_supervisor_sign', res.data.aut_lab_supervisor_sign);
-            });
-    }
-
-
-    function clearAutoclaveTable() {
-
-        document.querySelectorAll('.input-box').forEach(i => {
-            if (
-                i.id !== 'aut_month_year' &&
-                i.id !== 'aut_instrument_id'
-            ) {
-                i.value = '';
-            }
-        });
-
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.checked = false;
-        });
-    }
-
-    function loadHaoMaintenance() {
-
-        const monthYear = document.getElementById('hao_maint_month_year').value;
-        const instrument = document.getElementById('hao_maint_instrument_id').value;
-
-        // ❗ do not load without month
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/hao-maintenance/load?hao_maint_month_year=${monthYear}&hao_maint_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearHaoMaintenanceTable();
-
-                if (!res.data) {
-                    document.getElementById('hao_maint_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID
-                document.getElementById('hao_maint_form_id').value = res.data.id;
-
-                // ✅ FILL CHECKBOX DATA
-                fillCheckboxRow('hao_maint_clean_outside', res.data.hao_maint_clean_outside);
-                fillCheckboxRow('hao_maint_clean_inside', res.data.hao_maint_clean_inside);
-                fillCheckboxRow('hao_maint_temperature_check', res.data.hao_maint_temperature_check);
-                fillCheckboxRow('hao_maint_power_check', res.data.hao_maint_power_check);
-
-                // ✅ FILL TEXT DATA
-                fillRow('hao_maint_lab_staff_sign', res.data.hao_maint_lab_staff_sign);
-                fillRow('hao_maint_lab_supervisor_sign', res.data.hao_maint_lab_supervisor_sign);
-            });
-    }
-
-    function clearHaoMaintenanceTable() {
-
-        // clear text inputs
-        document.querySelectorAll('input[type="text"]').forEach(i => {
-            if (
-                i.id !== 'hao_maint_month_year' &&
-                i.id !== 'hao_maint_instrument_id'
-            ) {
-                i.value = '';
-            }
-        });
-
-        // clear checkboxes
-        document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
-            cb.checked = false;
-        });
-    }
-
-
-    function loadIncubatorMaintenance() {
-
-        const monthYear = document.getElementById('inc_maint_month_year').value;
-        const instrument = document.getElementById('inc_maint_instrument_id').value;
-
-        // ❗ DO NOT LOAD WITHOUT MONTH
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/incubator-maintenance/load?inc_maint_month_year=${monthYear}&inc_maint_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearIncubatorMaintenanceTable();
-
-                if (!res.data) {
-                    document.getElementById('inc_maint_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (VERY IMPORTANT)
-                document.getElementById('inc_maint_form_id').value = res.data.id;
-
-                // ✅ FILL DATA
-                fillRow('inc_maint_clean_outside', res.data.inc_maint_clean_outside);
-                fillRow('inc_maint_clean_inside', res.data.inc_maint_clean_inside);
-                fillRow('inc_maint_temperature_check', res.data.inc_maint_temperature_check);
-                fillRow('inc_maint_power_check', res.data.inc_maint_power_check);
-                fillRow('inc_maint_lab_staff_sign', res.data.inc_maint_lab_staff_sign);
-                fillRow('inc_maint_lab_supervisor_sign', res.data.inc_maint_lab_supervisor_sign);
-            });
-    }
-
-    function clearIncubatorMaintenanceTable() {
-
-        document.querySelectorAll('.qc-input').forEach(i => {
-            if (
-                i.id !== 'inc_maint_month_year' &&
-                i.id !== 'inc_maint_instrument_id'
-            ) {
-                i.value = '';
-            }
-        });
-    }
-
-    function loadCentrifuge() {
-
-        const monthYear = document.getElementById('cen_month_year').value;
-        const instrument = document.getElementById('cen_instrument_id').value;
-
-        // ❗ Do NOT load without month (same rule as others)
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/centrifuge/load?cen_month_year=${monthYear}&cen_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearCentrifugeTable();
-
-                if (!res.data) {
-                    document.getElementById('cen_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (VERY IMPORTANT)
-                document.getElementById('cen_form_id').value = res.data.id;
-
-                // ===== DAILY =====
-                fillRow('cen_clean_outside', res.data.cen_clean_outside);
-                fillRow('cen_clean_inside', res.data.cen_clean_inside);
-                fillRow('cen_power_check', res.data.cen_power_check);
-                fillRow('cen_carbon_brush', res.data.cen_carbon_brush);
-                fillRow('cen_lab_staff_sign', res.data.cen_lab_staff_sign);
-                fillRow('cen_lab_supervisor_sign', res.data.cen_lab_supervisor_sign);
-
-                // ===== WEEKLY =====
-                document.querySelector('[name="cen_week1_date"]').value = res.data.cen_week1_date ?? '';
-                document.querySelector('[name="cen_week2_date"]').value = res.data.cen_week2_date ?? '';
-                document.querySelector('[name="cen_week3_date"]').value = res.data.cen_week3_date ?? '';
-                document.querySelector('[name="cen_week4_date"]').value = res.data.cen_week4_date ?? '';
-
-                document.querySelector('[name="cen_week1_staff"]').value = res.data.cen_week1_staff ?? '';
-                document.querySelector('[name="cen_week2_staff"]').value = res.data.cen_week2_staff ?? '';
-                document.querySelector('[name="cen_week3_staff"]').value = res.data.cen_week3_staff ?? '';
-                document.querySelector('[name="cen_week4_staff"]').value = res.data.cen_week4_staff ?? '';
-
-                document.querySelector('[name="cen_week1_supervisor"]').value = res.data.cen_week1_supervisor ?? '';
-                document.querySelector('[name="cen_week2_supervisor"]').value = res.data.cen_week2_supervisor ?? '';
-                document.querySelector('[name="cen_week3_supervisor"]').value = res.data.cen_week3_supervisor ?? '';
-                document.querySelector('[name="cen_week4_supervisor"]').value = res.data.cen_week4_supervisor ?? '';
-            });
-    }
-
-    function clearCentrifugeTable() {
-
-        // clear daily inputs
-        document.querySelectorAll('.qc-input').forEach(i => {
-            if (
-                i.id !== 'cen_month_year' &&
-                i.id !== 'cen_instrument_id'
-            ) {
-                i.value = '';
-            }
-        });
-
-        // clear weekly inputs
-        document.querySelectorAll('[name^="cen_week"]').forEach(i => {
-            i.value = '';
-        });
-    }
-
-    function loadDxcForm() {
-
-        const monthYear = document.getElementById('dxc_month_year').value;
-        const location = document.getElementById('dxc_location').value;
-        const department = document.getElementById('dxc_department').value;
-
-        // ❗ month mandatory
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/dxc/load?dxc_month_year=${monthYear}&dxc_location=${location}&dxc_department=${department}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearDxcTable(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('dxc_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE + UPDATE)
-                document.getElementById('dxc_form_id').value = res.data.id;
-
-                // ===== DAILY (JSON DAY → VALUE) =====
-                fillRow('dxc_inspect_syringes', res.data.dxc_inspect_syringes);
-                fillRow('dxc_inspect_roller_pump', res.data.dxc_inspect_roller_pump);
-                fillRow('dxc_inspect_probes', res.data.dxc_inspect_probes);
-                fillRow('dxc_replace_diluent', res.data.dxc_replace_diluent);
-                fillRow('dxc_replace_probe_wash', res.data.dxc_replace_probe_wash);
-                fillRow('dxc_clean_ise', res.data.dxc_clean_ise);
-                fillRow('dxc_calibrate_ise', res.data.dxc_calibrate_ise);
-                fillRow('dxc_performed_by', res.data.dxc_performed_by);
-                fillRow('dxc_reviewed_by', res.data.dxc_reviewed_by);
-
-                // ===== WEEKLY (ARRAY INDEX → WEEK NO) =====
-                fillWeeklyRow('dxc_week_date', res.data.dxc_week_date);
-                fillWeeklyRow('dxc_clean_probe_mix', res.data.dxc_clean_probe_mix);
-                fillWeeklyRow('dxc_perform_w2', res.data.dxc_perform_w2);
-                fillWeeklyRow('dxc_performed_supervisor', res.data.dxc_performed_supervisor);
-            });
-    }
-
-
-    function clearDxcTable() {
-
-        document.querySelectorAll('.qc-input, .qc-input-wide').forEach(el => {
-
-            // ❌ DO NOT CLEAR FILTERS
-            if (
-                el.id === 'dxc_month_year' ||
-                el.id === 'dxc_location' ||
-                el.id === 'dxc_department'
-            ) {
-                return;
-            }
-
-            el.value = '';
-        });
-    }
-
-    function loadDxiForm() {
-
-        const monthYear = document.getElementById('dxi_month_year').value;
-        const location = document.getElementById('dxi_location').value;
-        const department = document.getElementById('dxi_department').value;
-
-        // ❗ SAME RULE – DO NOT LOAD WITHOUT MONTH
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/dxi800/load?dxi_month_year=${monthYear}&dxi_location=${location}&dxi_department=${department}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearDxiTable(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('dxi_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('dxi_form_id').value = res.data.id;
-
-                // ===== DAILY =====
-                fillRow('dxi_system_backup', res.data.dxi_system_backup);
-                fillRow('dxi_zone_temperature', res.data.dxi_zone_temperature);
-                fillRow('dxi_system_supplies', res.data.dxi_system_supplies);
-                fillRow('dxi_clean_probe', res.data.dxi_clean_probe);
-                fillRow('dxi_solid_waste', res.data.dxi_solid_waste);
-                fillRow('dxi_prime_substrate', res.data.dxi_prime_substrate);
-                fillRow('dxi_daily_cleaning', res.data.dxi_daily_cleaning);
-                fillRow('dxi_performed_by', res.data.dxi_performed_by);
-                fillRow('dxi_reviewed_by', res.data.dxi_reviewed_by);
-
-                fillWeeklyRow('dxi_week_date', res.data.dxi_week_date);
-
-                fillWeeklyRow('dxi_clean_exterior', res.data.dxi_clean_exterior);
-                fillWeeklyRow('dxi_clean_primary_probe', res.data.dxi_clean_primary_probe);
-                fillWeeklyRow('dxi_waste_filter', res.data.dxi_waste_filter);
-                fillWeeklyRow('dxi_system_check', res.data.dxi_system_check);
-                fillWeeklyRow('dxi_supervisor_sign', res.data.dxi_supervisor_sign);
-            });
-    }
-
-    function clearDxiTable() {
-
-        document.querySelectorAll('.qc-input, .qc-input-wide').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTERS
-            if (
-                input.id === 'dxi_month_year' ||
-                input.id === 'dxi_location' ||
-                input.id === 'dxi_department'
-            ) {
-                return;
-            }
-
-            input.value = '';
-        });
-    }
-
-    function loadSt200Form() {
-
-        const monthYear = document.getElementById('st200_month_year').value;
-        const instrument = document.getElementById('st200_instrument_id').value;
-
-        // ❗ SAME RULE – DO NOT LOAD WITHOUT MONTH
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/st200/load?st200_month_year=${monthYear}&st200_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearSt200Table(); // 🔑 ALWAYS CLEAR FIRST
-
-                if (!res.data) {
-                    document.getElementById('st200_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('st200_form_id').value = res.data.id;
-
-                // ===== DAILY ROWS =====
-                fillRow('st200_clean_instrument', res.data.st200_clean_instrument);
-                fillRow('st200_empty_waste', res.data.st200_empty_waste);
-                fillRow('st200_printer_status', res.data.st200_printer_status);
-                fillRow('st200_daily_cleaning_solution', res.data.st200_daily_cleaning_solution);
-                fillRow('st200_calibration', res.data.st200_calibration);
-                fillRow('st200_shutdown', res.data.st200_shutdown);
-                fillRow('st200_lab_staff_sign', res.data.st200_lab_staff_sign);
-                fillRow('st200_lab_supervisor_sign', res.data.st200_lab_supervisor_sign);
-            });
-    }
-
-    function clearSt200Table() {
-        document.querySelectorAll('.qc-input-wide').forEach(input => {
-            input.value = '';
-        });
-    }
-
-    function loadH550Form() {
-        const monthYear = document.getElementById('h550_month_year').value;
-        const instrument = document.getElementById('h550_instrument_serial').value;
-
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/h550/load?h550_month_year=${monthYear}&h550_instrument_serial=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearH550Table();
-
-                if (!res.data) {
-                    document.getElementById('h550_form_id').value = '';
-                    return;
-                }
-
-                document.getElementById('h550_form_id').value = res.data.id;
-
-                const daily = typeof res.data.h550_daily === 'string' ?
-                    JSON.parse(res.data.h550_daily) :
-                    res.data.h550_daily;
-
-                // 🔑 THIS LINE IS THE FIX
-                fillH550Daily('h550_daily', daily);
-            });
-    }
-
-
-    function clearH550Table() {
-
-        document.querySelectorAll('.qc-input, .qc-input-wide').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'h550_month_year' ||
-                input.id === 'h550_instrument_serial'
-            ) {
-                return;
-            }
-
-            input.value = '';
-        });
-    }
-
-
-    function loadD10Form() {
-
-        const monthYear = document.getElementById('d10_month_year').value;
-        const instrument = document.getElementById('d10_instrument_serial').value;
-
-        // ❗ SAME RULE AS ALL FORMS
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/d10/load?d10_month_year=${monthYear}&d10_instrument_serial=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearD10Form(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('d10_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('d10_form_id').value = res.data.id;
-
-                // ✅ FILL TOP FIELDS
-                document.getElementById('d10_location').value = res.data.d10_location ?? '';
-                document.getElementById('d10_department').value = res.data.d10_department ?? '';
-                document.getElementById('d10_year').value = res.data.d10_year ?? '';
-                document.getElementById('d10_monthly_instrument_serial').value =
-                    res.data.d10_monthly_instrument_serial ?? '';
-
-                // ✅ DAILY JSON
-                fillNestedRows('d10_daily', res.data.d10_daily);
-
-                // ✅ MONTHLY JSON
-                fillNestedRows('d10_monthly', res.data.d10_monthly);
-            });
-    }
-
-    function clearD10Form() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'd10_month_year' ||
-                input.id === 'd10_instrument_serial'
-            ) {
-                return;
-            }
-
-            input.value = '';
-        });
-    }
-
-    function loadAtpForm() {
-        const monthYear = document.getElementById('atp_month_year').value;
-        const instrument = document.getElementById('atp_instrument_id').value;
-        // ❗ SAME RULE AS ALL FORMS
-        if (!monthYear) return;
-        fetch(`/newforms/be/atp/load?atp_month_year=${monthYear}&atp_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearAtpForm(); // 🔑 ALWAYS CLEAR FIRST
-
-                if (!res.data) {
-                    document.getElementById('atp_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('atp_form_id').value = res.data.id;
-
-                // ✅ DAILY JSON FILL
-                fillNestedRows('atp_daily', res.data.daily);
-            });
-    }
-
-    function clearAtpForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'atp_month_year' ||
-                input.id === 'atp_instrument_id'
-            ) {
-                return;
-            }
-
-            input.value = '';
-        });
-    }
-
-    function loadTecForm() {
-
-        const monthYear = document.getElementById('tec_month_year').value;
-        const instrument = document.getElementById('tec_instrument_id').value;
-
-        // ❗ SAME RULE AS ALL BE FORMS
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/tec/load?tec_month_year=${monthYear}&tec_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearTecForm(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('tec_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('tec_form_id').value = res.data.id;
-
-                // ✅ DAILY JSON
-                fillNestedRows('tec_daily', res.data.tec_daily);
-            });
-    }
-
-    function clearTecForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'tec_month_year' ||
-                input.id === 'tec_instrument_id'
-            ) {
-                return;
-            }
-
-            input.value = '';
-        });
-    }
-
-    function loadBactAlertForm() {
-
-        const monthYear = document.getElementById('ba_month_year').value;
-        const instrument = document.getElementById('ba_instrument_id').value;
-
-        // ❗ SAME RULE AS ALL FORMS
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/ba/load?ba_month_year=${monthYear}&ba_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearBactAlertForm(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('ba_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('ba_form_id').value = res.data.id;
-
-                // ✅ FILL DAILY JSON
-                fillNestedRows('ba_daily', res.data.ba_daily);
-            });
-    }
-
-    function clearBactAlertForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'ba_month_year' ||
-                input.id === 'ba_instrument_id'
-            ) {
-                return;
-            }
-
-            input.value = '';
-        });
-    }
-
-
-    function loadElisaForm() {
-
-        const monthYear = document.getElementById('elisa_month_year').value;
-        const instrument = document.getElementById('elisa_instrument_id').value;
-
-        // ❗ SAME RULE AS ALL FORMS
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/elisa/load?elisa_month_year=${monthYear}&elisa_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearElisaForm(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('elisa_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('elisa_form_id').value = res.data.id;
-
-                // ✅ DAILY JSON
-                fillNestedRows('elisa_daily', res.data.elisa_daily);
-            });
-    }
-
-    function clearElisaForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'elisa_month_year' ||
-                input.id === 'elisa_instrument_id'
-            ) {
-                return;
-            }
-
-            // for checkbox + text
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
-        });
-    }
-
-
-    function loadRtpcrForm() {
-
-        const monthYear = document.getElementById('rtpcr_month_year').value;
-        const instrument = document.getElementById('rtpcr_instrument_id').value;
-
-        // ❗ SAME RULE AS ALL FORMS
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/rtpcr/load?rtpcr_month_year=${monthYear}&rtpcr_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearRtpcrForm(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('rtpcr_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('rtpcr_form_id').value = res.data.id;
-
-                // ✅ FILL DAILY JSON (checkbox + text safe)
-                fillNestedRows('rtpcr_daily', res.data.rtpcr_daily);
-            });
-    }
-
-    function clearRtpcrForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'rtpcr_month_year' ||
-                input.id === 'rtpcr_instrument_id'
-            ) {
-                return;
-            }
-
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
-        });
-    }
-
-
-    function loadCcForm() {
-
-        const monthYear = document.getElementById('cc_month_year').value;
-        const instrument = document.getElementById('cc_instrument_id').value;
-
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/cc/load?cc_month_year=${monthYear}&cc_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearCcForm();
-
-                if (!res.data) {
-                    document.getElementById('cc_form_id').value = '';
-                    return;
-                }
-
-                document.getElementById('cc_form_id').value = res.data.id;
-
-                // ✅ HEADER
-                document.getElementById('cc_department').value =
-                    res.data.cc_department ?? '';
-
-                // ✅ DAILY JSON
-                fillNestedRows('cc_daily', res.data.cc_daily);
-
-                // ✅ MONTHLY (FLAT)
-                document.getElementById('cc_monthly_bushes_checked_notes').value =
-                    res.data.cc_bushes_checked_notes ?? '';
-
-                document.getElementById('cc_monthly_bushes_checked_date').value =
-                    res.data.cc_bushes_checked_date ?? '';
-
-                document.getElementById('cc_monthly_bushes_next_due').value =
-                    res.data.cc_bushes_next_due ?? '';
-
-                document.getElementById('cc_monthly_signature').value =
-                    res.data.cc_monthly_signature ?? '';
-            });
-    }
-
-    function clearCcForm() {
-        document.querySelectorAll('.qc-input').forEach(input => {
-            if (
-                input.id === 'cc_month_year' ||
-                input.id === 'cc_instrument_id'
-            ) return;
-
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
-        });
-    }
-
-
-    function loadMicForm() {
-
-        const monthYear = document.getElementById('mic_month_year').value;
-        const instrument = document.getElementById('mic_instrument_id').value;
-
-        // ❗ SAME RULE AS ALL FORMS
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/mic/load?mic_month_year=${monthYear}&mic_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearMicForm(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('mic_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('mic_form_id').value = res.data.id;
-
-                // ✅ FILL DAILY JSON
-                fillNestedRows('mic_daily', res.data.mic_daily);
-            });
-    }
-
-    function clearMicForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'mic_month_year' ||
-                input.id === 'mic_instrument_id'
-            ) {
-                return;
-            }
-
-            // checkbox vs text
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
-        });
-    }
-
-
-    function loadLauramForm() {
-
-        const monthYear = document.getElementById('lauram_month_year').value;
-        const instrument = document.getElementById('lauram_instrument_id').value;
-
-        // ❗ GLOBAL RULE – Month mandatory
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/lauram/load?lauram_month_year=${monthYear}&lauram_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearLauramForm(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('lauram_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('lauram_form_id').value = res.data.id;
-
-                // ✅ FILL DAILY JSON (DEEP NESTED)
-                fillLauramDaily(res.data.lauram_daily);
-            });
-    }
-
-    function clearLauramForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'lauram_month_year' ||
-                input.id === 'lauram_instrument_id'
-            ) {
-                return;
-            }
-
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
-        });
-    }
-
-
-    function loadEquipmentBreakdownRegister() {
-
-        const fromDate = document.getElementById('eb_from_date').value;
-        const toDate = document.getElementById('eb_to_date').value;
-        const location = document.getElementById('eb_location').value;
-
-        // ❗ At least ONE date required
-        if (!fromDate && !toDate) return;
-
-        fetch(`/newforms/be/equipment-breakdown/load?eb_from_date=${fromDate}&eb_to_date=${toDate}&eb_location=${location}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearEquipmentBreakdownRegister();
-
-                if (!res.data) {
-                    document.getElementById('eb_form_id').value = '';
-                    return;
-                }
-
-                // ✅ INLINE EDIT ID
-                document.getElementById('eb_form_id').value = res.data.id;
-
-                // ✅ SIMPLE FIELD BINDING
-                Object.keys(res.data).forEach(key => {
-                    const el = document.getElementById(key);
-                    if (el) el.value = res.data[key] ?? '';
-                });
-            });
-    }
-
-
-
-
-    function clearEquipmentBreakdownRegister() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'eb_from_date' ||
-                input.id === 'eb_to_date' ||
-                input.id === 'eb_location'
-            ) {
-                return;
-            }
-
-            input.value = '';
-        });
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    // loadH550Form, clearH550Table — moved to self-contained script inside FOM-020
+
+
+    // loadD10Form, clearD10Form — moved to self-contained script inside FOM-021
+
+    // loadAtpForm, clearAtpForm — moved to self-contained script inside FOM-022
+
+    // loadTecForm, clearTecForm — moved to self-contained script inside FOM-023
+
+    // loadBactAlertForm, clearBactAlertForm — moved to self-contained script inside FOM-024
+
+
+    // loadElisaForm, clearElisaForm — moved to self-contained script inside FOM-026
+
+
+    // loadRtpcrForm, clearRtpcrForm — moved to self-contained script inside FOM-028
+
+
+    // loadCcForm, clearCcForm — moved to self-contained script inside FOM-029
+
+
+    // loadMicForm, clearMicForm — moved to self-contained script inside FOM-034
+
+
+    // loadLauramForm, clearLauramForm — moved to self-contained script inside FOM-035
+
+
+    // loadEquipmentBreakdownRegister, clearEquipmentBreakdownRegister — moved to self-contained script inside REG-001
 
 
 
@@ -5419,162 +8204,11 @@
 
 
 
-    function loadMicrotomeForm() {
+    // loadMicrotomeForm, clearMicrotomeForm — moved to self-contained script inside FOM-036
 
-        const monthYear = document.getElementById('microtome_month_year').value;
-        const instrument = document.getElementById('microtome_instrument_id').value;
+    // loadFbForm, clearFbForm — moved to self-contained script inside FOM-037
 
-        // ❗ GLOBAL RULE – Month mandatory
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/microtome/load?microtome_month_year=${monthYear}&microtome_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearMicrotomeForm(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('microtome_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET FORM ID (INLINE UPDATE)
-                document.getElementById('microtome_form_id').value = res.data.id;
-
-                // ✅ FILL DAILY JSON
-                fillNestedRows('microtome_daily', res.data.microtome_daily);
-            });
-    }
-
-    function clearMicrotomeForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'microtome_month_year' ||
-                input.id === 'microtome_instrument_id'
-            ) {
-                return;
-            }
-
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
-        });
-    }
-
-    function loadFbForm() {
-
-        const monthYear = document.getElementById('fb_month_year').value;
-        const instrument = document.getElementById('fb_instrument_id').value;
-
-        // ❗ GLOBAL RULE – month mandatory
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/fb/load?fb_month_year=${monthYear}&fb_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearFbForm(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('fb_form_id').value = '';
-                    return;
-                }
-
-                // ✅ INLINE UPDATE ID
-                document.getElementById('fb_form_id').value = res.data.id;
-
-                // ✅ FILL DAILY JSON
-                fillNestedRows('fb_daily', res.data.fb_daily);
-            });
-    }
-
-    /* ---------------- CLEAR FORM ---------------- */
-    function clearFbForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'fb_month_year' ||
-                input.id === 'fb_instrument_id'
-            ) {
-                return;
-            }
-
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
-        });
-    }
-
-    function loadGsForm() {
-
-        const monthYear = document.getElementById('gs_month_year').value;
-        const instrument = document.getElementById('gs_instrument_id').value;
-
-        // ❗ GLOBAL RULE – Month mandatory
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/gs/load?gs_month_year=${monthYear}&gs_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearGsForm(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('gs_form_id').value = '';
-                    return;
-                }
-
-                // ✅ INLINE EDIT ID
-                document.getElementById('gs_form_id').value = res.data.id;
-
-                // ✅ FILL DAILY JSON
-                fillNestedRows('gs_daily', res.data.gs_daily);
-            });
-    }
-
-    function clearGsForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'gs_month_year' ||
-                input.id === 'gs_instrument_id'
-            ) {
-                return;
-            }
-
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
-        });
-    }
+    // loadGsForm, clearGsForm — moved to self-contained script inside FOM-038
 
     function handlePatientMobileFilter(e) {
         e.preventDefault();
@@ -5663,337 +8297,16 @@
 
 
 
-    function loadTosohForm() {
+    // loadTosohForm, clearTosohForm, fillTosohDaily — moved to self-contained script inside FOM-018
 
-        const monthYear = document.getElementById('tosoh_month_year').value;
-        const serial = document.getElementById('tosoh_instrument_serial').value;
 
-        // ❗ SAME GLOBAL RULE AS OTHER FORMS
-        if (!monthYear) return;
 
-        fetch(`/newforms/be/tosoh/load?tosoh_month_year=${monthYear}&tosoh_instrument_serial=${serial}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
+    // loadDxh560Form, clearDxh560Form — moved to self-contained script inside FOM-019
 
-                clearTosohForm(); // 🔑 same pattern
 
-                if (!res.data) {
-                    document.getElementById('tosoh_form_id').value = '';
-                    return;
-                }
+    // loadVitekForm, clearVitekForm — moved to self-contained script inside FOM-025
 
-                // ✅ INLINE EDIT ID
-                document.getElementById('tosoh_form_id').value = res.data.id;
-
-                // ✅ USE EXISTING COMMON FILL FUNCTION
-                fillTosohDaily(res.data.tosoh_daily);
-
-            });
-    }
-
-    function clearTosohForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER FIELDS
-            if (
-                input.id === 'tosoh_month_year' ||
-                input.id === 'tosoh_instrument_serial'
-            ) {
-                return;
-            }
-
-            input.value = '';
-        });
-    }
-
-
-    function fillTosohDaily(data) {
-
-        if (!data) return;
-
-        Object.keys(data).forEach(section => {
-
-            Object.keys(data[section]).forEach(type => {
-
-                Object.keys(data[section][type]).forEach(day => {
-
-                    const inputName = `${section}_${type}_${day}`;
-
-                    const input = document.querySelector(
-                        `input[name="${inputName}"]`
-                    );
-
-                    if (!input) return;
-
-                    input.value = data[section][type][day] ?? '';
-                });
-            });
-        });
-    }
-
-
-
-    function loadDxh560Form() {
-
-        const monthYear = document.getElementById('dxh560_month_year').value;
-        const instrument = document.getElementById('dxh560_instrument_serial').value;
-
-        // ❗ GLOBAL RULE – Month mandatory
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/dxh560/load?dxh560_month_year=${monthYear}&dxh560_instrument_serial=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearDxh560Form(); // 🔑 clear FIRST
-
-                if (!res.data) {
-                    document.getElementById('dxh560_form_id').value = '';
-                    return;
-                }
-
-                // ✅ INLINE EDIT ID
-                document.getElementById('dxh560_form_id').value = res.data.id;
-
-                /* =========================
-                   DAILY MAINTENANCE
-                ========================= */
-                fillNestedRows('dxh560_daily', res.data.dxh560_daily);
-
-                /* =========================
-                   WEEKLY MAINTENANCE
-                ========================= */
-                if (res.data.dxh560_weekly) {
-                    Object.keys(res.data.dxh560_weekly).forEach(field => {
-                        fillWeeklyRow(
-                            `dxh560_weekly[${field}]`,
-                            res.data.dxh560_weekly[field]
-                        );
-                    });
-                }
-
-                /* =========================
-                   MONTHLY MAINTENANCE
-                ========================= */
-                if (res.data.dxh560_monthly && res.data.dxh560_monthly.bleach_cycle) {
-
-                    const bc = res.data.dxh560_monthly.bleach_cycle;
-
-                    const notesEl = document.querySelector(
-                        `[name="dxh560_monthly[bleach_cycle][notes]"]`
-                    );
-                    if (notesEl) notesEl.value = bc.notes ?? '';
-
-                    const datesEl = document.querySelector(
-                        `[name="dxh560_monthly[bleach_cycle][dates]"]`
-                    );
-                    if (datesEl) datesEl.value = bc.dates ?? '';
-                }
-
-                /* =========================
-                   TECHNICIAN SIGNATURE
-                ========================= */
-                if (res.data.dxh560_technician) {
-
-                    const nameEl = document.querySelector(
-                        `[name="dxh560_technician[name]"]`
-                    );
-                    if (nameEl) nameEl.value = res.data.dxh560_technician.name ?? '';
-
-                    const dateEl = document.querySelector(
-                        `[name="dxh560_technician[date]"]`
-                    );
-                    if (dateEl) dateEl.value = res.data.dxh560_technician.date ?? '';
-                }
-            });
-    }
-
-
-    function clearVitekForm() {
-
-        document.querySelectorAll('input.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTERS OR FORM ID
-            if (
-                input.id === 'vitek_month_year' ||
-                input.id === 'vitek_instrument_id' ||
-                input.id === 'vitek_form_id'
-            ) {
-                return;
-            }
-
-            input.value = '';
-        });
-    }
-
-
-
-
-
-    function clearDxh560Form() {
-
-        document.querySelectorAll('input.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTERS OR FORM ID
-            if (
-                input.id === 'dxh560_month_year' ||
-                input.id === 'dxh560_instrument_serial' ||
-                input.id === 'dxh560_form_id'
-            ) {
-                return;
-            }
-
-            input.value = '';
-        });
-    }
-
-
-    function loadVitekForm() {
-
-        const monthYear = document.getElementById('vitek_month_year').value;
-        const instrument = document.getElementById('vitek_instrument_id').value;
-
-        // ❗ GLOBAL RULE – Month mandatory
-        if (!monthYear) return;
-
-        fetch(`/newforms/be/vitek/load?vitek_month_year=${monthYear}&vitek_instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearVitekForm(); // 🔑 always clear first
-
-                if (!res.data) {
-                    document.getElementById('vitek_form_id').value = '';
-                    return;
-                }
-
-                // ✅ INLINE EDIT ID
-                document.getElementById('vitek_form_id').value = res.data.id;
-
-                // ✅ DAILY JSON
-                fillNestedRows('vitek_daily', res.data.vitek_daily);
-
-                // ✅ MONTHLY JSON
-                fillNestedRows('vitek_monthly', res.data.vitek_monthly);
-            });
-    }
-
-    function clearTbody(tbody) {
-        while (tbody.firstChild) {
-            tbody.removeChild(tbody.firstChild);
-        }
-    }
-
-    /* 🔹 Create input cell */
-    function createInputCell(name, value = '', type = 'text') {
-
-        const td = document.createElement('td');
-        td.className = 'border px-2 py-1';
-
-        const input = document.createElement('input');
-        input.type = type;
-        input.name = name;
-        input.value = value ?? '';
-        input.className = 'border rounded px-1 py-1 w-full';
-
-        td.appendChild(input);
-        return td;
-    }
-
-    /* 🔹 Create one row (new / existing) */
-    function createEquipmentBreakdownRow(row = {}, index = 0) {
-
-        const tr = document.createElement('tr');
-
-        // 🔑 hidden id for inline edit
-        if (row.id) {
-            const hidden = document.createElement('input');
-            hidden.type = 'hidden';
-            hidden.name = `rows[${index}][id]`;
-            hidden.value = row.id;
-            tr.appendChild(hidden);
-        }
-
-        tr.appendChild(createInputCell(`rows[${index}][eb_date]`, row.eb_date, 'date'));
-        tr.appendChild(createInputCell(`rows[${index}][eb_equipment]`, row.eb_equipment));
-        tr.appendChild(createInputCell(`rows[${index}][eb_problem]`, row.eb_problem));
-        tr.appendChild(createInputCell(`rows[${index}][eb_breakdown_time]`, row.eb_breakdown_time));
-        tr.appendChild(createInputCell(`rows[${index}][eb_action_taken]`, row.eb_action_taken));
-        tr.appendChild(createInputCell(`rows[${index}][eb_engineer_name]`, row.eb_engineer_name));
-        tr.appendChild(createInputCell(`rows[${index}][eb_total_downtime]`, row.eb_total_downtime));
-        tr.appendChild(createInputCell(`rows[${index}][eb_remarks]`, row.eb_remarks));
-        tr.appendChild(createInputCell(`rows[${index}][eb_signature]`, row.eb_signature));
-
-        return tr;
-    }
-
-    function loadEquipmentBreakdownRegister() {
-
-        const fromDate = document.getElementById('eb_from_date').value;
-        const toDate = document.getElementById('eb_to_date').value;
-        const location = document.getElementById('eb_location').value;
-
-        // ✅ Allow load if ANY filter is present
-        if (!fromDate && !toDate && !location) return;
-
-        fetch(
-                `/newforms/be/equipment-breakdown/load?` +
-                `eb_from_date=${fromDate}` +
-                `&eb_to_date=${toDate}` +
-                `&eb_location=${location}`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                }
-            )
-            .then(res => res.json())
-            .then(res => {
-
-                const tbody = document.getElementById('equipmentBreakdownBody');
-                clearTbody(tbody);
-
-                // No data → keep one empty row
-                if (!res.data || res.data.length === 0) {
-                    tbody.appendChild(createEquipmentBreakdownRow({}, 0));
-                    return;
-                }
-
-                res.data.forEach((row, index) => {
-                    tbody.appendChild(createEquipmentBreakdownRow(row, index));
-                });
-            })
-            .catch(console.error);
-    }
-
-
-
-    function handleDatalistInput(input, datalistId, callback) {
-        const list = document.getElementById(datalistId);
-        const options = Array.from(list.options).map(o => o.value);
-
-        // ✅ Only when user selects a valid option
-        if (options.includes(input.value)) {
-            if (typeof callback === 'function') {
-                callback();
-            }
-        }
-    }
+    // clearTbody, createInputCell, createEquipmentBreakdownRow, handleDatalistInput — moved to self-contained script inside REG-001
 
 
 
@@ -6046,25 +8359,7 @@
 
 
 
-    function fillH550Daily(prefix, data) {
-        if (!data) return;
-
-        // field loop (shutdown, empty_waste, etc)
-        Object.keys(data).forEach(field => {
-
-            // day loop (1..31)
-            Object.keys(data[field]).forEach(day => {
-
-                const inputId = `${prefix}_${field}_${day}`;
-
-                const input = document.getElementById(inputId);
-
-                if (input) {
-                    input.value = data[field][day] ?? '';
-                }
-            });
-        });
-    }
+    // fillH550Daily — moved to self-contained script inside FOM-020
 
     function fillRow(prefix, data) {
         if (!data) return;
