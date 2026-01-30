@@ -558,115 +558,133 @@ class HMFormsController extends Controller
     }
 
     /**
-     * STORE Bone Marrow Examination Form - Simple save (no filters)
+     * STORE Bone Marrow Examination Requisition Form (FOM-005)
      */
     protected function storeBoneMarrowExaminationForm(Request $request)
     {
-        $data = [
-            'doc_no' => $request->doc_no,
-            'patient_name' => $request->patient_name,
-            'lab_number' => $request->lab_number,
-            'age_sex' => $request->age_sex,
-            'exam_date' => $request->exam_date ?: null,
-            'ref_doctor' => $request->ref_doctor,
-            'time' => $request->time,
-            'client_name' => $request->client_name,
-            'mobile_no' => $request->mobile_no,
-            'client_code' => $request->client_code,
-            'clinical_history' => $request->clinical_history,
-            'hemoglobin' => $request->hemoglobin,
-            'rbc_count' => $request->rbc_count,
-            'mcv' => $request->mcv,
-            'rdw' => $request->rdw,
-            'total_leukocyte_count' => $request->total_leukocyte_count,
-            'differential_leukocyte_count' => $request->differential_leukocyte_count,
-            'platelet_count' => $request->platelet_count,
-            'peripheral_smear_findings' => $request->peripheral_smear_findings,
-            'created_by' => auth()->id(),
-        ];
+        $isAjax = $request->ajax() || $request->wantsJson();
 
-        $savedRecord = BoneMarrowExaminationForm::create($data);
+        $formId = $request->bone_marrow_exam_form_id;
 
-        if ($request->ajax() || $request->wantsJson()) {
+        $data = $request->only([
+            'patient_name',
+            'lab_number',
+            'age_sex',
+            'exam_date',
+            'ref_doctor',
+            'time',
+            'client_name',
+            'mobile_no',
+            'client_code',
+            'clinical_history',
+            'hemoglobin',
+            'rbc_count',
+            'mcv',
+            'rdw',
+            'total_leukocyte_count',
+            'differential_leukocyte_count',
+            'platelet_count',
+            'peripheral_smear_findings',
+        ]);
+
+        if ($formId) {
+            $form = BoneMarrowExaminationForm::findOrFail($formId);
+            $form->update($data);
+        } else {
+            $form = BoneMarrowExaminationForm::create($data);
+        }
+
+        if ($isAjax) {
             return response()->json([
                 'success' => true,
                 'message' => 'Bone Marrow Examination Form saved successfully',
-                'data' => $savedRecord
+                'form_id' => $form->id,
             ]);
         }
 
-        return back()->with('success', 'Bone Marrow Examination Form saved successfully');
+        return back()->with([
+            'success' => 'Bone Marrow Examination Form saved successfully',
+            'bone_marrow_exam_form_id' => $form->id,
+        ]);
     }
 
     /**
-     * STORE Coagulation Requisition Form - Simple save (no filters)
+     * LOAD Bone Marrow Examination Requisition Form (FOM-005)
+     */
+    public function loadBoneMarrowExaminationForm(Request $request)
+    {
+        if (!$request->filled('patient_name')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = BoneMarrowExaminationForm::where('patient_name', $request->patient_name)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
+    }
+
+    /**
+     * STORE Coagulation Requisition Form (FOM-006)
      */
     protected function storeCoagulationRequisitionForm(Request $request)
     {
-        $data = [
-            'doc_no' => $request->doc_no,
-            'lab_no' => $request->lab_no,
-            'form_date' => $request->form_date ?: null,
-            'specimen_type' => $request->specimen_type,
-            'specimen_time' => $request->specimen_time,
-            'patient_name' => $request->patient_name,
-            'age' => $request->age,
-            'sex' => $request->sex,
-            'tel_patient' => $request->tel_patient,
-            'tel_physician' => $request->tel_physician,
-            // Clinical History
-            'clinical_0' => $request->clinical_0,
-            'clinical_1' => $request->clinical_1,
-            'clinical_2' => $request->clinical_2,
-            'clinical_3' => $request->clinical_3,
-            'clinical_4' => $request->clinical_4,
-            'clinical_5' => $request->clinical_5,
-            'clinical_6' => $request->clinical_6,
-            'last_transfusion_date' => $request->last_transfusion_date ?: null,
-            'transfusion_type' => $request->transfusion_type,
-            // Lab Investigation
-            'lab_0' => $request->lab_0,
-            'lab_0_value' => $request->lab_0_value,
-            'lab_1' => $request->lab_1,
-            'lab_1_value' => $request->lab_1_value,
-            'liver_function' => $request->liver_function,
-            'liver_function_note' => $request->liver_function_note,
-            'others_specify' => $request->others_specify,
-            // Medication
-            'current_dose' => $request->current_dose,
-            'dose_change_date' => $request->dose_change_date ?: null,
-            'drug_0' => $request->drug_0,
-            'drug_0_notes' => $request->drug_0_notes,
-            'drug_1' => $request->drug_1,
-            'drug_1_notes' => $request->drug_1_notes,
-            'drug_2' => $request->drug_2,
-            'drug_2_notes' => $request->drug_2_notes,
-            'drug_3' => $request->drug_3,
-            'drug_3_notes' => $request->drug_3_notes,
-            // Heparin
-            'heparin_0' => $request->heparin_0,
-            'heparin_0_notes' => $request->heparin_0_notes,
-            'heparin_1' => $request->heparin_1,
-            'heparin_1_notes' => $request->heparin_1_notes,
-            // Others
-            'major_surgery' => $request->major_surgery,
-            'probable_diagnosis' => $request->probable_diagnosis,
-            'sample_collected_by' => $request->sample_collected_by,
-            'client_name_code' => $request->client_name_code,
-            'created_by' => auth()->id(),
-        ];
+        $isAjax = $request->ajax() || $request->wantsJson();
 
-        $savedRecord = CoagulationRequisitionForm::create($data);
+        $formId = $request->coagulation_req_form_id;
 
-        if ($request->ajax() || $request->wantsJson()) {
+        $data = $request->only([
+            'lab_no', 'form_date', 'specimen_type', 'specimen_time',
+            'patient_name', 'age', 'sex',
+            'tel_patient', 'tel_physician',
+            'clinical_0', 'clinical_1', 'clinical_2', 'clinical_3',
+            'clinical_4', 'clinical_5', 'clinical_6',
+            'last_transfusion_date', 'transfusion_type',
+            'lab_0', 'lab_0_value', 'lab_1', 'lab_1_value',
+            'liver_function', 'liver_function_note', 'others_specify',
+            'current_dose', 'dose_change_date',
+            'drug_0', 'drug_0_notes', 'drug_1', 'drug_1_notes',
+            'drug_2', 'drug_2_notes', 'drug_3', 'drug_3_notes',
+            'heparin_0', 'heparin_0_notes', 'heparin_1', 'heparin_1_notes',
+            'major_surgery', 'probable_diagnosis',
+            'sample_collected_by', 'client_name_code',
+        ]);
+
+        if ($formId) {
+            $form = CoagulationRequisitionForm::findOrFail($formId);
+            $form->update($data);
+        } else {
+            $form = CoagulationRequisitionForm::create($data);
+        }
+
+        if ($isAjax) {
             return response()->json([
                 'success' => true,
                 'message' => 'Coagulation Requisition Form saved successfully',
-                'data' => $savedRecord
+                'form_id' => $form->id,
             ]);
         }
 
-        return back()->with('success', 'Coagulation Requisition Form saved successfully');
+        return back()->with([
+            'success' => 'Coagulation Requisition Form saved successfully',
+            'coagulation_req_form_id' => $form->id,
+        ]);
+    }
+
+    /**
+     * LOAD Coagulation Requisition Form (FOM-006)
+     */
+    public function loadCoagulationRequisitionForm(Request $request)
+    {
+        if (!$request->filled('patient_name')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = CoagulationRequisitionForm::where('patient_name', $request->patient_name)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 
     /**

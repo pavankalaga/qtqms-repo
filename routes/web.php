@@ -1107,6 +1107,15 @@ Route::prefix('newforms')->name('newforms.')->group(function () {
                 '/forms/submit',
                 [CY_CSFormsController::class, 'store']
             )->name('forms.submit');
+
+            Route::get('/customer-feedback/load', [CY_CSFormsController::class, 'loadCustomerPatientFeedback'])
+                ->name('customer-feedback.load');
+
+            Route::get('/cytopathology-requisition/load', [CY_CSFormsController::class, 'loadCytopathologyRequisition'])
+                ->name('cytopathology-requisition.load');
+
+            Route::get('/fnac-consent/load', [CY_CSFormsController::class, 'loadFnacConsent'])
+                ->name('fnac-consent.load');
         });
 
     Route::prefix('ge')
@@ -1132,6 +1141,26 @@ Route::prefix('newforms')->name('newforms.')->group(function () {
                 '/first-aid-kit/load',
                 [GEFormsController::class, 'loadFirstAidKitMonitoring']
             )->name('first-aid-kit.load');
+
+            Route::get(
+                '/needle-stick-injury/load',
+                [GEFormsController::class, 'loadNeedleStickInjuryLog']
+            )->name('needle-stick-injury.load');
+
+            Route::get(
+                '/laboratory-incident/load',
+                [GEFormsController::class, 'loadLaboratoryIncidentForm']
+            )->name('laboratory-incident.load');
+
+            Route::get(
+                '/employee-suggestion/load',
+                [GEFormsController::class, 'loadEmployeeSuggestionForm']
+            )->name('employee-suggestion.load');
+
+            Route::get(
+                '/meeting-agenda/load',
+                [GEFormsController::class, 'loadMeetingAgendaForm']
+            )->name('meeting-agenda.load');
 
             /**
              * ===============================
@@ -1541,6 +1570,16 @@ Route::prefix('newforms')->name('newforms.')->group(function () {
                 [HMFormsController::class, 'submit']
             )->name('forms.submit');
 
+            Route::get(
+                '/bone-marrow-examination/load',
+                [HMFormsController::class, 'loadBoneMarrowExaminationForm']
+            )->name('bone-marrow-examination.load');
+
+            Route::get(
+                '/coagulation-requisition/load',
+                [HMFormsController::class, 'loadCoagulationRequisitionForm']
+            )->name('coagulation-requisition.load');
+
             /**
              * COAGULATION MNPT FORM LOAD (AJAX)
              */
@@ -1786,6 +1825,16 @@ Route::prefix('newforms')->name('newforms.')->group(function () {
                 '/forms/submit',
                 [ITFormsController::class, 'store']
             )->name('forms.submit');
+
+            Route::get(
+                '/lis-interface-validation/load',
+                [ITFormsController::class, 'loadLisInterfaceValidationForm']
+            )->name('lis-interface-validation.load');
+
+            Route::get(
+                '/lis-user-login/load',
+                [ITFormsController::class, 'loadLisUserLoginCreationForm']
+            )->name('lis-user-login.load');
         });
 
     /**

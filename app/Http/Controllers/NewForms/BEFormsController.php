@@ -156,122 +156,50 @@ class BEFormsController extends Controller
     /**
      * ==========================================
      * BC-FOM-001 – Maternal Marker & Pre-Eclampsia TRF
-     * Supports:
-     * - Inline edit
-     * - Full submit
      * ==========================================
      */
     protected function storeMaternalMarkerTrf(Request $request)
     {
+        $isAjax = $request->ajax() || $request->wantsJson();
 
-        // ✅ BASIC VALIDATION (SAFE, SAME STYLE)
-        $request->validate([
-            'patient_mobile' => 'nullable|string|max:20',
+        $formId = $request->maternal_marker_form_id;
+
+        $data = $request->only([
+            'physician_name', 'physician_mobile', 'client_name', 'client_code',
+            'patient_name', 'patient_age', 'patient_dob', 'patient_mobile', 'patient_email',
+            'patient_weight', 'ethnicity', 'lmp',
+            'diabetic_status', 'chronic_hypertension',
+            'on_medication', 'medication_details', 'smoking_status',
+            'bp_date', 'bp_right', 'bp_left',
+            'sample_collection_date', 'sample_collection_time', 'ultrasound_date',
+            'crl_a', 'crl_b', 'nt_a', 'nt_b', 'nb_a', 'nb_b', 'bpd_a', 'bpd_b',
+            'uterine_left', 'uterine_right',
+            'donor_age', 'donor_dob', 'ivf_type',
+            'extraction_date', 'transfer_date', 'hcg_taken', 'hcg_date',
+            'patient_signature', 'patient_signature_date',
         ]);
 
-        // 🔑 COMMON PAYLOAD (MATCHES BLADE EXACTLY)
-        $payload = [
+        $data['test_panels'] = array_filter($request->input('test_panels', []));
 
-            // 🔹 Top Filter
-            'filter_patient_mobile' => $request->filter_patient_mobile,
-
-            // 🔹 Requester Information
-            'physician_name'   => $request->physician_name,
-            'physician_mobile' => $request->physician_mobile,
-            'client_name'      => $request->client_name,
-            'client_code'      => $request->client_code,
-
-            // 🔹 Test Panels (JSON)
-            'test_panels' => array_filter($request->test_panels ?? []),
-
-            // 🔹 Patient Details
-            'patient_name'   => $request->patient_name,
-            'patient_age'    => $request->patient_age,
-            'patient_dob'    => $request->patient_dob,
-            'patient_mobile' => $request->patient_mobile,
-            'patient_email'  => $request->patient_email,
-
-            'patient_weight' => $request->patient_weight,
-            'ethnicity'      => $request->ethnicity,
-            'lmp'            => $request->lmp,
-
-            'diabetic_status'       => $request->diabetic_status,
-            'chronic_hypertension' => $request->chronic_hypertension,
-
-            'on_medication'      => $request->on_medication,
-            'medication_details' => $request->medication_details,
-
-            'smoking_status' => $request->smoking_status,
-
-            // 🔹 Blood Pressure
-            'bp_date'  => $request->bp_date,
-            'bp_right' => $request->bp_right,
-            'bp_left'  => $request->bp_left,
-
-            // 🔹 USG
-            'sample_collection_date' => $request->sample_collection_date,
-            'sample_collection_time' => $request->sample_collection_time,
-            'ultrasound_date'        => $request->ultrasound_date,
-
-            // 🔹 Markers
-            'crl_a' => $request->crl_a,
-            'crl_b' => $request->crl_b,
-
-            'nt_a' => $request->nt_a,
-            'nt_b' => $request->nt_b,
-
-            'nb_a' => $request->nb_a,
-            'nb_b' => $request->nb_b,
-
-            'bpd_a' => $request->bpd_a,
-            'bpd_b' => $request->bpd_b,
-
-            // 🔹 Uterine Artery
-            'uterine_left'  => $request->uterine_left,
-            'uterine_right' => $request->uterine_right,
-
-            // 🔹 IVF
-            'donor_age' => $request->donor_age,
-            'donor_dob' => $request->donor_dob,
-            'ivf_type'  => $request->ivf_type,
-
-            'extraction_date' => $request->extraction_date,
-            'transfer_date'   => $request->transfer_date,
-            'hcg_taken'       => $request->hcg_taken,
-            'hcg_date'        => $request->hcg_date,
-
-            // 🔹 Consent
-            'patient_signature'      => $request->patient_signature,
-            'patient_signature_date' => $request->patient_signature_date,
-        ];
-
-        /**
-         * ==========================================
-         * UPDATE (INLINE EDIT / FULL SUBMIT)
-         * ==========================================
-         */
-        if ($request->filled('form_id')) {
-
-            MaternalMarkerTrf::where('id', $request->form_id)
-                ->update($payload);
-
-            return back()->with(
-                'success',
-                'Maternal Marker & Pre-Eclampsia TRF updated successfully'
-            );
+        if ($formId) {
+            $form = MaternalMarkerTrf::findOrFail($formId);
+            $form->update($data);
+        } else {
+            $form = MaternalMarkerTrf::create($data);
         }
 
-        /**
-         * ==========================================
-         * CREATE (FIRST TIME SUBMIT)
-         * ==========================================
-         */
-        MaternalMarkerTrf::create($payload);
+        if ($isAjax) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Maternal Marker & Pre-Eclampsia TRF saved successfully.',
+                'form_id' => $form->id,
+            ]);
+        }
 
-        return back()->with(
-            'success',
-            'Maternal Marker & Pre-Eclampsia TRF saved successfully'
-        );
+        return back()->with([
+            'success' => 'Maternal Marker & Pre-Eclampsia TRF saved successfully.',
+            'maternal_marker_form_id' => $form->id,
+        ]);
     }
 
     /**
@@ -281,18 +209,15 @@ class BEFormsController extends Controller
      */
     public function loadMaternalMarker(Request $request)
     {
-        if (!$request->filled('filter_patient_mobile')) {
+        if (!$request->filled('patient_mobile')) {
             return response()->json(['data' => null]);
         }
 
-        $form = MaternalMarkerTrf::where(
-            'patient_mobile',
-            $request->filter_patient_mobile
-        )->latest()->first();
+        $form = MaternalMarkerTrf::where('patient_mobile', $request->patient_mobile)
+            ->latest()
+            ->first();
 
-        return response()->json([
-            'data' => $form
-        ]);
+        return response()->json(['data' => $form]);
     }
 
 

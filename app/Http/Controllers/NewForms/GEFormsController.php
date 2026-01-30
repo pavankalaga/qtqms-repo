@@ -305,45 +305,59 @@ class GEFormsController extends Controller
      */
     protected function storeNeedleStickInjuryLog(Request $request)
     {
-        $payload = [
-            'doc_no'              => $request->doc_no,
-            'injured_person'      => $request->injured_person,
-            'exposure_datetime'   => $request->exposure_datetime,
-            'sequence_of_events'  => $request->sequence_of_events,
-            'details_of_exposure' => $request->details_of_exposure,
-            'counseling_details'  => $request->counseling_details,
-            'source_person_info'  => $request->source_person_info,
-            'preventive_steps'    => $request->preventive_steps,
-            'recorded_by'         => $request->recorded_by,
-            'recorded_date'       => $request->recorded_date,
-        ];
+        $isAjax = $request->ajax() || $request->wantsJson();
 
-        $record = null;
+        $formId = $request->needle_stick_injury_log_id;
 
-        if ($request->filled('needle_stick_injury_log_id')) {
-            // UPDATE existing record
-            NeedleStickInjuryLog::where('id', $request->needle_stick_injury_log_id)
-                ->update(array_merge($payload, [
-                    'updated_by' => auth()->id(),
-                ]));
-            $record = NeedleStickInjuryLog::find($request->needle_stick_injury_log_id);
+        $data = $request->only([
+            'doc_no',
+            'injured_person',
+            'exposure_datetime',
+            'sequence_of_events',
+            'details_of_exposure',
+            'counseling_details',
+            'source_person_info',
+            'preventive_steps',
+            'recorded_by',
+            'recorded_date',
+        ]);
+
+        if ($formId) {
+            $form = NeedleStickInjuryLog::findOrFail($formId);
+            $form->update($data);
         } else {
-            // CREATE new record
-            $record = NeedleStickInjuryLog::create(array_merge($payload, [
-                'created_by' => auth()->id(),
-            ]));
+            $form = NeedleStickInjuryLog::create($data);
         }
 
-        // Return JSON for AJAX requests
-        if ($request->ajax() || $request->wantsJson()) {
+        if ($isAjax) {
             return response()->json([
                 'success' => true,
                 'message' => 'Needle Stick Injury Log saved successfully',
-                'data' => $record
+                'form_id' => $form->id,
             ]);
         }
 
-        return back()->with('success', 'Needle Stick Injury Log saved successfully');
+        return back()->with([
+            'success' => 'Needle Stick Injury Log saved successfully',
+            'needle_stick_injury_log_id' => $form->id,
+        ]);
+    }
+
+    /**
+     * LOAD Needle Stick Injury Log Form data
+     * Called via AJAX search by injured_person name
+     */
+    public function loadNeedleStickInjuryLog(Request $request)
+    {
+        if (!$request->filled('injured_person')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = NeedleStickInjuryLog::where('injured_person', $request->injured_person)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 
     /**
@@ -353,46 +367,66 @@ class GEFormsController extends Controller
      */
     protected function storeSampleRejectionForm(Request $request)
     {
-        $payload = [
-            'doc_no'              => $request->doc_no,
-            'month_year'          => $request->month_year,
-            'location'            => $request->location,
-            'department'          => $request->department,
-            'date_time'           => $request->date_time,
-            'patient_barcode'     => $request->patient_barcode,
-            'parameter'           => $request->parameter,
-            'collected_by'        => $request->collected_by,
-            'sample_type'         => $request->sample_type,
-            'reason_rejection'    => $request->reason_rejection,
-            'informed_by_name'    => $request->informed_by_name,
-            'informed_by_sign'    => $request->informed_by_sign,
-            'informed_to_csd'     => $request->informed_to_csd,
-            'fresh_sample_yes_no' => $request->fresh_sample_yes_no,
-            'new_barcode'         => $request->new_barcode,
-        ];
+        $department = $request->department;
+        $location   = $request->location;
+        $savedIds   = [];
 
-        $record = null;
+        // Handle array-style rows
+        if (is_array($request->date_time)) {
+            $rowCount = count($request->date_time);
+            $rowIds   = $request->row_id ?? [];
 
-        if ($request->filled('sample_rejection_form_id')) {
-            // UPDATE existing record
-            SampleRejectionForm::where('id', $request->sample_rejection_form_id)
-                ->update(array_merge($payload, [
-                    'updated_by' => auth()->id(),
-                ]));
-            $record = SampleRejectionForm::find($request->sample_rejection_form_id);
-        } else {
-            // CREATE new record
-            $record = SampleRejectionForm::create(array_merge($payload, [
-                'created_by' => auth()->id(),
-            ]));
+            for ($i = 0; $i < $rowCount; $i++) {
+                // Skip empty rows (no date_time)
+                if (empty($request->date_time[$i])) {
+                    continue;
+                }
+
+                $rowId = $rowIds[$i] ?? null;
+
+                $data = [
+                    'doc_no'              => $request->doc_no,
+                    'department'          => $department,
+                    'location'            => $location,
+                    'date_time'           => $request->date_time[$i],
+                    'patient_barcode'     => $request->patient_barcode[$i] ?? null,
+                    'parameter'           => $request->parameter[$i] ?? null,
+                    'collected_by'        => $request->collected_by[$i] ?? null,
+                    'sample_type'         => $request->sample_type[$i] ?? null,
+                    'reason_rejection'    => $request->reason_rejection[$i] ?? null,
+                    'informed_by_name'    => $request->informed_by_name[$i] ?? null,
+                    'informed_by_sign'    => $request->informed_by_sign[$i] ?? null,
+                    'informed_to_csd'     => $request->informed_to_csd[$i] ?? null,
+                    'fresh_sample_yes_no' => $request->fresh_sample_yes_no[$i] ?? null,
+                    'new_barcode'         => $request->new_barcode[$i] ?? null,
+                ];
+
+                if ($rowId) {
+                    // UPDATE existing record
+                    SampleRejectionForm::where('id', $rowId)->update(array_merge($data, [
+                        'updated_by' => auth()->id(),
+                    ]));
+                    $savedIds[] = $rowId;
+                } else {
+                    // CREATE new record
+                    $newRecord = SampleRejectionForm::create(array_merge($data, [
+                        'created_by' => auth()->id(),
+                    ]));
+                    $savedIds[] = $newRecord->id;
+                }
+            }
         }
 
-        // Return JSON for AJAX requests
+        // Return JSON for AJAX requests with saved records
         if ($request->ajax() || $request->wantsJson()) {
+            $savedRecords = SampleRejectionForm::whereIn('id', $savedIds)
+                ->orderBy('date_time', 'desc')
+                ->get();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Sample Rejection Form saved successfully',
-                'data' => $record
+                'data'    => $savedRecords,
             ]);
         }
 
@@ -405,32 +439,62 @@ class GEFormsController extends Controller
      */
     public function loadSampleRejectionForm(Request $request)
     {
-        $query = SampleRejectionForm::query();
+        // Get distinct values for datalists
+        $departments = SampleRejectionForm::whereNotNull('department')
+            ->where('department', '!=', '')
+            ->distinct()
+            ->pluck('department')
+            ->toArray();
 
-        if ($request->filled('month_year')) {
-            $query->where('month_year', $request->month_year);
+        $locations = SampleRejectionForm::whereNotNull('location')
+            ->where('location', '!=', '')
+            ->distinct()
+            ->pluck('location')
+            ->toArray();
+
+        // At least one date filter required
+        if (!$request->filled('from_date') && !$request->filled('to_date')) {
+            return response()->json([
+                'success' => false,
+                'data'    => [],
+                'departments' => $departments,
+                'locations'   => $locations,
+            ]);
         }
 
-        if ($request->filled('location')) {
-            $query->where('location', $request->location);
+        $query = SampleRejectionForm::query();
+
+        // FROM only → exact date
+        if ($request->filled('from_date') && !$request->filled('to_date')) {
+            $query->whereDate('date_time', $request->from_date);
+        }
+
+        // TO only → exact date
+        if (!$request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereDate('date_time', $request->to_date);
+        }
+
+        // FROM and TO → range
+        if ($request->filled('from_date') && $request->filled('to_date')) {
+            $query->whereDate('date_time', '>=', $request->from_date)
+                  ->whereDate('date_time', '<=', $request->to_date);
         }
 
         if ($request->filled('department')) {
             $query->where('department', $request->department);
         }
 
-        $data = $query->latest()->first();
-
-        if ($data) {
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ]);
+        if ($request->filled('location')) {
+            $query->where('location', $request->location);
         }
 
+        $data = $query->orderBy('date_time', 'desc')->get();
+
         return response()->json([
-            'success' => false,
-            'message' => 'No data found for the selected filters'
+            'success'     => $data->count() > 0,
+            'data'        => $data,
+            'departments' => $departments,
+            'locations'   => $locations,
         ]);
     }
 
@@ -442,48 +506,60 @@ class GEFormsController extends Controller
      */
     protected function storeAccidentReportingForm(Request $request)
     {
-        $rowCount = count($request->date_time ?? []);
         $location = $request->location;
+        $savedIds = [];
 
-        for ($i = 0; $i < $rowCount; $i++) {
+        // Handle array-style rows
+        if (is_array($request->date_time)) {
+            $rowCount = count($request->date_time);
+            $rowIds   = $request->row_id ?? [];
 
-            // Skip empty rows (no date_time)
-            if (empty($request->date_time[$i])) {
-                continue;
-            }
+            for ($i = 0; $i < $rowCount; $i++) {
+                // Skip empty rows (no date_time)
+                if (empty($request->date_time[$i])) {
+                    continue;
+                }
 
-            $data = [
-                'doc_no'              => $request->doc_no,
-                'location'            => $location,
-                'date_time'           => $request->date_time[$i],
-                'person_involved'     => $request->person_involved[$i] ?? null,
-                'injuries_sustained'  => $request->injuries_sustained[$i] ?? null,
-                'emergency_first_aid' => $request->emergency_first_aid[$i] ?? null,
-                'first_aid_by'        => $request->first_aid_by[$i] ?? null,
-                'follow_up_action'    => $request->follow_up_action[$i] ?? null,
-                'preventive_action'   => $request->preventive_action[$i] ?? null,
-            ];
+                $rowId = $rowIds[$i] ?? null;
 
-            $rowId = $request->row_id[$i] ?? null;
+                $data = [
+                    'doc_no'              => $request->doc_no,
+                    'location'            => $location,
+                    'date_time'           => $request->date_time[$i],
+                    'person_involved'     => $request->person_involved[$i] ?? null,
+                    'injuries_sustained'  => $request->injuries_sustained[$i] ?? null,
+                    'emergency_first_aid' => $request->emergency_first_aid[$i] ?? null,
+                    'first_aid_by'        => $request->first_aid_by[$i] ?? null,
+                    'follow_up_action'    => $request->follow_up_action[$i] ?? null,
+                    'preventive_action'   => $request->preventive_action[$i] ?? null,
+                ];
 
-            if ($rowId) {
-                // UPDATE existing record
-                AccidentReportingForm::where('id', $rowId)->update(array_merge($data, [
-                    'updated_by' => auth()->id(),
-                ]));
-            } else {
-                // CREATE new record
-                AccidentReportingForm::create(array_merge($data, [
-                    'created_by' => auth()->id(),
-                ]));
+                if ($rowId) {
+                    // UPDATE existing record
+                    AccidentReportingForm::where('id', $rowId)->update(array_merge($data, [
+                        'updated_by' => auth()->id(),
+                    ]));
+                    $savedIds[] = $rowId;
+                } else {
+                    // CREATE new record
+                    $newRecord = AccidentReportingForm::create(array_merge($data, [
+                        'created_by' => auth()->id(),
+                    ]));
+                    $savedIds[] = $newRecord->id;
+                }
             }
         }
 
-        // Return JSON for AJAX requests
+        // Return JSON for AJAX requests with saved records
         if ($request->ajax() || $request->wantsJson()) {
+            $savedRecords = AccidentReportingForm::whereIn('id', $savedIds)
+                ->orderBy('date_time', 'desc')
+                ->get();
+
             return response()->json([
                 'success' => true,
-                'message' => 'Accident Reporting Form saved successfully'
+                'message' => 'Accident Reporting Form saved successfully',
+                'data'    => $savedRecords,
             ]);
         }
 
@@ -497,41 +573,50 @@ class GEFormsController extends Controller
      */
     public function loadAccidentReportingForm(Request $request)
     {
+        // Get distinct values for datalists
+        $locations = AccidentReportingForm::whereNotNull('location')
+            ->where('location', '!=', '')
+            ->distinct()
+            ->pluck('location')
+            ->toArray();
+
         // At least one date filter required
         if (!$request->filled('from_date') && !$request->filled('to_date')) {
-            return response()->json(['success' => false, 'data' => []]);
+            return response()->json([
+                'success'   => false,
+                'data'      => [],
+                'locations' => $locations,
+            ]);
         }
 
         $query = AccidentReportingForm::query();
 
-        // FROM only - load records for that specific date
+        // FROM only → exact date
         if ($request->filled('from_date') && !$request->filled('to_date')) {
             $query->whereDate('date_time', $request->from_date);
         }
 
-        // TO only - load records for that specific date
+        // TO only → exact date
         if (!$request->filled('from_date') && $request->filled('to_date')) {
             $query->whereDate('date_time', $request->to_date);
         }
 
-        // FROM and TO - load records in range
+        // FROM and TO → range
         if ($request->filled('from_date') && $request->filled('to_date')) {
-            $query->whereBetween('date_time', [
-                $request->from_date . ' 00:00:00',
-                $request->to_date . ' 23:59:59'
-            ]);
+            $query->whereDate('date_time', '>=', $request->from_date)
+                  ->whereDate('date_time', '<=', $request->to_date);
         }
 
         if ($request->filled('location')) {
             $query->where('location', $request->location);
         }
 
-        // Return multiple records ordered by date_time
         $data = $query->orderBy('date_time', 'desc')->get();
 
         return response()->json([
-            'success' => $data->count() > 0,
-            'data' => $data
+            'success'   => $data->count() > 0,
+            'data'      => $data,
+            'locations' => $locations,
         ]);
     }
 
@@ -563,55 +648,67 @@ class GEFormsController extends Controller
      */
     protected function storeAnalyteCalibrationForm(Request $request)
     {
-        $rowCount = count($request->calibration_date ?? []);
-        $location = $request->location;
+        $location   = $request->location;
         $department = $request->department;
+        $savedIds   = [];
 
-        for ($i = 0; $i < $rowCount; $i++) {
+        // Handle array-style rows
+        if (is_array($request->calibration_date)) {
+            $rowCount = count($request->calibration_date);
+            $rowIds   = $request->row_id ?? [];
 
-            // Skip empty rows (no calibration_date)
-            if (empty($request->calibration_date[$i])) {
-                continue;
-            }
+            for ($i = 0; $i < $rowCount; $i++) {
+                // Skip empty rows (no calibration_date)
+                if (empty($request->calibration_date[$i])) {
+                    continue;
+                }
 
-            $data = [
-                'doc_no'           => $request->doc_no,
-                'location'         => $location,
-                'department'       => $department,
-                'calibration_date' => $request->calibration_date[$i],
-                'parameters'       => $request->parameters[$i] ?? null,
-                'calibrator_used'  => $request->calibrator_used[$i] ?? null,
-                'lot_no'           => $request->lot_no[$i] ?? null,
-                'level1'           => $request->level1[$i] ?? null,
-                'level1_status'    => $request->level1_status[$i] ?? null,
-                'level2'           => $request->level2[$i] ?? null,
-                'level2_status'    => $request->level2_status[$i] ?? null,
-                'level3'           => $request->level3[$i] ?? null,
-                'level3_status'    => $request->level3_status[$i] ?? null,
-                'lab_staff_sign'   => $request->lab_staff_sign[$i] ?? null,
-                'supervisor_sign'  => $request->supervisor_sign[$i] ?? null,
-            ];
+                $rowId = $rowIds[$i] ?? null;
 
-            $rowId = $request->row_id[$i] ?? null;
+                $data = [
+                    'doc_no'           => $request->doc_no,
+                    'location'         => $location,
+                    'department'       => $department,
+                    'calibration_date' => $request->calibration_date[$i],
+                    'parameters'       => $request->parameters[$i] ?? null,
+                    'calibrator_used'  => $request->calibrator_used[$i] ?? null,
+                    'lot_no'           => $request->lot_no[$i] ?? null,
+                    'level1'           => $request->level1[$i] ?? null,
+                    'level1_status'    => $request->level1_status[$i] ?? null,
+                    'level2'           => $request->level2[$i] ?? null,
+                    'level2_status'    => $request->level2_status[$i] ?? null,
+                    'level3'           => $request->level3[$i] ?? null,
+                    'level3_status'    => $request->level3_status[$i] ?? null,
+                    'lab_staff_sign'   => $request->lab_staff_sign[$i] ?? null,
+                    'supervisor_sign'  => $request->supervisor_sign[$i] ?? null,
+                ];
 
-            if ($rowId) {
-                // UPDATE existing record
-                AnalyteCalibrationForm::where('id', $rowId)->update(array_merge($data, [
-                    'updated_by' => auth()->id(),
-                ]));
-            } else {
-                // CREATE new record
-                AnalyteCalibrationForm::create(array_merge($data, [
-                    'created_by' => auth()->id(),
-                ]));
+                if ($rowId) {
+                    // UPDATE existing record
+                    AnalyteCalibrationForm::where('id', $rowId)->update(array_merge($data, [
+                        'updated_by' => auth()->id(),
+                    ]));
+                    $savedIds[] = $rowId;
+                } else {
+                    // CREATE new record
+                    $newRecord = AnalyteCalibrationForm::create(array_merge($data, [
+                        'created_by' => auth()->id(),
+                    ]));
+                    $savedIds[] = $newRecord->id;
+                }
             }
         }
 
-        // Return JSON for AJAX requests
+        // Return JSON for AJAX requests with saved records
         if ($request->ajax() || $request->wantsJson()) {
+            $savedRecords = AnalyteCalibrationForm::whereIn('id', $savedIds)
+                ->orderBy('calibration_date', 'desc')
+                ->get();
+
             return response()->json([
                 'success' => true,
-                'message' => 'Analyte Calibration Form saved successfully'
+                'message' => 'Analyte Calibration Form saved successfully',
+                'data'    => $savedRecords,
             ]);
         }
 
@@ -624,29 +721,45 @@ class GEFormsController extends Controller
      */
     public function loadAnalyteCalibrationForm(Request $request)
     {
+        // Get distinct values for datalists
+        $departments = AnalyteCalibrationForm::whereNotNull('department')
+            ->where('department', '!=', '')
+            ->distinct()
+            ->pluck('department')
+            ->toArray();
+
+        $locations = AnalyteCalibrationForm::whereNotNull('location')
+            ->where('location', '!=', '')
+            ->distinct()
+            ->pluck('location')
+            ->toArray();
+
         // At least one date filter required
         if (!$request->filled('from_date') && !$request->filled('to_date')) {
-            return response()->json(['success' => false, 'data' => []]);
+            return response()->json([
+                'success'     => false,
+                'data'        => [],
+                'departments' => $departments,
+                'locations'   => $locations,
+            ]);
         }
 
         $query = AnalyteCalibrationForm::query();
 
-        // FROM only - load records for that specific date
+        // FROM only → exact date
         if ($request->filled('from_date') && !$request->filled('to_date')) {
             $query->whereDate('calibration_date', $request->from_date);
         }
 
-        // TO only - load records for that specific date
+        // TO only → exact date
         if (!$request->filled('from_date') && $request->filled('to_date')) {
             $query->whereDate('calibration_date', $request->to_date);
         }
 
-        // FROM and TO - load records in range
+        // FROM and TO → range
         if ($request->filled('from_date') && $request->filled('to_date')) {
-            $query->whereBetween('calibration_date', [
-                $request->from_date,
-                $request->to_date
-            ]);
+            $query->whereDate('calibration_date', '>=', $request->from_date)
+                  ->whereDate('calibration_date', '<=', $request->to_date);
         }
 
         if ($request->filled('location')) {
@@ -657,12 +770,13 @@ class GEFormsController extends Controller
             $query->where('department', $request->department);
         }
 
-        // Return multiple records ordered by calibration_date
         $data = $query->orderBy('calibration_date', 'desc')->get();
 
         return response()->json([
-            'success' => $data->count() > 0,
-            'data' => $data
+            'success'     => $data->count() > 0,
+            'data'        => $data,
+            'departments' => $departments,
+            'locations'   => $locations,
         ]);
     }
 
@@ -737,8 +851,19 @@ class GEFormsController extends Controller
      */
     public function loadBiomedicalWasteDisposalForm(Request $request)
     {
+        // Get distinct values for datalist
+        $agencyNames = BiomedicalWasteDisposalForm::whereNotNull('agency_name')
+            ->where('agency_name', '!=', '')
+            ->distinct()
+            ->pluck('agency_name')
+            ->toArray();
+
         if (!$request->filled('month_year')) {
-            return response()->json(['success' => false, 'data' => null]);
+            return response()->json([
+                'success'      => false,
+                'data'         => null,
+                'agency_names' => $agencyNames,
+            ]);
         }
 
         $query = BiomedicalWasteDisposalForm::where('month_year', $request->month_year);
@@ -750,8 +875,9 @@ class GEFormsController extends Controller
         $data = $query->first();
 
         return response()->json([
-            'success' => $data ? true : false,
-            'data' => $data
+            'success'      => $data ? true : false,
+            'data'         => $data,
+            'agency_names' => $agencyNames,
         ]);
     }
 
@@ -945,87 +1071,67 @@ class GEFormsController extends Controller
     /**
      * GE: EQAS Sample Processing Form
      * TDPL/GE/FOM-009
-     * Single record form with inline edit support
+     * Supports AJAX inline edit (returns JSON)
      */
     protected function storeEqasSampleProcessingForm(Request $request)
     {
-        $payload = [
-            'doc_no'                  => $request->doc_no,
-            'eqas_provider'           => $request->eqas_provider,
-            'eqas_lab_id'             => $request->eqas_lab_id,
-            'department_name'         => $request->department_name,
-            'sample_temperature'      => $request->sample_temperature,
-            'sample_no'               => $request->sample_no,
-            'accession_no'            => $request->accession_no,
-            'reconstituted_by'        => $request->reconstituted_by,
-            'reconstitution_date'     => $request->reconstitution_date,
-            'processed_by'            => $request->processed_by,
-            'reviewed_by'             => $request->reviewed_by,
-            'qa_shared'               => $request->qa_shared,
-            'result_dispatched_date'  => $request->result_dispatched_date,
-            'evaluation_received_date'=> $request->evaluation_received_date,
-        ];
+        $isAjax = $request->ajax() || $request->wantsJson();
 
-        $record = null;
+        $formId = $request->eqas_sample_processing_form_id;
 
-        if ($request->filled('eqas_sample_processing_form_id')) {
-            // UPDATE existing record
-            EqasSampleProcessingForm::where('id', $request->eqas_sample_processing_form_id)
-                ->update(array_merge($payload, [
-                    'updated_by' => auth()->id(),
-                ]));
-            $record = EqasSampleProcessingForm::find($request->eqas_sample_processing_form_id);
+        $data = $request->only([
+            'doc_no',
+            'eqas_provider',
+            'eqas_lab_id',
+            'department_name',
+            'sample_temperature',
+            'sample_no',
+            'accession_no',
+            'reconstituted_by',
+            'reconstitution_date',
+            'processed_by',
+            'reviewed_by',
+            'qa_shared',
+            'result_dispatched_date',
+            'evaluation_received_date',
+        ]);
+
+        if ($formId) {
+            $form = EqasSampleProcessingForm::findOrFail($formId);
+            $form->update($data);
         } else {
-            // CREATE new record
-            $record = EqasSampleProcessingForm::create(array_merge($payload, [
-                'created_by' => auth()->id(),
-            ]));
+            $form = EqasSampleProcessingForm::create($data);
         }
 
-        // Return JSON for AJAX requests
-        if ($request->ajax() || $request->wantsJson()) {
+        if ($isAjax) {
             return response()->json([
                 'success' => true,
                 'message' => 'EQAS Sample Processing Form saved successfully',
-                'data' => $record
+                'form_id' => $form->id,
             ]);
         }
 
-        return back()->with('success', 'EQAS Sample Processing Form saved successfully');
+        return back()->with([
+            'success' => 'EQAS Sample Processing Form saved successfully',
+            'eqas_sample_processing_form_id' => $form->id,
+        ]);
     }
 
     /**
-     * LOAD EQAS Sample Processing Form data based on filters
+     * LOAD EQAS Sample Processing Form data
+     * Called via AJAX search by eqas_provider name
      */
     public function loadEqasSampleProcessingForm(Request $request)
     {
-        $query = EqasSampleProcessingForm::query();
-
-        if ($request->filled('eqas_provider')) {
-            $query->where('eqas_provider', $request->eqas_provider);
+        if (!$request->filled('eqas_provider')) {
+            return response()->json(['data' => null]);
         }
 
-        if ($request->filled('sample_no')) {
-            $query->where('sample_no', $request->sample_no);
-        }
+        $form = EqasSampleProcessingForm::where('eqas_provider', $request->eqas_provider)
+            ->latest()
+            ->first();
 
-        if ($request->filled('department_name')) {
-            $query->where('department_name', $request->department_name);
-        }
-
-        $data = $query->latest()->first();
-
-        if ($data) {
-            return response()->json([
-                'success' => true,
-                'data' => $data
-            ]);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'No data found for the selected filters'
-        ]);
+        return response()->json(['data' => $form]);
     }
 
     /**
@@ -2000,99 +2106,127 @@ class GEFormsController extends Controller
     /**
      * GE: Laboratory Incident Form
      * TDPL/GE/FOM-018
-     * Single record form with inline edit support
+     * Supports AJAX inline edit (returns JSON)
      */
     protected function storeLaboratoryIncidentForm(Request $request)
     {
-        $payload = [
-            'doc_no'                    => $request->doc_no,
-            'incident_date_patient_id'  => $request->incident_date_patient_id,
-            'report_filed_by'           => $request->report_filed_by,
-            'complaint_identification'  => $request->complaint_identification,
-            'department_involved'       => $request->department_involved,
-            'incident_description'      => $request->incident_description,
-            'damage_description'        => $request->damage_description,
-            'root_cause_description'    => $request->root_cause_description,
-            'corrective_action'         => $request->corrective_action,
-            'management_decision'       => $request->management_decision,
-            'signature_quality_manager' => $request->signature_quality_manager,
-            'signature_lab_head'        => $request->signature_lab_head,
-        ];
+        $isAjax = $request->ajax() || $request->wantsJson();
 
-        $record = null;
+        $formId = $request->laboratory_incident_form_id;
 
-        if ($request->filled('laboratory_incident_form_id')) {
-            // UPDATE existing record
-            LaboratoryIncidentForm::where('id', $request->laboratory_incident_form_id)
-                ->update(array_merge($payload, [
-                    'updated_by' => auth()->id(),
-                ]));
-            $record = LaboratoryIncidentForm::find($request->laboratory_incident_form_id);
+        $data = $request->only([
+            'doc_no',
+            'incident_date_patient_id',
+            'report_filed_by',
+            'complaint_identification',
+            'department_involved',
+            'incident_description',
+            'damage_description',
+            'root_cause_description',
+            'corrective_action',
+            'management_decision',
+            'signature_quality_manager',
+            'signature_lab_head',
+        ]);
+
+        if ($formId) {
+            $form = LaboratoryIncidentForm::findOrFail($formId);
+            $form->update($data);
         } else {
-            // CREATE new record
-            $record = LaboratoryIncidentForm::create(array_merge($payload, [
-                'created_by' => auth()->id(),
-            ]));
+            $form = LaboratoryIncidentForm::create($data);
         }
 
-        // Return JSON for AJAX requests
-        if ($request->ajax() || $request->wantsJson()) {
+        if ($isAjax) {
             return response()->json([
                 'success' => true,
                 'message' => 'Laboratory Incident Form saved successfully',
-                'data' => $record
+                'form_id' => $form->id,
             ]);
         }
 
-        return back()->with('success', 'Laboratory Incident Form saved successfully');
+        return back()->with([
+            'success' => 'Laboratory Incident Form saved successfully',
+            'laboratory_incident_form_id' => $form->id,
+        ]);
+    }
+
+    /**
+     * LOAD Laboratory Incident Form data
+     * Called via AJAX search by report_filed_by name
+     */
+    public function loadLaboratoryIncidentForm(Request $request)
+    {
+        if (!$request->filled('report_filed_by')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = LaboratoryIncidentForm::where('report_filed_by', $request->report_filed_by)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 
     /**
      * GE: Employee Suggestion for Improvement Form
      * TDPL/GE/FOM-019
-     * Single record form with inline edit support
+     * Supports AJAX inline edit (returns JSON)
      */
     protected function storeEmployeeSuggestionForm(Request $request)
     {
-        $payload = [
-            'doc_no'                      => $request->doc_no,
-            'employee_name'               => $request->employee_name,
-            'suggestion_date'             => $request->suggestion_date,
-            'employee_id'                 => $request->employee_id,
-            'staff_suggestions'           => $request->staff_suggestions,
-            'suggested_requirements'      => $request->suggested_requirements,
-            'employee_signature'          => $request->employee_signature,
-            'corrective_action_management'=> $request->corrective_action_management,
-            'lab_supervisor'              => $request->lab_supervisor,
-            'lab_director_signature'      => $request->lab_director_signature,
-        ];
+        $isAjax = $request->ajax() || $request->wantsJson();
 
-        $record = null;
+        $formId = $request->employee_suggestion_form_id;
 
-        if ($request->filled('employee_suggestion_form_id')) {
-            // UPDATE existing record
-            EmployeeSuggestionForm::where('id', $request->employee_suggestion_form_id)
-                ->update(array_merge($payload, [
-                    'updated_by' => auth()->id(),
-                ]));
-            $record = EmployeeSuggestionForm::find($request->employee_suggestion_form_id);
+        $data = $request->only([
+            'doc_no',
+            'employee_name',
+            'suggestion_date',
+            'employee_id',
+            'staff_suggestions',
+            'suggested_requirements',
+            'employee_signature',
+            'corrective_action_management',
+            'lab_supervisor',
+            'lab_director_signature',
+        ]);
+
+        if ($formId) {
+            $form = EmployeeSuggestionForm::findOrFail($formId);
+            $form->update($data);
         } else {
-            // CREATE new record
-            $record = EmployeeSuggestionForm::create(array_merge($payload, [
-                'created_by' => auth()->id(),
-            ]));
+            $form = EmployeeSuggestionForm::create($data);
         }
 
-        // Return JSON for AJAX requests
-        if ($request->ajax() || $request->wantsJson()) {
+        if ($isAjax) {
             return response()->json([
                 'success' => true,
                 'message' => 'Employee Suggestion Form saved successfully',
-                'data' => $record
+                'form_id' => $form->id,
             ]);
         }
 
-        return back()->with('success', 'Employee Suggestion Form saved successfully');
+        return back()->with([
+            'success' => 'Employee Suggestion Form saved successfully',
+            'employee_suggestion_form_id' => $form->id,
+        ]);
+    }
+
+    /**
+     * LOAD Employee Suggestion Form data
+     * Called via AJAX search by employee_name
+     */
+    public function loadEmployeeSuggestionForm(Request $request)
+    {
+        if (!$request->filled('employee_name')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = EmployeeSuggestionForm::where('employee_name', $request->employee_name)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 
     /**
@@ -2851,48 +2985,63 @@ class GEFormsController extends Controller
      */
     protected function storeMeetingAgendaForm(Request $request)
     {
-        $recordId = $request->meeting_agenda_form_id;
+        $isAjax = $request->ajax() || $request->wantsJson();
 
-        $data = [
-            'doc_no'            => $request->doc_no,
-            'meeting_date'      => $request->meeting_date,
-            'meeting_time'      => $request->meeting_time,
-            'meeting_location'  => $request->meeting_location,
-            'meeting_duration'  => $request->meeting_duration,
-            'chairperson'       => $request->chairperson,
-            'recorder'          => $request->recorder,
-            'attendees'         => $request->attendees,
-            'meeting_topic'     => $request->meeting_topic,
-            'agenda_items'      => $request->agenda_items,
-            'confirmation_date' => $request->confirmation_date,
-            'sender_name'       => $request->sender_name,
-            'sender_designation'=> $request->sender_designation,
-            'sender_contact'    => $request->sender_contact,
-        ];
+        $formId = $request->meeting_agenda_form_id;
 
-        if ($recordId) {
-            // UPDATE existing record
-            MeetingAgendaForm::where('id', $recordId)->update(array_merge($data, [
-                'updated_by' => auth()->id(),
-            ]));
-            $record = MeetingAgendaForm::find($recordId);
+        $data = $request->only([
+            'meeting_date',
+            'meeting_time',
+            'meeting_location',
+            'meeting_duration',
+            'chairperson',
+            'recorder',
+            'meeting_topic',
+            'confirmation_date',
+            'sender_name',
+            'sender_designation',
+            'sender_contact',
+        ]);
+
+        // Array fields (attendees, agenda_items)
+        $data['attendees']    = $request->input('attendees', []);
+        $data['agenda_items'] = $request->input('agenda_items', []);
+
+        if ($formId) {
+            $form = MeetingAgendaForm::findOrFail($formId);
+            $form->update($data);
         } else {
-            // CREATE new record
-            $record = MeetingAgendaForm::create(array_merge($data, [
-                'created_by' => auth()->id(),
-            ]));
+            $form = MeetingAgendaForm::create($data);
         }
 
-        // Return JSON for AJAX requests
-        if ($request->ajax() || $request->wantsJson()) {
+        if ($isAjax) {
             return response()->json([
                 'success' => true,
                 'message' => 'Meeting Agenda Form saved successfully',
-                'data' => $record
+                'form_id' => $form->id,
             ]);
         }
 
-        return back()->with('success', 'Meeting Agenda Form saved successfully');
+        return back()->with([
+            'success' => 'Meeting Agenda Form saved successfully',
+            'meeting_agenda_form_id' => $form->id,
+        ]);
+    }
+
+    /**
+     * LOAD Meeting Agenda Form (FOM-027)
+     */
+    public function loadMeetingAgendaForm(Request $request)
+    {
+        if (!$request->filled('chairperson')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = MeetingAgendaForm::where('chairperson', $request->chairperson)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 
     /**
@@ -3373,11 +3522,33 @@ class GEFormsController extends Controller
     /**
      * GE: Corrective Action & Preventive Action Form for EQAS Outliers
      * TDPL/GE/FOM-035
-     * Single record form with complex fields
      */
     protected function storeEqasCapaOutlierForm(Request $request)
     {
-        // Collect root cause checklist data
+        $isAjax = $request->ajax() || $request->wantsJson();
+
+        $formId = $request->eqas_capa_outlier_form_id;
+
+        $data = $request->only([
+            'corrective_action_date',
+            'survey_name',
+            'department',
+            'location',
+            'sample_details',
+            'sample_run_date',
+            'outlier_results',
+            'eqas_trends',
+            'root_cause_summary',
+            'other_root_cause',
+            'immediate_action',
+            'reassay_comment',
+            'preventive_action',
+            'conclusion',
+            'action_taken_by',
+            'action_approved_by',
+        ]);
+
+        // Collect root cause checklist data (JSON)
         $rootCauseChecklist = [];
         $rootCauseItems = [
             'iqc_status',
@@ -3395,8 +3566,9 @@ class GEFormsController extends Controller
                 'unacceptable' => $request->input("root_cause_{$index}_unacceptable") ? true : false,
             ];
         }
+        $data['root_cause_checklist'] = $rootCauseChecklist;
 
-        // Collect re-assay results data
+        // Collect re-assay results data (JSON)
         $reassayResults = [];
         for ($i = 1; $i <= 4; $i++) {
             $reassayResults[$i] = [
@@ -3406,104 +3578,43 @@ class GEFormsController extends Controller
                 'acceptability_limit' => $request->input("acceptability_limit_{$i}"),
             ];
         }
+        $data['reassay_results'] = $reassayResults;
 
-        $data = [
-            'doc_no' => 'TDPL/GE/FOM-035',
-            'month_year' => $request->month_year,
-            'department' => $request->department,
-            'location' => $request->location,
-            'corrective_action_date' => $request->corrective_action_date ?: null,
-            'survey_name' => $request->survey_name,
-            'sample_details' => $request->sample_details,
-            'sample_run_date' => $request->sample_run_date ?: null,
-            'outlier_results' => $request->outlier_results,
-            'eqas_trends' => $request->eqas_trends,
-            'root_cause_summary' => $request->root_cause_summary,
-            'root_cause_checklist' => $rootCauseChecklist,
-            'other_root_cause' => $request->other_root_cause,
-            'immediate_action' => $request->immediate_action,
-            'reassay_results' => $reassayResults,
-            'reassay_comment' => $request->reassay_comment,
-            'preventive_action' => $request->preventive_action,
-            'conclusion' => $request->conclusion,
-            'action_taken_by' => $request->action_taken_by,
-            'action_approved_by' => $request->action_approved_by,
-            'updated_by' => auth()->id(),
-        ];
-
-        // Check if editing existing record
-        $recordId = $request->input('record_id');
-
-        if ($recordId) {
-            $record = EqasCapaOutlierForm::find($recordId);
-            if ($record) {
-                $record->update($data);
-            }
+        if ($formId) {
+            $form = EqasCapaOutlierForm::findOrFail($formId);
+            $form->update($data);
         } else {
-            $data['created_by'] = auth()->id();
-            $record = EqasCapaOutlierForm::create($data);
+            $form = EqasCapaOutlierForm::create($data);
         }
 
-        if ($request->ajax() || $request->wantsJson()) {
+        if ($isAjax) {
             return response()->json([
                 'success' => true,
-                'message' => 'Form saved successfully',
-                'data' => $record
+                'message' => 'CAPA for EQAS Outliers Form saved successfully',
+                'form_id' => $form->id,
             ]);
         }
 
-        return back()->with('success', 'Corrective Action & Preventive Action Form for EQAS Outliers saved successfully');
+        return back()->with([
+            'success' => 'CAPA for EQAS Outliers Form saved successfully',
+            'eqas_capa_outlier_form_id' => $form->id,
+        ]);
     }
 
     /**
-     * Load EQAS CAPA Outlier Form records (AJAX)
+     * LOAD EQAS CAPA Outlier Form (FOM-035)
      */
     public function loadEqasCapaOutlierForm(Request $request)
     {
-        // Get distinct values for datalists
-        $departments = EqasCapaOutlierForm::whereNotNull('department')
-            ->where('department', '!=', '')
-            ->distinct()
-            ->pluck('department')
-            ->toArray();
-
-        $locations = EqasCapaOutlierForm::whereNotNull('location')
-            ->where('location', '!=', '')
-            ->distinct()
-            ->pluck('location')
-            ->toArray();
-
-        // Build query for records
-        $query = EqasCapaOutlierForm::query();
-
-        // Date filter - if only from_date, load that specific date
-        if ($request->filled('from_date') && $request->filled('to_date')) {
-            $query->where('corrective_action_date', '>=', $request->from_date);
-            $query->where('corrective_action_date', '<=', $request->to_date);
-        } elseif ($request->filled('from_date')) {
-            $query->where('corrective_action_date', '=', $request->from_date);
-        } elseif ($request->filled('to_date')) {
-            $query->where('corrective_action_date', '=', $request->to_date);
+        if (!$request->filled('survey_name')) {
+            return response()->json(['data' => null]);
         }
 
-        // Department filter
-        if ($request->filled('department')) {
-            $query->where('department', $request->department);
-        }
+        $form = EqasCapaOutlierForm::where('survey_name', $request->survey_name)
+            ->latest()
+            ->first();
 
-        // Location filter
-        if ($request->filled('location')) {
-            $query->where('location', $request->location);
-        }
-
-        $records = $query->orderBy('corrective_action_date', 'desc')->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $records,
-            'departments' => $departments,
-            'locations' => $locations
-        ]);
+        return response()->json(['data' => $form]);
     }
 
     /**

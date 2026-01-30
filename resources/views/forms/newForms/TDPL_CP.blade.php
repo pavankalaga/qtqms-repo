@@ -415,109 +415,211 @@
             docName="Manual Method for Clinical Pathology CUE (Once in 6 Months)" issueNo="2.0" issueDate="01/10/2024"
             buttonText="Submit" action="{{ route('newforms.cp.forms.submit') }}">
 
-            {{-- 🔑 INLINE EDIT PRIMARY ID --}}
-            <input type="hidden" name="cue_form_id" id="cue_form_id">
-
-            {{-- 🔑 FILTERS (BE STYLE) --}}
-            <div style="
-    display:flex;
-    gap:10px;
-    margin-bottom:20px;
-    align-items:flex-end;
-">
-
-                <div style="width:220px">
-                    <label style="font-size:14px;font-weight:600">Month / Year</label>
-                    <input type="month" name="month_year" id="cue_month_year" onchange="loadCueForm()"
-                        style="
-                width:100%;
-                border:1px solid #ccc;
-                border-radius:4px;
-                padding:6px 8px;
-            " />
+            <!-- Filter Section -->
+            <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
+                    <label><strong>From Date</strong></label>
+                    <input type="date" id="cueFromDate"
+                        onchange="loadCueRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
-
-                <div style="width:220px">
-                    <label style="font-size:14px;font-weight:600">Instrument ID</label>
-
-                    <input type="text" name="instrument_id" id="cue_instrument_id" list="cueInstrumentList"
-                        onchange="loadCueForm()"
-                        style="
-            width:100%;
-            border:1px solid #ccc;
-            border-radius:4px;
-            padding:6px 8px;
-        " />
-
-                    <datalist id="cueInstrumentList">
-                        <option value="CUE-001">
-                        <option value="CUE-002">
-                        <option value="CUE-003">
-                    </datalist>
+                <div>
+                    <label><strong>To Date</strong></label>
+                    <input type="date" id="cueToDate"
+                        onchange="loadCueRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
-
+                <div style="display:flex; align-items:flex-end;">
+                    <button type="button" onclick="clearCueFilters()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
+                </div>
             </div>
 
-
-
-
-            <table class="w-full border border-black">
+            <!-- Data Table -->
+            <table style="width:100%; border-collapse:collapse;" border="1">
                 <thead>
                     <tr>
-                        <th class="border p-1">S. No.</th>
-                        <th class="border p-1">Date</th>
-                        <th class="border p-1">SIN No.</th>
-                        <th class="border p-1">Analyte Name</th>
-                        <th class="border p-1">Results</th>
-                        <th class="border p-1">Done By</th>
-                        <th class="border p-1">Verified By</th>
-                        <th class="border p-1">Remarks</th>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Date</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">SIN No.</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Analyte Name</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Results</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Done By</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Verified By</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold; text-align:center; background:#e9ecef;">Remarks</td>
                     </tr>
                 </thead>
-
-                <tbody>
-                    @for ($i = 1; $i <= 30; $i++)
-                        <tr>
-                            <td class="border p-1">{{ $i }}</td>
-
-                            <td class="border p-1">
-                                <input type="date" name="rows[{{ $i }}][date]"
-                                    id="cue_rows_{{ $i }}_date" class="w-full" />
-                            </td>
-
-                            <td class="border p-1">
-                                <input type="text" name="rows[{{ $i }}][sin_no]"
-                                    id="cue_rows_{{ $i }}_sin_no" class="w-full" />
-                            </td>
-
-                            <td class="border p-1">
-                                <input type="text" name="rows[{{ $i }}][analyte]"
-                                    id="cue_rows_{{ $i }}_analyte" class="w-full" />
-                            </td>
-
-                            <td class="border p-1">
-                                <input type="text" name="rows[{{ $i }}][results]"
-                                    id="cue_rows_{{ $i }}_results" class="w-full" />
-                            </td>
-
-                            <td class="border p-1">
-                                <input type="text" name="rows[{{ $i }}][done_by]"
-                                    id="cue_rows_{{ $i }}_done_by" class="w-full" />
-                            </td>
-
-                            <td class="border p-1">
-                                <input type="text" name="rows[{{ $i }}][verified_by]"
-                                    id="cue_rows_{{ $i }}_verified_by" class="w-full" />
-                            </td>
-
-                            <td class="border p-1">
-                                <input type="text" name="rows[{{ $i }}][remarks]"
-                                    id="cue_rows_{{ $i }}_remarks" class="w-full" />
-                            </td>
-                        </tr>
-                    @endfor
+                <tbody id="cueTableBody">
+                    <tr>
+                        <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sin_no[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_analyte[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_results[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_done_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_verified_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    </tr>
                 </tbody>
             </table>
+
+            <script>
+                function loadCueRegister() {
+                    const fromDate = document.getElementById('cueFromDate').value;
+                    const toDate = document.getElementById('cueToDate').value;
+
+                    if (!fromDate && !toDate) return;
+
+                    const params = new URLSearchParams();
+                    if (fromDate) params.append('from_date', fromDate);
+                    if (toDate) params.append('to_date', toDate);
+
+                    fetch(`/newforms/cp/manual-cue/load?${params.toString()}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        const tbody = document.getElementById('cueTableBody');
+                        if (!tbody) return;
+
+                        tbody.innerHTML = '';
+
+                        if (!res.data || res.data.length === 0) {
+                            addEmptyRowCUE();
+                            return;
+                        }
+
+                        res.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildCUERowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowCUE();
+                    })
+                    .catch(error => console.error('Error loading data:', error));
+                }
+
+                function buildCUERowHTML(row) {
+                    return `
+                        <td style="border:1px solid #000; padding:4px;">
+                            <input type="hidden" name="row_id[]" value="${row.id}">
+                            <input type="date" name="row_date[]" value="${row.cue_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+                        </td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sin_no[]" value="${row.sin_no || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_analyte[]" value="${row.analyte || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_results[]" value="${row.results || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_done_by[]" value="${row.done_by || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_verified_by[]" value="${row.verified_by || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" value="${row.remarks || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    `;
+                }
+
+                function addEmptyRowCUE() {
+                    const tbody = document.getElementById('cueTableBody');
+                    if (!tbody) return;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sin_no[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_analyte[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_results[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_done_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_verified_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                function clearCueFilters() {
+                    document.getElementById('cueFromDate').value = '';
+                    document.getElementById('cueToDate').value = '';
+                    const tbody = document.getElementById('cueTableBody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        addEmptyRowCUE();
+                    }
+                }
+
+                // AJAX Submit for REG-001
+                (function() {
+                    function initCueForm() {
+                        const formContainer = document.querySelector('[id="TDPL/CP/REG-001"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                            if (submitBtn) {
+                                submitBtn.textContent = 'Saving...';
+                                submitBtn.disabled = true;
+                            }
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastCue('success', result.message || 'Saved successfully!');
+
+                                    const tbody = document.getElementById('cueTableBody');
+                                    if (tbody && result.data && result.data.length > 0) {
+                                        tbody.innerHTML = '';
+                                        result.data.forEach(row => {
+                                            const tr = document.createElement('tr');
+                                            tr.innerHTML = buildCUERowHTML(row);
+                                            tbody.appendChild(tr);
+                                        });
+                                        addEmptyRowCUE();
+                                    }
+                                } else {
+                                    showToastCue('error', result.message || 'Save failed!');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showToastCue('error', 'Failed to save data');
+                            })
+                            .finally(() => {
+                                if (submitBtn) {
+                                    submitBtn.textContent = originalText;
+                                    submitBtn.disabled = false;
+                                }
+                            });
+                        });
+                    }
+
+                    function showToastCue(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initCueForm);
+                    } else {
+                        initCueForm();
+                    }
+                })();
+            </script>
 
         </x-formTemplete>
 
@@ -526,11 +628,8 @@
         <x-formTemplete id="TDPL/CP/REG-002" docNo="TDPL/CP/REG-002" docName="Stool Examination Result Register"
             issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cp.forms.submit') }}">
 
-            {{-- 🔑 INLINE EDIT ID --}}
-            <input type="hidden" name="stool_register_id" id="stool_register_id">
-
             {{-- ================= FILTERS (LOAD ONLY) ================= --}}
-            <div style="display:flex;gap:16px;margin-bottom:12px">
+            <div style="display:flex;gap:16px;margin-bottom:12px;align-items:flex-end;flex-wrap:wrap;">
 
                 <div>
                     <label style="font-size:14px;font-weight:600">From Date</label>
@@ -551,6 +650,13 @@
                         <option value="Lab-2">
                         <option value="Lab-3">
                     </datalist>
+                </div>
+
+                <div style="display:flex; align-items:flex-end;">
+                    <button type="button" onclick="clearStoolFilters()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
                 </div>
 
             </div>
@@ -591,7 +697,7 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody id="stoolTableBody">
                     {{-- 🔹 ONLY ONE ROW --}}
                     <tr>
                         <td><input type="text" name="sno[]" class="w-full"></td>
@@ -625,25 +731,233 @@
                     </tr>
                 </tbody>
             </table>
+
+            <script>
+                function loadStoolRegister() {
+                    const fromDate = document.getElementById('stool_from_date').value;
+                    const toDate = document.getElementById('stool_to_date').value;
+
+                    if (!fromDate && !toDate) return;
+
+                    const params = new URLSearchParams();
+                    if (fromDate) params.append('from_date', fromDate);
+                    if (toDate) params.append('to_date', toDate);
+
+                    fetch(`/newforms/cp/stool-register/load?${params.toString()}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        const tbody = document.getElementById('stoolTableBody');
+                        if (!tbody) return;
+
+                        tbody.innerHTML = '';
+
+                        if (!res.data || res.data.length === 0) {
+                            addEmptyRowStool();
+                            return;
+                        }
+
+                        res.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildStoolRowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowStool();
+                    })
+                    .catch(error => console.error('Error loading data:', error));
+                }
+
+                function buildStoolRowHTML(row) {
+                    return `
+                        <td>
+                            <input type="hidden" name="row_id[]" value="${row.id}">
+                            <input type="text" name="sno[]" value="${row.sno || ''}" class="w-full">
+                        </td>
+                        <td><input type="date" name="date[]" value="${row.stool_date || ''}" class="w-full"></td>
+                        <td><input type="text" name="sin_no[]" value="${row.sin_no || ''}" class="w-full"></td>
+                        <td><input type="text" name="patient_name[]" value="${row.patient_name || ''}" class="w-full"></td>
+                        <td><input type="text" name="age_sex[]" value="${row.age_sex || ''}" class="w-full"></td>
+                        <td><input type="text" name="analyte_name[]" value="${row.analyte_name || ''}" class="w-full"></td>
+                        <td><input type="text" name="colour[]" value="${row.colour || ''}" class="w-full"></td>
+                        <td><input type="text" name="consistency[]" value="${row.consistency || ''}" class="w-full"></td>
+                        <td><input type="text" name="mucus[]" value="${row.mucus || ''}" class="w-full"></td>
+                        <td><input type="text" name="blood[]" value="${row.blood || ''}" class="w-full"></td>
+                        <td><input type="text" name="worms[]" value="${row.worms || ''}" class="w-full"></td>
+                        <td><input type="text" name="reducing_substance[]" value="${row.reducing_substance || ''}" class="w-full"></td>
+                        <td><input type="text" name="reaction[]" value="${row.reaction || ''}" class="w-full"></td>
+                        <td><input type="text" name="pus_cells[]" value="${row.pus_cells || ''}" class="w-full"></td>
+                        <td><input type="text" name="epithelial_cells[]" value="${row.epithelial_cells || ''}" class="w-full"></td>
+                        <td><input type="text" name="rbc[]" value="${row.rbc || ''}" class="w-full"></td>
+                        <td><input type="text" name="macrophages[]" value="${row.macrophages || ''}" class="w-full"></td>
+                        <td><input type="text" name="fat_globulins[]" value="${row.fat_globulins || ''}" class="w-full"></td>
+                        <td><input type="text" name="starch_granules[]" value="${row.starch_granules || ''}" class="w-full"></td>
+                        <td><input type="text" name="ova[]" value="${row.ova || ''}" class="w-full"></td>
+                        <td><input type="text" name="cyst[]" value="${row.cyst || ''}" class="w-full"></td>
+                        <td><input type="text" name="larva[]" value="${row.larva || ''}" class="w-full"></td>
+                        <td><input type="text" name="undigested_food[]" value="${row.undigested_food || ''}" class="w-full"></td>
+                        <td><input type="text" name="occult_blood[]" value="${row.occult_blood || ''}" class="w-full"></td>
+                        <td><input type="text" name="others[]" value="${row.others || ''}" class="w-full"></td>
+                        <td><input type="text" name="done_by[]" value="${row.done_by || ''}" class="w-full"></td>
+                        <td><input type="text" name="verified_by[]" value="${row.verified_by || ''}" class="w-full"></td>
+                        <td><input type="text" name="remarks[]" value="${row.remarks || ''}" class="w-full"></td>
+                    `;
+                }
+
+                function addEmptyRowStool() {
+                    const tbody = document.getElementById('stoolTableBody');
+                    if (!tbody) return;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><input type="text" name="sno[]" class="w-full"></td>
+                        <td><input type="date" name="date[]" class="w-full"></td>
+                        <td><input type="text" name="sin_no[]" class="w-full"></td>
+                        <td><input type="text" name="patient_name[]" class="w-full"></td>
+                        <td><input type="text" name="age_sex[]" class="w-full"></td>
+                        <td><input type="text" name="analyte_name[]" class="w-full"></td>
+                        <td><input type="text" name="colour[]" class="w-full"></td>
+                        <td><input type="text" name="consistency[]" class="w-full"></td>
+                        <td><input type="text" name="mucus[]" class="w-full"></td>
+                        <td><input type="text" name="blood[]" class="w-full"></td>
+                        <td><input type="text" name="worms[]" class="w-full"></td>
+                        <td><input type="text" name="reducing_substance[]" class="w-full"></td>
+                        <td><input type="text" name="reaction[]" class="w-full"></td>
+                        <td><input type="text" name="pus_cells[]" class="w-full"></td>
+                        <td><input type="text" name="epithelial_cells[]" class="w-full"></td>
+                        <td><input type="text" name="rbc[]" class="w-full"></td>
+                        <td><input type="text" name="macrophages[]" class="w-full"></td>
+                        <td><input type="text" name="fat_globulins[]" class="w-full"></td>
+                        <td><input type="text" name="starch_granules[]" class="w-full"></td>
+                        <td><input type="text" name="ova[]" class="w-full"></td>
+                        <td><input type="text" name="cyst[]" class="w-full"></td>
+                        <td><input type="text" name="larva[]" class="w-full"></td>
+                        <td><input type="text" name="undigested_food[]" class="w-full"></td>
+                        <td><input type="text" name="occult_blood[]" class="w-full"></td>
+                        <td><input type="text" name="others[]" class="w-full"></td>
+                        <td><input type="text" name="done_by[]" class="w-full"></td>
+                        <td><input type="text" name="verified_by[]" class="w-full"></td>
+                        <td><input type="text" name="remarks[]" class="w-full"></td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                function clearStoolFilters() {
+                    document.getElementById('stool_from_date').value = '';
+                    document.getElementById('stool_to_date').value = '';
+                    document.getElementById('stool_location').value = '';
+                    const tbody = document.getElementById('stoolTableBody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        addEmptyRowStool();
+                    }
+                }
+
+                // AJAX Submit for REG-002
+                (function() {
+                    function initStoolForm() {
+                        const formContainer = document.querySelector('[id="TDPL/CP/REG-002"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                            if (submitBtn) {
+                                submitBtn.textContent = 'Saving...';
+                                submitBtn.disabled = true;
+                            }
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastStool('success', result.message || 'Saved successfully!');
+
+                                    const tbody = document.getElementById('stoolTableBody');
+                                    if (tbody && result.data && result.data.length > 0) {
+                                        tbody.innerHTML = '';
+                                        result.data.forEach(row => {
+                                            const tr = document.createElement('tr');
+                                            tr.innerHTML = buildStoolRowHTML(row);
+                                            tbody.appendChild(tr);
+                                        });
+                                        addEmptyRowStool();
+                                    }
+                                } else {
+                                    showToastStool('error', result.message || 'Save failed!');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showToastStool('error', 'Failed to save data');
+                            })
+                            .finally(() => {
+                                if (submitBtn) {
+                                    submitBtn.textContent = originalText;
+                                    submitBtn.disabled = false;
+                                }
+                            });
+                        });
+                    }
+
+                    function showToastStool(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initStoolForm);
+                    } else {
+                        initStoolForm();
+                    }
+                })();
+            </script>
+
         </x-formTemplete>
 
         <x-formTemplete id="TDPL/CP/REG-003" docNo="TDPL/CP/REG-003" docName="Urine Examination Result Register"
             issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cp.forms.submit') }}">
 
-            {{-- 🔑 INLINE EDIT ID --}}
-            <input type="hidden" name="urine_register_id" id="urine_register_id">
-
             {{-- ================= FILTERS ================= --}}
-            <div style="display:flex;gap:16px;margin-bottom:12px">
+            <div style="display:flex;gap:16px;margin-bottom:12px;align-items:flex-end;flex-wrap:wrap;">
 
                 <div>
-                    <label>From Date</label>
-                    <input type="date" id="urine_from_date" onchange="loadUrineRegister()">
+                    <label><strong>From Date</strong></label>
+                    <input type="date" id="urine_from_date" onchange="loadUrineRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
 
                 <div>
-                    <label>To Date</label>
-                    <input type="date" id="urine_to_date" onchange="loadUrineRegister()">
+                    <label><strong>To Date</strong></label>
+                    <input type="date" id="urine_to_date" onchange="loadUrineRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
+                </div>
+
+                <div style="display:flex; align-items:flex-end;">
+                    <button type="button" onclick="clearUrineFilters()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
                 </div>
 
             </div>
@@ -711,6 +1025,200 @@
                     </tr>
                 </tbody>
             </table>
+
+            <script>
+                function loadUrineRegister() {
+                    const fromDate = document.getElementById('urine_from_date').value;
+                    const toDate = document.getElementById('urine_to_date').value;
+
+                    if (!fromDate && !toDate) return;
+
+                    const params = new URLSearchParams();
+                    if (fromDate) params.append('from_date', fromDate);
+                    if (toDate) params.append('to_date', toDate);
+
+                    fetch(`/newforms/cp/urine-register/load?${params.toString()}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        const tbody = document.getElementById('urine_register_body');
+                        if (!tbody) return;
+
+                        tbody.innerHTML = '';
+
+                        if (!res.data || res.data.length === 0) {
+                            addEmptyRowUrine();
+                            return;
+                        }
+
+                        res.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildUrineRowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowUrine();
+                    })
+                    .catch(error => console.error('Error loading data:', error));
+                }
+
+                function buildUrineRowHTML(row) {
+                    return `
+                        <td>
+                            <input type="hidden" name="row_id[]" value="${row.id}">
+                            <input name="sno[]" value="${row.sno || ''}" />
+                        </td>
+                        <td><input type="date" name="date[]" value="${row.urine_date || ''}" /></td>
+                        <td><input name="sin_no[]" value="${row.sin_no || ''}" /></td>
+                        <td><input name="patient_name[]" value="${row.patient_name || ''}" /></td>
+                        <td><input name="age_sex[]" value="${row.age_sex || ''}" /></td>
+                        <td><input name="quantity[]" value="${row.quantity || ''}" /></td>
+                        <td><input name="colour[]" value="${row.colour || ''}" /></td>
+                        <td><input name="appearance[]" value="${row.appearance || ''}" /></td>
+                        <td><input name="blood[]" value="${row.blood || ''}" /></td>
+                        <td><input name="bilirubin[]" value="${row.bilirubin || ''}" /></td>
+                        <td><input name="urobilinogen[]" value="${row.urobilinogen || ''}" /></td>
+                        <td><input name="ketone[]" value="${row.ketone || ''}" /></td>
+                        <td><input name="glucose[]" value="${row.glucose || ''}" /></td>
+                        <td><input name="protein[]" value="${row.protein || ''}" /></td>
+                        <td><input name="ph[]" value="${row.ph || ''}" /></td>
+                        <td><input name="nitrites[]" value="${row.nitrites || ''}" /></td>
+                        <td><input name="leucocytosis[]" value="${row.leucocytosis || ''}" /></td>
+                        <td><input name="specific_gravity[]" value="${row.specific_gravity || ''}" /></td>
+                        <td><input name="pus_cells[]" value="${row.pus_cells || ''}" /></td>
+                        <td><input name="epithelial_cells[]" value="${row.epithelial_cells || ''}" /></td>
+                        <td><input name="rbcs[]" value="${row.rbcs || ''}" /></td>
+                        <td><input name="others[]" value="${row.others || ''}" /></td>
+                        <td><input name="done_by[]" value="${row.done_by || ''}" /></td>
+                        <td><input name="verified_by[]" value="${row.verified_by || ''}" /></td>
+                        <td><input name="remarks[]" value="${row.remarks || ''}" /></td>
+                    `;
+                }
+
+                function addEmptyRowUrine() {
+                    const tbody = document.getElementById('urine_register_body');
+                    if (!tbody) return;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><input name="sno[]" /></td>
+                        <td><input type="date" name="date[]" /></td>
+                        <td><input name="sin_no[]" /></td>
+                        <td><input name="patient_name[]" /></td>
+                        <td><input name="age_sex[]" /></td>
+                        <td><input name="quantity[]" /></td>
+                        <td><input name="colour[]" /></td>
+                        <td><input name="appearance[]" /></td>
+                        <td><input name="blood[]" /></td>
+                        <td><input name="bilirubin[]" /></td>
+                        <td><input name="urobilinogen[]" /></td>
+                        <td><input name="ketone[]" /></td>
+                        <td><input name="glucose[]" /></td>
+                        <td><input name="protein[]" /></td>
+                        <td><input name="ph[]" /></td>
+                        <td><input name="nitrites[]" /></td>
+                        <td><input name="leucocytosis[]" /></td>
+                        <td><input name="specific_gravity[]" /></td>
+                        <td><input name="pus_cells[]" /></td>
+                        <td><input name="epithelial_cells[]" /></td>
+                        <td><input name="rbcs[]" /></td>
+                        <td><input name="others[]" /></td>
+                        <td><input name="done_by[]" /></td>
+                        <td><input name="verified_by[]" /></td>
+                        <td><input name="remarks[]" /></td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                function clearUrineFilters() {
+                    document.getElementById('urine_from_date').value = '';
+                    document.getElementById('urine_to_date').value = '';
+                    const tbody = document.getElementById('urine_register_body');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        addEmptyRowUrine();
+                    }
+                }
+
+                // AJAX Submit for REG-003
+                (function() {
+                    function initUrineForm() {
+                        const formContainer = document.querySelector('[id="TDPL/CP/REG-003"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                            if (submitBtn) {
+                                submitBtn.textContent = 'Saving...';
+                                submitBtn.disabled = true;
+                            }
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastUrine('success', result.message || 'Saved successfully!');
+
+                                    const tbody = document.getElementById('urine_register_body');
+                                    if (tbody && result.data && result.data.length > 0) {
+                                        tbody.innerHTML = '';
+                                        result.data.forEach(row => {
+                                            const tr = document.createElement('tr');
+                                            tr.innerHTML = buildUrineRowHTML(row);
+                                            tbody.appendChild(tr);
+                                        });
+                                        addEmptyRowUrine();
+                                    }
+                                } else {
+                                    showToastUrine('error', result.message || 'Save failed!');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showToastUrine('error', 'Failed to save data');
+                            })
+                            .finally(() => {
+                                if (submitBtn) {
+                                    submitBtn.textContent = originalText;
+                                    submitBtn.disabled = false;
+                                }
+                            });
+                        });
+                    }
+
+                    function showToastUrine(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initUrineForm);
+                    } else {
+                        initUrineForm();
+                    }
+                })();
+            </script>
 
         </x-formTemplete>
 
@@ -954,228 +1462,9 @@
     }
 
 
-    function loadCueForm() {
-
-        const monthYear = document.getElementById('cue_month_year').value;
-        const instrument = document.getElementById('cue_instrument_id').value;
-
-        // ❗ GLOBAL RULE – Month mandatory (SAME AS QC)
-        if (!monthYear) return;
-
-        fetch(`/newforms/cp/manual-cue/load?month_year=${monthYear}&instrument_id=${instrument}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                // 🔑 ALWAYS CLEAR FIRST (SAME PATTERN)
-                clearCueRows();
-
-                if (!res.data) {
-                    document.getElementById('cue_form_id').value = '';
-                    return;
-                }
-
-                // ✅ INLINE EDIT ID
-                document.getElementById('cue_form_id').value = res.data.id;
-
-                /* =========================
-                   ROW JSON (INDEX → FIELD)
-                ========================= */
-                if (!res.data.rows) return;
-
-                Object.keys(res.data.rows).forEach(row => {
-
-                    Object.keys(res.data.rows[row]).forEach(field => {
-
-                        const input = document.getElementById(
-                            `cue_rows_${row}_${field}`
-                        );
-
-                        if (!input) return;
-
-                        input.value = res.data.rows[row][field] ?? '';
-                    });
-                });
-            });
-    }
-
-    /* =========================
-       CLEAR FUNCTION (SAFE)
-    ========================= */
-    function clearCueRows() {
-
-        // ❌ DO NOT CLEAR CSRF TOKEN
-        if (input.name === '_token') return;
-
-        // ❌ DO NOT CLEAR DOC NO
-        if (input.name === 'doc_no') return;
-
-
-        document.querySelectorAll('[id^="cue_rows_"]').forEach(input => {
-            input.value = '';
-        });
-    }
-
-    function loadStoolRegister() {
-
-        const fromDate = document.getElementById('stool_from_date').value;
-        const toDate = document.getElementById('stool_to_date').value;
-
-        if (!fromDate && !toDate) return;
-
-        fetch(`/newforms/cp/stool-register/load?from_date=${fromDate}&to_date=${toDate}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                const tbody = document.querySelector('#TDPL\\/CP\\/REG-002 tbody');
-                tbody.innerHTML = '';
-
-                if (!res.data || res.data.length === 0) return;
-
-                res.data.forEach(row => {
-
-                    const tr = document.createElement('tr');
-
-                    tr.innerHTML = `
-                                                                        <td><input name="sno[]" value="${row.sno ?? ''}"></td>
-                                                                        <td><input type="date" name="date[]" value="${row.stool_date ?? ''}"></td>
-                                                                        <td><input name="sin_no[]" value="${row.sin_no ?? ''}"></td>
-                                                                        <td><input name="patient_name[]" value="${row.patient_name ?? ''}"></td>
-                                                                        <td><input name="age_sex[]" value="${row.age_sex ?? ''}"></td>
-                                                                        <td><input name="analyte_name[]" value="${row.analyte_name ?? ''}"></td>
-                                                                        <td><input name="colour[]" value="${row.colour ?? ''}"></td>
-                                                                        <td><input name="consistency[]" value="${row.consistency ?? ''}"></td>
-                                                                        <td><input name="mucus[]" value="${row.mucus ?? ''}"></td>
-                                                                        <td><input name="blood[]" value="${row.blood ?? ''}"></td>
-                                                                        <td><input name="worms[]" value="${row.worms ?? ''}"></td>
-                                                                        <td><input name="reducing_substance[]" value="${row.reducing_substance ?? ''}"></td>
-                                                                        <td><input name="reaction[]" value="${row.reaction ?? ''}"></td>
-                                                                        <td><input name="pus_cells[]" value="${row.pus_cells ?? ''}"></td>
-                                                                        <td><input name="epithelial_cells[]" value="${row.epithelial_cells ?? ''}"></td>
-                                                                        <td><input name="rbc[]" value="${row.rbc ?? ''}"></td>
-                                                                        <td><input name="macrophages[]" value="${row.macrophages ?? ''}"></td>
-                                                                        <td><input name="fat_globulins[]" value="${row.fat_globulins ?? ''}"></td>
-                                                                        <td><input name="starch_granules[]" value="${row.starch_granules ?? ''}"></td>
-                                                                        <td><input name="ova[]" value="${row.ova ?? ''}"></td>
-                                                                        <td><input name="cyst[]" value="${row.cyst ?? ''}"></td>
-                                                                        <td><input name="larva[]" value="${row.larva ?? ''}"></td>
-                                                                        <td><input name="undigested_food[]" value="${row.undigested_food ?? ''}"></td>
-                                                                        <td><input name="occult_blood[]" value="${row.occult_blood ?? ''}"></td>
-                                                                        <td><input name="others[]" value="${row.others ?? ''}"></td>
-                                                                        <td><input name="done_by[]" value="${row.done_by ?? ''}"></td>
-                                                                        <td><input name="verified_by[]" value="${row.verified_by ?? ''}"></td>
-                                                                        <td><input name="remarks[]" value="${row.remarks ?? ''}"></td>
-                                                                    `;
-
-                    tbody.appendChild(tr);
-                });
-            });
-    }
-
-
-
-    function clearStoolRegisterForm() {
-        document.querySelectorAll('#TDPL\\/CP\\/REG-002 input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTERS
-            if (
-                input.id === 'stool_from_date' ||
-                input.id === 'stool_to_date' ||
-                input.id === 'stool_location'
-            ) return;
-
-            // ❌ DO NOT CLEAR CSRF & DOC NO
-            if (input.name === '_token') return;
-            if (input.name === 'doc_no') return;
-
-            input.value = '';
-        });
-    }
-
-
-    function loadUrineRegister() {
-
-        const fromDate = document.getElementById('urine_from_date').value;
-        const toDate = document.getElementById('urine_to_date').value;
-
-        // ❗ at least one filter required
-        if (!fromDate && !toDate) return;
-
-        fetch(`/newforms/cp/urine-register/load?from_date=${fromDate}&to_date=${toDate}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearUrineRegisterForm();
-
-                const tbody = document.getElementById('urine_register_body');
-                if (!tbody || !res.data || res.data.length === 0) return;
-
-                res.data.forEach(row => {
-
-                    const tr = document.createElement('tr');
-
-                    tr.innerHTML = `
-                            <td>
-                                <input type="hidden" name="row_id[]" value="${row.id}">
-                                <input name="sno[]" value="${row.sno ?? ''}">
-                            </td>
-                            <td><input type="date" name="date[]" value="${row.urine_date ?? ''}"></td>
-                            <td><input name="sin_no[]" value="${row.sin_no ?? ''}"></td>
-                            <td><input name="patient_name[]" value="${row.patient_name ?? ''}"></td>
-                            <td><input name="age_sex[]" value="${row.age_sex ?? ''}"></td>
-                            <td><input name="quantity[]" value="${row.quantity ?? ''}"></td>
-                            <td><input name="colour[]" value="${row.colour ?? ''}"></td>
-                            <td><input name="appearance[]" value="${row.appearance ?? ''}"></td>
-                            <td><input name="blood[]" value="${row.blood ?? ''}"></td>
-                            <td><input name="bilirubin[]" value="${row.bilirubin ?? ''}"></td>
-                            <td><input name="urobilinogen[]" value="${row.urobilinogen ?? ''}"></td>
-                            <td><input name="ketone[]" value="${row.ketone ?? ''}"></td>
-                            <td><input name="glucose[]" value="${row.glucose ?? ''}"></td>
-                            <td><input name="protein[]" value="${row.protein ?? ''}"></td>
-                            <td><input name="ph[]" value="${row.ph ?? ''}"></td>
-                            <td><input name="nitrites[]" value="${row.nitrites ?? ''}"></td>
-                            <td><input name="leucocytosis[]" value="${row.leucocytosis ?? ''}"></td>
-                            <td><input name="specific_gravity[]" value="${row.specific_gravity ?? ''}"></td>
-                            <td><input name="pus_cells[]" value="${row.pus_cells ?? ''}"></td>
-                            <td><input name="epithelial_cells[]" value="${row.epithelial_cells ?? ''}"></td>
-                            <td><input name="rbcs[]" value="${row.rbcs ?? ''}"></td>
-                            <td><input name="others[]" value="${row.others ?? ''}"></td>
-                            <td><input name="done_by[]" value="${row.done_by ?? ''}"></td>
-                            <td><input name="verified_by[]" value="${row.verified_by ?? ''}"></td>
-                            <td><input name="remarks[]" value="${row.remarks ?? ''}"></td>
-                        `;
-
-                        tbody.appendChild(tr);
-                    });
-                });
-        }
-
-        function clearUrineRegisterForm() {
-
-            const tbody = document.getElementById('urine_register_body');
-            if (tbody) tbody.innerHTML = '';
-
-            const editId = document.getElementById('urine_register_id');
-            if (editId) editId.value = '';
-
-            // ❌ DO NOT clear:
-            // - from_date
-            // - to_date
-            // - _token
-            // - doc_no
-        }
+    // loadCueForm, clearCueRows — moved to self-contained script inside REG-001
+    // loadStoolRegister, clearStoolFilters — moved to self-contained script inside REG-002
+    // loadUrineRegister, clearUrineFilters — moved to self-contained script inside REG-003
     </script>
 
 

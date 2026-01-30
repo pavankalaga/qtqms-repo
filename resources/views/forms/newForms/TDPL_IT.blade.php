@@ -273,6 +273,28 @@
         issueDate="01/10/2024"
         buttonText="Submit"
         action="{{ route('newforms.it.forms.submit') }}">
+
+        <input type="hidden" name="lis_interface_form_id" id="IT_FOM_001__record_id">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Analyzer Name</strong></label>
+                <input type="text" id="IT_FOM_001__filter_name"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type analyzer name">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadItFom001()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearItFom001()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
         <!-- MAIN ANALYZER INFORMATION TABLE -->
         <table style="width:100%; border-collapse: collapse;" border="1">
             <tbody>
@@ -281,7 +303,7 @@
                     <td style="padding:6px; width:80px;"><strong>S. No.</strong></td>
                     <td colspan="3" style="padding:6px;">
                         <strong>Department:</strong>
-                        <input type="text" name="department" style="width:95%; border:none; outline:none;">
+                        <input type="text" name="department" id="IT_FOM_001__department" style="width:95%; border:none; outline:none;">
                     </td>
                 </tr>
 
@@ -289,7 +311,7 @@
                     <td style="padding:6px;"><strong>1</strong></td>
                     <td colspan="3" style="padding:6px;">
                         <strong>Analyzer Name:</strong>
-                        <input type="text" name="analyzer_name" style="width:95%; border:none; outline:none;">
+                        <input type="text" name="analyzer_name" id="IT_FOM_001__analyzer_name" style="width:95%; border:none; outline:none;">
                     </td>
                 </tr>
 
@@ -297,11 +319,11 @@
                     <td style="padding:6px;"><strong>2</strong></td>
                     <td colspan="2" style="padding:6px;">
                         <strong>Instrument S. No.:</strong>
-                        <input type="text" name="instrument_serial" style="width:90%; border:none; outline:none;">
+                        <input type="text" name="instrument_serial" id="IT_FOM_001__instrument_serial" style="width:90%; border:none; outline:none;">
                     </td>
                     <td style="padding:6px;">
                         <strong>Instrument ID:</strong>
-                        <input type="text" name="instrument_id" style="width:90%; border:none; outline:none;">
+                        <input type="text" name="instrument_id" id="IT_FOM_001__instrument_id" style="width:90%; border:none; outline:none;">
                     </td>
                 </tr>
 
@@ -309,7 +331,7 @@
                     <td style="padding:6px;"><strong>3</strong></td>
                     <td colspan="3" style="padding:6px;">
                         <strong>Analyzer Type:</strong>
-                        <input type="text" name="analyzer_type" style="width:95%; border:none; outline:none;">
+                        <input type="text" name="analyzer_type" id="IT_FOM_001__analyzer_type" style="width:95%; border:none; outline:none;">
                     </td>
                 </tr>
 
@@ -326,7 +348,7 @@
                     <td style="padding:6px; width:120px;"><strong>Step 1</strong></td>
                     <td colspan="2" style="padding:6px;">
                         <strong>Registration:</strong>
-                        <input type="text" name="validation_step_1" style="width:90%; border:none; outline:none;">
+                        <input type="text" name="validation_step_1" id="IT_FOM_001__validation_step_1" style="width:90%; border:none; outline:none;">
                     </td>
                 </tr>
 
@@ -334,7 +356,7 @@
                     <td style="padding:6px;"><strong>Step 2</strong></td>
                     <td colspan="2" style="padding:6px;">
                         <strong>Sample Receipt in Department:</strong>
-                        <input type="text" name="validation_step_2" style="width:90%; border:none; outline:none;">
+                        <input type="text" name="validation_step_2" id="IT_FOM_001__validation_step_2" style="width:90%; border:none; outline:none;">
                     </td>
                 </tr>
 
@@ -342,7 +364,7 @@
                     <td style="padding:6px;"><strong>Step 3</strong></td>
                     <td colspan="2" style="padding:6px;">
                         <strong>Result Transfer from Analyzer to ITDose LIMS</strong>
-                        <input type="text" name="validation_step_3" style="width:90%; border:none; outline:none;">
+                        <input type="text" name="validation_step_3" id="IT_FOM_001__validation_step_3" style="width:90%; border:none; outline:none;">
                     </td>
                 </tr>
 
@@ -354,7 +376,7 @@
                             <li><strong>Interface Logfile</strong></li>
                             <li><strong>Analyzer Screen</strong></li>
                         </ul>
-                        <input type="text" name="validation_step_4" style="width:90%; border:none; outline:none;">
+                        <input type="text" name="validation_step_4" id="IT_FOM_001__validation_step_4" style="width:90%; border:none; outline:none;">
                     </td>
                 </tr>
 
@@ -362,7 +384,7 @@
                     <td style="padding:6px;"><strong>Step 5</strong></td>
                     <td colspan="2" style="padding:6px;">
                         <strong>Report:</strong>
-                        <input type="text" name="validation_step_5" style="width:90%; border:none; outline:none;">
+                        <input type="text" name="validation_step_5" id="IT_FOM_001__validation_step_5" style="width:90%; border:none; outline:none;">
                     </td>
                 </tr>
 
@@ -370,7 +392,7 @@
                     <td style="padding:6px;"><strong>5</strong></td>
                     <td colspan="3" style="padding:6px;">
                         <strong>Remarks:</strong>
-                        <textarea name="remarks" style="width:98%; height:60px; border:none; outline:none;">Machine raw data and report values match.</textarea>
+                        <textarea name="remarks" id="IT_FOM_001__remarks" style="width:98%; height:60px; border:none; outline:none;">Machine raw data and report values match.</textarea>
                     </td>
                 </tr>
 
@@ -397,13 +419,13 @@
                     <tr>
                     <td style="padding:6px; text-align:center;">{{ $i }}</td>
                     <td style="padding:6px;">
-                        <input type="text" name="tests[{{ $i }}][code]" style="width:95%; border:none; outline:none;">
+                        <input type="text" name="tests[{{ $i }}][code]" id="IT_FOM_001__test_{{ $i }}_code" style="width:95%; border:none; outline:none;">
                     </td>
                     <td style="padding:6px;">
-                        <input type="text" name="tests[{{ $i }}][name]" style="width:95%; border:none; outline:none;">
+                        <input type="text" name="tests[{{ $i }}][name]" id="IT_FOM_001__test_{{ $i }}_name" style="width:95%; border:none; outline:none;">
                     </td>
                     <td style="padding:6px;">
-                        <input type="text" name="tests[{{ $i }}][lis]" style="width:95%; border:none; outline:none;">
+                        <input type="text" name="tests[{{ $i }}][lis]" id="IT_FOM_001__test_{{ $i }}_lis" style="width:95%; border:none; outline:none;">
                     </td>
                     </tr>
                     @endfor
@@ -412,6 +434,144 @@
 
         <p><strong>Parameters Interfaced and Validated</strong></p>
 
+        <script>
+            // ── LOAD ──
+            function loadItFom001() {
+                const analyzerName = document.getElementById('IT_FOM_001__filter_name').value.trim();
+                if (!analyzerName) return;
+
+                fetch(`/newforms/it/lis-interface-validation/load?analyzer_name=${encodeURIComponent(analyzerName)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearItFom001Fields();
+
+                    if (!res.data) {
+                        document.getElementById('IT_FOM_001__record_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('IT_FOM_001__record_id').value = res.data.id;
+
+                    // Simple text fields
+                    const textFields = [
+                        'department', 'analyzer_name', 'instrument_serial',
+                        'instrument_id', 'analyzer_type',
+                        'validation_step_1', 'validation_step_2', 'validation_step_3',
+                        'validation_step_4', 'validation_step_5', 'remarks'
+                    ];
+
+                    textFields.forEach(field => {
+                        const el = document.getElementById('IT_FOM_001__' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
+                    });
+
+                    // Tests data (JSON array)
+                    if (res.data.tests_data && Array.isArray(res.data.tests_data)) {
+                        res.data.tests_data.forEach((test, idx) => {
+                            const rowNum = test.sno || (idx + 1);
+                            const codeEl = document.getElementById('IT_FOM_001__test_' + rowNum + '_code');
+                            const nameEl = document.getElementById('IT_FOM_001__test_' + rowNum + '_name');
+                            const lisEl  = document.getElementById('IT_FOM_001__test_' + rowNum + '_lis');
+                            if (codeEl && test.code != null) codeEl.value = test.code;
+                            if (nameEl && test.name != null) nameEl.value = test.name;
+                            if (lisEl && test.lis != null)   lisEl.value = test.lis;
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            // ── CLEAR ──
+            function clearItFom001() {
+                document.getElementById('IT_FOM_001__filter_name').value = '';
+                document.getElementById('IT_FOM_001__record_id').value = '';
+                clearItFom001Fields();
+            }
+
+            function clearItFom001Fields() {
+                const container = document.querySelector('[id="TDPL/IT/FOM-001"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'IT_FOM_001__filter_name' || el.id === 'IT_FOM_001__record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            // ── AJAX SUBMIT + TOAST ──
+            (function() {
+                function initItFom001() {
+                    const formContainer = document.querySelector('[id="TDPL/IT/FOM-001"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastItFom001('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('IT_FOM_001__record_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastItFom001('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            showToastItFom001('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastItFom001(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initItFom001);
+                } else {
+                    initItFom001();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -578,6 +738,28 @@
         issueDate="01/10/2024"
         buttonText="Submit"
         action="{{ route('newforms.it.forms.submit') }}">
+
+        <input type="hidden" name="lis_user_login_form_id" id="IT_FOM_004__record_id">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Employee Name</strong></label>
+                <input type="text" id="IT_FOM_004__filter_name"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type employee name">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadItFom004()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearItFom004()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
         <!-- IT Department Form -->
         <table style="width:100%; border-collapse: collapse;">
             <tr>
@@ -586,33 +768,33 @@
 
             <tr>
                 <td style="padding:6px; font-weight:bold;">Date:</td>
-                <td><input type="date" name="date" style="width:100%; padding:4px;"></td>
+                <td><input type="date" name="date" id="IT_FOM_004__date" style="width:100%; padding:4px;"></td>
 
                 <td style="padding:6px; font-weight:bold;">Employee No.:</td>
-                <td><input type="text" name="employee_no" style="width:100%; padding:4px;"></td>
+                <td><input type="text" name="employee_no" id="IT_FOM_004__employee_no" style="width:100%; padding:4px;"></td>
             </tr>
 
             <tr>
                 <td style="padding:6px; font-weight:bold;">Employee Name:</td>
-                <td><input type="text" name="employee_name" style="width:100%; padding:4px;"></td>
+                <td><input type="text" name="employee_name" id="IT_FOM_004__employee_name" style="width:100%; padding:4px;"></td>
 
                 <td style="padding:6px; font-weight:bold;">Department:</td>
-                <td><input type="text" name="department" style="width:100%; padding:4px;"></td>
+                <td><input type="text" name="department" id="IT_FOM_004__department" style="width:100%; padding:4px;"></td>
             </tr>
 
             <tr>
                 <td style="padding:6px; font-weight:bold;">Email ID:</td>
                 <td colspan="3">
-                    <input type="email" name="email" style="width:100%; padding:4px;">
+                    <input type="email" name="email" id="IT_FOM_004__email" style="width:100%; padding:4px;">
                 </td>
             </tr>
 
             <tr>
                 <td style="padding:6px; font-weight:bold;">LIMS Login ID:</td>
-                <td><input type="text" name="lims_id" style="width:100%; padding:4px;"></td>
+                <td><input type="text" name="lims_id" id="IT_FOM_004__lims_id" style="width:100%; padding:4px;"></td>
 
                 <td style="padding:6px; font-weight:bold;">Requested By:</td>
-                <td><input type="text" name="requested_by" style="width:100%; padding:4px;"></td>
+                <td><input type="text" name="requested_by" id="IT_FOM_004__requested_by" style="width:100%; padding:4px;"></td>
             </tr>
         </table>
 
@@ -664,10 +846,10 @@
                     Authorized by:<br>
                     <span style="font-weight:400;">(Name & Designation)</span>
                 </td>
-                <td><input type="text" name="authorized_by" style="width:100%; padding:4px;"></td>
+                <td><input type="text" name="authorized_by" id="IT_FOM_004__authorized_by" style="width:100%; padding:4px;"></td>
 
                 <td colspan="2" style="padding:6px; font-weight:bold;">Reason</td>
-                <td><input type="text" name="reason" style="width:100%; padding:4px;"></td>
+                <td><input type="text" name="reason" id="IT_FOM_004__reason" style="width:100%; padding:4px;"></td>
             </tr>
 
             <tr>
@@ -678,10 +860,10 @@
 
             <tr>
                 <td style="padding:6px; font-weight:bold;">Login Created:</td>
-                <td><input type="text" name="login_created" style="width:100%; padding:4px;"></td>
+                <td><input type="text" name="login_created" id="IT_FOM_004__login_created" style="width:100%; padding:4px;"></td>
 
                 <td style="padding:6px; font-weight:bold;">Date:</td>
-                <td colspan="2"><input type="date" name="created_date" style="width:100%; padding:4px;"></td>
+                <td colspan="2"><input type="date" name="created_date" id="IT_FOM_004__created_date" style="width:100%; padding:4px;"></td>
             </tr>
 
             <tr>
@@ -690,12 +872,147 @@
 
             <tr>
                 <td style="padding:6px; font-weight:bold;">Login Created by:</td>
-                <td><input type="text" name="login_by" style="width:100%; padding:4px;"></td>
+                <td><input type="text" name="login_by" id="IT_FOM_004__login_by" style="width:100%; padding:4px;"></td>
 
                 <td style="padding:6px; font-weight:bold;">Sign:</td>
-                <td colspan="2"><input type="text" name="sign" style="width:100%; padding:4px;"></td>
+                <td colspan="2"><input type="text" name="sign" id="IT_FOM_004__sign" style="width:100%; padding:4px;"></td>
             </tr>
         </table>
+
+        <script>
+            // ── LOAD ──
+            function loadItFom004() {
+                const employeeName = document.getElementById('IT_FOM_004__filter_name').value.trim();
+                if (!employeeName) return;
+
+                fetch(`/newforms/it/lis-user-login/load?employee_name=${encodeURIComponent(employeeName)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearItFom004Fields();
+
+                    if (!res.data) {
+                        document.getElementById('IT_FOM_004__record_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('IT_FOM_004__record_id').value = res.data.id;
+
+                    // Simple text fields
+                    const textFields = [
+                        'date', 'employee_no', 'employee_name', 'department',
+                        'email', 'lims_id', 'requested_by',
+                        'authorized_by', 'reason', 'login_created',
+                        'created_date', 'login_by', 'sign'
+                    ];
+
+                    textFields.forEach(field => {
+                        const el = document.getElementById('IT_FOM_004__' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
+                    });
+
+                    // Roles (checkbox array)
+                    if (res.data.roles && Array.isArray(res.data.roles)) {
+                        const container = document.querySelector('[id="TDPL/IT/FOM-004"]');
+                        res.data.roles.forEach(role => {
+                            const cb = container.querySelector('input[name="roles[]"][value="' + role + '"]');
+                            if (cb) cb.checked = true;
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            // ── CLEAR ──
+            function clearItFom004() {
+                document.getElementById('IT_FOM_004__filter_name').value = '';
+                document.getElementById('IT_FOM_004__record_id').value = '';
+                clearItFom004Fields();
+            }
+
+            function clearItFom004Fields() {
+                const container = document.querySelector('[id="TDPL/IT/FOM-004"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'IT_FOM_004__filter_name' || el.id === 'IT_FOM_004__record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            // ── AJAX SUBMIT + TOAST ──
+            (function() {
+                function initItFom004() {
+                    const formContainer = document.querySelector('[id="TDPL/IT/FOM-004"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastItFom004('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('IT_FOM_004__record_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastItFom004('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            showToastItFom004('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastItFom004(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initItFom004);
+                } else {
+                    initItFom004();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -833,50 +1150,6 @@
     }
 
     /* ===================================================
-       FOM-001 – LIS Interface Validation Form (AJAX)
-       =================================================== */
-    (function initFOM001() {
-        const wrapper = document.getElementById('TDPL/IT/FOM-001');
-        if (!wrapper) return;
-        const formEl = wrapper.querySelector('form');
-        if (!formEl) return;
-
-        // Toast helper
-        function showToastFOM001(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.textContent = message;
-            toast.style.cssText =
-                'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
-                (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        formEl.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const fd = new FormData(formEl);
-
-            fetch(formEl.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                },
-                body: fd,
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    showToastFOM001(data.message || 'Saved successfully!', 'success');
-                } else {
-                    showToastFOM001(data.message || 'Save failed.', 'error');
-                }
-            })
-            .catch(() => showToastFOM001('Network error.', 'error'));
-        });
-    })();
-
-    /* ===================================================
        FOM-003 – Auto Approval Authorization (AJAX)
        =================================================== */
     (function initFOM003() {
@@ -919,48 +1192,6 @@
         });
     })();
 
-    /* ===================================================
-       FOM-004 – LIS User ID & Mail ID Login Creation (AJAX)
-       =================================================== */
-    (function initFOM004() {
-        const wrapper = document.getElementById('TDPL/IT/FOM-004');
-        if (!wrapper) return;
-        const formEl = wrapper.querySelector('form');
-        if (!formEl) return;
-
-        function showToastFOM004(message, type = 'success') {
-            const toast = document.createElement('div');
-            toast.textContent = message;
-            toast.style.cssText =
-                'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
-                (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
-        }
-
-        formEl.addEventListener('submit', function (e) {
-            e.preventDefault();
-
-            const fd = new FormData(formEl);
-
-            fetch(formEl.action, {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                },
-                body: fd,
-            })
-            .then(r => r.json())
-            .then(data => {
-                if (data.success) {
-                    showToastFOM004(data.message || 'Saved successfully!', 'success');
-                } else {
-                    showToastFOM004(data.message || 'Save failed.', 'error');
-                }
-            })
-            .catch(() => showToastFOM004('Network error.', 'error'));
-        });
-    })();
 </script>
 
 

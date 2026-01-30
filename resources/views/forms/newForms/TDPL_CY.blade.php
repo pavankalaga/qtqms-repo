@@ -263,7 +263,26 @@
         <x-formTemplete id="TDPL/CS/FOM-001" docNo="TDPL/CS/FOM-001" docName="CustomerPatient Feedback Form" issueNo="2.0"
             issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cy.forms.submit') }}">
 
-            <form>
+            <input type="hidden" name="customer_patient_feedback_id" id="customer_patient_feedback_id">
+
+            <!-- Filter Section -->
+            <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
+                    <label><strong>Patient Name</strong></label>
+                    <input type="text" id="csFeedbackFilterName"
+                        style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type patient name">
+                </div>
+                <div style="display:flex; gap:8px; align-items:flex-end;">
+                    <button type="button" onclick="loadCustomerFeedbackForm()"
+                        style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Search
+                    </button>
+                    <button type="button" onclick="clearCustomerFeedbackForm()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
+                </div>
+            </div>
 
                 <p>Dear Sir/Madam,</p>
 
@@ -405,16 +424,196 @@
                     <input type="text" name="approved_by" id="TDPL_CS_FOM_001__approved_by" style="width:250px;">
                 </p>
 
-            </form>
+            <script>
+                function loadCustomerFeedbackForm() {
+                    const patientName = document.getElementById('csFeedbackFilterName').value.trim();
+                    if (!patientName) return;
+
+                    fetch(`/newforms/cy/customer-feedback/load?name=${encodeURIComponent(patientName)}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        clearCustomerFeedbackFields();
+
+                        if (!res.data) {
+                            document.getElementById('customer_patient_feedback_id').value = '';
+                            return;
+                        }
+
+                        document.getElementById('customer_patient_feedback_id').value = res.data.id;
+
+                        // Text/date fields
+                        const textFields = [
+                            'name', 'barcode', 'date', 'address', 'contact_no',
+                            'signature', 'complainant_id', 'complaint_date',
+                            'closure_date', 'by', 'on', 'reviewed_by', 'approved_by'
+                        ];
+
+                        textFields.forEach(field => {
+                            const el = document.getElementById('TDPL_CS_FOM_001__' + field);
+                            if (el && res.data[field] != null) el.value = res.data[field];
+                        });
+
+                        // Textareas
+                        const textareaFields = [
+                            'additional_feedback', 'complaint_description',
+                            'complaint_action', 'preventive_action'
+                        ];
+
+                        textareaFields.forEach(field => {
+                            const el = document.getElementById('TDPL_CS_FOM_001__' + field);
+                            if (el && res.data[field] != null) el.value = res.data[field];
+                        });
+
+                        // Select
+                        const communicated = document.getElementById('TDPL_CS_FOM_001__communicated');
+                        if (communicated && res.data.communicated) {
+                            communicated.value = res.data.communicated;
+                        }
+
+                        // Radio buttons (ratings)
+                        for (let i = 0; i <= 8; i++) {
+                            const val = res.data['rating_' + i];
+                            if (!val) continue;
+                            const radio = document.getElementById('TDPL_CS_FOM_001__rating_' + i + '_' + val);
+                            if (radio) radio.checked = true;
+                        }
+
+                        // Remarks
+                        for (let i = 0; i <= 8; i++) {
+                            const el = document.getElementById('TDPL_CS_FOM_001__remarks_' + i);
+                            if (el && res.data['remarks_' + i] != null) {
+                                el.value = res.data['remarks_' + i];
+                            }
+                        }
+                    })
+                    .catch(err => console.error('Load error:', err));
+                }
+
+                function clearCustomerFeedbackFields() {
+                    const formContainer = document.querySelector('[id="TDPL/CS/FOM-001"]');
+                    if (!formContainer) return;
+
+                    formContainer.querySelectorAll('input, textarea, select').forEach(el => {
+                        if (el.name === '_token') return;
+                        if (el.name === 'doc_no') return;
+                        if (el.id === 'csFeedbackFilterName') return;
+
+                        if (el.type === 'radio' || el.type === 'checkbox') {
+                            el.checked = false;
+                        } else if (el.tagName === 'SELECT') {
+                            el.selectedIndex = 0;
+                        } else {
+                            el.value = '';
+                        }
+                    });
+                }
+
+                function clearCustomerFeedbackForm() {
+                    document.getElementById('csFeedbackFilterName').value = '';
+                    clearCustomerFeedbackFields();
+                }
+
+                // AJAX Submit for CS/FOM-001
+                (function() {
+                    function initCsFeedbackForm() {
+                        const formContainer = document.querySelector('[id="TDPL/CS/FOM-001"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                            if (submitBtn) {
+                                submitBtn.textContent = 'Saving...';
+                                submitBtn.disabled = true;
+                            }
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastCsFeedback('success', result.message || 'Saved successfully!');
+                                    if (result.form_id) {
+                                        document.getElementById('customer_patient_feedback_id').value = result.form_id;
+                                    }
+                                } else {
+                                    showToastCsFeedback('error', result.message || 'Failed to save');
+                                }
+                            })
+                            .catch(err => {
+                                showToastCsFeedback('error', 'Failed to save. Please try again.');
+                            })
+                            .finally(() => {
+                                if (submitBtn) {
+                                    submitBtn.textContent = originalText;
+                                    submitBtn.disabled = false;
+                                }
+                            });
+                        });
+                    }
+
+                    function showToastCsFeedback(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initCsFeedbackForm);
+                    } else {
+                        initCsFeedbackForm();
+                    }
+                })();
+            </script>
+
         </x-formTemplete>
 
 
 
         <x-formTemplete id="TDPL/CY/FOM-001" docNo="TDPL/CY/FOM-001" docName="Cytopathology Requisition Form"
             issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cy.forms.submit') }}">
-            <form action="#" method="POST"
-                style="background:#ffffff;border:1px solid #000;border-radius: 10px;padding:20px;width:100%;margin:auto;font-family:Arial, sans-serif;font-size:14px;">
-                @csrf
+
+            <input type="hidden" name="cytopathology_requisition_form_id" id="cytopathology_requisition_form_id">
+
+            <!-- Filter Section -->
+            <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
+                    <label><strong>Patient Name</strong></label>
+                    <input type="text" id="cyReqFilterName"
+                        style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type patient name">
+                </div>
+                <div style="display:flex; gap:8px; align-items:flex-end;">
+                    <button type="button" onclick="loadCytoRequisitionForm()"
+                        style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Search
+                    </button>
+                    <button type="button" onclick="clearCytoRequisitionForm()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <div style="background:#ffffff;border:1px solid #000;border-radius: 10px;padding:20px;width:100%;margin:auto;font-family:Arial, sans-serif;font-size:14px;">
 
                 <h2 style="text-align:center; font-weight:bold; margin-bottom:20px;">CYTOPATHOLOGY REQUISITION FORM</h2>
 
@@ -621,12 +820,194 @@
                     <li>Do not omit telephone number of Patient / Referring Doctor.</li>
                 </ol>
 
-            </form>
+            </div>
+
+            <script>
+                function loadCytoRequisitionForm() {
+                    const patientName = document.getElementById('cyReqFilterName').value.trim();
+                    if (!patientName) return;
+
+                    fetch(`/newforms/cy/cytopathology-requisition/load?name=${encodeURIComponent(patientName)}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        clearCytoRequisitionFields();
+
+                        if (!res.data) {
+                            document.getElementById('cytopathology_requisition_form_id').value = '';
+                            return;
+                        }
+
+                        document.getElementById('cytopathology_requisition_form_id').value = res.data.id;
+
+                        // Helper: extract YYYY-MM-DD from datetime string
+                        function toDateStr(val) {
+                            if (!val) return '';
+                            return val.substring(0, 10);
+                        }
+
+                        // Text fields
+                        const textFields = ['lab_no', 'name', 'mobile', 'client_name', 'client_code', 'ref_doctor', 'fnac'];
+                        textFields.forEach(field => {
+                            const el = document.getElementById('CY_FOM_001__' + field);
+                            if (el && res.data[field] != null) el.value = res.data[field];
+                        });
+
+                        // Date fields (model casts to datetime)
+                        const dateFields = ['date', 'dob', 'lmp'];
+                        dateFields.forEach(field => {
+                            const el = document.getElementById('CY_FOM_001__' + field);
+                            if (el && res.data[field]) el.value = toDateStr(res.data[field]);
+                        });
+
+                        // Radio button (sex)
+                        if (res.data.sex) {
+                            const radio = document.getElementById('CY_FOM_001__sex_' + res.data.sex.toLowerCase());
+                            if (radio) radio.checked = true;
+                        }
+
+                        // Textareas
+                        const textareaFields = ['misc', 'details'];
+                        textareaFields.forEach(field => {
+                            const el = document.getElementById('CY_FOM_001__' + field);
+                            if (el && res.data[field] != null) el.value = res.data[field];
+                        });
+
+                        // Checkbox arrays
+                        const arrayFields = ['gynae', 'non_gynae', 'clinical_features', 'sample_site', 'history', 'nipple'];
+                        arrayFields.forEach(field => {
+                            const values = res.data[field];
+                            if (!Array.isArray(values)) return;
+                            values.forEach(val => {
+                                const cb = document.querySelector(`input[name="${field}[]"][value="${val}"]`);
+                                if (cb) cb.checked = true;
+                            });
+                        });
+                    })
+                    .catch(err => console.error('Load error:', err));
+                }
+
+                function clearCytoRequisitionFields() {
+                    const formContainer = document.querySelector('[id="TDPL/CY/FOM-001"]');
+                    if (!formContainer) return;
+
+                    formContainer.querySelectorAll('input, textarea, select').forEach(el => {
+                        if (el.name === '_token') return;
+                        if (el.name === 'doc_no') return;
+                        if (el.id === 'cyReqFilterName') return;
+                        if (el.id === 'cytopathology_requisition_form_id') return;
+
+                        if (el.type === 'radio' || el.type === 'checkbox') {
+                            el.checked = false;
+                        } else {
+                            el.value = '';
+                        }
+                    });
+                }
+
+                function clearCytoRequisitionForm() {
+                    document.getElementById('cyReqFilterName').value = '';
+                    clearCytoRequisitionFields();
+                }
+
+                // AJAX Submit for CY/FOM-001
+                (function() {
+                    function initCytoReqForm() {
+                        const formContainer = document.querySelector('[id="TDPL/CY/FOM-001"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                            if (submitBtn) {
+                                submitBtn.textContent = 'Saving...';
+                                submitBtn.disabled = true;
+                            }
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastCytoReq('success', result.message || 'Saved successfully!');
+                                    if (result.form_id) {
+                                        document.getElementById('cytopathology_requisition_form_id').value = result.form_id;
+                                    }
+                                } else {
+                                    showToastCytoReq('error', result.message || 'Failed to save');
+                                }
+                            })
+                            .catch(err => {
+                                showToastCytoReq('error', 'Failed to save. Please try again.');
+                            })
+                            .finally(() => {
+                                if (submitBtn) {
+                                    submitBtn.textContent = originalText;
+                                    submitBtn.disabled = false;
+                                }
+                            });
+                        });
+                    }
+
+                    function showToastCytoReq(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initCytoReqForm);
+                    } else {
+                        initCytoReqForm();
+                    }
+                })();
+            </script>
+
         </x-formTemplete>
 
 
         <x-formTemplete id="TDPL/CY/FOM-002" docNo="TDPL/CY/FOM-002" docName="Consent Form for FNAC" issueNo="2.0"
             issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cy.forms.submit') }}">
+
+            <input type="hidden" name="fnac_consent_form_id" id="fnac_consent_form_id">
+
+            <!-- Filter Section -->
+            <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
+                    <label><strong>Patient Name</strong></label>
+                    <input type="text" id="fnacFilterName"
+                        style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type patient name">
+                </div>
+                <div style="display:flex; gap:8px; align-items:flex-end;">
+                    <button type="button" onclick="loadFnacConsentForm()"
+                        style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Search
+                    </button>
+                    <button type="button" onclick="clearFnacConsentForm()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
             <style>
                 .containerCY {
 
@@ -780,6 +1161,7 @@
                 <div class="language-toggle">
                     <button class="lang-btn active" data-lang="en">English</button>
                     <button class="lang-btn" data-lang="hi">हिंदी</button>
+                    <button class="lang-btn" data-lang="te">తెలుగు</button>
                 </div>
 
                 <!-- English Form -->
@@ -879,28 +1261,222 @@
 
                     <p class="section-title">यदि प्रक्रिया इन-हाउस की गई है:</p>
                 </div>
+
+                <!-- Telugu Form -->
+                <div class="form-content" id="form-te">
+                    <h1>FNAC కోసం సమ్మతి పత్రం</h1>
+
+                    <p>
+                        నేను <input type="text" class="inline-input" style="width:230px;" placeholder="మీ పేరు"
+                            name="consent_name" id="CY_FOM_002__consent_name_te">
+                        నా
+                        <input type="text" class="inline-input" style="width:230px;" placeholder="పరీక్ష ప్రాంతం"
+                            name="test_area" id="CY_FOM_002__test_area_te">
+                        కోసం FNAC (ఫైన్ నీడిల్ ఆస్పిరేషన్ సైటాలజీ) ప్రక్రియను నిర్వహించడానికి నా సమ్మతిని తెలుపుతున్నాను.
+                        ఈ ప్రక్రియ, దానికి సంబంధించిన ప్రమాదాలు మరియు సాధ్యమైన సమస్యల గురించి నాకు వివరంగా వివరించబడింది.
+                    </p>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>రోగి పేరు:</label>
+                            <input type="text" placeholder="రోగి పేరు నమోదు చేయండి" name="patient_name"
+                                id="CY_FOM_002__patient_name_te">
+                        </div>
+                        <div class="form-field">
+                            <label>డాక్టర్ పేరు:</label>
+                            <input type="text" placeholder="డాక్టర్ పేరు నమోదు చేయండి" name="doctor_name"
+                                id="CY_FOM_002__doctor_name_te">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-field">
+                            <label>రోగి సంతకం:</label>
+                            <input type="text" placeholder="సంతకం" name="patient_signature"
+                                id="CY_FOM_002__patient_signature_te">
+                        </div>
+                        <div class="form-field">
+                            <label>డాక్టర్ సంతకం:</label>
+                            <input type="text" placeholder="సంతకం" name="doctor_signature"
+                                id="CY_FOM_002__doctor_signature_te">
+                        </div>
+                    </div>
+
+                    <div class="form-field" style="max-width: 300px;">
+                        <label>తేదీ:</label>
+                        <input type="date" name="date" id="CY_FOM_002__date_te">
+                    </div>
+
+                    <p class="section-title">ఈ ప్రక్రియ ఇన్-హౌస్ లో చేయబడితే:</p>
+                </div>
             </div>
 
             <script>
                 // Language toggle functionality
-                const langButtons = document.querySelectorAll('.lang-btn');
-                const formContents = document.querySelectorAll('.form-content');
+                (function() {
+                    const container = document.querySelector('[id="TDPL/CY/FOM-002"]');
+                    if (!container) return;
 
-                langButtons.forEach(button => {
-                    button.addEventListener('click', function() {
-                        const lang = this.getAttribute('data-lang');
+                    const langButtons = container.querySelectorAll('.lang-btn');
+                    const formContents = container.querySelectorAll('.form-content');
 
-                        // Update button states
-                        langButtons.forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
+                    langButtons.forEach(button => {
+                        button.addEventListener('click', function() {
+                            const lang = this.getAttribute('data-lang');
 
-                        // Update form visibility
-                        formContents.forEach(form => form.classList.remove('active'));
-                        document.getElementById(`form-${lang}`).classList.add('active');
+                            langButtons.forEach(btn => btn.classList.remove('active'));
+                            this.classList.add('active');
+
+                            formContents.forEach(fc => fc.classList.remove('active'));
+                            const target = container.querySelector('#form-' + lang);
+                            if (target) target.classList.add('active');
+                        });
                     });
-                });
-            </script>
+                })();
 
+                // Load, Clear, AJAX Submit
+                function loadFnacConsentForm() {
+                    const patientName = document.getElementById('fnacFilterName').value.trim();
+                    if (!patientName) return;
+
+                    fetch(`/newforms/cy/fnac-consent/load?patient_name=${encodeURIComponent(patientName)}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        clearFnacConsentFields();
+
+                        if (!res.data) {
+                            document.getElementById('fnac_consent_form_id').value = '';
+                            return;
+                        }
+
+                        document.getElementById('fnac_consent_form_id').value = res.data.id;
+
+                        function toDateStr(val) {
+                            if (!val) return '';
+                            return val.substring(0, 10);
+                        }
+
+                        // Field mapping: db_field → [english_id, hindi_id, telugu_id]
+                        const fieldMap = {
+                            'consent_name':      ['CY_FOM_002__consent_name', 'CY_FOM_002__consent_name_hi', 'CY_FOM_002__consent_name_te'],
+                            'test_area':         ['CY_FOM_002__test_area', 'CY_FOM_002__test_area_hi', 'CY_FOM_002__test_area_te'],
+                            'patient_name':      ['CY_FOM_002__patient_name', 'CY_FOM_002__patient_name_hi', 'CY_FOM_002__patient_name_te'],
+                            'doctor_name':       ['CY_FOM_002__doctor_name', 'CY_FOM_002__doctor_name_hi', 'CY_FOM_002__doctor_name_te'],
+                            'patient_signature': ['CY_FOM_002__patient_signature', 'CY_FOM_002__patient_signature_hi', 'CY_FOM_002__patient_signature_te'],
+                            'doctor_signature':  ['CY_FOM_002__doctor_signature', 'CY_FOM_002__doctor_signature_hi', 'CY_FOM_002__doctor_signature_te'],
+                        };
+
+                        // Populate text fields across all languages
+                        Object.keys(fieldMap).forEach(dbField => {
+                            const val = res.data[dbField];
+                            if (val == null) return;
+                            fieldMap[dbField].forEach(elId => {
+                                const el = document.getElementById(elId);
+                                if (el) el.value = val;
+                            });
+                        });
+
+                        // Date fields across all languages
+                        const dateVal = toDateStr(res.data.date);
+                        ['CY_FOM_002__date', 'CY_FOM_002__date_hi', 'CY_FOM_002__date_te'].forEach(elId => {
+                            const el = document.getElementById(elId);
+                            if (el && dateVal) el.value = dateVal;
+                        });
+                    })
+                    .catch(err => console.error('Load error:', err));
+                }
+
+                function clearFnacConsentFields() {
+                    const formContainer = document.querySelector('[id="TDPL/CY/FOM-002"]');
+                    if (!formContainer) return;
+
+                    formContainer.querySelectorAll('input, textarea, select').forEach(el => {
+                        if (el.name === '_token') return;
+                        if (el.name === 'doc_no') return;
+                        if (el.id === 'fnacFilterName') return;
+                        if (el.id === 'fnac_consent_form_id') return;
+                        if (el.classList.contains('lang-btn')) return;
+
+                        el.value = '';
+                    });
+                }
+
+                function clearFnacConsentForm() {
+                    document.getElementById('fnacFilterName').value = '';
+                    clearFnacConsentFields();
+                }
+
+                // AJAX Submit for CY/FOM-002
+                (function() {
+                    function initFnacForm() {
+                        const formContainer = document.querySelector('[id="TDPL/CY/FOM-002"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                            if (submitBtn) {
+                                submitBtn.textContent = 'Saving...';
+                                submitBtn.disabled = true;
+                            }
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastFnac('success', result.message || 'Saved successfully!');
+                                    if (result.form_id) {
+                                        document.getElementById('fnac_consent_form_id').value = result.form_id;
+                                    }
+                                } else {
+                                    showToastFnac('error', result.message || 'Failed to save');
+                                }
+                            })
+                            .catch(err => {
+                                showToastFnac('error', 'Failed to save. Please try again.');
+                            })
+                            .finally(() => {
+                                if (submitBtn) {
+                                    submitBtn.textContent = originalText;
+                                    submitBtn.disabled = false;
+                                }
+                            });
+                        });
+                    }
+
+                    function showToastFnac(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initFnacForm);
+                    } else {
+                        initFnacForm();
+                    }
+                })();
+            </script>
 
         </x-formTemplete>
 

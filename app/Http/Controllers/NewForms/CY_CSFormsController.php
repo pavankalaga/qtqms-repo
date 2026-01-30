@@ -52,11 +52,8 @@ class CY_CSFormsController extends Controller
      */
     protected function storeCustomerPatientFeedback(Request $request)
     {
-        /*
-     |==================================================
-     | BUILD PAYLOAD (ALL COLUMNS – NOTHING MISSED)
-     |==================================================
-     */
+        $isAjax = $request->ajax() || $request->wantsJson();
+
         $payload = [
 
             // BASIC DETAILS
@@ -112,28 +109,38 @@ class CY_CSFormsController extends Controller
             'approved_by' => $request->approved_by,
         ];
 
-        /*
-     |==================================================
-     | INLINE EDIT OR NEW SUBMIT (SAME AS CP FORMS)
-     |==================================================
-     */
         if ($request->filled('customer_patient_feedback_id')) {
-
-            // ✅ INLINE UPDATE
-            CustomerPatientFeedback::where(
-                'id',
-                $request->customer_patient_feedback_id
-            )->update($payload);
+            $form = CustomerPatientFeedback::findOrFail($request->customer_patient_feedback_id);
+            $form->update($payload);
         } else {
-
-            // ✅ NORMAL CREATE
-            CustomerPatientFeedback::create($payload);
+            $form = CustomerPatientFeedback::create($payload);
         }
 
-        return back()->with(
-            'success',
-            'Customer / Patient Feedback saved successfully'
-        );
+        if ($isAjax) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Customer / Patient Feedback saved successfully',
+                'form_id' => $form->id,
+            ]);
+        }
+
+        return back()->with([
+            'success' => 'Customer / Patient Feedback saved successfully',
+            'customer_patient_feedback_id' => $form->id,
+        ]);
+    }
+
+    public function loadCustomerPatientFeedback(Request $request)
+    {
+        if (!$request->filled('name')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = CustomerPatientFeedback::where('name', $request->name)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 
 
@@ -143,6 +150,8 @@ class CY_CSFormsController extends Controller
      */
     protected function storeCytopathologyRequisition(Request $request)
     {
+        $isAjax = $request->ajax() || $request->wantsJson();
+
         $payload = [
             'doc_no'            => $request->doc_no,
             'lab_no'            => $request->lab_no,
@@ -167,19 +176,41 @@ class CY_CSFormsController extends Controller
         ];
 
         if ($request->filled('cytopathology_requisition_form_id')) {
-            // UPDATE
-            CytopathologyRequisitionForm::where('id', $request->cytopathology_requisition_form_id)
-                ->update(array_merge($payload, [
-                    'updated_by' => auth()->id(),
-                ]));
+            $form = CytopathologyRequisitionForm::findOrFail($request->cytopathology_requisition_form_id);
+            $form->update(array_merge($payload, [
+                'updated_by' => auth()->id(),
+            ]));
         } else {
-            // CREATE
-            CytopathologyRequisitionForm::create(array_merge($payload, [
+            $form = CytopathologyRequisitionForm::create(array_merge($payload, [
                 'created_by' => auth()->id(),
             ]));
         }
 
-        return back()->with('success', 'Cytopathology Requisition Form saved successfully');
+        if ($isAjax) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cytopathology Requisition Form saved successfully',
+                'form_id' => $form->id,
+            ]);
+        }
+
+        return back()->with([
+            'success' => 'Cytopathology Requisition Form saved successfully',
+            'cytopathology_requisition_form_id' => $form->id,
+        ]);
+    }
+
+    public function loadCytopathologyRequisition(Request $request)
+    {
+        if (!$request->filled('name')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = CytopathologyRequisitionForm::where('name', $request->name)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 
     /**
@@ -188,6 +219,8 @@ class CY_CSFormsController extends Controller
      */
     protected function storeConsentForFnac(Request $request)
     {
+        $isAjax = $request->ajax() || $request->wantsJson();
+
         $payload = [
             'doc_no'            => $request->doc_no,
             'consent_name'      => $request->consent_name,
@@ -200,18 +233,40 @@ class CY_CSFormsController extends Controller
         ];
 
         if ($request->filled('fnac_consent_form_id')) {
-            // UPDATE
-            FnacConsentForm::where('id', $request->fnac_consent_form_id)
-                ->update(array_merge($payload, [
-                    'updated_by' => auth()->id(),
-                ]));
+            $form = FnacConsentForm::findOrFail($request->fnac_consent_form_id);
+            $form->update(array_merge($payload, [
+                'updated_by' => auth()->id(),
+            ]));
         } else {
-            // CREATE
-            FnacConsentForm::create(array_merge($payload, [
+            $form = FnacConsentForm::create(array_merge($payload, [
                 'created_by' => auth()->id(),
             ]));
         }
 
-        return back()->with('success', 'FNAC Consent Form saved successfully');
+        if ($isAjax) {
+            return response()->json([
+                'success' => true,
+                'message' => 'FNAC Consent Form saved successfully',
+                'form_id' => $form->id,
+            ]);
+        }
+
+        return back()->with([
+            'success' => 'FNAC Consent Form saved successfully',
+            'fnac_consent_form_id' => $form->id,
+        ]);
+    }
+
+    public function loadFnacConsent(Request $request)
+    {
+        if (!$request->filled('patient_name')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = FnacConsentForm::where('patient_name', $request->patient_name)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 }

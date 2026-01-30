@@ -40,14 +40,29 @@ class ITFormsController extends Controller
     }
 
     /**
-     * =============================================
-     * FOM-001 – LIS Interface Validation Form
-     * Store-only: individual columns + JSON tests_data
-     * =============================================
+     * STORE LIS Interface Validation Form (FOM-001)
      */
     private function storeLisInterfaceValidationForm(Request $request)
     {
-        // Collect non-empty test rows
+        $isAjax = $request->ajax() || $request->wantsJson();
+
+        $formId = $request->lis_interface_form_id;
+
+        $data = $request->only([
+            'department',
+            'analyzer_name',
+            'instrument_serial',
+            'instrument_id',
+            'analyzer_type',
+            'validation_step_1',
+            'validation_step_2',
+            'validation_step_3',
+            'validation_step_4',
+            'validation_step_5',
+            'remarks',
+        ]);
+
+        // Collect non-empty test rows (JSON)
         $testsRaw = $request->input('tests', []);
         $testsData = [];
 
@@ -56,7 +71,6 @@ class ITFormsController extends Controller
             $name = trim($row['name'] ?? '');
             $lis  = trim($row['lis'] ?? '');
 
-            // Skip completely empty rows
             if ($code === '' && $name === '' && $lis === '') {
                 continue;
             }
@@ -69,28 +83,43 @@ class ITFormsController extends Controller
             ];
         }
 
-        $record = LisInterfaceValidationForm::create([
-            'doc_no'            => $request->doc_no,
-            'department'        => $request->department,
-            'analyzer_name'     => $request->analyzer_name,
-            'instrument_serial' => $request->instrument_serial,
-            'instrument_id'     => $request->instrument_id,
-            'analyzer_type'     => $request->analyzer_type,
-            'validation_step_1' => $request->validation_step_1,
-            'validation_step_2' => $request->validation_step_2,
-            'validation_step_3' => $request->validation_step_3,
-            'validation_step_4' => $request->validation_step_4,
-            'validation_step_5' => $request->validation_step_5,
-            'remarks'           => $request->remarks,
-            'tests_data'        => !empty($testsData) ? $testsData : null,
-            'created_by'        => auth()->id(),
-        ]);
+        $data['tests_data'] = !empty($testsData) ? $testsData : null;
 
-        return response()->json([
-            'success' => true,
-            'message' => 'LIS Interface Validation Form saved successfully.',
-            'id'      => $record->id,
+        if ($formId) {
+            $form = LisInterfaceValidationForm::findOrFail($formId);
+            $form->update($data);
+        } else {
+            $form = LisInterfaceValidationForm::create($data);
+        }
+
+        if ($isAjax) {
+            return response()->json([
+                'success' => true,
+                'message' => 'LIS Interface Validation Form saved successfully',
+                'form_id' => $form->id,
+            ]);
+        }
+
+        return back()->with([
+            'success' => 'LIS Interface Validation Form saved successfully',
+            'lis_interface_form_id' => $form->id,
         ]);
+    }
+
+    /**
+     * LOAD LIS Interface Validation Form (FOM-001)
+     */
+    public function loadLisInterfaceValidationForm(Request $request)
+    {
+        if (!$request->filled('analyzer_name')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = LisInterfaceValidationForm::where('analyzer_name', $request->analyzer_name)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 
     /**
@@ -188,34 +217,70 @@ class ITFormsController extends Controller
     /**
      * =============================================
      * FOM-004 – LIS User ID & Mail ID Login Creation Form
-     * Store-only: individual columns + JSON roles
+     * Store: individual columns + JSON roles
      * =============================================
      */
     private function storeLisUserLoginCreationForm(Request $request)
     {
-        $record = LisUserLoginCreationForm::create([
-            'doc_no'         => $request->doc_no,
-            'date'           => $request->date ?: null,
-            'employee_no'    => $request->employee_no,
-            'employee_name'  => $request->employee_name,
-            'department'     => $request->department,
-            'email'          => $request->email,
-            'lims_id'        => $request->lims_id,
-            'requested_by'   => $request->requested_by,
-            'roles'          => $request->input('roles', []),
-            'authorized_by'  => $request->authorized_by,
-            'reason'         => $request->reason,
-            'login_created'  => $request->login_created,
-            'created_date'   => $request->created_date ?: null,
-            'login_by'       => $request->login_by,
-            'sign'           => $request->sign,
-            'created_by'     => auth()->id(),
+        $isAjax = $request->ajax() || $request->wantsJson();
+
+        $formId = $request->lis_user_login_form_id;
+
+        $data = $request->only([
+            'date',
+            'employee_no',
+            'employee_name',
+            'department',
+            'email',
+            'lims_id',
+            'requested_by',
+            'authorized_by',
+            'reason',
+            'login_created',
+            'created_date',
+            'login_by',
+            'sign',
         ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'LIS User ID & Mail ID Login Creation Form saved successfully.',
-            'id'      => $record->id,
+        $data['date'] = $data['date'] ?: null;
+        $data['created_date'] = $data['created_date'] ?: null;
+        $data['roles'] = $request->input('roles', []);
+
+        if ($formId) {
+            $form = LisUserLoginCreationForm::findOrFail($formId);
+            $form->update($data);
+        } else {
+            $data['created_by'] = auth()->id();
+            $form = LisUserLoginCreationForm::create($data);
+        }
+
+        if ($isAjax) {
+            return response()->json([
+                'success' => true,
+                'message' => 'LIS User ID & Mail ID Login Creation Form saved successfully.',
+                'form_id' => $form->id,
+            ]);
+        }
+
+        return back()->with([
+            'success' => 'LIS User ID & Mail ID Login Creation Form saved successfully.',
+            'lis_user_login_form_id' => $form->id,
         ]);
+    }
+
+    /**
+     * LOAD LIS User ID & Mail ID Login Creation Form (FOM-004)
+     */
+    public function loadLisUserLoginCreationForm(Request $request)
+    {
+        if (!$request->filled('employee_name')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = LisUserLoginCreationForm::where('employee_name', $request->employee_name)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 }

@@ -769,8 +769,26 @@
         buttonText="Submit"
         action="{{ route('newforms.ge.forms.submit') }}">
 
-        <!-- Hidden field for update -->
         <input type="hidden" name="needle_stick_injury_log_id" id="GE_FOM_002__record_id">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Injured Person Name</strong></label>
+                <input type="text" id="GE_FOM_002__filter_name"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type injured person name">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadGeFom002()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearGeFom002()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
         <p style="margin-bottom:10px;">
             <strong>Name of injured person:</strong>
@@ -825,6 +843,132 @@
         <input type="date" name="recorded_date" id="GE_FOM_002__recorded_date"
             style="border:1px solid #000; padding:4px; width:20%; margin-left:20px;">
 
+        <script>
+            // ── LOAD ──
+            function loadGeFom002() {
+                const injuredPerson = document.getElementById('GE_FOM_002__filter_name').value.trim();
+                if (!injuredPerson) return;
+
+                fetch(`/newforms/ge/needle-stick-injury/load?injured_person=${encodeURIComponent(injuredPerson)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearGeFom002Fields();
+
+                    if (!res.data) {
+                        document.getElementById('GE_FOM_002__record_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('GE_FOM_002__record_id').value = res.data.id;
+
+                    // Simple text / date / textarea fields
+                    const textFields = [
+                        'injured_person', 'exposure_datetime',
+                        'sequence_of_events', 'details_of_exposure',
+                        'counseling_details', 'source_person_info',
+                        'preventive_steps', 'recorded_by', 'recorded_date'
+                    ];
+
+                    textFields.forEach(field => {
+                        const el = document.getElementById('GE_FOM_002__' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            // ── CLEAR ──
+            function clearGeFom002() {
+                document.getElementById('GE_FOM_002__filter_name').value = '';
+                document.getElementById('GE_FOM_002__record_id').value = '';
+                clearGeFom002Fields();
+            }
+
+            function clearGeFom002Fields() {
+                const container = document.querySelector('[id="TDPL/GE/FOM-002"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'GE_FOM_002__filter_name' || el.id === 'GE_FOM_002__record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            // ── AJAX SUBMIT + TOAST ──
+            (function() {
+                function initGeFom002() {
+                    const formContainer = document.querySelector('[id="TDPL/GE/FOM-002"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastFOM002('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('GE_FOM_002__record_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastFOM002('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            showToastFOM002('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastFOM002(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initGeFom002);
+                } else {
+                    initGeFom002();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
 
     <x-formTemplete
@@ -836,38 +980,54 @@
         buttonText="Submit"
         action="{{ route('newforms.ge.forms.submit') }}">
 
-        <!-- Hidden field for update -->
-        <input type="hidden" name="sample_rejection_form_id" id="GE_FOM_003__record_id">
-
-        <p style="margin-bottom:10px;">
-            <strong>Month/Year:</strong>
-            <input type="month" name="month_year" id="GE_FOM_003__month_year" onchange="loadSampleRejectionData()" style="border:1px solid #000; padding:4px; width:150px; margin-right:20px;">
-
-            <strong>Location:</strong>
-            <input type="text" name="location" id="GE_FOM_003__location" list="GE_FOM_003__location_list"
-                onchange="loadSampleRejectionData()" onblur="loadSampleRejectionData()" onkeyup="debounceSampleRejection()"
-                style="border:1px solid #000; padding:4px; width:150px; margin-right:20px;" placeholder="Select or type">
-            <datalist id="GE_FOM_003__location_list">
-                <option value="Main Lab">
-                <option value="Branch Lab 1">
-                <option value="Branch Lab 2">
-                <option value="Collection Center 1">
-                <option value="Collection Center 2">
-            </datalist>
-
-            <strong>Department:</strong>
-            <input type="text" name="department" id="GE_FOM_003__department" list="GE_FOM_003__department_list"
-                onchange="loadSampleRejectionData()" onblur="loadSampleRejectionData()" onkeyup="debounceSampleRejection()"
-                style="border:1px solid #000; padding:4px; width:150px;" placeholder="Select or type">
-            <datalist id="GE_FOM_003__department_list">
-                <option value="Biochemistry">
-                <option value="Hematology">
-                <option value="Microbiology">
-                <option value="Histopathology">
-                <option value="Cytology">
-                <option value="Clinical Pathology">
-            </datalist>
-        </p>
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="GE_FOM_003__from_date"
+                    onchange="loadSampleRejectionData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="GE_FOM_003__to_date"
+                    onchange="loadSampleRejectionData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>Department</strong></label>
+                <input type="text" name="department" id="GE_FOM_003__department" list="GE_FOM_003__department_list"
+                    onchange="loadSampleRejectionData()" onblur="loadSampleRejectionData()"
+                    style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                <datalist id="GE_FOM_003__department_list">
+                    <option value="Biochemistry">
+                    <option value="Hematology">
+                    <option value="Microbiology">
+                    <option value="Histopathology">
+                    <option value="Cytology">
+                    <option value="Clinical Pathology">
+                </datalist>
+            </div>
+            <div>
+                <label><strong>Location</strong></label>
+                <input type="text" name="location" id="GE_FOM_003__location" list="GE_FOM_003__location_list"
+                    onchange="loadSampleRejectionData()" onblur="loadSampleRejectionData()"
+                    style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                <datalist id="GE_FOM_003__location_list">
+                    <option value="Main Lab">
+                    <option value="Branch Lab 1">
+                    <option value="Branch Lab 2">
+                    <option value="Collection Center 1">
+                    <option value="Collection Center 2">
+                </datalist>
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearSampleRejectionFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
         <table style="width:100%; border-collapse:collapse; margin-top:10px;">
             <thead>
@@ -890,140 +1050,155 @@
                 </tr>
             </thead>
 
-            <tbody>
+            <tbody id="GE_FOM_003__tbody">
+                <!-- Empty row for new entry -->
                 <tr>
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="datetime-local" name="date_time" id="GE_FOM_003__date_time" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
-
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="patient_barcode" id="GE_FOM_003__patient_barcode" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
-
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="parameter" id="GE_FOM_003__parameter" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
-
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="collected_by" id="GE_FOM_003__collected_by" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
-
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="sample_type" id="GE_FOM_003__sample_type" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
-
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="reason_rejection" id="GE_FOM_003__reason_rejection" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
-
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="informed_by_name" id="GE_FOM_003__informed_by_name" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
-
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="informed_by_sign" id="GE_FOM_003__informed_by_sign" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
-
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="informed_to_csd" id="GE_FOM_003__informed_to_csd" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
-
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="fresh_sample_yes_no" id="GE_FOM_003__fresh_sample_yes_no" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
-
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="new_barcode" id="GE_FOM_003__new_barcode" style="width:100%; padding:4px; border:1px solid #000;">
-                    </td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="date_time[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="patient_barcode[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="parameter[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="collected_by[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="sample_type[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="reason_rejection[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="informed_by_name[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="informed_by_sign[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="informed_to_csd[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="fresh_sample_yes_no[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="new_barcode[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                 </tr>
             </tbody>
         </table>
 
         <script>
-            // Debounce timer for Sample Rejection Form
-            let sampleRejectionDebounceTimer = null;
-
-            function debounceSampleRejection() {
-                clearTimeout(sampleRejectionDebounceTimer);
-                sampleRejectionDebounceTimer = setTimeout(function() {
-                    loadSampleRejectionData();
-                }, 500);
-            }
-
-            // Load Sample Rejection data based on filters
+            // Load Sample Rejection records based on date range filters
             function loadSampleRejectionData() {
-                const monthYear = document.getElementById('GE_FOM_003__month_year').value;
-                const location = document.getElementById('GE_FOM_003__location').value;
-                const department = document.getElementById('GE_FOM_003__department').value;
+                const fromDate = document.getElementById('GE_FOM_003__from_date').value;
+                const toDate   = document.getElementById('GE_FOM_003__to_date').value;
 
-                if (!monthYear && !location && !department) {
-                    clearSampleRejectionForm();
-                    return;
-                }
+                // At least one date filter required
+                if (!fromDate && !toDate) return;
 
                 const params = new URLSearchParams();
-                if (monthYear) params.append('month_year', monthYear);
-                if (location) params.append('location', location);
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate)   params.append('to_date', toDate);
+
+                const department = document.getElementById('GE_FOM_003__department').value;
                 if (department) params.append('department', department);
 
-                fetch(`/newforms/ge/sample-rejection/load?${params.toString()}`)
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.success && result.data) {
-                            populateSampleRejectionForm(result.data);
-                        } else {
-                            clearSampleRejectionForm(true);
-                        }
-                    })
-                    .catch(error => console.error('Error loading data:', error));
+                const location = document.getElementById('GE_FOM_003__location').value;
+                if (location) params.append('location', location);
+
+                fetch(`/newforms/ge/sample-rejection/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('GE_FOM_003__tbody');
+                    if (!tbody) return;
+
+                    // Clear existing rows
+                    tbody.innerHTML = '';
+
+                    // Update datalists
+                    if (res.departments) {
+                        updateFOM003Datalist('GE_FOM_003__department_list', res.departments);
+                    }
+                    if (res.locations) {
+                        updateFOM003Datalist('GE_FOM_003__location_list', res.locations);
+                    }
+
+                    // If no records found, add one empty row
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowFOM003();
+                        return;
+                    }
+
+                    // Add all loaded records
+                    res.data.forEach(row => {
+                        const dtVal = row.date_time ? row.date_time.replace(' ', 'T').substring(0, 16) : '';
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="border:1px solid #000; padding:4px;">
+                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                <input type="datetime-local" name="date_time[]" value="${dtVal}" style="width:100%; padding:4px; border:1px solid #ccc;">
+                            </td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="patient_barcode[]" value="${row.patient_barcode || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="parameter[]" value="${row.parameter || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="collected_by[]" value="${row.collected_by || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="sample_type[]" value="${row.sample_type || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="reason_rejection[]" value="${row.reason_rejection || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="informed_by_name[]" value="${row.informed_by_name || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="informed_by_sign[]" value="${row.informed_by_sign || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="informed_to_csd[]" value="${row.informed_to_csd || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="fresh_sample_yes_no[]" value="${row.fresh_sample_yes_no || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="new_barcode[]" value="${row.new_barcode || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    // Add empty row below loaded records
+                    addEmptyRowFOM003();
+                })
+                .catch(error => console.error('Error loading data:', error));
             }
 
-            function populateSampleRejectionForm(data) {
-                document.getElementById('GE_FOM_003__record_id').value = data.id || '';
-                document.getElementById('GE_FOM_003__date_time').value = data.date_time ? data.date_time.replace(' ', 'T').substring(0, 16) : '';
-                document.getElementById('GE_FOM_003__patient_barcode').value = data.patient_barcode || '';
-                document.getElementById('GE_FOM_003__parameter').value = data.parameter || '';
-                document.getElementById('GE_FOM_003__collected_by').value = data.collected_by || '';
-                document.getElementById('GE_FOM_003__sample_type').value = data.sample_type || '';
-                document.getElementById('GE_FOM_003__reason_rejection').value = data.reason_rejection || '';
-                document.getElementById('GE_FOM_003__informed_by_name').value = data.informed_by_name || '';
-                document.getElementById('GE_FOM_003__informed_by_sign').value = data.informed_by_sign || '';
-                document.getElementById('GE_FOM_003__informed_to_csd').value = data.informed_to_csd || '';
-                document.getElementById('GE_FOM_003__fresh_sample_yes_no').value = data.fresh_sample_yes_no || '';
-                document.getElementById('GE_FOM_003__new_barcode').value = data.new_barcode || '';
-            }
-
-            function clearSampleRejectionForm(keepFilters = false) {
-                document.getElementById('GE_FOM_003__record_id').value = '';
-                document.getElementById('GE_FOM_003__date_time').value = '';
-                document.getElementById('GE_FOM_003__patient_barcode').value = '';
-                document.getElementById('GE_FOM_003__parameter').value = '';
-                document.getElementById('GE_FOM_003__collected_by').value = '';
-                document.getElementById('GE_FOM_003__sample_type').value = '';
-                document.getElementById('GE_FOM_003__reason_rejection').value = '';
-                document.getElementById('GE_FOM_003__informed_by_name').value = '';
-                document.getElementById('GE_FOM_003__informed_by_sign').value = '';
-                document.getElementById('GE_FOM_003__informed_to_csd').value = '';
-                document.getElementById('GE_FOM_003__fresh_sample_yes_no').value = '';
-                document.getElementById('GE_FOM_003__new_barcode').value = '';
-
-                if (!keepFilters) {
-                    document.getElementById('GE_FOM_003__month_year').value = '';
-                    document.getElementById('GE_FOM_003__location').value = '';
-                    document.getElementById('GE_FOM_003__department').value = '';
+            function clearSampleRejectionForm() {
+                const tbody = document.getElementById('GE_FOM_003__tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowFOM003();
                 }
             }
 
-            // AJAX form submission for FOM-003
+            function addEmptyRowFOM003() {
+                const tbody = document.getElementById('GE_FOM_003__tbody');
+                if (!tbody) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="date_time[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="patient_barcode[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="parameter[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="collected_by[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="sample_type[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="reason_rejection[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="informed_by_name[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="informed_by_sign[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="informed_to_csd[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="fresh_sample_yes_no[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="new_barcode[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearSampleRejectionFilters() {
+                document.getElementById('GE_FOM_003__from_date').value = '';
+                document.getElementById('GE_FOM_003__to_date').value = '';
+                document.getElementById('GE_FOM_003__department').value = '';
+                document.getElementById('GE_FOM_003__location').value = '';
+                clearSampleRejectionForm();
+            }
+
+            function updateFOM003Datalist(datalistId, values) {
+                const datalist = document.getElementById(datalistId);
+                if (!datalist) return;
+                const existingOptions = Array.from(datalist.options).map(opt => opt.value);
+                values.forEach(value => {
+                    if (!existingOptions.includes(value)) {
+                        const option = document.createElement('option');
+                        option.value = value;
+                        datalist.appendChild(option);
+                    }
+                });
+            }
+
+            // AJAX Submit for FOM-003
             (function() {
                 function initSampleRejectionForm() {
                     const formContainer = document.querySelector('[id="TDPL/GE/FOM-003"]');
                     if (!formContainer) return;
 
                     const form = formContainer.querySelector('form');
-                    if (!form) return;
-
-                    if (form.dataset.ajaxBound === 'true') return;
+                    if (!form || form.dataset.ajaxBound === 'true') return;
                     form.dataset.ajaxBound = 'true';
 
                     form.addEventListener('submit', function(e) {
@@ -1048,10 +1223,38 @@
                         .then(response => response.json())
                         .then(result => {
                             if (result.success) {
-                                if (result.data && result.data.id) {
-                                    document.getElementById('GE_FOM_003__record_id').value = result.data.id;
-                                }
                                 showToastFOM003('success', result.message || 'Saved successfully!');
+
+                                // Display saved records directly from response
+                                const tbody = document.getElementById('GE_FOM_003__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach(row => {
+                                        const dtVal = row.date_time ? row.date_time.replace(' ', 'T').substring(0, 16) : '';
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:4px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input type="datetime-local" name="date_time[]" value="${dtVal}" style="width:100%; padding:4px; border:1px solid #ccc;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="patient_barcode[]" value="${row.patient_barcode || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="parameter[]" value="${row.parameter || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="collected_by[]" value="${row.collected_by || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="sample_type[]" value="${row.sample_type || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="reason_rejection[]" value="${row.reason_rejection || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="informed_by_name[]" value="${row.informed_by_name || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="informed_by_sign[]" value="${row.informed_by_sign || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="informed_to_csd[]" value="${row.informed_to_csd || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="fresh_sample_yes_no[]" value="${row.fresh_sample_yes_no || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="new_barcode[]" value="${row.new_barcode || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    // Add empty row at end for new entry
+                                    addEmptyRowFOM003();
+                                }
                             } else {
                                 showToastFOM003('error', result.message || 'Failed to save');
                             }
@@ -1104,23 +1307,25 @@
         buttonText="Submit"
         action="{{ route('newforms.ge.forms.submit') }}">
 
-        {{-- FILTERS --}}
-        <div style="display:flex; gap:16px; margin-bottom:12px;">
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
             <div>
                 <label><strong>From Date</strong></label>
-                <input type="date" id="GE_FOM_004__from_date" onchange="loadAccidentReportingData()"
-                    style="border:1px solid #000; padding:4px;">
+                <input type="date" id="GE_FOM_004__from_date"
+                    onchange="loadAccidentReportingData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
             </div>
             <div>
                 <label><strong>To Date</strong></label>
-                <input type="date" id="GE_FOM_004__to_date" onchange="loadAccidentReportingData()"
-                    style="border:1px solid #000; padding:4px;">
+                <input type="date" id="GE_FOM_004__to_date"
+                    onchange="loadAccidentReportingData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
             </div>
             <div>
                 <label><strong>Location</strong></label>
                 <input type="text" name="location" id="GE_FOM_004__location" list="GE_FOM_004__location_list"
                     onchange="loadAccidentReportingData()" onblur="loadAccidentReportingData()"
-                    style="border:1px solid #000; padding:4px; width:200px;" placeholder="Select or type">
+                    style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
                 <datalist id="GE_FOM_004__location_list">
                     <option value="Main Lab">
                     <option value="Branch Lab 1">
@@ -1131,33 +1336,39 @@
                     <option value="Warehouse">
                 </datalist>
             </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearAccidentReportingFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
         </div>
 
-        {{-- TABLE --}}
-        <table border="1" cellspacing="0" cellpadding="4" style="width:100%; border-collapse:collapse;">
+        <table style="width:100%; border-collapse:collapse; margin-top:10px;">
             <thead>
                 <tr>
-                    <th style="padding:6px; border:1px solid #000;">S.No</th>
-                    <th style="padding:6px; border:1px solid #000;">Date &amp; Time</th>
-                    <th style="padding:6px; border:1px solid #000;">Person Involved</th>
-                    <th style="padding:6px; border:1px solid #000;">Injuries Sustained</th>
-                    <th style="padding:6px; border:1px solid #000;">Emergency First-Aid Given</th>
-                    <th style="padding:6px; border:1px solid #000;">First-Aid Given By<br><span style="font-weight:400;">(Name &amp; Signature)</span></th>
-                    <th style="padding:6px; border:1px solid #000;">Follow-Up Action</th>
-                    <th style="padding:6px; border:1px solid #000;">Preventive Action</th>
+                    <th style="border:1px solid #000; padding:6px;">S.No</th>
+                    <th style="border:1px solid #000; padding:6px;">Date &amp; Time</th>
+                    <th style="border:1px solid #000; padding:6px;">Person Involved</th>
+                    <th style="border:1px solid #000; padding:6px;">Injuries Sustained</th>
+                    <th style="border:1px solid #000; padding:6px;">Emergency First-Aid Given</th>
+                    <th style="border:1px solid #000; padding:6px;">First-Aid Given By<br><span style="font-weight:400;">(Name &amp; Signature)</span></th>
+                    <th style="border:1px solid #000; padding:6px;">Follow-Up Action</th>
+                    <th style="border:1px solid #000; padding:6px;">Preventive Action</th>
                 </tr>
             </thead>
+
             <tbody id="GE_FOM_004__tbody">
-                {{-- Single empty row for new entry --}}
+                <!-- Empty row for new entry -->
                 <tr>
-                    <td style="border:1px solid #000; padding:4px;"><input name="sno[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="date_time[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="person_involved[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="injuries_sustained[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="emergency_first_aid[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="first_aid_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="follow_up_action[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="preventive_action[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="sno[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="date_time[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="person_involved[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="injuries_sustained[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="emergency_first_aid[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="first_aid_by[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="follow_up_action[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="preventive_action[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                 </tr>
             </tbody>
         </table>
@@ -1166,14 +1377,14 @@
             // Load Accident Reporting records based on date range filters
             function loadAccidentReportingData() {
                 const fromDate = document.getElementById('GE_FOM_004__from_date').value;
-                const toDate = document.getElementById('GE_FOM_004__to_date').value;
+                const toDate   = document.getElementById('GE_FOM_004__to_date').value;
 
                 // At least one date filter required
                 if (!fromDate && !toDate) return;
 
                 const params = new URLSearchParams();
                 if (fromDate) params.append('from_date', fromDate);
-                if (toDate) params.append('to_date', toDate);
+                if (toDate)   params.append('to_date', toDate);
 
                 const location = document.getElementById('GE_FOM_004__location').value;
                 if (location) params.append('location', location);
@@ -1183,69 +1394,96 @@
                 })
                 .then(res => res.json())
                 .then(res => {
-                    clearAccidentReportingForm();
-
                     const tbody = document.getElementById('GE_FOM_004__tbody');
-                    if (!tbody || !res.data || res.data.length === 0) return;
+                    if (!tbody) return;
 
+                    // Clear existing rows
+                    tbody.innerHTML = '';
+
+                    // Update datalists
+                    if (res.locations) {
+                        updateFOM004Datalist('GE_FOM_004__location_list', res.locations);
+                    }
+
+                    // If no records found, add one empty row
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowFOM004();
+                        return;
+                    }
+
+                    // Add all loaded records
                     res.data.forEach((row, index) => {
+                        const dtVal = row.date_time ? row.date_time.replace(' ', 'T').substring(0, 16) : '';
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td style="border:1px solid #000; padding:4px;">
                                 <input type="hidden" name="row_id[]" value="${row.id}">
-                                <input name="sno[]" value="${index + 1}" style="width:100%; border:1px solid #ccc; padding:4px;">
+                                <input name="sno[]" value="${index + 1}" style="width:100%; padding:4px; border:1px solid #ccc;">
                             </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input type="datetime-local" name="date_time[]" value="${row.date_time ? row.date_time.replace(' ', 'T').substring(0, 16) : ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="person_involved[]" value="${row.person_involved || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="injuries_sustained[]" value="${row.injuries_sustained || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="emergency_first_aid[]" value="${row.emergency_first_aid || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="first_aid_by[]" value="${row.first_aid_by || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="follow_up_action[]" value="${row.follow_up_action || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="preventive_action[]" value="${row.preventive_action || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
+                            <td style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="date_time[]" value="${dtVal}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="person_involved[]" value="${row.person_involved || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="injuries_sustained[]" value="${row.injuries_sustained || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="emergency_first_aid[]" value="${row.emergency_first_aid || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="first_aid_by[]" value="${row.first_aid_by || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="follow_up_action[]" value="${row.follow_up_action || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="preventive_action[]" value="${row.preventive_action || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                         `;
                         tbody.appendChild(tr);
                     });
+
+                    // Add empty row below loaded records
+                    addEmptyRowFOM004();
                 })
                 .catch(error => console.error('Error loading data:', error));
             }
 
             function clearAccidentReportingForm() {
                 const tbody = document.getElementById('GE_FOM_004__tbody');
-                if (tbody) tbody.innerHTML = '';
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowFOM004();
+                }
             }
 
-            // Toast notification
-            function showToastFOM004(type, message) {
-                const existingToast = document.querySelector('.ge-toast-fom004');
-                if (existingToast) existingToast.remove();
+            function addEmptyRowFOM004() {
+                const tbody = document.getElementById('GE_FOM_004__tbody');
+                if (!tbody) return;
 
-                const toast = document.createElement('div');
-                toast.className = 'ge-toast-fom004';
-                toast.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; padding: 15px 25px;
-                    border-radius: 5px; color: white; font-weight: bold; z-index: 9999;
-                    background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:4px;"><input name="sno[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="date_time[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="person_involved[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="injuries_sustained[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="emergency_first_aid[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="first_aid_by[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="follow_up_action[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="preventive_action[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                 `;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 3000);
+                tbody.appendChild(tr);
             }
 
-            // AJAX form submission - stay on same page
+            function clearAccidentReportingFilters() {
+                document.getElementById('GE_FOM_004__from_date').value = '';
+                document.getElementById('GE_FOM_004__to_date').value = '';
+                document.getElementById('GE_FOM_004__location').value = '';
+                clearAccidentReportingForm();
+            }
+
+            function updateFOM004Datalist(datalistId, values) {
+                const datalist = document.getElementById(datalistId);
+                if (!datalist) return;
+                const existingOptions = Array.from(datalist.options).map(opt => opt.value);
+                values.forEach(value => {
+                    if (!existingOptions.includes(value)) {
+                        const option = document.createElement('option');
+                        option.value = value;
+                        datalist.appendChild(option);
+                    }
+                });
+            }
+
+            // AJAX Submit for FOM-004
             (function() {
                 function initAccidentReportingForm() {
                     const formContainer = document.querySelector('[id="TDPL/GE/FOM-004"]');
@@ -1276,9 +1514,39 @@
                         })
                         .then(response => response.json())
                         .then(result => {
-                            showToastFOM004('success', result.message || 'Saved successfully!');
-                            // Reload data to show updated records
-                            loadAccidentReportingData();
+                            if (result.success) {
+                                showToastFOM004('success', result.message || 'Saved successfully!');
+
+                                // Display saved records directly from response
+                                const tbody = document.getElementById('GE_FOM_004__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach((row, index) => {
+                                        const dtVal = row.date_time ? row.date_time.replace(' ', 'T').substring(0, 16) : '';
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:4px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input name="sno[]" value="${index + 1}" style="width:100%; padding:4px; border:1px solid #ccc;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="date_time[]" value="${dtVal}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="person_involved[]" value="${row.person_involved || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="injuries_sustained[]" value="${row.injuries_sustained || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="emergency_first_aid[]" value="${row.emergency_first_aid || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="first_aid_by[]" value="${row.first_aid_by || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="follow_up_action[]" value="${row.follow_up_action || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="preventive_action[]" value="${row.preventive_action || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    // Add empty row at end for new entry
+                                    addEmptyRowFOM004();
+                                }
+                            } else {
+                                showToastFOM004('error', result.message || 'Failed to save');
+                            }
                         })
                         .catch(error => {
                             console.error('Error:', error);
@@ -1291,6 +1559,22 @@
 
                         return false;
                     });
+                }
+
+                function showToastFOM004(type, message) {
+                    const existingToast = document.querySelector('.ge-toast-fom004');
+                    if (existingToast) existingToast.remove();
+
+                    const toast = document.createElement('div');
+                    toast.className = 'ge-toast-fom004';
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; padding: 15px 25px;
+                        border-radius: 5px; color: white; font-weight: bold; z-index: 9999;
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
                 }
 
                 if (document.readyState === 'loading') {
@@ -1312,30 +1596,19 @@
         buttonText="Submit"
         action="{{ route('newforms.ge.forms.submit') }}">
 
-        {{-- FILTERS --}}
-        <div style="display:flex; gap:16px; margin-bottom:12px; flex-wrap:wrap;">
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
             <div>
                 <label><strong>From Date</strong></label>
-                <input type="date" id="GE_FOM_005__from_date" onchange="loadAnalyteCalibrationData()"
-                    style="border:1px solid #000; padding:4px;">
+                <input type="date" id="GE_FOM_005__from_date"
+                    onchange="loadAnalyteCalibrationData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
             </div>
             <div>
                 <label><strong>To Date</strong></label>
-                <input type="date" id="GE_FOM_005__to_date" onchange="loadAnalyteCalibrationData()"
-                    style="border:1px solid #000; padding:4px;">
-            </div>
-            <div>
-                <label><strong>Location</strong></label>
-                <input type="text" name="location" id="GE_FOM_005__location" list="GE_FOM_005__location_list"
-                    onchange="loadAnalyteCalibrationData()" onblur="loadAnalyteCalibrationData()"
-                    style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
-                <datalist id="GE_FOM_005__location_list">
-                    <option value="Main Lab">
-                    <option value="Branch Lab 1">
-                    <option value="Branch Lab 2">
-                    <option value="Collection Center 1">
-                    <option value="Collection Center 2">
-                </datalist>
+                <input type="date" id="GE_FOM_005__to_date"
+                    onchange="loadAnalyteCalibrationData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
             </div>
             <div>
                 <label><strong>Department</strong></label>
@@ -1350,64 +1623,83 @@
                     <option value="Histopathology">
                 </datalist>
             </div>
+            <div>
+                <label><strong>Location</strong></label>
+                <input type="text" name="location" id="GE_FOM_005__location" list="GE_FOM_005__location_list"
+                    onchange="loadAnalyteCalibrationData()" onblur="loadAnalyteCalibrationData()"
+                    style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                <datalist id="GE_FOM_005__location_list">
+                    <option value="Main Lab">
+                    <option value="Branch Lab 1">
+                    <option value="Branch Lab 2">
+                    <option value="Collection Center 1">
+                    <option value="Collection Center 2">
+                </datalist>
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearAnalyteCalibrationFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
         </div>
 
-        {{-- TABLE --}}
-        <table border="1" cellspacing="0" cellpadding="4" style="width:100%; border-collapse:collapse;">
+        <table style="width:100%; border-collapse:collapse; margin-top:10px;">
             <thead>
                 <tr>
-                    <th rowspan="2" style="border:1px solid #000; padding:4px;">S.No</th>
-                    <th rowspan="2" style="border:1px solid #000; padding:4px;">Date</th>
-                    <th rowspan="2" style="border:1px solid #000; padding:4px;">Parameters</th>
-                    <th rowspan="2" style="border:1px solid #000; padding:4px;">Calibrator Used</th>
-                    <th rowspan="2" style="border:1px solid #000; padding:4px;">Lot No.</th>
-                    <th colspan="6" style="border:1px solid #000; padding:4px; text-align:center;">QC Value</th>
-                    <th rowspan="2" style="border:1px solid #000; padding:4px;">Lab Staff Sign</th>
-                    <th rowspan="2" style="border:1px solid #000; padding:4px;">Supervisor Sign</th>
+                    <th rowspan="2" style="border:1px solid #000; padding:6px;">S.No</th>
+                    <th rowspan="2" style="border:1px solid #000; padding:6px;">Date</th>
+                    <th rowspan="2" style="border:1px solid #000; padding:6px;">Parameters</th>
+                    <th rowspan="2" style="border:1px solid #000; padding:6px;">Calibrator Used</th>
+                    <th rowspan="2" style="border:1px solid #000; padding:6px;">Lot No.</th>
+                    <th colspan="6" style="border:1px solid #000; padding:6px; text-align:center;">QC Value</th>
+                    <th rowspan="2" style="border:1px solid #000; padding:6px;">Lab Staff Sign</th>
+                    <th rowspan="2" style="border:1px solid #000; padding:6px;">Supervisor Sign</th>
                 </tr>
                 <tr>
-                    <th style="border:1px solid #000; padding:4px;">Level 1</th>
-                    <th style="border:1px solid #000; padding:4px;">Accept/Unaccept</th>
-                    <th style="border:1px solid #000; padding:4px;">Level 2</th>
-                    <th style="border:1px solid #000; padding:4px;">Accept/Unaccept</th>
-                    <th style="border:1px solid #000; padding:4px;">Level 3</th>
-                    <th style="border:1px solid #000; padding:4px;">Accept/Unaccept</th>
+                    <th style="border:1px solid #000; padding:6px;">Level 1</th>
+                    <th style="border:1px solid #000; padding:6px;">Accept/Unaccept</th>
+                    <th style="border:1px solid #000; padding:6px;">Level 2</th>
+                    <th style="border:1px solid #000; padding:6px;">Accept/Unaccept</th>
+                    <th style="border:1px solid #000; padding:6px;">Level 3</th>
+                    <th style="border:1px solid #000; padding:6px;">Accept/Unaccept</th>
                 </tr>
             </thead>
+
             <tbody id="GE_FOM_005__tbody">
-                {{-- Single empty row for new entry --}}
+                <!-- Empty row for new entry -->
                 <tr>
-                    <td style="border:1px solid #000; padding:4px;"><input name="sno[]" style="width:50px; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input type="date" name="calibration_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="parameters[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="calibrator_used[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="lot_no[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="level1[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="sno[]" style="width:50px; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="date" name="calibration_date[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="parameters[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="calibrator_used[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="lot_no[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="level1[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                     <td style="border:1px solid #000; padding:4px;">
-                        <select name="level1_status[]" style="width:100%; border:1px solid #ccc; padding:4px;">
+                        <select name="level1_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
                             <option value="">--</option>
                             <option value="Acceptable">Acceptable</option>
                             <option value="Unacceptable">Unacceptable</option>
                         </select>
                     </td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="level2[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="level2[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                     <td style="border:1px solid #000; padding:4px;">
-                        <select name="level2_status[]" style="width:100%; border:1px solid #ccc; padding:4px;">
+                        <select name="level2_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
                             <option value="">--</option>
                             <option value="Acceptable">Acceptable</option>
                             <option value="Unacceptable">Unacceptable</option>
                         </select>
                     </td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="level3[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="level3[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                     <td style="border:1px solid #000; padding:4px;">
-                        <select name="level3_status[]" style="width:100%; border:1px solid #ccc; padding:4px;">
+                        <select name="level3_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
                             <option value="">--</option>
                             <option value="Acceptable">Acceptable</option>
                             <option value="Unacceptable">Unacceptable</option>
                         </select>
                     </td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="lab_staff_sign[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
-                    <td style="border:1px solid #000; padding:4px;"><input name="supervisor_sign[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="lab_staff_sign[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="supervisor_sign[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                 </tr>
             </tbody>
         </table>
@@ -1416,116 +1708,165 @@
             // Load Analyte Calibration records based on date range filters
             function loadAnalyteCalibrationData() {
                 const fromDate = document.getElementById('GE_FOM_005__from_date').value;
-                const toDate = document.getElementById('GE_FOM_005__to_date').value;
+                const toDate   = document.getElementById('GE_FOM_005__to_date').value;
 
                 // At least one date filter required
                 if (!fromDate && !toDate) return;
 
                 const params = new URLSearchParams();
                 if (fromDate) params.append('from_date', fromDate);
-                if (toDate) params.append('to_date', toDate);
-
-                const location = document.getElementById('GE_FOM_005__location').value;
-                if (location) params.append('location', location);
+                if (toDate)   params.append('to_date', toDate);
 
                 const department = document.getElementById('GE_FOM_005__department').value;
                 if (department) params.append('department', department);
+
+                const location = document.getElementById('GE_FOM_005__location').value;
+                if (location) params.append('location', location);
 
                 fetch(`/newforms/ge/analyte-calibration/load?${params.toString()}`, {
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
                 })
                 .then(res => res.json())
                 .then(res => {
-                    clearAnalyteCalibrationForm();
-
                     const tbody = document.getElementById('GE_FOM_005__tbody');
-                    if (!tbody || !res.data || res.data.length === 0) return;
+                    if (!tbody) return;
 
+                    // Clear existing rows
+                    tbody.innerHTML = '';
+
+                    // Update datalists
+                    if (res.departments) {
+                        updateFOM005Datalist('GE_FOM_005__department_list', res.departments);
+                    }
+                    if (res.locations) {
+                        updateFOM005Datalist('GE_FOM_005__location_list', res.locations);
+                    }
+
+                    // If no records found, add one empty row
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowFOM005();
+                        return;
+                    }
+
+                    // Add all loaded records
                     res.data.forEach((row, index) => {
                         const tr = document.createElement('tr');
                         tr.innerHTML = `
                             <td style="border:1px solid #000; padding:4px;">
                                 <input type="hidden" name="row_id[]" value="${row.id}">
-                                <input name="sno[]" value="${index + 1}" style="width:50px; border:1px solid #ccc; padding:4px;">
+                                <input name="sno[]" value="${index + 1}" style="width:50px; padding:4px; border:1px solid #ccc;">
                             </td>
+                            <td style="border:1px solid #000; padding:4px;"><input type="date" name="calibration_date[]" value="${row.calibration_date || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="parameters[]" value="${row.parameters || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="calibrator_used[]" value="${row.calibrator_used || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="lot_no[]" value="${row.lot_no || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="level1[]" value="${row.level1 || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                             <td style="border:1px solid #000; padding:4px;">
-                                <input type="date" name="calibration_date[]" value="${row.calibration_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="parameters[]" value="${row.parameters || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="calibrator_used[]" value="${row.calibrator_used || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="lot_no[]" value="${row.lot_no || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="level1[]" value="${row.level1 || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <select name="level1_status[]" style="width:100%; border:1px solid #ccc; padding:4px;">
+                                <select name="level1_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
                                     <option value="">--</option>
                                     <option value="Acceptable" ${row.level1_status === 'Acceptable' ? 'selected' : ''}>Acceptable</option>
                                     <option value="Unacceptable" ${row.level1_status === 'Unacceptable' ? 'selected' : ''}>Unacceptable</option>
                                 </select>
                             </td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="level2[]" value="${row.level2 || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                             <td style="border:1px solid #000; padding:4px;">
-                                <input name="level2[]" value="${row.level2 || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <select name="level2_status[]" style="width:100%; border:1px solid #ccc; padding:4px;">
+                                <select name="level2_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
                                     <option value="">--</option>
                                     <option value="Acceptable" ${row.level2_status === 'Acceptable' ? 'selected' : ''}>Acceptable</option>
                                     <option value="Unacceptable" ${row.level2_status === 'Unacceptable' ? 'selected' : ''}>Unacceptable</option>
                                 </select>
                             </td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="level3[]" value="${row.level3 || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                             <td style="border:1px solid #000; padding:4px;">
-                                <input name="level3[]" value="${row.level3 || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <select name="level3_status[]" style="width:100%; border:1px solid #ccc; padding:4px;">
+                                <select name="level3_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
                                     <option value="">--</option>
                                     <option value="Acceptable" ${row.level3_status === 'Acceptable' ? 'selected' : ''}>Acceptable</option>
                                     <option value="Unacceptable" ${row.level3_status === 'Unacceptable' ? 'selected' : ''}>Unacceptable</option>
                                 </select>
                             </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="lab_staff_sign[]" value="${row.lab_staff_sign || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
-                            <td style="border:1px solid #000; padding:4px;">
-                                <input name="supervisor_sign[]" value="${row.supervisor_sign || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
-                            </td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="lab_staff_sign[]" value="${row.lab_staff_sign || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                            <td style="border:1px solid #000; padding:4px;"><input name="supervisor_sign[]" value="${row.supervisor_sign || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                         `;
                         tbody.appendChild(tr);
                     });
+
+                    // Add empty row below loaded records
+                    addEmptyRowFOM005();
                 })
                 .catch(error => console.error('Error loading data:', error));
             }
 
             function clearAnalyteCalibrationForm() {
                 const tbody = document.getElementById('GE_FOM_005__tbody');
-                if (tbody) tbody.innerHTML = '';
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowFOM005();
+                }
             }
 
-            // Toast notification
-            function showToastFOM005(type, message) {
-                const existingToast = document.querySelector('.ge-toast-fom005');
-                if (existingToast) existingToast.remove();
+            function addEmptyRowFOM005() {
+                const tbody = document.getElementById('GE_FOM_005__tbody');
+                if (!tbody) return;
 
-                const toast = document.createElement('div');
-                toast.className = 'ge-toast-fom005';
-                toast.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; padding: 15px 25px;
-                    border-radius: 5px; color: white; font-weight: bold; z-index: 9999;
-                    background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:4px;"><input name="sno[]" style="width:50px; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="date" name="calibration_date[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="parameters[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="calibrator_used[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="lot_no[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="level1[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;">
+                        <select name="level1_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
+                            <option value="">--</option>
+                            <option value="Acceptable">Acceptable</option>
+                            <option value="Unacceptable">Unacceptable</option>
+                        </select>
+                    </td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="level2[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;">
+                        <select name="level2_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
+                            <option value="">--</option>
+                            <option value="Acceptable">Acceptable</option>
+                            <option value="Unacceptable">Unacceptable</option>
+                        </select>
+                    </td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="level3[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;">
+                        <select name="level3_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
+                            <option value="">--</option>
+                            <option value="Acceptable">Acceptable</option>
+                            <option value="Unacceptable">Unacceptable</option>
+                        </select>
+                    </td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="lab_staff_sign[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="supervisor_sign[]" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
                 `;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 3000);
+                tbody.appendChild(tr);
             }
 
-            // AJAX form submission - stay on same page
+            function clearAnalyteCalibrationFilters() {
+                document.getElementById('GE_FOM_005__from_date').value = '';
+                document.getElementById('GE_FOM_005__to_date').value = '';
+                document.getElementById('GE_FOM_005__department').value = '';
+                document.getElementById('GE_FOM_005__location').value = '';
+                clearAnalyteCalibrationForm();
+            }
+
+            function updateFOM005Datalist(datalistId, values) {
+                const datalist = document.getElementById(datalistId);
+                if (!datalist) return;
+                const existingOptions = Array.from(datalist.options).map(opt => opt.value);
+                values.forEach(value => {
+                    if (!existingOptions.includes(value)) {
+                        const option = document.createElement('option');
+                        option.value = value;
+                        datalist.appendChild(option);
+                    }
+                });
+            }
+
+            // AJAX Submit for FOM-005
             (function() {
                 function initAnalyteCalibrationForm() {
                     const formContainer = document.querySelector('[id="TDPL/GE/FOM-005"]');
@@ -1556,9 +1897,61 @@
                         })
                         .then(response => response.json())
                         .then(result => {
-                            showToastFOM005('success', result.message || 'Saved successfully!');
-                            // Reload data to show updated records
-                            loadAnalyteCalibrationData();
+                            if (result.success) {
+                                showToastFOM005('success', result.message || 'Saved successfully!');
+
+                                // Display saved records directly from response
+                                const tbody = document.getElementById('GE_FOM_005__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach((row, index) => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:4px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input name="sno[]" value="${index + 1}" style="width:50px; padding:4px; border:1px solid #ccc;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:4px;"><input type="date" name="calibration_date[]" value="${row.calibration_date || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="parameters[]" value="${row.parameters || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="calibrator_used[]" value="${row.calibrator_used || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="lot_no[]" value="${row.lot_no || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="level1[]" value="${row.level1 || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;">
+                                                <select name="level1_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
+                                                    <option value="">--</option>
+                                                    <option value="Acceptable" ${row.level1_status === 'Acceptable' ? 'selected' : ''}>Acceptable</option>
+                                                    <option value="Unacceptable" ${row.level1_status === 'Unacceptable' ? 'selected' : ''}>Unacceptable</option>
+                                                </select>
+                                            </td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="level2[]" value="${row.level2 || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;">
+                                                <select name="level2_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
+                                                    <option value="">--</option>
+                                                    <option value="Acceptable" ${row.level2_status === 'Acceptable' ? 'selected' : ''}>Acceptable</option>
+                                                    <option value="Unacceptable" ${row.level2_status === 'Unacceptable' ? 'selected' : ''}>Unacceptable</option>
+                                                </select>
+                                            </td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="level3[]" value="${row.level3 || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;">
+                                                <select name="level3_status[]" style="width:100%; padding:4px; border:1px solid #ccc;">
+                                                    <option value="">--</option>
+                                                    <option value="Acceptable" ${row.level3_status === 'Acceptable' ? 'selected' : ''}>Acceptable</option>
+                                                    <option value="Unacceptable" ${row.level3_status === 'Unacceptable' ? 'selected' : ''}>Unacceptable</option>
+                                                </select>
+                                            </td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="lab_staff_sign[]" value="${row.lab_staff_sign || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                            <td style="border:1px solid #000; padding:4px;"><input name="supervisor_sign[]" value="${row.supervisor_sign || ''}" style="width:100%; padding:4px; border:1px solid #ccc;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    // Add empty row at end for new entry
+                                    addEmptyRowFOM005();
+                                }
+                            } else {
+                                showToastFOM005('error', result.message || 'Failed to save');
+                            }
                         })
                         .catch(error => {
                             console.error('Error:', error);
@@ -1571,6 +1964,22 @@
 
                         return false;
                     });
+                }
+
+                function showToastFOM005(type, message) {
+                    const existingToast = document.querySelector('.ge-toast-fom005');
+                    if (existingToast) existingToast.remove();
+
+                    const toast = document.createElement('div');
+                    toast.className = 'ge-toast-fom005';
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; padding: 15px 25px;
+                        border-radius: 5px; color: white; font-weight: bold; z-index: 9999;
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
                 }
 
                 if (document.readyState === 'loading') {
@@ -1592,32 +2001,28 @@
         buttonText="Submit"
         action="{{ route('newforms.ge.forms.submit') }}">
 
-        {{-- FILTERS --}}
-        <div style="display:flex; gap:16px; margin-bottom:12px; flex-wrap:wrap;">
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
             <div>
-                <label><strong>Month &amp; Year</strong></label>
+                <strong>Month & Year:</strong>
                 <input type="month" name="month_year" id="GE_FOM_006__month_year"
-                    onchange="loadBiomedicalWasteData()"
-                    style="border:1px solid #000; padding:4px;">
+                    style="border:1px solid #000; padding:4px;"
+                    onchange="loadBiomedicalWasteData()">
             </div>
             <div>
-                <label><strong>Biomedical Waste Collection Agency Name</strong></label>
+                <strong>Agency Name:</strong>
                 <input type="text" name="agency_name" id="GE_FOM_006__agency_name"
                     list="GE_FOM_006__agency_list"
-                    onchange="loadBiomedicalWasteData()" onblur="loadBiomedicalWasteData()"
-                    style="border:1px solid #000; padding:4px; width:280px;" placeholder="Select or type">
-                <datalist id="GE_FOM_006__agency_list">
-                    <option value="Agency 1">
-                    <option value="Agency 2">
-                    <option value="Agency 3">
-                    <option value="Biomedical Waste Services">
-                    <option value="Medical Waste Solutions">
-                </datalist>
+                    style="border:1px solid #000; padding:4px; width:280px;"
+                    onchange="loadBiomedicalWasteData()">
+                <datalist id="GE_FOM_006__agency_list"></datalist>
             </div>
+            <button type="button" onclick="clearBiomedicalWasteFilters()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
         </div>
 
-        {{-- TABLE --}}
-        <table style="width:100%; border-collapse:collapse; background:#fff; border:1px solid #000;">
+        <table style="width:100%; border-collapse:collapse; margin-top:15px;">
             <thead>
                 <tr>
                     <th rowspan="2" style="border:1px solid #000; padding:4px;">Date</th>
@@ -1689,94 +2094,85 @@
         </table>
 
         <script>
-            // Load Biomedical Waste data based on month_year filter
             function loadBiomedicalWasteData() {
                 const monthYear = document.getElementById('GE_FOM_006__month_year').value;
+                const agencyName = document.getElementById('GE_FOM_006__agency_name').value;
 
                 if (!monthYear) return;
 
                 const params = new URLSearchParams();
                 params.append('month_year', monthYear);
-
-                const agencyName = document.getElementById('GE_FOM_006__agency_name').value;
                 if (agencyName) params.append('agency_name', agencyName);
 
-                fetch(`/newforms/ge/biomedical-waste/load?${params.toString()}`, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                })
-                .then(res => res.json())
-                .then(res => {
-                    // Clear all fields first
-                    clearBiomedicalWasteForm();
-
-                    if (!res.data || !res.data.daily_data) return;
-
-                    // Populate data into form
-                    const dailyData = res.data.daily_data;
-                    for (let day = 1; day <= 31; day++) {
-                        if (dailyData[day]) {
-                            const row = dailyData[day];
-                            setFieldValue('GE_FOM_006__red_' + day, row.red);
-                            setFieldValue('GE_FOM_006__red_weight_' + day, row.red_weight);
-                            setFieldValue('GE_FOM_006__yellow_' + day, row.yellow);
-                            setFieldValue('GE_FOM_006__yellow_weight_' + day, row.yellow_weight);
-                            setFieldValue('GE_FOM_006__blue_' + day, row.blue);
-                            setFieldValue('GE_FOM_006__blue_weight_' + day, row.blue_weight);
-                            setFieldValue('GE_FOM_006__sharp_' + day, row.sharp);
-                            setFieldValue('GE_FOM_006__sharp_weight_' + day, row.sharp_weight);
-                            setFieldValue('GE_FOM_006__handover_' + day, row.handover_signature);
-                            setFieldValue('GE_FOM_006__handler_' + day, row.handler_signature);
+                fetch(`/newforms/ge/biomedical-waste/load?${params.toString()}`)
+                    .then(res => res.json())
+                    .then(result => {
+                        // Populate datalists
+                        if (result.agency_names) {
+                            const agencyList = document.getElementById('GE_FOM_006__agency_list');
+                            agencyList.innerHTML = result.agency_names.map(a => `<option value="${a}">`).join('');
                         }
-                    }
 
-                    // Set agency name if returned
-                    if (res.data.agency_name) {
-                        document.getElementById('GE_FOM_006__agency_name').value = res.data.agency_name;
-                    }
-                })
-                .catch(error => console.error('Error loading data:', error));
+                        // Clear all inputs first
+                        clearBiomedicalWasteInputs();
+
+                        // If data found, populate fields
+                        if (result.success && result.data && result.data.daily_data) {
+                            const dailyData = result.data.daily_data;
+                            for (let day = 1; day <= 31; day++) {
+                                if (dailyData[day]) {
+                                    const row = dailyData[day];
+                                    setFOM006Value('GE_FOM_006__red_' + day, row.red);
+                                    setFOM006Value('GE_FOM_006__red_weight_' + day, row.red_weight);
+                                    setFOM006Value('GE_FOM_006__yellow_' + day, row.yellow);
+                                    setFOM006Value('GE_FOM_006__yellow_weight_' + day, row.yellow_weight);
+                                    setFOM006Value('GE_FOM_006__blue_' + day, row.blue);
+                                    setFOM006Value('GE_FOM_006__blue_weight_' + day, row.blue_weight);
+                                    setFOM006Value('GE_FOM_006__sharp_' + day, row.sharp);
+                                    setFOM006Value('GE_FOM_006__sharp_weight_' + day, row.sharp_weight);
+                                    setFOM006Value('GE_FOM_006__handover_' + day, row.handover_signature);
+                                    setFOM006Value('GE_FOM_006__handler_' + day, row.handler_signature);
+                                }
+                            }
+
+                            // Set agency name if returned
+                            if (result.data.agency_name) {
+                                document.getElementById('GE_FOM_006__agency_name').value = result.data.agency_name;
+                            }
+                        }
+                    })
+                    .catch(err => console.error('Load error:', err));
             }
 
-            function setFieldValue(id, value) {
+            function setFOM006Value(id, value) {
                 const el = document.getElementById(id);
                 if (el && value !== undefined && value !== null) {
                     el.value = value;
                 }
             }
 
-            function clearBiomedicalWasteForm() {
+            function clearBiomedicalWasteInputs() {
                 for (let day = 1; day <= 31; day++) {
-                    setFieldValue('GE_FOM_006__red_' + day, '');
-                    setFieldValue('GE_FOM_006__red_weight_' + day, '');
-                    setFieldValue('GE_FOM_006__yellow_' + day, '');
-                    setFieldValue('GE_FOM_006__yellow_weight_' + day, '');
-                    setFieldValue('GE_FOM_006__blue_' + day, '');
-                    setFieldValue('GE_FOM_006__blue_weight_' + day, '');
-                    setFieldValue('GE_FOM_006__sharp_' + day, '');
-                    setFieldValue('GE_FOM_006__sharp_weight_' + day, '');
-                    setFieldValue('GE_FOM_006__handover_' + day, '');
-                    setFieldValue('GE_FOM_006__handler_' + day, '');
+                    setFOM006Value('GE_FOM_006__red_' + day, '');
+                    setFOM006Value('GE_FOM_006__red_weight_' + day, '');
+                    setFOM006Value('GE_FOM_006__yellow_' + day, '');
+                    setFOM006Value('GE_FOM_006__yellow_weight_' + day, '');
+                    setFOM006Value('GE_FOM_006__blue_' + day, '');
+                    setFOM006Value('GE_FOM_006__blue_weight_' + day, '');
+                    setFOM006Value('GE_FOM_006__sharp_' + day, '');
+                    setFOM006Value('GE_FOM_006__sharp_weight_' + day, '');
+                    setFOM006Value('GE_FOM_006__handover_' + day, '');
+                    setFOM006Value('GE_FOM_006__handler_' + day, '');
                 }
             }
 
-            // Toast notification
-            function showToastFOM006(type, message) {
-                const existingToast = document.querySelector('.ge-toast-fom006');
-                if (existingToast) existingToast.remove();
-
-                const toast = document.createElement('div');
-                toast.className = 'ge-toast-fom006';
-                toast.style.cssText = `
-                    position: fixed; top: 20px; right: 20px; padding: 15px 25px;
-                    border-radius: 5px; color: white; font-weight: bold; z-index: 9999;
-                    background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
-                `;
-                toast.textContent = message;
-                document.body.appendChild(toast);
-                setTimeout(() => toast.remove(), 3000);
+            function clearBiomedicalWasteFilters() {
+                document.getElementById('GE_FOM_006__month_year').value = '';
+                document.getElementById('GE_FOM_006__agency_name').value = '';
+                clearBiomedicalWasteInputs();
             }
 
-            // AJAX form submission - stay on same page
+            // AJAX Submit for FOM-006
             (function() {
                 function initBiomedicalWasteForm() {
                     const formContainer = document.querySelector('[id="TDPL/GE/FOM-006"]');
@@ -1792,10 +2188,12 @@
 
                         const formData = new FormData(form);
                         const submitBtn = form.querySelector('button[type="submit"]');
-                        const originalText = submitBtn.textContent;
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
 
-                        submitBtn.textContent = 'Saving...';
-                        submitBtn.disabled = true;
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
 
                         fetch(form.action, {
                             method: 'POST',
@@ -1818,12 +2216,27 @@
                             showToastFOM006('error', 'Failed to save. Please try again.');
                         })
                         .finally(() => {
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
                         });
 
                         return false;
                     });
+                }
+
+                function showToastFOM006(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
                 }
 
                 if (document.readyState === 'loading') {
@@ -2329,17 +2742,33 @@
         buttonText="Submit"
         action="{{ route('newforms.ge.forms.submit') }}">
 
-        <!-- Hidden field for record ID (for inline edit) -->
-        <input type="hidden" name="eqas_sample_processing_form_id" id="fom009_record_id" value="">
+        <input type="hidden" name="eqas_sample_processing_form_id" id="fom009_record_id">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>EQAS Provider Name</strong></label>
+                <input type="text" id="fom009_filter_provider"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type EQAS provider name">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadGeFom009()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearGeFom009()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
         <div style="font-size:14px; line-height:22px; background:#fff; border:1px solid #ccc; padding:20px; border-radius:10px; width:100%;">
 
             <p style="margin-bottom:12px;">
                 <strong style="display:inline-block; width:250px;">Name Of EQAS Provider:</strong>
-                <input type="text" name="eqas_provider" id="fom009_eqas_provider" list="fom009_provider_list"
-                    style="border:1px solid #000; padding:6px; width:60%; border-radius:6px;"
-                    onchange="loadEqasSampleProcessingForm()">
-                <datalist id="fom009_provider_list"></datalist>
+                <input type="text" name="eqas_provider" id="fom009_eqas_provider"
+                    style="border:1px solid #000; padding:6px; width:60%; border-radius:6px;">
             </p>
 
             <p style="margin-bottom:12px;">
@@ -2348,9 +2777,8 @@
                     style="border:1px solid #000; padding:6px; width:20%; border-radius:6px;">
 
                 <strong style="display:inline-block; width:150px; margin-left:20px;">Department Name:</strong>
-                <input type="text" name="department_name" id="fom009_department_name" list="fom009_dept_list"
+                <input type="text" name="department_name" id="fom009_department_name"
                     style="border:1px solid #000; padding:6px; width:28%; border-radius:6px;">
-                <datalist id="fom009_dept_list"></datalist>
             </p>
 
             <p style="margin-bottom:12px;">
@@ -2362,8 +2790,7 @@
             <p style="margin-bottom:12px;">
                 <strong style="display:inline-block; width:250px;">EQAS Sample No.:</strong>
                 <input type="text" name="sample_no" id="fom009_sample_no"
-                    style="border:1px solid #000; padding:6px; width:40%; border-radius:6px;"
-                    onchange="loadEqasSampleProcessingForm()">
+                    style="border:1px solid #000; padding:6px; width:40%; border-radius:6px;">
             </p>
 
             <p style="margin-bottom:12px;">
@@ -2414,70 +2841,68 @@
                     style="border:1px solid #000; padding:6px; width:25%; border-radius:6px;">
             </p>
 
-            <p style="margin-top:15px;">
-                <button type="button" onclick="clearEqasSampleProcessingForm()"
-                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
-                    Clear Form
-                </button>
-            </p>
-
         </div>
 
         <script>
-            function loadEqasSampleProcessingForm() {
-                const provider = document.getElementById('fom009_eqas_provider').value;
-                const sampleNo = document.getElementById('fom009_sample_no').value;
+            // ── LOAD ──
+            function loadGeFom009() {
+                const providerName = document.getElementById('fom009_filter_provider').value.trim();
+                if (!providerName) return;
 
-                if (!provider && !sampleNo) return;
+                fetch(`/newforms/ge/eqas-sample-processing/load?eqas_provider=${encodeURIComponent(providerName)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearGeFom009Fields();
 
-                const params = new URLSearchParams();
-                if (provider) params.append('eqas_provider', provider);
-                if (sampleNo) params.append('sample_no', sampleNo);
+                    if (!res.data) {
+                        document.getElementById('fom009_record_id').value = '';
+                        return;
+                    }
 
-                fetch(`/newforms/ge/eqas-sample-processing/load?${params.toString()}`)
-                    .then(res => res.json())
-                    .then(result => {
-                        if (result.success && result.data) {
-                            const d = result.data;
-                            document.getElementById('fom009_record_id').value = d.id || '';
-                            document.getElementById('fom009_eqas_provider').value = d.eqas_provider || '';
-                            document.getElementById('fom009_eqas_lab_id').value = d.eqas_lab_id || '';
-                            document.getElementById('fom009_department_name').value = d.department_name || '';
-                            document.getElementById('fom009_sample_temperature').value = d.sample_temperature || '';
-                            document.getElementById('fom009_sample_no').value = d.sample_no || '';
-                            document.getElementById('fom009_accession_no').value = d.accession_no || '';
-                            document.getElementById('fom009_reconstituted_by').value = d.reconstituted_by || '';
-                            document.getElementById('fom009_reconstitution_date').value = d.reconstitution_date ? d.reconstitution_date.split('T')[0] : '';
-                            document.getElementById('fom009_processed_by').value = d.processed_by || '';
-                            document.getElementById('fom009_reviewed_by').value = d.reviewed_by || '';
-                            document.getElementById('fom009_qa_shared').value = d.qa_shared || '';
-                            document.getElementById('fom009_result_dispatched_date').value = d.result_dispatched_date ? d.result_dispatched_date.split('T')[0] : '';
-                            document.getElementById('fom009_evaluation_received_date').value = d.evaluation_received_date ? d.evaluation_received_date.split('T')[0] : '';
-                        }
-                    })
-                    .catch(err => console.error('Load error:', err));
+                    document.getElementById('fom009_record_id').value = res.data.id;
+
+                    // Simple text / date fields
+                    const textFields = [
+                        'eqas_provider', 'eqas_lab_id', 'department_name',
+                        'sample_temperature', 'sample_no', 'accession_no',
+                        'reconstituted_by', 'reconstitution_date',
+                        'processed_by', 'reviewed_by', 'qa_shared',
+                        'result_dispatched_date', 'evaluation_received_date'
+                    ];
+
+                    textFields.forEach(field => {
+                        const el = document.getElementById('fom009_' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
             }
 
-            function clearEqasSampleProcessingForm() {
+            // ── CLEAR ──
+            function clearGeFom009() {
+                document.getElementById('fom009_filter_provider').value = '';
                 document.getElementById('fom009_record_id').value = '';
-                document.getElementById('fom009_eqas_provider').value = '';
-                document.getElementById('fom009_eqas_lab_id').value = '';
-                document.getElementById('fom009_department_name').value = '';
-                document.getElementById('fom009_sample_temperature').value = '';
-                document.getElementById('fom009_sample_no').value = '';
-                document.getElementById('fom009_accession_no').value = '';
-                document.getElementById('fom009_reconstituted_by').value = '';
-                document.getElementById('fom009_reconstitution_date').value = '';
-                document.getElementById('fom009_processed_by').value = '';
-                document.getElementById('fom009_reviewed_by').value = '';
-                document.getElementById('fom009_qa_shared').value = '';
-                document.getElementById('fom009_result_dispatched_date').value = '';
-                document.getElementById('fom009_evaluation_received_date').value = '';
+                clearGeFom009Fields();
             }
 
-            // AJAX Submit for FOM-009
+            function clearGeFom009Fields() {
+                const container = document.querySelector('[id="TDPL/GE/FOM-009"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'fom009_filter_provider' || el.id === 'fom009_record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            // ── AJAX SUBMIT + TOAST ──
             (function() {
-                function initEqasSampleProcessingForm() {
+                function initGeFom009() {
                     const formContainer = document.querySelector('[id="TDPL/GE/FOM-009"]');
                     if (!formContainer) return;
 
@@ -2510,15 +2935,14 @@
                         .then(result => {
                             if (result.success) {
                                 showToastFOM009('success', result.message || 'Saved successfully!');
-                                if (result.data && result.data.id) {
-                                    document.getElementById('fom009_record_id').value = result.data.id;
+                                if (result.form_id) {
+                                    document.getElementById('fom009_record_id').value = result.form_id;
                                 }
                             } else {
                                 showToastFOM009('error', result.message || 'Failed to save');
                             }
                         })
-                        .catch(error => {
-                            console.error('Error:', error);
+                        .catch(err => {
                             showToastFOM009('error', 'Failed to save. Please try again.');
                         })
                         .finally(() => {
@@ -2527,28 +2951,21 @@
                                 submitBtn.disabled = false;
                             }
                         });
-
-                        return false;
                     });
                 }
 
                 function showToastFOM009(type, message) {
                     const toast = document.createElement('div');
-                    toast.style.cssText = `
-                        position: fixed; top: 20px; right: 20px; z-index: 9999;
-                        padding: 15px 25px; border-radius: 5px; color: white;
-                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
-                    `;
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
                     toast.textContent = message;
                     document.body.appendChild(toast);
                     setTimeout(() => toast.remove(), 3000);
                 }
 
                 if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', initEqasSampleProcessingForm);
+                    document.addEventListener('DOMContentLoaded', initGeFom009);
                 } else {
-                    initEqasSampleProcessingForm();
+                    initGeFom009();
                 }
             })();
         </script>
@@ -4528,8 +4945,26 @@
         buttonText="Submit"
         action="{{ route('newforms.ge.forms.submit') }}">
 
-        <!-- Hidden field for update -->
         <input type="hidden" name="laboratory_incident_form_id" id="GE_FOM_018__record_id">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Report Filed By</strong></label>
+                <input type="text" id="GE_FOM_018__filter_name"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type name of person who filed">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadGeFom018()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearGeFom018()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
         <div style="font-size:14px; line-height:22px; background:#fff; border:1px solid #ccc; padding:20px; border-radius:10px; width:100%;">
 
@@ -4601,6 +5036,134 @@
                     style="border:1px solid #000; padding:6px; width:40%; margin-top:5px;">
             </p>
         </div>
+
+        <script>
+            // ── LOAD ──
+            function loadGeFom018() {
+                const reportFiledBy = document.getElementById('GE_FOM_018__filter_name').value.trim();
+                if (!reportFiledBy) return;
+
+                fetch(`/newforms/ge/laboratory-incident/load?report_filed_by=${encodeURIComponent(reportFiledBy)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearGeFom018Fields();
+
+                    if (!res.data) {
+                        document.getElementById('GE_FOM_018__record_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('GE_FOM_018__record_id').value = res.data.id;
+
+                    const textFields = [
+                        'incident_date_patient_id', 'report_filed_by',
+                        'complaint_identification', 'department_involved',
+                        'incident_description', 'damage_description',
+                        'root_cause_description', 'corrective_action',
+                        'management_decision', 'signature_quality_manager',
+                        'signature_lab_head'
+                    ];
+
+                    textFields.forEach(field => {
+                        const el = document.getElementById('GE_FOM_018__' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            // ── CLEAR ──
+            function clearGeFom018() {
+                document.getElementById('GE_FOM_018__filter_name').value = '';
+                document.getElementById('GE_FOM_018__record_id').value = '';
+                clearGeFom018Fields();
+            }
+
+            function clearGeFom018Fields() {
+                const container = document.querySelector('[id="TDPL/GE/FOM-018"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'GE_FOM_018__filter_name' || el.id === 'GE_FOM_018__record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            // ── AJAX SUBMIT + TOAST ──
+            (function() {
+                function initGeFom018() {
+                    const formContainer = document.querySelector('[id="TDPL/GE/FOM-018"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastFOM018('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('GE_FOM_018__record_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastFOM018('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            showToastFOM018('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastFOM018(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initGeFom018);
+                } else {
+                    initGeFom018();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
 
     <x-formTemplete
@@ -4612,8 +5175,26 @@
         buttonText="Submit"
         action="{{ route('newforms.ge.forms.submit') }}">
 
-        <!-- Hidden field for update -->
         <input type="hidden" name="employee_suggestion_form_id" id="GE_FOM_019__record_id">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Employee Name</strong></label>
+                <input type="text" id="GE_FOM_019__filter_name"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type employee name">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadGeFom019()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearGeFom019()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
         <div style="font-size:14px; line-height:22px; background:#fff; border:1px solid #ccc; padding:20px; border-radius:10px; width:100%;">
 
@@ -4672,6 +5253,132 @@
                     style="border:1px solid #000; padding:6px; width:40%; margin-top:5px;">
             </p>
         </div>
+
+        <script>
+            // ── LOAD ──
+            function loadGeFom019() {
+                const employeeName = document.getElementById('GE_FOM_019__filter_name').value.trim();
+                if (!employeeName) return;
+
+                fetch(`/newforms/ge/employee-suggestion/load?employee_name=${encodeURIComponent(employeeName)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearGeFom019Fields();
+
+                    if (!res.data) {
+                        document.getElementById('GE_FOM_019__record_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('GE_FOM_019__record_id').value = res.data.id;
+
+                    const textFields = [
+                        'employee_name', 'suggestion_date', 'employee_id',
+                        'staff_suggestions', 'suggested_requirements',
+                        'employee_signature', 'corrective_action_management',
+                        'lab_supervisor', 'lab_director_signature'
+                    ];
+
+                    textFields.forEach(field => {
+                        const el = document.getElementById('GE_FOM_019__' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            // ── CLEAR ──
+            function clearGeFom019() {
+                document.getElementById('GE_FOM_019__filter_name').value = '';
+                document.getElementById('GE_FOM_019__record_id').value = '';
+                clearGeFom019Fields();
+            }
+
+            function clearGeFom019Fields() {
+                const container = document.querySelector('[id="TDPL/GE/FOM-019"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'GE_FOM_019__filter_name' || el.id === 'GE_FOM_019__record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            // ── AJAX SUBMIT + TOAST ──
+            (function() {
+                function initGeFom019() {
+                    const formContainer = document.querySelector('[id="TDPL/GE/FOM-019"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastFOM019('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('GE_FOM_019__record_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastFOM019('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            showToastFOM019('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastFOM019(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initGeFom019);
+                } else {
+                    initGeFom019();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
 
     <x-formTemplete
@@ -6229,8 +6936,26 @@
         buttonText="Submit"
         action="{{ route('newforms.ge.forms.submit') }}">
 
-        <!-- Hidden field for record ID (for inline edit) -->
-        <input type="hidden" name="meeting_agenda_form_id" id="fom027_record_id" value="">
+        <input type="hidden" name="meeting_agenda_form_id" id="GE_FOM_027__record_id">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Chairperson</strong></label>
+                <input type="text" id="GE_FOM_027__filter_name"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type chairperson name">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadGeFom027()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearGeFom027()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
         <div style="background:#fff; border:1px solid #ccc; border-radius:12px; padding:25px; width:100%; font-family:Arial;">
 
@@ -6242,31 +6967,31 @@
 
                 <div style="margin-bottom:10px;">
                     <label style="width:120px; display:inline-block;">Date:</label>
-                    <input type="date" name="meeting_date" id="fom027_meeting_date"
+                    <input type="date" name="meeting_date" id="GE_FOM_027__meeting_date"
                         style="border:1px solid #000; border-radius:6px; padding:6px;">
 
                     <label style="margin-left:40px; width:60px; display:inline-block;">Time:</label>
-                    <input type="text" name="meeting_time" id="fom027_meeting_time"
+                    <input type="text" name="meeting_time" id="GE_FOM_027__meeting_time"
                         style="border:1px solid #000; border-radius:6px; padding:6px;">
                 </div>
 
                 <div style="margin-bottom:10px;">
                     <label style="width:120px; display:inline-block;">Location:</label>
-                    <input type="text" name="meeting_location" id="fom027_meeting_location"
+                    <input type="text" name="meeting_location" id="GE_FOM_027__meeting_location"
                         style="border:1px solid #000; border-radius:6px; padding:6px; width:30%;">
 
                     <label style="margin-left:40px; width:150px; display:inline-block;">Expected Duration:</label>
-                    <input type="text" name="meeting_duration" id="fom027_meeting_duration"
+                    <input type="text" name="meeting_duration" id="GE_FOM_027__meeting_duration"
                         style="border:1px solid #000; border-radius:6px; padding:6px;">
                 </div>
 
                 <div style="margin-bottom:10px;">
                     <label style="width:120px; display:inline-block;">Chairperson:</label>
-                    <input type="text" name="chairperson" id="fom027_chairperson"
+                    <input type="text" name="chairperson" id="GE_FOM_027__chairperson"
                         style="border:1px solid #000; border-radius:6px; padding:6px; width:30%;">
 
                     <label style="margin-left:40px; width:90px; display:inline-block;">Recorder:</label>
-                    <input type="text" name="recorder" id="fom027_recorder"
+                    <input type="text" name="recorder" id="GE_FOM_027__recorder"
                         style="border:1px solid #000; border-radius:6px; padding:6px;">
                 </div>
             </div>
@@ -6278,7 +7003,7 @@
                 @for($i = 1; $i <= 10; $i++)
                     <div style="display:flex; align-items:center; margin-bottom:8px;">
                     <span style="width:25px;">{{ $i }}.</span>
-                    <input type="text" name="attendees[{{ $i }}]" id="fom027_attendee_{{ $i }}"
+                    <input type="text" name="attendees[{{ $i }}]" id="GE_FOM_027__attendee_{{ $i }}"
                         style="border:1px solid #000; border-radius:6px; padding:6px; width:40%;">
             </div>
             @endfor
@@ -6290,7 +7015,7 @@
 
             <p>
                 You are cordially invited to attend the upcoming <strong>Meeting</strong> for
-                <input type="text" name="meeting_topic" id="fom027_meeting_topic"
+                <input type="text" name="meeting_topic" id="GE_FOM_027__meeting_topic"
                     style="border:1px solid #000; border-radius:6px; padding:4px; width:25%; display:inline-block;">
             </p>
 
@@ -6298,7 +7023,7 @@
             <ol>
                 @for($i = 1; $i <= 10; $i++)
                     <li style="margin-bottom:8px;">
-                    <input type="text" name="agenda_items[{{ $i }}]" id="fom027_agenda_item_{{ $i }}"
+                    <input type="text" name="agenda_items[{{ $i }}]" id="GE_FOM_027__agenda_item_{{ $i }}"
                         style="border:1px solid #000; border-radius:6px; padding:6px; width:85%;">
                     </li>
                     @endfor
@@ -6311,7 +7036,7 @@
 
             <p>
                 Please confirm your availability by:
-                <input type="date" name="confirmation_date" id="fom027_confirmation_date"
+                <input type="date" name="confirmation_date" id="GE_FOM_027__confirmation_date"
                     style="border:1px solid #000; border-radius:6px; padding:4px;">
             </p>
         </div>
@@ -6322,19 +7047,19 @@
 
             <div style="margin-top:10px;">
                 <label style="display:block; margin-bottom:5px;">Your Full Name:</label>
-                <input type="text" name="sender_name" id="fom027_sender_name"
+                <input type="text" name="sender_name" id="GE_FOM_027__sender_name"
                     style="border:1px solid #000; border-radius:6px; padding:6px; width:40%;">
 
                 <br><br>
 
                 <label style="display:block; margin-bottom:5px;">Designation:</label>
-                <input type="text" name="sender_designation" id="fom027_sender_designation"
+                <input type="text" name="sender_designation" id="GE_FOM_027__sender_designation"
                     style="border:1px solid #000; border-radius:6px; padding:6px; width:40%;">
 
                 <br><br>
 
                 <label style="display:block; margin-bottom:5px;">Contact Details:</label>
-                <input type="text" name="sender_contact" id="fom027_sender_contact"
+                <input type="text" name="sender_contact" id="GE_FOM_027__sender_contact"
                     style="border:1px solid #000; border-radius:6px; padding:6px; width:40%;">
 
                 <p style="margin-top:15px;">TRUSTlab Diagnostics Pvt Ltd</p>
@@ -6344,9 +7069,82 @@
         </div>
 
         <script>
-            // AJAX Submit for FOM-027
+            // ── LOAD ──
+            function loadGeFom027() {
+                const chairperson = document.getElementById('GE_FOM_027__filter_name').value.trim();
+                if (!chairperson) return;
+
+                fetch(`/newforms/ge/meeting-agenda/load?chairperson=${encodeURIComponent(chairperson)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearGeFom027Fields();
+
+                    if (!res.data) {
+                        document.getElementById('GE_FOM_027__record_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('GE_FOM_027__record_id').value = res.data.id;
+
+                    // Simple text / date fields
+                    const textFields = [
+                        'meeting_date', 'meeting_time', 'meeting_location',
+                        'meeting_duration', 'chairperson', 'recorder',
+                        'meeting_topic', 'confirmation_date',
+                        'sender_name', 'sender_designation', 'sender_contact'
+                    ];
+
+                    textFields.forEach(field => {
+                        const el = document.getElementById('GE_FOM_027__' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
+                    });
+
+                    // Array fields: attendees (keyed 1..10)
+                    if (res.data.attendees) {
+                        const att = res.data.attendees;
+                        for (let i = 1; i <= 10; i++) {
+                            const el = document.getElementById('GE_FOM_027__attendee_' + i);
+                            if (el && att[i] != null) el.value = att[i];
+                        }
+                    }
+
+                    // Array fields: agenda_items (keyed 1..10)
+                    if (res.data.agenda_items) {
+                        const items = res.data.agenda_items;
+                        for (let i = 1; i <= 10; i++) {
+                            const el = document.getElementById('GE_FOM_027__agenda_item_' + i);
+                            if (el && items[i] != null) el.value = items[i];
+                        }
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            // ── CLEAR ──
+            function clearGeFom027() {
+                document.getElementById('GE_FOM_027__filter_name').value = '';
+                document.getElementById('GE_FOM_027__record_id').value = '';
+                clearGeFom027Fields();
+            }
+
+            function clearGeFom027Fields() {
+                const container = document.querySelector('[id="TDPL/GE/FOM-027"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'GE_FOM_027__filter_name' || el.id === 'GE_FOM_027__record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            // ── AJAX SUBMIT + TOAST ──
             (function() {
-                function initMeetingAgendaForm() {
+                function initGeFom027() {
                     const formContainer = document.querySelector('[id="TDPL/GE/FOM-027"]');
                     if (!formContainer) return;
 
@@ -6360,10 +7158,12 @@
 
                         const formData = new FormData(form);
                         const submitBtn = form.querySelector('button[type="submit"]');
-                        const originalText = submitBtn.textContent;
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
 
-                        submitBtn.textContent = 'Saving...';
-                        submitBtn.disabled = true;
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
 
                         fetch(form.action, {
                             method: 'POST',
@@ -6377,44 +7177,37 @@
                         .then(result => {
                             if (result.success) {
                                 showToastFOM027('success', result.message || 'Saved successfully!');
-                                // Set record ID for future updates
-                                if (result.data && result.data.id) {
-                                    document.getElementById('fom027_record_id').value = result.data.id;
+                                if (result.form_id) {
+                                    document.getElementById('GE_FOM_027__record_id').value = result.form_id;
                                 }
                             } else {
                                 showToastFOM027('error', result.message || 'Failed to save');
                             }
                         })
-                        .catch(error => {
-                            console.error('Error:', error);
+                        .catch(err => {
                             showToastFOM027('error', 'Failed to save. Please try again.');
                         })
                         .finally(() => {
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
                         });
-
-                        return false;
                     });
                 }
 
                 function showToastFOM027(type, message) {
                     const toast = document.createElement('div');
-                    toast.style.cssText = `
-                        position: fixed; top: 20px; right: 20px; z-index: 9999;
-                        padding: 15px 25px; border-radius: 5px; color: white;
-                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
-                    `;
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
                     toast.textContent = message;
                     document.body.appendChild(toast);
                     setTimeout(() => toast.remove(), 3000);
                 }
 
                 if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', initMeetingAgendaForm);
+                    document.addEventListener('DOMContentLoaded', initGeFom027);
                 } else {
-                    initMeetingAgendaForm();
+                    initGeFom027();
                 }
             })();
         </script>
@@ -7693,90 +8486,81 @@
         buttonText="Submit"
         action="{{ route('newforms.ge.forms.submit') }}">
 
-        <div style="background:#fff; padding:20px; border:1px solid #ccc; border-radius:8px;">
+        <input type="hidden" name="eqas_capa_outlier_form_id" id="GE_FOM_035__record_id">
 
-            <!-- Hidden record ID for editing -->
-            <input type="hidden" name="record_id" id="fom035_record_id" value="">
-
-            <!-- TOP SECTION / FILTERS -->
-            <div style="margin-bottom:20px; display:flex; gap:15px; align-items:center; flex-wrap:wrap;">
-                <div>
-                    <label style="font-weight:bold;">Month/Year:</label>
-                    <input type="month" name="month_year" id="fom035_month_year"
-                        style="border:1px solid #000; padding:5px; width:150px;"
-                        onchange="loadEqasCapaOutlier()">
-                </div>
-                <div>
-                    <label style="font-weight:bold;">Department:</label>
-                    <input type="text" name="department" id="fom035_department" list="fom035_dept_list"
-                        style="border:1px solid #000; padding:5px; width:180px;"
-                        onchange="loadEqasCapaOutlier()">
-                    <datalist id="fom035_dept_list">
-                        <option value="Biochemistry">
-                        <option value="Hematology">
-                        <option value="Microbiology">
-                        <option value="Pathology">
-                        <option value="Immunology">
-                    </datalist>
-                </div>
-                <div>
-                    <label style="font-weight:bold;">Location:</label>
-                    <input type="text" name="location" id="fom035_location" list="fom035_loc_list"
-                        style="border:1px solid #000; padding:5px; width:180px;"
-                        onchange="loadEqasCapaOutlier()">
-                    <datalist id="fom035_loc_list">
-                        <option value="Main Lab">
-                        <option value="Branch Lab 1">
-                        <option value="Branch Lab 2">
-                        <option value="Collection Center">
-                    </datalist>
-                </div>
-                <button type="button" onclick="clearEqasCapaOutlierForm()"
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Survey Name</strong></label>
+                <input type="text" id="GE_FOM_035__filter_name"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type survey name">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadGeFom035()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearGeFom035()"
                     style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
                     Clear
                 </button>
             </div>
+        </div>
+
+        <div style="background:#fff; padding:20px; border:1px solid #ccc; border-radius:8px;">
 
             <!-- SIMPLE INPUT FIELDS -->
             <div style="margin-bottom:12px;">
                 <label style="font-weight:bold;">Date of Corrective Action Taken:</label><br>
-                <input type="date" name="corrective_action_date" id="fom035_corrective_action_date"
+                <input type="date" name="corrective_action_date" id="GE_FOM_035__corrective_action_date"
                     style="border:1px solid #000; padding:5px; width:40%;">
             </div>
 
             <div style="margin-bottom:12px;">
                 <label style="font-weight:bold;">Name of the Survey:</label><br>
-                <input type="text" name="survey_name" id="fom035_survey_name"
+                <input type="text" name="survey_name" id="GE_FOM_035__survey_name"
                     style="border:1px solid #000; padding:5px; width:70%;">
             </div>
 
             <div style="margin-bottom:12px;">
+                <label style="font-weight:bold;">Department:</label><br>
+                <input type="text" name="department" id="GE_FOM_035__department"
+                    style="border:1px solid #000; padding:5px; width:50%;">
+            </div>
+
+            <div style="margin-bottom:12px;">
+                <label style="font-weight:bold;">Location:</label><br>
+                <input type="text" name="location" id="GE_FOM_035__location"
+                    style="border:1px solid #000; padding:5px; width:50%;">
+            </div>
+
+            <div style="margin-bottom:12px;">
                 <label style="font-weight:bold;">Details of Samples:</label><br>
-                <textarea name="sample_details" id="fom035_sample_details"
+                <textarea name="sample_details" id="GE_FOM_035__sample_details"
                     style="border:1px solid #000; padding:5px; width:80%; height:60px;"></textarea>
             </div>
 
             <div style="margin-bottom:12px;">
                 <label style="font-weight:bold;">EQAS Sample Run Date:</label><br>
-                <input type="date" name="sample_run_date" id="fom035_sample_run_date"
+                <input type="date" name="sample_run_date" id="GE_FOM_035__sample_run_date"
                     style="border:1px solid #000; padding:5px; width:40%;">
             </div>
 
             <div style="margin-bottom:12px;">
                 <label style="font-weight:bold;">Outlier Results:</label><br>
-                <textarea name="outlier_results" id="fom035_outlier_results"
+                <textarea name="outlier_results" id="GE_FOM_035__outlier_results"
                     style="border:1px solid #000; padding:5px; width:80%; height:60px;"></textarea>
             </div>
 
             <div style="margin-bottom:12px;">
                 <label style="font-weight:bold;">EQAS Trends of last 2 cycles (if applicable):</label><br>
-                <textarea name="eqas_trends" id="fom035_eqas_trends"
+                <textarea name="eqas_trends" id="GE_FOM_035__eqas_trends"
                     style="border:1px solid #000; padding:5px; width:80%; height:60px;"></textarea>
             </div>
 
             <div style="margin-bottom:20px;">
                 <label style="font-weight:bold;">Root Cause Analysis (Summary):</label><br>
-                <textarea name="root_cause_summary" id="fom035_root_cause_summary"
+                <textarea name="root_cause_summary" id="GE_FOM_035__root_cause_summary"
                     style="border:1px solid #000; padding:5px; width:80%; height:80px;"></textarea>
             </div>
 
@@ -7808,10 +8592,10 @@
                             {{ $item }}
                         </td>
                         <td style="border:1px solid #ccc; padding:6px; text-align:center;">
-                            <input type="checkbox" name="root_cause_{{ $index }}_acceptable" id="fom035_root_cause_{{ $index }}_acceptable">
+                            <input type="checkbox" name="root_cause_{{ $index }}_acceptable" id="GE_FOM_035__root_cause_{{ $index }}_acceptable">
                         </td>
                         <td style="border:1px solid #ccc; padding:6px; text-align:center;">
-                            <input type="checkbox" name="root_cause_{{ $index }}_unacceptable" id="fom035_root_cause_{{ $index }}_unacceptable">
+                            <input type="checkbox" name="root_cause_{{ $index }}_unacceptable" id="GE_FOM_035__root_cause_{{ $index }}_unacceptable">
                         </td>
                     </tr>
                     @endforeach
@@ -7819,7 +8603,7 @@
                     <tr>
                         <td colspan="4" style="border:1px solid #ccc; padding:6px;">
                             Any Other (Please Specify):<br>
-                            <textarea name="other_root_cause" id="fom035_other_root_cause"
+                            <textarea name="other_root_cause" id="GE_FOM_035__other_root_cause"
                                 style="border:1px solid #000; padding:5px; width:98%; height:60px;"></textarea>
                         </td>
                     </tr>
@@ -7829,7 +8613,7 @@
             <!-- IMMEDIATE ACTION -->
             <div style="margin-top:25px;">
                 <label style="font-weight:bold;">Immediate Action Taken, if any:</label><br>
-                <textarea name="immediate_action" id="fom035_immediate_action"
+                <textarea name="immediate_action" id="GE_FOM_035__immediate_action"
                     style="border:1px solid #000; padding:5px; width:80%; height:80px;"></textarea>
             </div>
 
@@ -7851,19 +8635,19 @@
                     <tr>
                         <td style="border:1px solid #ccc; padding:6px; text-align:center;">{{ $i }}</td>
                         <td style="border:1px solid #ccc; padding:6px;">
-                            <input type="text" name="analyte_{{ $i }}" id="fom035_analyte_{{ $i }}"
+                            <input type="text" name="analyte_{{ $i }}" id="GE_FOM_035__analyte_{{ $i }}"
                                 style="width:95%; border:1px solid #000; padding:4px;">
                         </td>
                         <td style="border:1px solid #ccc; padding:6px;">
-                            <input type="text" name="previous_result_{{ $i }}" id="fom035_previous_result_{{ $i }}"
+                            <input type="text" name="previous_result_{{ $i }}" id="GE_FOM_035__previous_result_{{ $i }}"
                                 style="width:95%; border:1px solid #000; padding:4px;">
                         </td>
                         <td style="border:1px solid #ccc; padding:6px;">
-                            <input type="text" name="reassayed_result_{{ $i }}" id="fom035_reassayed_result_{{ $i }}"
+                            <input type="text" name="reassayed_result_{{ $i }}" id="GE_FOM_035__reassayed_result_{{ $i }}"
                                 style="width:95%; border:1px solid #000; padding:4px;">
                         </td>
                         <td style="border:1px solid #ccc; padding:6px;">
-                            <input type="text" name="acceptability_limit_{{ $i }}" id="fom035_acceptability_limit_{{ $i }}"
+                            <input type="text" name="acceptability_limit_{{ $i }}" id="GE_FOM_035__acceptability_limit_{{ $i }}"
                                 style="width:95%; border:1px solid #000; padding:4px;">
                         </td>
                     </tr>
@@ -7874,19 +8658,19 @@
             <!-- COMMENTS -->
             <div style="margin-top:25px;">
                 <label style="font-weight:bold;">Comment on Re-Assayed Results:</label><br>
-                <textarea name="reassay_comment" id="fom035_reassay_comment"
+                <textarea name="reassay_comment" id="GE_FOM_035__reassay_comment"
                     style="border:1px solid #000; padding:5px; width:80%; height:80px;"></textarea>
             </div>
 
             <div style="margin-top:25px;">
                 <label style="font-weight:bold;">Preventive Action to Prevent Recurrence:</label><br>
-                <textarea name="preventive_action" id="fom035_preventive_action"
+                <textarea name="preventive_action" id="GE_FOM_035__preventive_action"
                     style="border:1px solid #000; padding:5px; width:80%; height:80px;"></textarea>
             </div>
 
             <div style="margin-top:25px;">
                 <label style="font-weight:bold;">Conclusion:</label>
-                <select name="conclusion" id="fom035_conclusion" style="border:1px solid #000; padding:5px; width:300px; margin-left:10px;">
+                <select name="conclusion" id="GE_FOM_035__conclusion" style="border:1px solid #000; padding:5px; width:300px; margin-left:10px;">
                     <option value="">-- Select --</option>
                     <option value="Clerical Error">1. Clerical Error</option>
                     <option value="Methodology Error">2. Methodology Error</option>
@@ -7898,144 +8682,111 @@
 
             <div style="margin-top:25px;">
                 <label style="font-weight:bold;">Corrective Action Taken By:</label><br>
-                <input type="text" name="action_taken_by" id="fom035_action_taken_by"
+                <input type="text" name="action_taken_by" id="GE_FOM_035__action_taken_by"
                     style="border:1px solid #000; padding:5px; width:60%;">
             </div>
 
             <div style="margin-top:15px;">
                 <label style="font-weight:bold;">Corrective Action Reviewed/Approved By:</label><br>
-                <input type="text" name="action_approved_by" id="fom035_action_approved_by"
+                <input type="text" name="action_approved_by" id="GE_FOM_035__action_approved_by"
                     style="border:1px solid #000; padding:5px; width:60%;">
             </div>
 
         </div>
 
         <script>
-            function loadEqasCapaOutlier() {
-                const monthYear = document.getElementById('fom035_month_year').value;
-                const department = document.getElementById('fom035_department').value;
-                const location = document.getElementById('fom035_location').value;
+            // ── LOAD ──
+            function loadGeFom035() {
+                const surveyName = document.getElementById('GE_FOM_035__filter_name').value.trim();
+                if (!surveyName) return;
 
-                if (!monthYear && !department && !location) return;
+                fetch(`/newforms/ge/eqas-capa-outlier/load?survey_name=${encodeURIComponent(surveyName)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearGeFom035Fields();
 
-                const params = new URLSearchParams();
-                if (monthYear) params.append('month_year', monthYear);
-                if (department) params.append('department', department);
-                if (location) params.append('location', location);
+                    if (!res.data) {
+                        document.getElementById('GE_FOM_035__record_id').value = '';
+                        return;
+                    }
 
-                fetch(`/newforms/ge/eqas-capa-outlier/load?${params.toString()}`)
-                    .then(res => res.json())
-                    .then(result => {
-                        // Update datalists
-                        if (result.departments) {
-                            const deptList = document.getElementById('fom035_dept_list');
-                            const currentOptions = ['Biochemistry', 'Hematology', 'Microbiology', 'Pathology', 'Immunology'];
-                            const allDepts = [...new Set([...currentOptions, ...result.departments])];
-                            deptList.innerHTML = allDepts.map(d => `<option value="${d}">`).join('');
-                        }
-                        if (result.locations) {
-                            const locList = document.getElementById('fom035_loc_list');
-                            const currentOptions = ['Main Lab', 'Branch Lab 1', 'Branch Lab 2', 'Collection Center'];
-                            const allLocs = [...new Set([...currentOptions, ...result.locations])];
-                            locList.innerHTML = allLocs.map(l => `<option value="${l}">`).join('');
-                        }
+                    document.getElementById('GE_FOM_035__record_id').value = res.data.id;
 
-                        // Clear form first
-                        clearEqasCapaOutlierInputs();
+                    // Simple text / date / textarea fields
+                    const textFields = [
+                        'corrective_action_date', 'survey_name', 'department', 'location',
+                        'sample_details', 'sample_run_date', 'outlier_results',
+                        'eqas_trends', 'root_cause_summary', 'other_root_cause',
+                        'immediate_action', 'reassay_comment', 'preventive_action',
+                        'action_taken_by', 'action_approved_by'
+                    ];
 
-                        // If data found, populate first record
-                        if (result.success && result.data && result.data.length > 0) {
-                            const data = result.data[0];
-                            populateEqasCapaOutlierForm(data);
-                        }
-                    })
-                    .catch(err => console.error('Load error:', err));
-            }
-
-            function populateEqasCapaOutlierForm(data) {
-                document.getElementById('fom035_record_id').value = data.id || '';
-                document.getElementById('fom035_corrective_action_date').value = data.corrective_action_date || '';
-                document.getElementById('fom035_survey_name').value = data.survey_name || '';
-                document.getElementById('fom035_sample_details').value = data.sample_details || '';
-                document.getElementById('fom035_sample_run_date').value = data.sample_run_date || '';
-                document.getElementById('fom035_outlier_results').value = data.outlier_results || '';
-                document.getElementById('fom035_eqas_trends').value = data.eqas_trends || '';
-                document.getElementById('fom035_root_cause_summary').value = data.root_cause_summary || '';
-                document.getElementById('fom035_other_root_cause').value = data.other_root_cause || '';
-                document.getElementById('fom035_immediate_action').value = data.immediate_action || '';
-                document.getElementById('fom035_reassay_comment').value = data.reassay_comment || '';
-                document.getElementById('fom035_preventive_action').value = data.preventive_action || '';
-                document.getElementById('fom035_conclusion').value = data.conclusion || '';
-                document.getElementById('fom035_action_taken_by').value = data.action_taken_by || '';
-                document.getElementById('fom035_action_approved_by').value = data.action_approved_by || '';
-
-                // Root cause checklist
-                if (data.root_cause_checklist) {
-                    const items = ['iqc_status', 'preventive_maintenance_status', 'calibration_status',
-                        'reagent_status', 'clerical_error', 'technical_problem', 'eqas_sample_problem'];
-                    items.forEach((item, index) => {
-                        if (data.root_cause_checklist[item]) {
-                            document.getElementById(`fom035_root_cause_${index}_acceptable`).checked = data.root_cause_checklist[item].acceptable || false;
-                            document.getElementById(`fom035_root_cause_${index}_unacceptable`).checked = data.root_cause_checklist[item].unacceptable || false;
-                        }
+                    textFields.forEach(field => {
+                        const el = document.getElementById('GE_FOM_035__' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
                     });
-                }
 
-                // Re-assay results
-                if (data.reassay_results) {
-                    for (let i = 1; i <= 4; i++) {
-                        if (data.reassay_results[i]) {
-                            document.getElementById(`fom035_analyte_${i}`).value = data.reassay_results[i].analyte || '';
-                            document.getElementById(`fom035_previous_result_${i}`).value = data.reassay_results[i].previous_result || '';
-                            document.getElementById(`fom035_reassayed_result_${i}`).value = data.reassay_results[i].reassayed_result || '';
-                            document.getElementById(`fom035_acceptability_limit_${i}`).value = data.reassay_results[i].acceptability_limit || '';
+                    // Select field: conclusion
+                    const conclusionEl = document.getElementById('GE_FOM_035__conclusion');
+                    if (conclusionEl && res.data.conclusion != null) conclusionEl.value = res.data.conclusion;
+
+                    // Root cause checklist (JSON)
+                    if (res.data.root_cause_checklist) {
+                        const checklist = res.data.root_cause_checklist;
+                        const items = ['iqc_status', 'preventive_maintenance_status', 'calibration_status',
+                            'reagent_status', 'clerical_error', 'technical_problem', 'eqas_sample_problem'];
+                        items.forEach((item, index) => {
+                            if (checklist[item]) {
+                                const accEl = document.getElementById('GE_FOM_035__root_cause_' + index + '_acceptable');
+                                const unaccEl = document.getElementById('GE_FOM_035__root_cause_' + index + '_unacceptable');
+                                if (accEl) accEl.checked = checklist[item].acceptable || false;
+                                if (unaccEl) unaccEl.checked = checklist[item].unacceptable || false;
+                            }
+                        });
+                    }
+
+                    // Re-assay results (JSON)
+                    if (res.data.reassay_results) {
+                        const results = res.data.reassay_results;
+                        for (let i = 1; i <= 4; i++) {
+                            if (results[i]) {
+                                const fields = ['analyte', 'previous_result', 'reassayed_result', 'acceptability_limit'];
+                                fields.forEach(f => {
+                                    const el = document.getElementById('GE_FOM_035__' + f + '_' + i);
+                                    if (el && results[i][f] != null) el.value = results[i][f];
+                                });
+                            }
                         }
                     }
-                }
+                })
+                .catch(err => console.error('Load error:', err));
             }
 
-            function clearEqasCapaOutlierInputs() {
-                document.getElementById('fom035_record_id').value = '';
-                document.getElementById('fom035_corrective_action_date').value = '';
-                document.getElementById('fom035_survey_name').value = '';
-                document.getElementById('fom035_sample_details').value = '';
-                document.getElementById('fom035_sample_run_date').value = '';
-                document.getElementById('fom035_outlier_results').value = '';
-                document.getElementById('fom035_eqas_trends').value = '';
-                document.getElementById('fom035_root_cause_summary').value = '';
-                document.getElementById('fom035_other_root_cause').value = '';
-                document.getElementById('fom035_immediate_action').value = '';
-                document.getElementById('fom035_reassay_comment').value = '';
-                document.getElementById('fom035_preventive_action').value = '';
-                document.getElementById('fom035_conclusion').value = '';
-                document.getElementById('fom035_action_taken_by').value = '';
-                document.getElementById('fom035_action_approved_by').value = '';
-
-                // Clear checkboxes
-                for (let i = 0; i < 7; i++) {
-                    document.getElementById(`fom035_root_cause_${i}_acceptable`).checked = false;
-                    document.getElementById(`fom035_root_cause_${i}_unacceptable`).checked = false;
-                }
-
-                // Clear re-assay results
-                for (let i = 1; i <= 4; i++) {
-                    document.getElementById(`fom035_analyte_${i}`).value = '';
-                    document.getElementById(`fom035_previous_result_${i}`).value = '';
-                    document.getElementById(`fom035_reassayed_result_${i}`).value = '';
-                    document.getElementById(`fom035_acceptability_limit_${i}`).value = '';
-                }
+            // ── CLEAR ──
+            function clearGeFom035() {
+                document.getElementById('GE_FOM_035__filter_name').value = '';
+                document.getElementById('GE_FOM_035__record_id').value = '';
+                clearGeFom035Fields();
             }
 
-            function clearEqasCapaOutlierForm() {
-                document.getElementById('fom035_month_year').value = '';
-                document.getElementById('fom035_department').value = '';
-                document.getElementById('fom035_location').value = '';
-                clearEqasCapaOutlierInputs();
+            function clearGeFom035Fields() {
+                const container = document.querySelector('[id="TDPL/GE/FOM-035"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'GE_FOM_035__filter_name' || el.id === 'GE_FOM_035__record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
             }
 
-            // AJAX Submit for FOM-035
+            // ── AJAX SUBMIT + TOAST ──
             (function() {
-                function initEqasCapaOutlierForm() {
+                function initGeFom035() {
                     const formContainer = document.querySelector('[id="TDPL/GE/FOM-035"]');
                     if (!formContainer) return;
 
@@ -8068,16 +8819,14 @@
                         .then(result => {
                             if (result.success) {
                                 showToastFOM035('success', result.message || 'Saved successfully!');
-                                // Update record_id if new record was created
-                                if (result.data && result.data.id) {
-                                    document.getElementById('fom035_record_id').value = result.data.id;
+                                if (result.form_id) {
+                                    document.getElementById('GE_FOM_035__record_id').value = result.form_id;
                                 }
                             } else {
                                 showToastFOM035('error', result.message || 'Failed to save');
                             }
                         })
-                        .catch(error => {
-                            console.error('Error:', error);
+                        .catch(err => {
                             showToastFOM035('error', 'Failed to save. Please try again.');
                         })
                         .finally(() => {
@@ -8086,28 +8835,21 @@
                                 submitBtn.disabled = false;
                             }
                         });
-
-                        return false;
                     });
                 }
 
                 function showToastFOM035(type, message) {
                     const toast = document.createElement('div');
-                    toast.style.cssText = `
-                        position: fixed; top: 20px; right: 20px; z-index: 9999;
-                        padding: 15px 25px; border-radius: 5px; color: white;
-                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
-                    `;
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
                     toast.textContent = message;
                     document.body.appendChild(toast);
                     setTimeout(() => toast.remove(), 3000);
                 }
 
                 if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', initEqasCapaOutlierForm);
+                    document.addEventListener('DOMContentLoaded', initGeFom035);
                 } else {
-                    initEqasCapaOutlierForm();
+                    initGeFom035();
                 }
             })();
         </script>

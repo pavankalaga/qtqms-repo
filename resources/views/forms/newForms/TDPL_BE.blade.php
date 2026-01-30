@@ -377,19 +377,29 @@
 
     <x-formTemplete id="TDPL-BC-FOM-001" docNo="TDPL-BC-FOM-001" docName="Matermal Marker & Pre-eclampsia TRF"
         issueNo="1.0" issueDate="01/10/2024" action="{{ route('newforms.be.forms.submit') }}" buttonText="Submit">
-        <input type="hidden" id="mm_form_id" name="form_id">
 
+        <input type="hidden" name="maternal_marker_form_id" id="BC_FOM_001__record_id">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Patient Mobile</strong></label>
+                <input type="text" id="BC_FOM_001__filter_mobile"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Enter patient mobile">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadBcFom001()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearBcFom001()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
         <p><strong>MATERNAL SERUM / PRE-ECLAMPSIA SCREENING</strong></p>
-
-        <!-- EXTRA PATIENT MOBILE FILTER -->
-        <div style="margin-bottom:10px;">
-            <strong>Patient Mobile (Filter):</strong>
-            <input type="text" id="filter_patient_mobile" name="filter_patient_mobile"
-                placeholder="Enter Patient Mobile" oninput="handlePatientMobileFilter(event)"
-                onkeydown="return blockEnter(event)">
-
-        </div>
 
         <table style="width:100%; border-collapse: collapse;" border="1" cellpadding="6">
             <tbody>
@@ -402,17 +412,17 @@
                 <tr>
                     <td colspan="3">
                         Physician's Name:
-                        <input type="text" class="border p-1 w-48" id="physician_name" name="physician_name">
+                        <input type="text" class="border p-1 w-48" id="BC_FOM_001__physician_name" name="physician_name">
 
                         Mobile No:
-                        <input type="text" class="border p-1 w-40" id="physician_mobile" name="physician_mobile">
+                        <input type="text" class="border p-1 w-40" id="BC_FOM_001__physician_mobile" name="physician_mobile">
                         <br>
 
                         Client Name:
-                        <input type="text" class="border p-1 w-48" id="client_name" name="client_name">
+                        <input type="text" class="border p-1 w-48" id="BC_FOM_001__client_name" name="client_name">
 
                         Client Code:
-                        <input type="text" class="border p-1 w-40" id="client_code" name="client_code">
+                        <input type="text" class="border p-1 w-40" id="BC_FOM_001__client_code" name="client_code">
                     </td>
                 </tr>
 
@@ -424,23 +434,23 @@
                 <tr>
                     <td colspan="3">
                         <p>
-                            <input type="checkbox" id="test_maternal" name="test_panels[]" value="maternal_screening">
+                            <input type="checkbox" name="test_panels[]" value="maternal_screening">
                             Maternal Screening &nbsp;
-                            <input type="checkbox" id="test_dual" name="test_panels[]" value="dual_marker">
+                            <input type="checkbox" name="test_panels[]" value="dual_marker">
                             First Trimester - Dual Marker &nbsp;
-                            <input type="checkbox" id="test_triple" name="test_panels[]" value="triple_marker">
+                            <input type="checkbox" name="test_panels[]" value="triple_marker">
                             Second Trimester - Triple Marker &nbsp;
-                            <input type="checkbox" id="test_quad" name="test_panels[]" value="quad_marker">
+                            <input type="checkbox" name="test_panels[]" value="quad_marker">
                             Quad Marker (15–20 Weeks)
                         </p>
                         <p>
-                            <input type="checkbox" id="test_preeclampsia" name="test_panels[]" value="pre_eclampsia">
+                            <input type="checkbox" name="test_panels[]" value="pre_eclampsia">
                             Pre-Eclampsia Screening &nbsp;
-                            <input type="checkbox" id="test_1t_quad" name="test_panels[]" value="1t_quad">
+                            <input type="checkbox" name="test_panels[]" value="1t_quad">
                             1T Quad Test
                         </p>
                         <p>
-                            <input type="checkbox" id="test_pappa" name="test_panels[]" value="pappa_panel">
+                            <input type="checkbox" name="test_panels[]" value="pappa_panel">
                             PAPP-A, Free BHCG, PLGF, NT (11–13 Weeks + 6 days)
                         </p>
                     </td>
@@ -454,51 +464,51 @@
                 <tr>
                     <td colspan="3">
                         Name of Patient:
-                        <input type="text" class="border p-1 w-48" id="patient_name" name="patient_name">
+                        <input type="text" class="border p-1 w-48" id="BC_FOM_001__patient_name" name="patient_name">
 
                         Age:
-                        <input type="number" class="border p-1 w-20" id="patient_age" name="patient_age">
+                        <input type="number" class="border p-1 w-20" id="BC_FOM_001__patient_age" name="patient_age">
 
                         DOB:
-                        <input type="date" class="border p-1 w-40" id="patient_dob" name="patient_dob">
+                        <input type="date" class="border p-1 w-40" id="BC_FOM_001__patient_dob" name="patient_dob">
 
                         Mobile:
-                        <input type="text" class="border p-1 w-40" id="patient_mobile" name="patient_mobile">
+                        <input type="text" class="border p-1 w-40" id="BC_FOM_001__patient_mobile" name="patient_mobile">
 
                         Email:
-                        <input type="email" class="border p-1 w-48" id="patient_email" name="patient_email">
+                        <input type="email" class="border p-1 w-48" id="BC_FOM_001__patient_email" name="patient_email">
                         <br><br>
 
                         Weight (kgs):
-                        <input type="number" class="border p-1 w-24" id="patient_weight" name="patient_weight">
+                        <input type="number" class="border p-1 w-24" id="BC_FOM_001__patient_weight" name="patient_weight">
 
                         Ethnicity:
-                        <input type="text" class="border p-1 w-40" id="ethnicity" name="ethnicity">
+                        <input type="text" class="border p-1 w-40" id="BC_FOM_001__ethnicity" name="ethnicity">
 
                         LMP:
-                        <input type="date" class="border p-1 w-40" id="lmp" name="lmp">
+                        <input type="date" class="border p-1 w-40" id="BC_FOM_001__lmp" name="lmp">
                         <br><br>
 
                         Diabetic Status:
-                        <input type="text" class="border p-1 w-32" id="diabetic_status" name="diabetic_status">
+                        <input type="text" class="border p-1 w-32" id="BC_FOM_001__diabetic_status" name="diabetic_status">
 
                         Chronic Hypertension:
-                        <input type="text" class="border p-1 w-40" id="chronic_hypertension"
+                        <input type="text" class="border p-1 w-40" id="BC_FOM_001__chronic_hypertension"
                             name="chronic_hypertension">
                         <br><br>
 
                         On Medication (Y/N):
-                        <select class="border p-1" id="on_medication" name="on_medication">
+                        <select class="border p-1" id="BC_FOM_001__on_medication" name="on_medication">
                             <option value="No">No</option>
                             <option value="Yes">Yes</option>
                         </select>
 
                         If Yes, Specify:
-                        <input type="text" class="border p-1 w-64" id="medication_details" name="medication_details">
+                        <input type="text" class="border p-1 w-64" id="BC_FOM_001__medication_details" name="medication_details">
                         <br><br>
 
                         Smoking:
-                        <select class="border p-1" id="smoking_status" name="smoking_status">
+                        <select class="border p-1" id="BC_FOM_001__smoking_status" name="smoking_status">
                             <option>Not Known</option>
                             <option>Non-Smoker</option>
                             <option>Smoker</option>
@@ -507,13 +517,13 @@
 
                         <strong>Blood Pressure:</strong>
                         Date:
-                        <input type="date" class="border p-1" id="bp_date" name="bp_date">
+                        <input type="date" class="border p-1" id="BC_FOM_001__bp_date" name="bp_date">
 
                         Right Arm:
-                        <input type="text" class="border p-1 w-32" id="bp_right" name="bp_right">
+                        <input type="text" class="border p-1 w-32" id="BC_FOM_001__bp_right" name="bp_right">
 
                         Left Arm:
-                        <input type="text" class="border p-1 w-32" id="bp_left" name="bp_left">
+                        <input type="text" class="border p-1 w-32" id="BC_FOM_001__bp_left" name="bp_left">
                     </td>
                 </tr>
 
@@ -525,15 +535,15 @@
                 <tr>
                     <td colspan="3">
                         Date of Sample Collection:
-                        <input type="date" class="border p-1" id="sample_collection_date"
+                        <input type="date" class="border p-1" id="BC_FOM_001__sample_collection_date"
                             name="sample_collection_date">
 
                         Time:
-                        <input type="time" class="border p-1" id="sample_collection_time"
+                        <input type="time" class="border p-1" id="BC_FOM_001__sample_collection_time"
                             name="sample_collection_time">
 
                         Date of Ultrasound:
-                        <input type="date" class="border p-1" id="ultrasound_date" name="ultrasound_date">
+                        <input type="date" class="border p-1" id="BC_FOM_001__ultrasound_date" name="ultrasound_date">
                     </td>
                 </tr>
 
@@ -546,26 +556,26 @@
 
                 <tr>
                     <td>CRL (MM)</td>
-                    <td><input type="text" class="border p-1 w-full" id="crl_a" name="crl_a"></td>
-                    <td><input type="text" class="border p-1 w-full" id="crl_b" name="crl_b"></td>
+                    <td><input type="text" class="border p-1 w-full" id="BC_FOM_001__crl_a" name="crl_a"></td>
+                    <td><input type="text" class="border p-1 w-full" id="BC_FOM_001__crl_b" name="crl_b"></td>
                 </tr>
 
                 <tr>
                     <td>NT</td>
-                    <td><input type="text" class="border p-1 w-full" id="nt_a" name="nt_a"></td>
-                    <td><input type="text" class="border p-1 w-full" id="nt_b" name="nt_b"></td>
+                    <td><input type="text" class="border p-1 w-full" id="BC_FOM_001__nt_a" name="nt_a"></td>
+                    <td><input type="text" class="border p-1 w-full" id="BC_FOM_001__nt_b" name="nt_b"></td>
                 </tr>
 
                 <tr>
                     <td>NB</td>
-                    <td><input type="text" class="border p-1 w-full" id="nb_a" name="nb_a"></td>
-                    <td><input type="text" class="border p-1 w-full" id="nb_b" name="nb_b"></td>
+                    <td><input type="text" class="border p-1 w-full" id="BC_FOM_001__nb_a" name="nb_a"></td>
+                    <td><input type="text" class="border p-1 w-full" id="BC_FOM_001__nb_b" name="nb_b"></td>
                 </tr>
 
                 <tr>
                     <td>BPD</td>
-                    <td><input type="text" class="border p-1 w-full" id="bpd_a" name="bpd_a"></td>
-                    <td><input type="text" class="border p-1 w-full" id="bpd_b" name="bpd_b"></td>
+                    <td><input type="text" class="border p-1 w-full" id="BC_FOM_001__bpd_a" name="bpd_a"></td>
+                    <td><input type="text" class="border p-1 w-full" id="BC_FOM_001__bpd_b" name="bpd_b"></td>
                 </tr>
 
                 <!-- Uterine Artery -->
@@ -573,9 +583,9 @@
                     <td colspan="3">
                         <strong>Uterine Artery PI</strong>
                         Left:
-                        <input type="text" class="border p-1 w-24" id="uterine_left" name="uterine_left">
+                        <input type="text" class="border p-1 w-24" id="BC_FOM_001__uterine_left" name="uterine_left">
                         Right:
-                        <input type="text" class="border p-1 w-24" id="uterine_right" name="uterine_right">
+                        <input type="text" class="border p-1 w-24" id="BC_FOM_001__uterine_right" name="uterine_right">
                     </td>
                 </tr>
 
@@ -587,29 +597,29 @@
                 <tr>
                     <td colspan="3">
                         Donor Age:
-                        <input type="number" class="border p-1 w-20" id="donor_age" name="donor_age">
+                        <input type="number" class="border p-1 w-20" id="BC_FOM_001__donor_age" name="donor_age">
 
                         Donor DOB:
-                        <input type="date" class="border p-1" id="donor_dob" name="donor_dob">
+                        <input type="date" class="border p-1" id="BC_FOM_001__donor_dob" name="donor_dob">
 
                         Type of IVF:
-                        <input type="text" class="border p-1 w-40" id="ivf_type" name="ivf_type">
+                        <input type="text" class="border p-1 w-40" id="BC_FOM_001__ivf_type" name="ivf_type">
                         <br><br>
 
                         Extraction Date:
-                        <input type="date" class="border p-1" id="extraction_date" name="extraction_date">
+                        <input type="date" class="border p-1" id="BC_FOM_001__extraction_date" name="extraction_date">
 
                         Transfer Date:
-                        <input type="date" class="border p-1" id="transfer_date" name="transfer_date">
+                        <input type="date" class="border p-1" id="BC_FOM_001__transfer_date" name="transfer_date">
 
                         HCG Injection Taken:
-                        <select class="border p-1" id="hcg_taken" name="hcg_taken">
+                        <select class="border p-1" id="BC_FOM_001__hcg_taken" name="hcg_taken">
                             <option>No</option>
                             <option>Yes</option>
                         </select>
 
                         If Yes, Date:
-                        <input type="date" class="border p-1" id="hcg_date" name="hcg_date">
+                        <input type="date" class="border p-1" id="BC_FOM_001__hcg_date" name="hcg_date">
                     </td>
                 </tr>
 
@@ -624,7 +634,7 @@
             I have read and understood your prenatal screening consent form. I
             understand that this test represents only the risks and not actual diagnostic outcomes - Increased risk does
             not mean that the baby is affected and further tests must be performed before a ﬁrm diagnosis can be made; A
-            low risk does not exclude possibility of Down’s syndrome or other abnormalities, as risk assessment does not
+            low risk does not exclude possibility of Down's syndrome or other abnormalities, as risk assessment does not
             detect all affected pregnancies. I understand that therapeutic decisions should not be made based solely on
             screening results. I give my consent that the specimen(s) shall be the sole exclusive property of TRUSTlab
             Diagnostics, and I transfer all my rights on those specimens to TRUSTlab Diagnostics, for its commercial and
@@ -637,11 +647,11 @@
 
         <br><br>
 
-        Patient’s Signature:
-        <input type="text" class="border p-1 w-48" id="patient_signature" name="patient_signature">
+        Patient's Signature:
+        <input type="text" class="border p-1 w-48" id="BC_FOM_001__patient_signature" name="patient_signature">
 
         Date:
-        <input type="date" class="border p-1" id="patient_signature_date" name="patient_signature_date">
+        <input type="date" class="border p-1" id="BC_FOM_001__patient_signature_date" name="patient_signature_date">
 
         <br><br>
 
@@ -656,6 +666,151 @@
             Dual Marker: LMP, DOB, Weight, CRL, NT, NB
             Triple Marker: LMP, DOB, Weight, CRL, BPD
         </p>
+
+        <script>
+            // ── LOAD ──
+            function loadBcFom001() {
+                const patientMobile = document.getElementById('BC_FOM_001__filter_mobile').value.trim();
+                if (!patientMobile) return;
+
+                fetch(`/newforms/be/maternal-marker/load?patient_mobile=${encodeURIComponent(patientMobile)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearBcFom001Fields();
+
+                    if (!res.data) {
+                        document.getElementById('BC_FOM_001__record_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('BC_FOM_001__record_id').value = res.data.id;
+
+                    // Simple text/date/number/email/select fields
+                    const textFields = [
+                        'physician_name', 'physician_mobile', 'client_name', 'client_code',
+                        'patient_name', 'patient_age', 'patient_dob', 'patient_mobile', 'patient_email',
+                        'patient_weight', 'ethnicity', 'lmp',
+                        'diabetic_status', 'chronic_hypertension',
+                        'on_medication', 'medication_details', 'smoking_status',
+                        'bp_date', 'bp_right', 'bp_left',
+                        'sample_collection_date', 'sample_collection_time', 'ultrasound_date',
+                        'crl_a', 'crl_b', 'nt_a', 'nt_b', 'nb_a', 'nb_b', 'bpd_a', 'bpd_b',
+                        'uterine_left', 'uterine_right',
+                        'donor_age', 'donor_dob', 'ivf_type',
+                        'extraction_date', 'transfer_date', 'hcg_taken', 'hcg_date',
+                        'patient_signature', 'patient_signature_date'
+                    ];
+
+                    textFields.forEach(field => {
+                        const el = document.getElementById('BC_FOM_001__' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
+                    });
+
+                    // Test panels (checkbox array)
+                    if (res.data.test_panels && Array.isArray(res.data.test_panels)) {
+                        const container = document.querySelector('[id="TDPL-BC-FOM-001"]');
+                        res.data.test_panels.forEach(val => {
+                            const cb = container.querySelector('input[name="test_panels[]"][value="' + val + '"]');
+                            if (cb) cb.checked = true;
+                        });
+                    }
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            // ── CLEAR ──
+            function clearBcFom001() {
+                document.getElementById('BC_FOM_001__filter_mobile').value = '';
+                document.getElementById('BC_FOM_001__record_id').value = '';
+                clearBcFom001Fields();
+            }
+
+            function clearBcFom001Fields() {
+                const container = document.querySelector('[id="TDPL-BC-FOM-001"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'BC_FOM_001__filter_mobile' || el.id === 'BC_FOM_001__record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else if (el.tagName === 'SELECT') {
+                        el.selectedIndex = 0;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            // ── AJAX SUBMIT + TOAST ──
+            (function() {
+                function initBcFom001() {
+                    const formContainer = document.querySelector('[id="TDPL-BC-FOM-001"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastBcFom001('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('BC_FOM_001__record_id').value = result.form_id;
+                                }
+                            } else {
+                                showToastBcFom001('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(err => {
+                            showToastBcFom001('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
+                        });
+                    });
+                }
+
+                function showToastBcFom001(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initBcFom001);
+                } else {
+                    initBcFom001();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
 
@@ -8210,90 +8365,7 @@
 
     // loadGsForm, clearGsForm — moved to self-contained script inside FOM-038
 
-    function handlePatientMobileFilter(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        loadMaternalMarkerForm();
-    }
-
-    function blockEnter(e) {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            return false; // ⛔ STOP submit
-        }
-    }
-
-
-
-    function loadMaternalMarkerForm() {
-
-        const mobile = document.getElementById('filter_patient_mobile').value;
-
-        // ❗ GLOBAL RULE – filter mandatory
-        if (!mobile) return;
-
-        fetch(`/newforms/be/maternal-marker/load?filter_patient_mobile=${mobile}`, {
-                headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                },
-                credentials: 'same-origin'
-            })
-            .then(res => res.json())
-            .then(res => {
-
-                clearMaternalMarkerForm(); // 🔑 clear first
-
-                if (!res.data) {
-                    document.getElementById('mm_form_id').value = '';
-                    return;
-                }
-
-                // ✅ SET INLINE EDIT ID (MOST IMPORTANT)
-                document.getElementById('mm_form_id').value = res.data.id;
-
-                // ✅ FILL SIMPLE INPUTS
-                Object.keys(res.data).forEach(key => {
-
-                    const el = document.getElementById(key);
-                    if (!el) return;
-
-                    if (el.type === 'checkbox') {
-                        el.checked = true;
-                    } else {
-                        el.value = res.data[key] ?? '';
-                    }
-                });
-
-                // ✅ TEST PANELS (ARRAY CHECKBOXES)
-                if (Array.isArray(res.data.test_panels)) {
-                    res.data.test_panels.forEach(val => {
-                        const cb = document.querySelector(
-                            `input[name="test_panels[]"][value="${val}"]`
-                        );
-                        if (cb) cb.checked = true;
-                    });
-                }
-            });
-    }
-
-    /* ---------------- CLEAR FORM ---------------- */
-    function clearMaternalMarkerForm() {
-
-        document.querySelectorAll('.qc-input').forEach(input => {
-
-            // ❌ DO NOT CLEAR FILTER
-            if (input.id === 'filter_patient_mobile') return;
-
-            // ❌ DO NOT CLEAR form_id
-            if (input.id === 'mm_form_id') return;
-
-            if (input.type === 'checkbox') {
-                input.checked = false;
-            } else {
-                input.value = '';
-            }
-        });
-    }
+    // loadMaternalMarkerForm, clearMaternalMarkerForm — moved to self-contained script inside BC-FOM-001
 
 
 

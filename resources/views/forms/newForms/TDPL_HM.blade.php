@@ -1336,6 +1336,27 @@
         issueDate="01/10/2024"
         buttonText="Submit"
         action="{{ route('newforms.hm.forms.submit') }}">
+        <input type="hidden" name="bone_marrow_exam_form_id" id="HM_FOM_005__record_id">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Patient Name</strong></label>
+                <input type="text" id="HM_FOM_005__filter_name"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type patient name">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadHmFom005()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearHmFom005()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
         <div style="width:100%;font-size:14px;background:#fff;padding:25px;border-radius:12px;border:1px solid #ddd;">
 
             <h3 style="text-align:center; margin-bottom:20px;">
@@ -1346,47 +1367,47 @@
             <div style="display:flex; margin-bottom:8px; gap:20px;">
                 <div style="flex:1;">
                     <label>Patient Name:</label>
-                    <input type="text" name="patient_name" style="width:100%; border:1px solid #000; padding:4px;">
+                    <input type="text" name="patient_name" id="HM_FOM_005__patient_name" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
                 <div style="flex:1;">
                     <label>Lab Number:</label>
-                    <input type="text" name="lab_number" style="width:100%; border:1px solid #000; padding:4px;">
+                    <input type="text" name="lab_number" id="HM_FOM_005__lab_number" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
             </div>
             <div style="display:flex; margin-bottom:8px; gap:20px;">
                 <div style="flex:1;">
                     <label>Age & Sex:</label>
-                    <input type="text" name="age_sex" style="width:100%; border:1px solid #000; padding:4px;">
+                    <input type="text" name="age_sex" id="HM_FOM_005__age_sex" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
                 <div style="flex:1;">
                     <label>Date:</label>
-                    <input type="date" name="exam_date" style="width:100%; border:1px solid #000; padding:4px;">
+                    <input type="date" name="exam_date" id="HM_FOM_005__exam_date" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
             </div>
             <div style="display:flex; margin-bottom:8px; gap:20px;">
                 <div style="flex:1;">
                     <label>Ref. Doctor:</label>
-                    <input type="text" name="ref_doctor" style="width:100%; border:1px solid #000; padding:4px;">
+                    <input type="text" name="ref_doctor" id="HM_FOM_005__ref_doctor" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
                 <div style="flex:1;">
                     <label>Time:</label>
-                    <input type="text" name="time" style="width:100%; border:1px solid #000; padding:4px;">
+                    <input type="text" name="time" id="HM_FOM_005__time" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
             </div>
             <div style="display:flex; margin-bottom:8px; gap:20px;">
                 <div style="flex:1;">
                     <label>Client Name:</label>
-                    <input type="text" name="client_name" style="width:100%; border:1px solid #000; padding:4px;">
+                    <input type="text" name="client_name" id="HM_FOM_005__client_name" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
                 <div style="flex:1;">
                     <label>Mobile No.:</label>
-                    <input type="text" name="mobile_no" style="width:100%; border:1px solid #000; padding:4px;">
+                    <input type="text" name="mobile_no" id="HM_FOM_005__mobile_no" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
             </div>
             <div style="display:flex; margin-bottom:8px; gap:20px;">
                 <div style="flex:1;">
                     <label>Client Code:</label>
-                    <input type="text" name="client_code" style="width:100%; border:1px solid #000; padding:4px;">
+                    <input type="text" name="client_code" id="HM_FOM_005__client_code" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
                 <div style="flex:1;"></div>
             </div>
@@ -1394,43 +1415,43 @@
             <!-- CLINICAL HISTORY -->
             <div style="margin:15px 0;">
                 <label>Relevant Clinical History:</label>
-                <textarea name="clinical_history" rows="4" style="width:100%; border:1px solid #000; padding:6px;"></textarea>
+                <textarea name="clinical_history" id="HM_FOM_005__clinical_history" rows="4" style="width:100%; border:1px solid #000; padding:6px;"></textarea>
             </div>
 
             <!-- CBC FIELDS -->
             <div style="margin-bottom:8px;">
                 <label>Hemoglobin:</label>
-                <input type="text" name="hemoglobin" style="width:100%; border:1px solid #000; padding:4px;">
+                <input type="text" name="hemoglobin" id="HM_FOM_005__hemoglobin" style="width:100%; border:1px solid #000; padding:4px;">
             </div>
             <div style="margin-bottom:8px;">
                 <label>RBC count:</label>
-                <input type="text" name="rbc_count" style="width:100%; border:1px solid #000; padding:4px;">
+                <input type="text" name="rbc_count" id="HM_FOM_005__rbc_count" style="width:100%; border:1px solid #000; padding:4px;">
             </div>
             <div style="margin-bottom:8px;">
                 <label>MCV:</label>
-                <input type="text" name="mcv" style="width:100%; border:1px solid #000; padding:4px;">
+                <input type="text" name="mcv" id="HM_FOM_005__mcv" style="width:100%; border:1px solid #000; padding:4px;">
             </div>
             <div style="margin-bottom:8px;">
                 <label>RDW:</label>
-                <input type="text" name="rdw" style="width:100%; border:1px solid #000; padding:4px;">
+                <input type="text" name="rdw" id="HM_FOM_005__rdw" style="width:100%; border:1px solid #000; padding:4px;">
             </div>
             <div style="margin-bottom:8px;">
                 <label>Total leukocyte count:</label>
-                <input type="text" name="total_leukocyte_count" style="width:100%; border:1px solid #000; padding:4px;">
+                <input type="text" name="total_leukocyte_count" id="HM_FOM_005__total_leukocyte_count" style="width:100%; border:1px solid #000; padding:4px;">
             </div>
             <div style="margin-bottom:8px;">
                 <label>Differential leukocyte count:</label>
-                <input type="text" name="differential_leukocyte_count" style="width:100%; border:1px solid #000; padding:4px;">
+                <input type="text" name="differential_leukocyte_count" id="HM_FOM_005__differential_leukocyte_count" style="width:100%; border:1px solid #000; padding:4px;">
             </div>
             <div style="margin-bottom:8px;">
                 <label>Platelet count:</label>
-                <input type="text" name="platelet_count" style="width:100%; border:1px solid #000; padding:4px;">
+                <input type="text" name="platelet_count" id="HM_FOM_005__platelet_count" style="width:100%; border:1px solid #000; padding:4px;">
             </div>
 
             <!-- PERIPHERAL SMEAR -->
             <div style="margin:15px 0;">
                 <label>Peripheral Smear Findings:</label>
-                <textarea name="peripheral_smear_findings" rows="4" style="width:100%; border:1px solid #000; padding:6px;"></textarea>
+                <textarea name="peripheral_smear_findings" id="HM_FOM_005__peripheral_smear_findings" rows="4" style="width:100%; border:1px solid #000; padding:6px;"></textarea>
             </div>
 
             <!-- NOTE -->
@@ -1441,9 +1462,65 @@
         </div>
 
         <script>
-            // AJAX Submit for FOM-005 (Bone Marrow Examination)
+            // ── LOAD ──
+            function loadHmFom005() {
+                const patientName = document.getElementById('HM_FOM_005__filter_name').value.trim();
+                if (!patientName) return;
+
+                fetch(`/newforms/hm/bone-marrow-examination/load?patient_name=${encodeURIComponent(patientName)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearHmFom005Fields();
+
+                    if (!res.data) {
+                        document.getElementById('HM_FOM_005__record_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('HM_FOM_005__record_id').value = res.data.id;
+
+                    const textFields = [
+                        'patient_name', 'lab_number', 'age_sex', 'exam_date',
+                        'ref_doctor', 'time', 'client_name', 'mobile_no',
+                        'client_code', 'clinical_history',
+                        'hemoglobin', 'rbc_count', 'mcv', 'rdw',
+                        'total_leukocyte_count', 'differential_leukocyte_count',
+                        'platelet_count', 'peripheral_smear_findings'
+                    ];
+
+                    textFields.forEach(field => {
+                        const el = document.getElementById('HM_FOM_005__' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            // ── CLEAR ──
+            function clearHmFom005() {
+                document.getElementById('HM_FOM_005__filter_name').value = '';
+                document.getElementById('HM_FOM_005__record_id').value = '';
+                clearHmFom005Fields();
+            }
+
+            function clearHmFom005Fields() {
+                const container = document.querySelector('[id="TDPL/HM/FOM-005"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'HM_FOM_005__filter_name' || el.id === 'HM_FOM_005__record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            // ── AJAX SUBMIT + TOAST ──
             (function() {
-                function initBoneMarrowForm() {
+                function initHmFom005() {
                     const formContainer = document.querySelector('[id="TDPL/HM/FOM-005"]');
                     if (!formContainer) return;
 
@@ -1457,10 +1534,12 @@
 
                         const formData = new FormData(form);
                         const submitBtn = form.querySelector('button[type="submit"]');
-                        const originalText = submitBtn.textContent;
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
 
-                        submitBtn.textContent = 'Saving...';
-                        submitBtn.disabled = true;
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
 
                         fetch(form.action, {
                             method: 'POST',
@@ -1473,43 +1552,38 @@
                         .then(response => response.json())
                         .then(result => {
                             if (result.success) {
-                                showToastFOM005('success', result.message || 'Saved successfully!');
-                                // Clear form after successful save
-                                form.reset();
+                                showToastHmFom005('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('HM_FOM_005__record_id').value = result.form_id;
+                                }
                             } else {
-                                showToastFOM005('error', result.message || 'Failed to save');
+                                showToastHmFom005('error', result.message || 'Failed to save');
                             }
                         })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            showToastFOM005('error', 'Failed to save. Please try again.');
+                        .catch(err => {
+                            showToastHmFom005('error', 'Failed to save. Please try again.');
                         })
                         .finally(() => {
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
                         });
-
-                        return false;
                     });
                 }
 
-                function showToastFOM005(type, message) {
+                function showToastHmFom005(type, message) {
                     const toast = document.createElement('div');
-                    toast.style.cssText = `
-                        position: fixed; top: 20px; right: 20px; z-index: 9999;
-                        padding: 15px 25px; border-radius: 5px; color: white;
-                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
-                    `;
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
                     toast.textContent = message;
                     document.body.appendChild(toast);
                     setTimeout(() => toast.remove(), 3000);
                 }
 
                 if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', initBoneMarrowForm);
+                    document.addEventListener('DOMContentLoaded', initHmFom005);
                 } else {
-                    initBoneMarrowForm();
+                    initHmFom005();
                 }
             })();
         </script>
@@ -1523,6 +1597,27 @@
         issueDate="01/10/2024"
         buttonText="Submit"
         action="{{ route('newforms.hm.forms.submit') }}">
+        <input type="hidden" name="coagulation_req_form_id" id="HM_FOM_006__record_id">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Patient Name</strong></label>
+                <input type="text" id="HM_FOM_006__filter_name"
+                    style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type patient name">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadHmFom006()"
+                    style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearHmFom006()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
         <div style="width:100%;background:#fff;padding:25px;border-radius:12px;border:1px solid #ccc;font-size:14px;line-height:1.6;">
 
             <h2 style="text-align:center; margin-bottom:20px;">
@@ -1533,12 +1628,12 @@
             <div style="display:flex; gap:20px; margin-bottom:12px;">
                 <div style="flex:1;">
                     <label>Lab No.:</label>
-                    <input type="text" name="lab_no"
+                    <input type="text" name="lab_no" id="HM_FOM_006__lab_no"
                         style="width:100%; border:1px solid #777; padding:6px; border-radius:8px;">
                 </div>
                 <div style="flex:1;">
                     <label>Date:</label>
-                    <input type="date" name="form_date"
+                    <input type="date" name="form_date" id="HM_FOM_006__form_date"
                         style="width:100%; border:1px solid #777; padding:6px; border-radius:8px;">
                 </div>
             </div>
@@ -1555,7 +1650,7 @@
 
                 <div style="margin-top:8px;">
                     <label>Time of specimen:</label>
-                    <input type="text" name="specimen_time"
+                    <input type="text" name="specimen_time" id="HM_FOM_006__specimen_time"
                         style="width:50%; border:1px solid #777; padding:6px; border-radius:8px;">
                 </div>
             </div>
@@ -1564,14 +1659,14 @@
             <div style="margin-bottom:12px;">
                 <div style="margin-bottom:8px;">
                     <label>Name:</label>
-                    <input type="text" name="patient_name"
+                    <input type="text" name="patient_name" id="HM_FOM_006__patient_name"
                         style="width:100%; border:1px solid #777; padding:6px; border-radius:8px;">
                 </div>
 
                 <div style="display:flex; gap:20px; margin-bottom:8px;">
                     <div style="flex:1;">
                         <label>Age:</label>
-                        <input type="text" name="age"
+                        <input type="text" name="age" id="HM_FOM_006__age"
                             style="width:100%; border:1px solid #777; padding:6px; border-radius:8px;">
                     </div>
 
@@ -1589,11 +1684,11 @@
             <!-- Contact -->
             <div style="margin-bottom:12px;">
                 <label>Tel No. Patient:</label>
-                <input type="text" name="tel_patient"
+                <input type="text" name="tel_patient" id="HM_FOM_006__tel_patient"
                     style="width:100%; border:1px solid #777; padding:6px; border-radius:8px; margin-bottom:10px;">
 
                 <label>Tel No. Physician:</label>
-                <input type="text" name="tel_physician"
+                <input type="text" name="tel_physician" id="HM_FOM_006__tel_physician"
                     style="width:100%; border:1px solid #777; padding:6px; border-radius:8px;">
             </div>
 
@@ -1624,11 +1719,11 @@
             <!-- Transfusion Extra -->
             <div style="margin-bottom:20px;">
                 <label>If yes, Date of Last Transfusion:</label>
-                <input type="date" name="last_transfusion_date"
+                <input type="date" name="last_transfusion_date" id="HM_FOM_006__last_transfusion_date"
                     style="border:1px solid #777; padding:6px; border-radius:8px; margin-right:20px;">
 
                 <label>Type:</label>
-                <input type="text" name="transfusion_type"
+                <input type="text" name="transfusion_type" id="HM_FOM_006__transfusion_type"
                     style="border:1px solid #777; padding:6px; border-radius:8px;">
             </div>
 
@@ -1650,7 +1745,7 @@
 
             <div style="margin-bottom:15px;">
                 <label>If yes: Last value:</label>
-                <input type="text" name="lab_{{ $i }}_value"
+                <input type="text" name="lab_{{ $i }}_value" id="HM_FOM_006__lab_{{ $i }}_value"
                     style="border:1px solid #777; padding:6px; border-radius:8px; width:50%;">
             </div>
             @endforeach
@@ -1664,14 +1759,14 @@
                 </label>
                 @endforeach
 
-                <input type="text" name="liver_function_note"
+                <input type="text" name="liver_function_note" id="HM_FOM_006__liver_function_note"
                     style="border:1px solid #777; padding:6px; border-radius:8px; margin-left:15px;">
             </div>
 
             <!-- Others -->
             <div style="margin-bottom:15px;">
                 <label>Others specify:</label>
-                <input type="text" name="others_specify"
+                <input type="text" name="others_specify" id="HM_FOM_006__others_specify"
                     style="width:100%; border:1px solid #777; padding:6px; border-radius:8px;">
             </div>
 
@@ -1680,13 +1775,13 @@
 
             <div style="margin-bottom:12px;">
                 <label>Current dose:</label>
-                <input type="text" name="current_dose"
+                <input type="text" name="current_dose" id="HM_FOM_006__current_dose"
                     style="width:60%; border:1px solid #777; padding:6px; border-radius:8px; margin-left:15px;">
             </div>
 
             <div style="margin-bottom:20px;">
                 <label>Date of last change in dose:</label>
-                <input type="date" name="dose_change_date"
+                <input type="date" name="dose_change_date" id="HM_FOM_006__dose_change_date"
                     style="border:1px solid #777; padding:6px; border-radius:8px; margin-left:15px;">
             </div>
 
@@ -1707,7 +1802,7 @@
                 @endforeach
 
                 <input type="text"
-                    name="drug_{{ $m }}_notes"
+                    name="drug_{{ $m }}_notes" id="HM_FOM_006__drug_{{ $m }}_notes"
                     style="border:1px solid #777; padding:6px; border-radius:8px; width:40%;">
             </div>
             @endforeach
@@ -1727,7 +1822,7 @@
                 @endforeach
 
                 <input type="text"
-                    name="heparin_{{ $h }}_notes"
+                    name="heparin_{{ $h }}_notes" id="HM_FOM_006__heparin_{{ $h }}_notes"
                     style="border:1px solid #777; padding:6px; border-radius:8px; width:40%;">
             </div>
             @endforeach
@@ -1745,27 +1840,107 @@
             <!-- Diagnosis -->
             <div style="margin-bottom:15px;">
                 <label>Probable Diagnosis:</label>
-                <textarea name="probable_diagnosis" rows="3"
+                <textarea name="probable_diagnosis" id="HM_FOM_006__probable_diagnosis" rows="3"
                     style="width:100%; border:1px solid #777; padding:6px; border-radius:8px;"></textarea>
             </div>
 
             <!-- Footer Info -->
             <div style="margin-bottom:15px;">
                 <label>Sample collected by:</label>
-                <input type="text" name="sample_collected_by"
+                <input type="text" name="sample_collected_by" id="HM_FOM_006__sample_collected_by"
                     style="width:100%; border:1px solid #777; padding:6px; border-radius:8px; margin-bottom:10px;">
 
                 <label>Client Name & Code:</label>
-                <input type="text" name="client_name_code"
+                <input type="text" name="client_name_code" id="HM_FOM_006__client_name_code"
                     style="width:100%; border:1px solid #777; padding:6px; border-radius:8px;">
             </div>
 
         </div>
 
         <script>
-            // AJAX Submit for FOM-006 (Coagulation Requisition)
+            // ── LOAD ──
+            function loadHmFom006() {
+                const patientName = document.getElementById('HM_FOM_006__filter_name').value.trim();
+                if (!patientName) return;
+
+                fetch(`/newforms/hm/coagulation-requisition/load?patient_name=${encodeURIComponent(patientName)}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    clearHmFom006Fields();
+
+                    if (!res.data) {
+                        document.getElementById('HM_FOM_006__record_id').value = '';
+                        return;
+                    }
+
+                    document.getElementById('HM_FOM_006__record_id').value = res.data.id;
+
+                    const container = document.querySelector('[id="TDPL/HM/FOM-006"]');
+
+                    // Simple text / date / textarea fields
+                    const textFields = [
+                        'lab_no', 'form_date', 'specimen_time',
+                        'patient_name', 'age',
+                        'tel_patient', 'tel_physician',
+                        'last_transfusion_date', 'transfusion_type',
+                        'lab_0_value', 'lab_1_value',
+                        'liver_function_note', 'others_specify',
+                        'current_dose', 'dose_change_date',
+                        'drug_0_notes', 'drug_1_notes', 'drug_2_notes', 'drug_3_notes',
+                        'heparin_0_notes', 'heparin_1_notes',
+                        'probable_diagnosis', 'sample_collected_by', 'client_name_code'
+                    ];
+
+                    textFields.forEach(field => {
+                        const el = document.getElementById('HM_FOM_006__' + field);
+                        if (el && res.data[field] != null) el.value = res.data[field];
+                    });
+
+                    // Radio button fields
+                    const radioFields = [
+                        'specimen_type', 'sex',
+                        'clinical_0', 'clinical_1', 'clinical_2', 'clinical_3',
+                        'clinical_4', 'clinical_5', 'clinical_6',
+                        'lab_0', 'lab_1', 'liver_function',
+                        'drug_0', 'drug_1', 'drug_2', 'drug_3',
+                        'heparin_0', 'heparin_1', 'major_surgery'
+                    ];
+
+                    radioFields.forEach(field => {
+                        if (res.data[field] != null) {
+                            const radio = container.querySelector('input[name="' + field + '"][value="' + res.data[field] + '"]');
+                            if (radio) radio.checked = true;
+                        }
+                    });
+                })
+                .catch(err => console.error('Load error:', err));
+            }
+
+            // ── CLEAR ──
+            function clearHmFom006() {
+                document.getElementById('HM_FOM_006__filter_name').value = '';
+                document.getElementById('HM_FOM_006__record_id').value = '';
+                clearHmFom006Fields();
+            }
+
+            function clearHmFom006Fields() {
+                const container = document.querySelector('[id="TDPL/HM/FOM-006"]');
+                if (!container) return;
+                container.querySelectorAll('input, textarea, select').forEach(el => {
+                    if (el.id === 'HM_FOM_006__filter_name' || el.id === 'HM_FOM_006__record_id' || el.name === 'doc_no') return;
+                    if (el.type === 'checkbox' || el.type === 'radio') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                });
+            }
+
+            // ── AJAX SUBMIT + TOAST ──
             (function() {
-                function initCoagulationReqForm() {
+                function initHmFom006() {
                     const formContainer = document.querySelector('[id="TDPL/HM/FOM-006"]');
                     if (!formContainer) return;
 
@@ -1779,10 +1954,12 @@
 
                         const formData = new FormData(form);
                         const submitBtn = form.querySelector('button[type="submit"]');
-                        const originalText = submitBtn.textContent;
+                        const originalText = submitBtn ? submitBtn.textContent : 'Submit';
 
-                        submitBtn.textContent = 'Saving...';
-                        submitBtn.disabled = true;
+                        if (submitBtn) {
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+                        }
 
                         fetch(form.action, {
                             method: 'POST',
@@ -1795,43 +1972,38 @@
                         .then(response => response.json())
                         .then(result => {
                             if (result.success) {
-                                showToastFOM006('success', result.message || 'Saved successfully!');
-                                // Clear form after successful save
-                                form.reset();
+                                showToastHmFom006('success', result.message || 'Saved successfully!');
+                                if (result.form_id) {
+                                    document.getElementById('HM_FOM_006__record_id').value = result.form_id;
+                                }
                             } else {
-                                showToastFOM006('error', result.message || 'Failed to save');
+                                showToastHmFom006('error', result.message || 'Failed to save');
                             }
                         })
-                        .catch(error => {
-                            console.error('Error:', error);
-                            showToastFOM006('error', 'Failed to save. Please try again.');
+                        .catch(err => {
+                            showToastHmFom006('error', 'Failed to save. Please try again.');
                         })
                         .finally(() => {
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
+                            if (submitBtn) {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            }
                         });
-
-                        return false;
                     });
                 }
 
-                function showToastFOM006(type, message) {
+                function showToastHmFom006(type, message) {
                     const toast = document.createElement('div');
-                    toast.style.cssText = `
-                        position: fixed; top: 20px; right: 20px; z-index: 9999;
-                        padding: 15px 25px; border-radius: 5px; color: white;
-                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
-                    `;
+                    toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
                     toast.textContent = message;
                     document.body.appendChild(toast);
                     setTimeout(() => toast.remove(), 3000);
                 }
 
                 if (document.readyState === 'loading') {
-                    document.addEventListener('DOMContentLoaded', initCoagulationReqForm);
+                    document.addEventListener('DOMContentLoaded', initHmFom006);
                 } else {
-                    initCoagulationReqForm();
+                    initHmFom006();
                 }
             })();
         </script>
