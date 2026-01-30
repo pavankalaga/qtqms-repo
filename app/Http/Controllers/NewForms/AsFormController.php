@@ -180,6 +180,13 @@ class AsFormController extends Controller
             }
         });
 
+        if ($request->ajax() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Sample Volume Check saved successfully',
+            ]);
+        }
+
         return back()->with('success', 'Sample Volume Check saved successfully');
     }
 
@@ -224,115 +231,77 @@ class AsFormController extends Controller
 
     protected function storeSampleReceivingRegister(Request $request)
     {
-        /**
-         * =================================================
-         * 🔵 INLINE EDIT (MULTIPLE ROWS)
-         * =================================================
-         */
-        if ($request->has('rows') && is_array($request->rows)) {
+        $isAjax = $request->ajax() || $request->wantsJson();
+        $location   = $request->srLocation;
+        $department = $request->srDepartment;
+        $equipmentId = $request->srEquipmentId;
+        $savedIds = [];
 
-            foreach ($request->rows as $row) {
+        // Handle array-style rows (row_date[], row_time[], etc.)
+        if (is_array($request->row_date)) {
+            $rowCount     = count($request->row_date);
+            $rowIds       = $request->row_id ?? [];
+            $rowTimes     = $request->row_time ?? [];
+            $rowClientLoc = $request->row_client_location ?? [];
+            $rowClientNm  = $request->row_client_name ?? [];
+            $rowTlCode    = $request->row_tl_code ?? [];
+            $rowBlood     = $request->row_blood_samples ?? [];
+            $rowOther     = $request->row_other_samples ?? [];
+            $rowCsrName   = $request->row_csr_name ?? [];
+            $rowCsrSign   = $request->row_csr_sign ?? [];
+            $rowTemp      = $request->row_sample_temp ?? [];
+            $rowReceiver  = $request->row_receiver_name ?? [];
+            $rowRemarks   = $request->row_remarks ?? [];
 
-                // 🛑 skip empty rows
-                if (
-                    empty($row['date']) &&
-                    empty($row['client_name'])
-                ) {
+            for ($i = 0; $i < $rowCount; $i++) {
+                // Skip empty rows
+                if (empty($request->row_date[$i])) {
                     continue;
                 }
 
+                $rowDate = $request->row_date[$i];
+                $rowId   = $rowIds[$i] ?? null;
+
                 $data = [
-                    'date'            => $row['date'] ?? null,
-                    'time'            => $row['time'] ?? null,
-                    'location'        => $request->srLocation ?? null,
-                    'department'      => $request->srDepartment ?? null,
-                    'equipment_id'    => $request->srEquipmentId ?? null,
-                    'client_location' => $row['client_location'] ?? null,
-                    'client_name'     => $row['client_name'] ?? null,
-                    'blood_samples'   => $row['blood_samples'] ?? null,
-                    'other_samples'   => $row['other_samples'] ?? null,
-                    'csr_name'        => $row['csr_name'] ?? null,
-                    'csr_sign'        => $row['csr_sign'] ?? null,
-                    'sample_temp'     => $row['sample_temp'] ?? null,
-                    'receiver_name'   => $row['receiver_name'] ?? null,
-                    'remarks'         => $row['remarks'] ?? null,
-                    'tl_code'         => $row['tl_code'] ?? null,
+                    'date'            => $rowDate,
+                    'time'            => $rowTimes[$i] ?? null,
+                    'location'        => $location,
+                    'department'      => $department,
+                    'equipment_id'    => $equipmentId,
+                    'client_location' => $rowClientLoc[$i] ?? null,
+                    'client_name'     => $rowClientNm[$i] ?? null,
+                    'blood_samples'   => $rowBlood[$i] ?? null,
+                    'other_samples'   => $rowOther[$i] ?? null,
+                    'csr_name'        => $rowCsrName[$i] ?? null,
+                    'csr_sign'        => $rowCsrSign[$i] ?? null,
+                    'sample_temp'     => $rowTemp[$i] ?? null,
+                    'receiver_name'   => $rowReceiver[$i] ?? null,
+                    'remarks'         => $rowRemarks[$i] ?? null,
+                    'tl_code'         => $rowTlCode[$i] ?? null,
                 ];
 
-                if (!empty($row['id'])) {
-                    SampleReceivingRegister::where('id', $row['id'])->update($data);
+                if ($rowId) {
+                    SampleReceivingRegister::where('id', $rowId)->update($data);
+                    $savedIds[] = $rowId;
                 } else {
-                    SampleReceivingRegister::create($data);
+                    $newRecord = SampleReceivingRegister::create($data);
+                    $savedIds[] = $newRecord->id;
                 }
-
             }
-
-            $query = SampleReceivingRegister::query();
-
-            if ($request->filled('srFromDate') && $request->filled('srToDate')) {
-
-                // 🔹 Date range
-                $query->whereBetween('date', [
-                    $request->srFromDate,
-                    $request->srToDate
-                ]);
-            } elseif ($request->filled('srFromDate')) {
-
-                // 🔹 Single day
-                $query->whereDate('date', $request->srFromDate);
-            }
-
-            if ($request->filled('srLocation')) {
-                $query->where('location', $request->srLocation);
-            }
-
-            if ($request->filled('srDepartment')) {
-                $query->where('department', $request->srDepartment);
-            }
-
-            if ($request->filled('srEquipmentId')) {
-                $query->where('equipment_id', $request->srEquipmentId);
-            }
-
-            $data = $query->orderBy('date', 'desc')->get();
-
-        //     return response()->json([
-        //         'success' => true,
-        //         'data' => $data
-        //     ]);
-         return back()->with('success', 'Sample Receiving Register   sccessfully');
-         }
-
-        /**
-         * =================================================
-         * 🔵 NORMAL FORM SUBMIT
-         * =================================================
-         */
-        if (
-            empty($request->date) &&
-            empty($request->client_name)
-        ) {
-            return back();
         }
 
-        SampleReceivingRegister::create([
-            'date'            => $request->date,
-            'time'            => $request->time ?? null,
-            'location'        => $request->srLocation ?? $request->location,
-            'department'      => $request->srDepartment ?? null,
-            'equipment_id'    => $request->srEquipmentId ?? null,
-            'client_location' => $request->client_location ?? null,
-            'client_name'     => $request->client_name ?? null,
-            'blood_samples'   => $request->blood_samples ?? null,
-            'other_samples'   => $request->other_samples ?? null,
-            'csr_name'        => $request->csr_name ?? null,
-            'csr_sign'        => $request->csr_sign ?? null,
-            'sample_temp'     => $request->sample_temp ?? null,
-            'receiver_name'   => $request->receiver_name ?? null,
-            'remarks'         => $request->remarks ?? null,
-            'tl_code'         => $request->tl_code ?? null,
-        ]);
+        // Return JSON for AJAX requests with saved records
+        if ($isAjax) {
+            $savedRecords = SampleReceivingRegister::whereIn('id', $savedIds)
+                ->orderBy('date', 'desc')
+                ->get();
 
+            return response()->json([
+                'success' => true,
+                'message' => 'Sample Receiving Register saved successfully',
+                'data'    => $savedRecords,
+            ]);
+        }
 
         return back()->with('success', 'Sample Receiving Register saved successfully');
     }
@@ -375,82 +344,70 @@ class AsFormController extends Controller
 
     protected function storeSampleDeliveryRegister(Request $request)
     {
-        /**
-         * =================================================
-         * 🔵 INLINE EDIT / MULTI-ROW SAVE
-         * rows[index][field]
-         * =================================================
-         */
-        if ($request->has('rows') && is_array($request->rows)) {
+        $isAjax = $request->ajax() || $request->wantsJson();
+        $location   = $request->sdLocation;
+        $department = $request->sdDepartment;
+        $equipmentId = $request->sdEquipmentId;
+        $savedIds = [];
 
-            foreach ($request->rows as $row) {
+        // Handle array-style rows (row_date[], row_barcode[], etc.)
+        if (is_array($request->row_date)) {
+            $rowCount              = count($request->row_date);
+            $rowIds                = $request->row_id ?? [];
+            $rowBarcodes           = $request->row_barcode ?? [];
+            $rowSamples            = $request->row_samples ?? [];
+            $rowDepartments        = $request->row_department ?? [];
+            $rowTakenFromAccession = $request->row_taken_from_accession ?? [];
+            $rowVerifiedBy         = $request->row_verified_by ?? [];
+            $rowDeliveredToDept    = $request->row_delivered_to_dept ?? [];
+            $rowReceivedAtDept     = $request->row_received_at_dept ?? [];
+            $rowRemarks            = $request->row_remarks ?? [];
 
-                // 🛑 Skip completely empty rows
-                if (
-                    empty($row['date']) &&
-                    empty($row['barcode'])
-                ) {
+            for ($i = 0; $i < $rowCount; $i++) {
+                // Skip empty rows
+                if (empty($request->row_date[$i])) {
                     continue;
                 }
 
-                $data = [
-                    'date'                 => $row['date'] ?? null,
-                    'barcode'              => $row['barcode'] ?? null,
-                    'samples'              => $row['samples'] ?? null,
-                    'department'           => $row['department'] ?? null,
-                    'taken_from_accession' => $row['taken_from_accession'] ?? null,
-                    'verified_by'          => $row['verified_by'] ?? null,
-                    'delivered_to_dept'    => $row['delivered_to_dept'] ?? null,
-                    'received_at_dept'     => $row['received_at_dept'] ?? null,
-                    'remarks'              => $row['remarks'] ?? null,
+                $rowId = $rowIds[$i] ?? null;
 
-                    // 🔍 FILTER VALUES (TOP FILTERS)
-                    'location'             => $request->sdLocation ?? null,
-                    'equipment_id'         => $request->sdEquipmentId ?? null,
-                    'destination_department' => $request->sdDepartment ?? null,
+                $data = [
+                    'date'                   => $request->row_date[$i],
+                    'barcode'                => $rowBarcodes[$i] ?? null,
+                    'samples'                => $rowSamples[$i] ?? null,
+                    'department'             => $rowDepartments[$i] ?? null,
+                    'taken_from_accession'   => $rowTakenFromAccession[$i] ?? null,
+                    'verified_by'            => $rowVerifiedBy[$i] ?? null,
+                    'delivered_to_dept'      => $rowDeliveredToDept[$i] ?? null,
+                    'received_at_dept'       => $rowReceivedAtDept[$i] ?? null,
+                    'remarks'                => $rowRemarks[$i] ?? null,
+                    'location'               => $location,
+                    'equipment_id'           => $equipmentId,
+                    'destination_department' => $department,
                 ];
 
-                // 🔁 UPDATE
-                if (!empty($row['id'])) {
-                    SampleDeliveryRegister::where('id', $row['id'])->update($data);
-                }
-                // ➕ INSERT
-                else {
-                    SampleDeliveryRegister::create($data);
+                if ($rowId) {
+                    SampleDeliveryRegister::where('id', $rowId)->update($data);
+                    $savedIds[] = $rowId;
+                } else {
+                    $newRecord = SampleDeliveryRegister::create($data);
+                    $savedIds[] = $newRecord->id;
                 }
             }
-
-            // 🔥 INLINE SAVE → NO REDIRECT PAGE CHANGE
-
-            return back()->with('success', 'Sample Delivery Register updated successfully');
         }
 
-        /**
-         * =================================================
-         * 🟢 NORMAL FORM SUBMIT (SINGLE ROW)
-         * =================================================
-         */
-        if (
-            empty($request->date) &&
-            empty($request->barcode)
-        ) {
-            return back();
-        }
+        // Return JSON for AJAX requests with saved records
+        if ($isAjax) {
+            $savedRecords = SampleDeliveryRegister::whereIn('id', $savedIds)
+                ->orderBy('date', 'desc')
+                ->get();
 
-        SampleDeliveryRegister::create([
-            'date'                 => $request->date,
-            'barcode'              => $request->barcode,
-            'samples'              => $request->samples,
-            'department'           => $request->department,
-            'taken_from_accession' => $request->taken_from_accession,
-            'verified_by'          => $request->verified_by,
-            'delivered_to_dept'    => $request->delivered_to_dept,
-            'received_at_dept'     => $request->received_at_dept,
-            'remarks'              => $request->remarks,
-            'location'             => $request->sdLocation,
-            'equipment_id'         => $request->sdEquipmentId,
-            'destination_department' => $request->sdDepartment,
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Sample Delivery Register saved successfully',
+                'data'    => $savedRecords,
+            ]);
+        }
 
         return back()->with('success', 'Sample Delivery Register saved successfully');
     }
@@ -495,75 +452,62 @@ class AsFormController extends Controller
 
     protected function storeIceGelRegister(Request $request)
     {
-        /**
-         * =================================================
-         * 🔵 INLINE EDIT / MULTI-ROW SAVE
-         * rows[index][field]
-         * =================================================
-         */
-        if ($request->has('rows') && is_array($request->rows)) {
+        $isAjax = $request->ajax() || $request->wantsJson();
+        $location   = $request->igLocation;
+        $department = $request->igDepartment;
+        $savedIds = [];
 
-            foreach ($request->rows as $row) {
+        // Handle array-style rows (row_date[], row_quantity[], etc.)
+        if (is_array($request->row_date)) {
+            $rowCount       = count($request->row_date);
+            $rowIds          = $request->row_id ?? [];
+            $rowQuantity     = $request->row_quantity ?? [];
+            $rowHandedOverBy = $request->row_handed_over_by ?? [];
+            $rowReceivedBy   = $request->row_received_by ?? [];
+            $rowReturned     = $request->row_returned ?? [];
+            $rowRemarks      = $request->row_remarks ?? [];
 
-                // 🛑 Skip completely empty rows
-                if (
-                    empty($row['date']) &&
-                    empty($row['quantity']) &&
-                    empty($row['handed_over_by'])
-                ) {
+            for ($i = 0; $i < $rowCount; $i++) {
+                // Skip empty rows
+                if (empty($request->row_date[$i])) {
                     continue;
                 }
 
-                $data = [
-                    'date'           => $row['date'] ?? null,
-                    'quantity'       => $row['quantity'] ?? null,
-                    'handed_over_by' => $row['handed_over_by'] ?? null,
-                    'received_by'    => $row['received_by'] ?? null,
-                    'returned'       => $row['returned'] ?? null, // yes / no
-                    'remarks'        => $row['remarks'] ?? null,
+                $rowId = $rowIds[$i] ?? null;
 
-                    // 🔍 TOP FILTER VALUES
-                    'location'       => $request->igLocation ?? null,
-                    'department'     => $request->igDepartment ?? null,
+                $data = [
+                    'date'           => $request->row_date[$i],
+                    'quantity'       => $rowQuantity[$i] ?? null,
+                    'handed_over_by' => $rowHandedOverBy[$i] ?? null,
+                    'received_by'    => $rowReceivedBy[$i] ?? null,
+                    'returned'       => $rowReturned[$i] ?? null,
+                    'remarks'        => $rowRemarks[$i] ?? null,
+                    'location'       => $location,
+                    'department'     => $department,
                 ];
 
-                // 🔁 UPDATE
-                if (!empty($row['id'])) {
-                    IceGelPackRegister::where('id', $row['id'])->update($data);
-                }
-                // ➕ INSERT
-                else {
-                    IceGelPackRegister::create($data);
+                if ($rowId) {
+                    IceGelPackRegister::where('id', $rowId)->update($data);
+                    $savedIds[] = $rowId;
+                } else {
+                    $newRecord = IceGelPackRegister::create($data);
+                    $savedIds[] = $newRecord->id;
                 }
             }
-
-            // 🔥 INLINE SAVE → NO PAGE RELOAD
-            return back()->with('success', 'Ice Gel Packs Register updated successfully');
         }
 
-        /**
-         * =================================================
-         * 🟢 NORMAL FORM SUBMIT (SINGLE ROW)
-         * =================================================
-         */
-        if (
-            empty($request->date) &&
-            empty($request->quantity) &&
-            empty($request->handed_over_by)
-        ) {
-            return back();
-        }
+        // Return JSON for AJAX requests with saved records
+        if ($isAjax) {
+            $savedRecords = IceGelPackRegister::whereIn('id', $savedIds)
+                ->orderBy('date', 'desc')
+                ->get();
 
-        IceGelPackRegister::create([
-            'date'           => $request->date,
-            'quantity'       => $request->quantity,
-            'handed_over_by' => $request->handed_over_by,
-            'received_by'    => $request->received_by,
-            'returned'       => $request->returned,
-            'remarks'        => $request->remarks,
-            'location'       => $request->igLocation,
-            'department'     => $request->igDepartment,
-        ]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Ice Gel Packs Register saved successfully',
+                'data'    => $savedRecords,
+            ]);
+        }
 
         return back()->with('success', 'Ice Gel Packs Register saved successfully');
     }
@@ -600,97 +544,72 @@ class AsFormController extends Controller
 
     protected function storeSampleOutsourceRegister(Request $request)
     {
-        /**
-         * =================================================
-         * 🔵 INLINE EDIT / MULTI-ROW SAVE
-         * rows[index][field]
-         * =================================================
-         */
-        if ($request->has('rows') && is_array($request->rows)) {
+        $isAjax = $request->ajax() || $request->wantsJson();
+        $location    = $request->soLocation;
+        $department  = $request->soDepartment;
+        $equipmentId = $request->soEquipmentId;
+        $savedIds = [];
 
-            foreach ($request->rows as $row) {
+        // Handle array-style rows (row_date[], row_bar_code[], etc.)
+        if (is_array($request->row_date)) {
+            $rowCount              = count($request->row_date);
+            $rowIds                = $request->row_id ?? [];
+            $rowBarCodes           = $request->row_bar_code ?? [];
+            $rowPatientNames       = $request->row_patient_name ?? [];
+            $rowDepartments        = $request->row_department ?? [];
+            $rowTestnameCodes      = $request->row_testname_code ?? [];
+            $rowHandoverSigns      = $request->row_sample_handover_sign ?? [];
+            $rowReceiverSigns      = $request->row_sample_receiver_sign ?? [];
+            $rowHandoverToOs       = $request->row_sample_handover_to_os ?? [];
+            $rowOsLabReceiverNames = $request->row_os_lab_receiver_name ?? [];
 
-                // 🛑 Skip completely empty rows
-                if (
-                    empty($row['date']) &&
-                    empty($row['bar_code']) &&
-                    empty($row['patient_name'])
-                ) {
+            for ($i = 0; $i < $rowCount; $i++) {
+                // Skip empty rows
+                if (empty($request->row_date[$i])) {
                     continue;
                 }
 
+                $rowId = $rowIds[$i] ?? null;
+
                 $data = [
-                    'date'                  => $row['date'] ?? null,
-
-                    // 🔍 TOP FILTER VALUES
-                    'location'              => $request->soLocation ?? null,
-                    'department'            => $request->soDepartment ?? null,
-                    'equipment_id'          => $request->soEquipmentId ?? null,
-
-                    'bar_code'              => $row['bar_code'] ?? null,
-                    'patient_name'          => $row['patient_name'] ?? null,
-                    'testname_code'         => $row['testname_code'] ?? null,
-
-                    'sample_handover_sign'  => $row['sample_handover_sign'] ?? null,
-                    'sample_receiver_sign'  => $row['sample_receiver_sign'] ?? null,
-                    'sample_handover_to_os' => $row['sample_handover_to_os'] ?? null,
-                    'os_lab_receiver_name'  => $row['os_lab_receiver_name'] ?? null,
-
-                    'destination_department' => $row['department'] ?? null,
+                    'date'                   => $request->row_date[$i],
+                    'location'               => $location,
+                    'department'             => $department,
+                    'equipment_id'           => $equipmentId,
+                    'bar_code'               => $rowBarCodes[$i] ?? null,
+                    'patient_name'           => $rowPatientNames[$i] ?? null,
+                    'testname_code'          => $rowTestnameCodes[$i] ?? null,
+                    'sample_handover_sign'   => $rowHandoverSigns[$i] ?? null,
+                    'sample_receiver_sign'   => $rowReceiverSigns[$i] ?? null,
+                    'sample_handover_to_os'  => $rowHandoverToOs[$i] ?? null,
+                    'os_lab_receiver_name'   => $rowOsLabReceiverNames[$i] ?? null,
+                    'destination_department' => $rowDepartments[$i] ?? null,
                 ];
 
-                // 🔁 UPDATE
-                if (!empty($row['id'])) {
-                    SampleOutsourceRegister::where('id', $row['id'])->update($data);
-                }
-                // ➕ INSERT
-                else {
-                    SampleOutsourceRegister::create($data);
+                if ($rowId) {
+                    SampleOutsourceRegister::where('id', $rowId)->update($data);
+                    $savedIds[] = $rowId;
+                } else {
+                    $newRecord = SampleOutsourceRegister::create($data);
+                    $savedIds[] = $newRecord->id;
                 }
             }
-
-            // 🔥 INLINE SAVE → NO PAGE JUMP
-            return back()->with(
-                'success',
-                'Sample Outsource Updated saved successfully'
-            );
         }
 
-        /**
-         * =================================================
-         * 🟢 NORMAL FORM SUBMIT (SINGLE ROW)
-         * =================================================
-         */
-        if (
-            empty($request->date) &&
-            empty($request->bar_code) &&
-            empty($request->patient_name)
-        ) {
-            return back();
+        // Return JSON for AJAX requests with saved records
+        if ($isAjax) {
+            $savedRecords = SampleOutsourceRegister::whereIn('id', $savedIds)
+                ->orderBy('date', 'desc')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Sample Outsource Register saved successfully',
+                'data'    => $savedRecords,
+            ]);
         }
 
-        SampleOutsourceRegister::create([
-            'date'                  => $request->date,
-            'location'              => $request->soLocation,
-            'department'            => $request->soDepartment,
-            'equipment_id'          => $request->soEquipmentId,
-
-            'bar_code'              => $request->bar_code,
-            'patient_name'          => $request->patient_name,
-            'testname_code'         => $request->testname_code,
-
-            'sample_handover_sign'  => $request->sample_handover_sign,
-            'sample_receiver_sign'  => $request->sample_receiver_sign,
-            'sample_handover_to_os' => $request->sample_handover_to_os,
-            'os_lab_receiver_name'  => $request->os_lab_receiver_name,
-
-            'destination_department' => $request->department,
-        ]);
-
-        return back()->with(
-            'success',
-            'Sample Outsource Register saved successfully'
-        );
+        return back()->with('success', 'Sample Outsource Register saved successfully');
     }
 
 

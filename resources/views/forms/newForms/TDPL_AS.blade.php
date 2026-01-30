@@ -362,7 +362,7 @@
 
                             @foreach (['jul', 'aug', 'sep', 'oct', 'nov', 'dec', 'jan', 'feb', 'mar', 'apr', 'may', 'jun'] as $month)
                                 <td>
-                                    <input type="text"
+                                    <input type="number"
                                         name="containers[{{ $key }}][actual_qty][{{ $month }}]"
                                         data-month="{{ $month }}" class="form-control">
 
@@ -392,330 +392,876 @@
                 This random check is done once a month to track and record that the samples are collected up to the required
                 mark indicated on the respective vials.
             </p>
+
+            <script>
+                // AJAX Submit for FOM-001
+                (function() {
+                    function initSampleVolumeCheckForm() {
+                        const formContainer = document.querySelector('[id="TDPL/AS/FOM-001"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn.textContent;
+
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastFOM001('success', result.message || 'Saved successfully!');
+                                } else {
+                                    showToastFOM001('error', result.message || 'Save failed!');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showToastFOM001('error', 'Failed to save data');
+                            })
+                            .finally(() => {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            });
+                        });
+                    }
+
+                    function showToastFOM001(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = `
+                            position:fixed; top:20px; right:20px; z-index:9999;
+                            padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                            box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                            background:${type === 'success' ? '#28a745' : '#dc3545'};
+                        `;
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initSampleVolumeCheckForm);
+                    } else {
+                        initSampleVolumeCheckForm();
+                    }
+                })();
+            </script>
+
         </x-formTemplete>
 
         <x-formTemplete id="TDPL/AS/REG-001" docNo="TDPL/AS/REG-001" docName="Sample Receiving Register" issueNo="2.0"
-            issueDate="01/10/2024" buttonText="Submit" data-inline="true" action="{{ route('newforms.as.forms.submit') }}">
-            <div class="row mb-3">
-                <div class="col-md-2">
+            issueDate="01/10/2024" buttonText="Submit"
+            action="{{ route('newforms.as.forms.submit') }}">
+
+            <!-- Filter Section -->
+            <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
                     <label><strong>From Date</strong></label>
-                    <input type="date" id="srFromDate" name="srFromDate" class="form-control"
-                        onchange="loadSampleReceivingRegister()">
+                    <input type="date" id="srFromDate" name="srFromDate"
+                        onchange="loadSampleReceivingRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>To Date</strong></label>
-                    <input type="date" id="srToDate" class="form-control" onchange="loadSampleReceivingRegister()">
+                    <input type="date" id="srToDate"
+                        onchange="loadSampleReceivingRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>Location</strong></label>
-                    <input list="srLocList" id="srLocation" name="srLocation" class="form-control"
-                        onfocus="resetIfMatched(this)"
-                        oninput="handleDatalistInput(this,'srLocList',loadSampleReceivingRegister)">
+                    <input type="text" name="srLocation" id="srLocation" list="srLocList"
+                        onchange="loadSampleReceivingRegister()" onblur="loadSampleReceivingRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
                     <datalist id="srLocList">
                         <option value="Hyderabad">
                         <option value="Bangalore">
                         <option value="Chennai">
                     </datalist>
-
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>Department</strong></label>
-                    <input list="srDeptList" id="srDepartment" name="srDepartment" class="form-control"
-                        placeholder="All" oninput="handleDatalistInput(this,'srDeptList',loadSampleReceivingRegister)">
+                    <input type="text" name="srDepartment" id="srDepartment" list="srDeptList"
+                        onchange="loadSampleReceivingRegister()" onblur="loadSampleReceivingRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
                     <datalist id="srDeptList">
                         <option value="Biochemistry">
                         <option value="Pathology">
                         <option value="Hematology">
                     </datalist>
-
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>Equipment / TL Code</strong></label>
-                    <input list="srEquipList" id="srEquipmentId" name="srEquipmentId" class="form-control"
-                        placeholder="All" oninput="handleDatalistInput(this,'srEquipList',loadSampleReceivingRegister)">
+                    <input type="text" name="srEquipmentId" id="srEquipmentId" list="srEquipList"
+                        onchange="loadSampleReceivingRegister()" onblur="loadSampleReceivingRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
                     <datalist id="srEquipList">
                         <option value="TL001">
                         <option value="TL002">
                     </datalist>
-
+                </div>
+                <div style="display:flex; align-items:flex-end;">
+                    <button type="button" onclick="clearSampleReceivingFilters()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
                 </div>
             </div>
 
-
-
-
-            {{-- MAIN FORM TABLE --}}
-            <table class="table table-bordered">
+            <!-- Data Table -->
+            <table style="width:100%; border-collapse:collapse;" border="1">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Time</th>
-                        <th>Client Location</th>
-                        <th>Client Name</th>
-                        <th>TL Code</th>
-                        <th># of Blood Samples</th>
-                        <th># of Other Samples</th>
-                        <th>CSR Name</th>
-                        <th>CSR Sign</th>
-                        <th>Sample Temperature</th>
-                        <th>Receiver Name</th>
-                        <th>Remarks</th>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Date</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Time</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Client Location</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Client Name</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">TL Code</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;"># Blood Samples</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;"># Other Samples</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">CSR Name</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">CSR Sign</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Sample Temp</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Receiver Name</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Remarks</td>
                     </tr>
                 </thead>
-
                 <tbody id="srTableBody">
                     <tr>
-                        <td>
-                            <input type="date" name="date" class="form-control" required>
-                        </td>
-
-                        <td>
-                            <input type="time" name="time" class="form-control" required>
-                        </td>
-
-                        <td>
-                            <input type="text" name="client_location" class="form-control" required>
-                        </td>
-
-                        <td>
-                            <input type="text" name="client_name" class="form-control" required>
-                        </td>
-
-                        <td>
-                            <input type="text" name="tl_code" class="form-control">
-                        </td>
-
-                        <td>
-                            <input type="number" name="blood_samples" class="form-control">
-                        </td>
-
-                        <td>
-                            <input type="number" name="other_samples" class="form-control">
-                        </td>
-
-                        <td>
-                            <input type="text" name="csr_name" class="form-control">
-                        </td>
-
-                        <td>
-                            <input type="text" name="csr_sign" class="form-control">
-                        </td>
-
-                        <td>
-                            <input type="text" name="sample_temp" class="form-control">
-                        </td>
-
-                        <td>
-                            <input type="text" name="receiver_name" class="form-control">
-                        </td>
-
-                        <td>
-                            <input type="text" name="remarks" class="form-control">
-                        </td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="time" name="row_time[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_client_location[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_client_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_tl_code[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_blood_samples[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_other_samples[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_csr_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_csr_sign[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_temp[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_receiver_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
                     </tr>
                 </tbody>
             </table>
 
+            <script>
+                function loadSampleReceivingRegister() {
+                    const fromDate = document.getElementById('srFromDate').value;
+                    const toDate = document.getElementById('srToDate').value;
+
+                    if (!fromDate && !toDate) return;
+
+                    const params = new URLSearchParams();
+                    if (fromDate) params.append('from_date', fromDate);
+                    if (toDate) params.append('to_date', toDate);
+
+                    const location = document.getElementById('srLocation').value;
+                    if (location) params.append('location', location);
+
+                    const department = document.getElementById('srDepartment').value;
+                    if (department) params.append('department', department);
+
+                    const equipment = document.getElementById('srEquipmentId').value;
+                    if (equipment) params.append('equipment', equipment);
+
+                    fetch(`/newforms/as/sample-receiving-register/load?${params.toString()}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        const tbody = document.getElementById('srTableBody');
+                        if (!tbody) return;
+
+                        tbody.innerHTML = '';
+
+                        if (!res.data || res.data.length === 0) {
+                            addEmptyRowREG001();
+                            return;
+                        }
+
+                        res.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildREG001RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowREG001();
+                    })
+                    .catch(error => console.error('Error loading data:', error));
+                }
+
+                function buildREG001RowHTML(row) {
+                    return `
+                        <td style="border:1px solid #000; padding:4px;">
+                            <input type="hidden" name="row_id[]" value="${row.id}">
+                            <input type="date" name="row_date[]" value="${row.date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+                        </td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="time" name="row_time[]" value="${row.time || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_client_location[]" value="${row.client_location || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_client_name[]" value="${row.client_name || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_tl_code[]" value="${row.tl_code || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_blood_samples[]" value="${row.blood_samples || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_other_samples[]" value="${row.other_samples || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_csr_name[]" value="${row.csr_name || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_csr_sign[]" value="${row.csr_sign || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_temp[]" value="${row.sample_temp || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_receiver_name[]" value="${row.receiver_name || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" value="${row.remarks || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    `;
+                }
+
+                function addEmptyRowREG001() {
+                    const tbody = document.getElementById('srTableBody');
+                    if (!tbody) return;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="time" name="row_time[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_client_location[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_client_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_tl_code[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_blood_samples[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_other_samples[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_csr_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_csr_sign[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_temp[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_receiver_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                function clearSampleReceivingFilters() {
+                    document.getElementById('srFromDate').value = '';
+                    document.getElementById('srToDate').value = '';
+                    document.getElementById('srLocation').value = '';
+                    document.getElementById('srDepartment').value = '';
+                    document.getElementById('srEquipmentId').value = '';
+                    const tbody = document.getElementById('srTableBody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        addEmptyRowREG001();
+                    }
+                }
+
+                // AJAX Submit for REG-001
+                (function() {
+                    function initSampleReceivingForm() {
+                        const formContainer = document.querySelector('[id="TDPL/AS/REG-001"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn.textContent;
+
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastREG001('success', result.message || 'Saved successfully!');
+
+                                    const tbody = document.getElementById('srTableBody');
+                                    if (tbody && result.data && result.data.length > 0) {
+                                        tbody.innerHTML = '';
+                                        result.data.forEach(row => {
+                                            const tr = document.createElement('tr');
+                                            tr.innerHTML = buildREG001RowHTML(row);
+                                            tbody.appendChild(tr);
+                                        });
+                                        addEmptyRowREG001();
+                                    }
+                                } else {
+                                    showToastREG001('error', result.message || 'Save failed!');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showToastREG001('error', 'Failed to save data');
+                            })
+                            .finally(() => {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            });
+                        });
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initSampleReceivingForm);
+                    } else {
+                        initSampleReceivingForm();
+                    }
+                })();
+
+                function showToastREG001(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position:fixed; top:20px; right:20px; z-index:9999;
+                        padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                        box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                        background:${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+            </script>
+
         </x-formTemplete>
 
-        <x-formTemplete id="TDPL/AS/REG-003" data-inline="true" docNo="TDPL/AS/REG-003"
+        <x-formTemplete id="TDPL/AS/REG-003" docNo="TDPL/AS/REG-003"
             docName="Sample Delivery Register" issueNo="2.0" issueDate="01/10/2024" buttonText="Submit"
             action="{{ route('newforms.as.forms.submit') }}">
-            <div class="row mb-3">
-                <div class="col-md-2">
+
+            <!-- Filter Section -->
+            <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
                     <label><strong>From Date</strong></label>
-                    <input type="date" id="sdFromDate" class="form-control" onchange="loadSampleDeliveryRegister()">
+                    <input type="date" id="sdFromDate"
+                        onchange="loadSampleDeliveryRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>To Date</strong></label>
-                    <input type="date" id="sdToDate" class="form-control" onchange="loadSampleDeliveryRegister()">
+                    <input type="date" id="sdToDate"
+                        onchange="loadSampleDeliveryRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>Location</strong></label>
-
-                    <input list="locList" id="sdLocation" name="sdLocation" class="form-control"
-                        oninput="handleDatalistInput(this,'locList',loadSampleDeliveryRegister)">
-
-                    <datalist id="locList">
+                    <input type="text" name="sdLocation" id="sdLocation" list="sdLocList"
+                        onchange="loadSampleDeliveryRegister()" onblur="loadSampleDeliveryRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                    <datalist id="sdLocList">
                         <option value="Hyderabad">
                         <option value="Bangalore">
                         <option value="Chennai">
                     </datalist>
                 </div>
-
-
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>Department</strong></label>
-                    <input list="deptList" id="sdDepartment" name="sdDepartment" class="form-control" placeholder="All"
-                        oninput="handleDatalistInput(this,'deptList',loadSampleDeliveryRegister)">
-
-                    <datalist id="deptList">
+                    <input type="text" name="sdDepartment" id="sdDepartment" list="sdDeptList"
+                        onchange="loadSampleDeliveryRegister()" onblur="loadSampleDeliveryRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                    <datalist id="sdDeptList">
                         <option value="Biochemistry">
                         <option value="Pathology">
                         <option value="Hematology">
                     </datalist>
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>Equipment / TL Code</strong></label>
-
-                    <input list="equipList" id="sdEquipmentId" name="sdEquipmentId" class="form-control"
-                        placeholder="All" oninput="handleDatalistInput(this,'equipList',loadSampleDeliveryRegister)">
-
-                    <datalist id="equipList">
+                    <input type="text" name="sdEquipmentId" id="sdEquipmentId" list="sdEquipList"
+                        onchange="loadSampleDeliveryRegister()" onblur="loadSampleDeliveryRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                    <datalist id="sdEquipList">
                         <option value="TL001">
                         <option value="TL002">
                     </datalist>
                 </div>
-
+                <div style="display:flex; align-items:flex-end;">
+                    <button type="button" onclick="clearSampleDeliveryFilters()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
+                </div>
             </div>
 
-
-            <table class="table table-bordered w-100">
+            <!-- Data Table -->
+            <table style="width:100%; border-collapse:collapse;" border="1">
                 <thead>
                     <tr>
-                        <th>Date</th>
-                        <th>Barcode</th>
-                        <th>No. of Samples</th>
-                        <th>Destination Department</th>
-                        <th>Sample taken from Accession by @ time</th>
-                        <th>Verified by</th>
-                        <th>Sample delivered to Dept. by @ time</th>
-                        <th>Sample Received at Dept. by @ time</th>
-                        <th>Remarks</th>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Date</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Barcode</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;"># Samples</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Dest. Department</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Taken from Accession</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Verified by</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Delivered to Dept.</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Received at Dept.</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Remarks</td>
                     </tr>
                 </thead>
-
                 <tbody id="sdTableBody">
-
-
-                    {{-- Dynamic Empty Rows --}}
-
                     <tr>
-                        <td><input type="date" name="date" class="form-control"></td>
-
-                        <td><input type="text" name="barcode" class="form-control"></td>
-
-                        <td><input type="number" name="samples" class="form-control"></td>
-
-                        <td><input type="text" name="department" class="form-control"></td>
-
-                        <td><input type="text" name="taken_from_accession" class="form-control"></td>
-
-                        <td><input type="text" name="verified_by" class="form-control"></td>
-
-                        <td><input type="text" name="delivered_to_dept" class="form-control">
-                        </td>
-
-                        <td><input type="text" name="received_at_dept" class="form-control">
-                        </td>
-
-                        <td><input type="text" name="remarks" class="form-control"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_barcode[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_samples[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_department[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_taken_from_accession[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_verified_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_delivered_to_dept[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_received_at_dept[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
                     </tr>
-
-
                 </tbody>
             </table>
+
+            <script>
+                function loadSampleDeliveryRegister() {
+                    const fromDate = document.getElementById('sdFromDate').value;
+                    const toDate = document.getElementById('sdToDate').value;
+
+                    if (!fromDate && !toDate) return;
+
+                    const params = new URLSearchParams();
+                    if (fromDate) params.append('from_date', fromDate);
+                    if (toDate) params.append('to_date', toDate);
+
+                    const location = document.getElementById('sdLocation').value;
+                    if (location) params.append('location', location);
+
+                    const department = document.getElementById('sdDepartment').value;
+                    if (department) params.append('department', department);
+
+                    const equipment = document.getElementById('sdEquipmentId').value;
+                    if (equipment) params.append('equipment', equipment);
+
+                    fetch(`/newforms/as/sample-delivery-register/load?${params.toString()}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        const tbody = document.getElementById('sdTableBody');
+                        if (!tbody) return;
+
+                        tbody.innerHTML = '';
+
+                        if (!res.data || res.data.length === 0) {
+                            addEmptyRowREG003();
+                            return;
+                        }
+
+                        res.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildREG003RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowREG003();
+                    })
+                    .catch(error => console.error('Error loading data:', error));
+                }
+
+                function buildREG003RowHTML(row) {
+                    return `
+                        <td style="border:1px solid #000; padding:4px;">
+                            <input type="hidden" name="row_id[]" value="${row.id}">
+                            <input type="date" name="row_date[]" value="${row.date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+                        </td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_barcode[]" value="${row.barcode || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_samples[]" value="${row.samples || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_department[]" value="${row.department || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_taken_from_accession[]" value="${row.taken_from_accession || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_verified_by[]" value="${row.verified_by || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_delivered_to_dept[]" value="${row.delivered_to_dept || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_received_at_dept[]" value="${row.received_at_dept || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" value="${row.remarks || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    `;
+                }
+
+                function addEmptyRowREG003() {
+                    const tbody = document.getElementById('sdTableBody');
+                    if (!tbody) return;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_barcode[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_samples[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_department[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_taken_from_accession[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_verified_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_delivered_to_dept[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_received_at_dept[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                function clearSampleDeliveryFilters() {
+                    document.getElementById('sdFromDate').value = '';
+                    document.getElementById('sdToDate').value = '';
+                    document.getElementById('sdLocation').value = '';
+                    document.getElementById('sdDepartment').value = '';
+                    document.getElementById('sdEquipmentId').value = '';
+                    const tbody = document.getElementById('sdTableBody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        addEmptyRowREG003();
+                    }
+                }
+
+                // AJAX Submit for REG-003
+                (function() {
+                    function initSampleDeliveryForm() {
+                        const formContainer = document.querySelector('[id="TDPL/AS/REG-003"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn.textContent;
+
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastREG003('success', result.message || 'Saved successfully!');
+
+                                    const tbody = document.getElementById('sdTableBody');
+                                    if (tbody && result.data && result.data.length > 0) {
+                                        tbody.innerHTML = '';
+                                        result.data.forEach(row => {
+                                            const tr = document.createElement('tr');
+                                            tr.innerHTML = buildREG003RowHTML(row);
+                                            tbody.appendChild(tr);
+                                        });
+                                        addEmptyRowREG003();
+                                    }
+                                } else {
+                                    showToastREG003('error', result.message || 'Save failed!');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showToastREG003('error', 'Failed to save data');
+                            })
+                            .finally(() => {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            });
+                        });
+                    }
+
+                    function showToastREG003(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = `
+                            position:fixed; top:20px; right:20px; z-index:9999;
+                            padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                            box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                            background:${type === 'success' ? '#28a745' : '#dc3545'};
+                        `;
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initSampleDeliveryForm);
+                    } else {
+                        initSampleDeliveryForm();
+                    }
+                })();
+            </script>
 
         </x-formTemplete>
 
 
         <x-formTemplete id="TDPL/AS/REG-004" docNo="TDPL/AS/REG-004" docName="Ice Gel Packs Distribution Register"
-            data-inline="true" issueNo="2.0" issueDate="01/10/2024" buttonText="Submit"
+            issueNo="2.0" issueDate="01/10/2024" buttonText="Submit"
             action="{{ route('newforms.as.forms.submit') }}">
 
-            <div class="row mb-3">
-                <div class="col-md-3">
+            <!-- Filter Section -->
+            <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
                     <label><strong>From Date</strong></label>
-                    <input type="date" id="igFromDate" class="form-control" onchange="loadIceGelRegister()">
+                    <input type="date" id="igFromDate"
+                        onchange="loadIceGelRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
-
-                <div class="col-md-3">
+                <div>
                     <label><strong>To Date</strong></label>
-                    <input type="date" id="igToDate" class="form-control" onchange="loadIceGelRegister()">
+                    <input type="date" id="igToDate"
+                        onchange="loadIceGelRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
-
-                <div class="col-md-3">
+                <div>
                     <label><strong>Location</strong></label>
-
-                    <input list="locList" id="igLocation" name="igLocation" class="form-control"
-                        oninput="handleDatalistInput(this,'locList',loadSampleDeliveryRegister)">
-
-                    <datalist id="locList">
+                    <input type="text" name="igLocation" id="igLocation" list="igLocList"
+                        onchange="loadIceGelRegister()" onblur="loadIceGelRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                    <datalist id="igLocList">
                         <option value="Hyderabad">
                         <option value="Bangalore">
                         <option value="Chennai">
                     </datalist>
                 </div>
-
-                <div class="col-md-3">
+                <div>
                     <label><strong>Department</strong></label>
-                    <input list="deptList" id="igDepartment" name="igDepartment" class="form-control" placeholder="All"
-                        oninput="handleDatalistInput(this,'deptList',loadSampleDeliveryRegister)">
-
-                    <datalist id="deptList">
+                    <input type="text" name="igDepartment" id="igDepartment" list="igDeptList"
+                        onchange="loadIceGelRegister()" onblur="loadIceGelRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                    <datalist id="igDeptList">
                         <option value="Biochemistry">
                         <option value="Pathology">
                         <option value="Hematology">
                     </datalist>
                 </div>
+                <div style="display:flex; align-items:flex-end;">
+                    <button type="button" onclick="clearIceGelFilters()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
+                </div>
             </div>
 
-            <table border="1" cellspacing="0" cellpadding="6"
-                style="width:100%; border-collapse: collapse; text-align:left;">
+            <!-- Data Table -->
+            <table style="width:100%; border-collapse:collapse;" border="1">
                 <thead>
                     <tr>
-                        <td rowspan="2"><strong>Date</strong></td>
-                        <td rowspan="2"><strong>Quantity</strong></td>
-                        <td rowspan="2"><strong>Handed over by (Name & Time)</strong></td>
-                        <td rowspan="2"><strong>Received by (Name & Time)</strong></td>
-                        <td colspan="2"><strong>Returned</strong></td>
-                        <td rowspan="2"><strong>Remarks</strong></td>
-                    </tr>
-                    <tr>
-                        <td><strong>Yes</strong></td>
-                        <td><strong>No</strong></td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Date</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Quantity</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Handed over by (Name & Time)</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Received by (Name & Time)</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Returned</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Remarks</td>
                     </tr>
                 </thead>
                 <tbody id="igTableBody">
-
-
-                    {{-- Editable Rows --}}
-
                     <tr>
-                        <td><input type="date" name="date" class="w-full border-0 focus:ring-0" /></td>
-                        <td><input type="number" name="quantity" class="w-full border-0 focus:ring-0" /></td>
-                        <td><input type="text" name="handed_over_by" class="w-full border-0 focus:ring-0"
-                                placeholder="Name & Time" />
+                        <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_quantity[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_handed_over_by[]" placeholder="Name & Time" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_received_by[]" placeholder="Name & Time" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;">
+                            <select name="row_returned[]" style="width:100%; border:1px solid #ccc; padding:4px;">
+                                <option value="">--</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
                         </td>
-                        <td><input type="text" name="received_by" class="w-full border-0 focus:ring-0"
-                                placeholder="Name & Time" />
-                        </td>
-
-                        <td style="text-align:center">
-                            <input type="radio" name="returned" value="yes">
-                        </td>
-
-                        <td style="text-align:center">
-                            <input type="radio" name="returned" value="no">
-                        </td>
-
-
-                        <td>
-                            <textarea name="remarks" class="w-full border-0 focus:ring-0" rows="1"></textarea>
-                        </td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
                     </tr>
-
-
                 </tbody>
             </table>
+
+            <script>
+                function loadIceGelRegister() {
+                    const fromDate = document.getElementById('igFromDate').value;
+                    const toDate = document.getElementById('igToDate').value;
+
+                    if (!fromDate && !toDate) return;
+
+                    const params = new URLSearchParams();
+                    if (fromDate) params.append('from_date', fromDate);
+                    if (toDate) params.append('to_date', toDate);
+
+                    const location = document.getElementById('igLocation').value;
+                    if (location) params.append('location', location);
+
+                    const department = document.getElementById('igDepartment').value;
+                    if (department) params.append('department', department);
+
+                    fetch(`/newforms/as/ice-gel-register/load?${params.toString()}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        const tbody = document.getElementById('igTableBody');
+                        if (!tbody) return;
+
+                        tbody.innerHTML = '';
+
+                        if (!res.data || res.data.length === 0) {
+                            addEmptyRowREG004();
+                            return;
+                        }
+
+                        res.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildREG004RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowREG004();
+                    })
+                    .catch(error => console.error('Error loading data:', error));
+                }
+
+                function buildREG004RowHTML(row) {
+                    return `
+                        <td style="border:1px solid #000; padding:4px;">
+                            <input type="hidden" name="row_id[]" value="${row.id}">
+                            <input type="date" name="row_date[]" value="${row.date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+                        </td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_quantity[]" value="${row.quantity || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_handed_over_by[]" value="${row.handed_over_by || ''}" placeholder="Name & Time" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_received_by[]" value="${row.received_by || ''}" placeholder="Name & Time" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;">
+                            <select name="row_returned[]" style="width:100%; border:1px solid #ccc; padding:4px;">
+                                <option value="">--</option>
+                                <option value="yes" ${row.returned === 'yes' ? 'selected' : ''}>Yes</option>
+                                <option value="no" ${row.returned === 'no' ? 'selected' : ''}>No</option>
+                            </select>
+                        </td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" value="${row.remarks || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    `;
+                }
+
+                function addEmptyRowREG004() {
+                    const tbody = document.getElementById('igTableBody');
+                    if (!tbody) return;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="number" name="row_quantity[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_handed_over_by[]" placeholder="Name & Time" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_received_by[]" placeholder="Name & Time" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;">
+                            <select name="row_returned[]" style="width:100%; border:1px solid #ccc; padding:4px;">
+                                <option value="">--</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                        </td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_remarks[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                function clearIceGelFilters() {
+                    document.getElementById('igFromDate').value = '';
+                    document.getElementById('igToDate').value = '';
+                    document.getElementById('igLocation').value = '';
+                    document.getElementById('igDepartment').value = '';
+                    const tbody = document.getElementById('igTableBody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        addEmptyRowREG004();
+                    }
+                }
+
+                // AJAX Submit for REG-004
+                (function() {
+                    function initIceGelForm() {
+                        const formContainer = document.querySelector('[id="TDPL/AS/REG-004"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn.textContent;
+
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastREG004('success', result.message || 'Saved successfully!');
+
+                                    const tbody = document.getElementById('igTableBody');
+                                    if (tbody && result.data && result.data.length > 0) {
+                                        tbody.innerHTML = '';
+                                        result.data.forEach(row => {
+                                            const tr = document.createElement('tr');
+                                            tr.innerHTML = buildREG004RowHTML(row);
+                                            tbody.appendChild(tr);
+                                        });
+                                        addEmptyRowREG004();
+                                    }
+                                } else {
+                                    showToastREG004('error', result.message || 'Save failed!');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showToastREG004('error', 'Failed to save data');
+                            })
+                            .finally(() => {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            });
+                        });
+                    }
+
+                    function showToastREG004(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = `
+                            position:fixed; top:20px; right:20px; z-index:9999;
+                            padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                            box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                            background:${type === 'success' ? '#28a745' : '#dc3545'};
+                        `;
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initIceGelForm);
+                    } else {
+                        initIceGelForm();
+                    }
+                })();
+            </script>
 
         </x-formTemplete>
 
@@ -723,124 +1269,266 @@
         <x-formTemplete id="TDPL/AS/REG-005" docNo="TDPL/AS/REG-005" docName="Sample Outsource Register" issueNo="2.0"
             issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.as.forms.submit') }}">
 
-            <!-- =================== FILTER SECTION (ONCHANGE ONLY) =================== -->
-            <div class="row mb-3">
-                <div class="col-md-2">
+            <!-- Filter Section -->
+            <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
                     <label><strong>From Date</strong></label>
-                    <input type="date" id="soFromDate" class="form-control" onchange="loadSampleOutsourceRegister()">
+                    <input type="date" id="soFromDate"
+                        onchange="loadSampleOutsourceRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>To Date</strong></label>
-                    <input type="date" id="soToDate" class="form-control" onchange="loadSampleOutsourceRegister()">
+                    <input type="date" id="soToDate"
+                        onchange="loadSampleOutsourceRegister()"
+                        style="border:1px solid #000; padding:4px; width:140px; display:block;">
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>Location</strong></label>
-
-                    <input list="locList" id="soLocation" name="soLocation" class="form-control"
-                        oninput="handleDatalistInput(this,'locList',loadSampleDeliveryRegister)">
-
-                    <datalist id="locList">
+                    <input type="text" name="soLocation" id="soLocation" list="soLocList"
+                        onchange="loadSampleOutsourceRegister()" onblur="loadSampleOutsourceRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                    <datalist id="soLocList">
                         <option value="Hyderabad">
                         <option value="Bangalore">
                         <option value="Chennai">
                     </datalist>
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>Department</strong></label>
-                    <input list="deptList" id="soDepartment" name="soDepartment" class="form-control" placeholder="All"
-                        oninput="handleDatalistInput(this,'deptList',loadSampleDeliveryRegister)">
-
-                    <datalist id="deptList">
+                    <input type="text" name="soDepartment" id="soDepartment" list="soDeptList"
+                        onchange="loadSampleOutsourceRegister()" onblur="loadSampleOutsourceRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                    <datalist id="soDeptList">
                         <option value="Biochemistry">
                         <option value="Pathology">
                         <option value="Hematology">
                     </datalist>
                 </div>
-
-                <div class="col-md-2">
+                <div>
                     <label><strong>Equipment / TL Code</strong></label>
-                    <input list="equipList" id="soEquipmentId" name="soEquipmentId" class="form-control"
-                        placeholder="All" oninput="handleDatalistInput(this,'equipList',loadSampleDeliveryRegister)">
-
-                    <datalist id="equipList">
+                    <input type="text" name="soEquipmentId" id="soEquipmentId" list="soEquipList"
+                        onchange="loadSampleOutsourceRegister()" onblur="loadSampleOutsourceRegister()"
+                        style="border:1px solid #000; padding:4px; width:180px;" placeholder="Select or type">
+                    <datalist id="soEquipList">
                         <option value="TL001">
                         <option value="TL002">
                     </datalist>
-
+                </div>
+                <div style="display:flex; align-items:flex-end;">
+                    <button type="button" onclick="clearSampleOutsourceFilters()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
                 </div>
             </div>
 
-            <br>
-
-            <!-- =================== MAIN DATA TABLE =================== -->
-            <table border="1" cellspacing="0" cellpadding="6"
-                style="width:100%; border-collapse: collapse; text-align:left;">
+            <!-- Data Table -->
+            <table style="width:100%; border-collapse:collapse;" border="1">
                 <thead>
                     <tr>
-                        <td><strong>Date</strong></td>
-                        <td><strong>Barcode</strong></td>
-                        <td><strong>Patient Name</strong></td>
-                        <td><strong>Department</strong></td>
-                        <td><strong>Test Name & Code</strong></td>
-                        <td><strong>Sample Handover Sign, Date & Time (Accession)</strong></td>
-                        <td><strong>Sample Receiver Sign, Date & Time (Front Office)</strong></td>
-                        <td><strong>Sample Handover to OS Lab By</strong></td>
-                        <td><strong>OS Lab Receiver Name, Sign, Date & Time</strong></td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Date</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Barcode</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Patient Name</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Department</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Test Name & Code</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Sample Handover Sign (Accession)</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Sample Receiver Sign (Front Office)</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">Sample Handover to OS Lab By</td>
+                        <td style="padding:6px; border:1px solid #000; font-weight:bold;">OS Lab Receiver Name, Sign</td>
                     </tr>
                 </thead>
-
                 <tbody id="soTableBody">
-
-                    {{-- ================= VIEW MODE (BLADE LOOP) ================= --}}
-                    @isset($records)
-                        @forelse($records as $row)
-                            <tr>
-                                <td>{{ $row->date }}</td>
-                                <td>{{ $row->bar_code }}</td>
-                                <td>{{ $row->patient_name }}</td>
-                                <td>{{ $row->department }}</td>
-                                <td>{{ $row->testname_code }}</td>
-                                <td>{{ $row->sample_handover_sign }}</td>
-                                <td>{{ $row->sample_receiver_sign }}</td>
-                                <td>{{ $row->sample_handover_to_os }}</td>
-                                <td>{{ $row->os_lab_receiver_name }}</td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="9" class="text-center">No records found</td>
-                            </tr>
-                        @endforelse
-                    @endisset
-
-                    {{-- ================= ENTRY ROW (UNCHANGED) ================= --}}
                     <tr>
-                        <td><input type="date" name="date" class="w-full border-0"></td>
-                        <td><input type="text" name="bar_code" class="w-full border-0"></td>
-                        <td><input type="text" name="patient_name" class="w-full border-0"></td>
-                        <td><input type="text" name="department" class="w-full border-0"></td>
-                        <td>
-                            <textarea class="w-full border-0" name="testname_code" rows="1"></textarea>
-                        </td>
-                        <td>
-                            <textarea class="w-full border-0" name="sample_handover_sign" rows="1"></textarea>
-                        </td>
-                        <td>
-                            <textarea class="w-full border-0" name="sample_receiver_sign" rows="1"></textarea>
-                        </td>
-                        <td><input type="text" class="w-full border-0" name="sample_handover_to_os"></td>
-                        <td>
-                            <textarea class="w-full border-0" name="os_lab_receiver_name" rows="1"></textarea>
-                        </td>
+                        <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_bar_code[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_patient_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_department[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_testname_code[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_handover_sign[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_receiver_sign[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_handover_to_os[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_os_lab_receiver_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
                     </tr>
-
                 </tbody>
             </table>
 
-            <br>
             <p><em>*OS = Outsource</em></p>
+
+            <script>
+                function loadSampleOutsourceRegister() {
+                    const fromDate = document.getElementById('soFromDate').value;
+                    const toDate = document.getElementById('soToDate').value;
+
+                    if (!fromDate && !toDate) return;
+
+                    const params = new URLSearchParams();
+                    if (fromDate) params.append('from_date', fromDate);
+                    if (toDate) params.append('to_date', toDate);
+
+                    const location = document.getElementById('soLocation').value;
+                    if (location) params.append('location', location);
+
+                    const department = document.getElementById('soDepartment').value;
+                    if (department) params.append('department', department);
+
+                    const equipment = document.getElementById('soEquipmentId').value;
+                    if (equipment) params.append('equipment', equipment);
+
+                    fetch(`/newforms/as/sample-outsource-register/load?${params.toString()}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        const tbody = document.getElementById('soTableBody');
+                        if (!tbody) return;
+
+                        tbody.innerHTML = '';
+
+                        if (!res.data || res.data.length === 0) {
+                            addEmptyRowREG005();
+                            return;
+                        }
+
+                        res.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildREG005RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowREG005();
+                    })
+                    .catch(error => console.error('Error loading data:', error));
+                }
+
+                function buildREG005RowHTML(row) {
+                    return `
+                        <td style="border:1px solid #000; padding:4px;">
+                            <input type="hidden" name="row_id[]" value="${row.id}">
+                            <input type="date" name="row_date[]" value="${row.date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+                        </td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_bar_code[]" value="${row.bar_code || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_patient_name[]" value="${row.patient_name || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_department[]" value="${row.destination_department || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_testname_code[]" value="${row.testname_code || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_handover_sign[]" value="${row.sample_handover_sign || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_receiver_sign[]" value="${row.sample_receiver_sign || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_handover_to_os[]" value="${row.sample_handover_to_os || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_os_lab_receiver_name[]" value="${row.os_lab_receiver_name || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    `;
+                }
+
+                function addEmptyRowREG005() {
+                    const tbody = document.getElementById('soTableBody');
+                    if (!tbody) return;
+
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_bar_code[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_patient_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_department[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_testname_code[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_handover_sign[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_receiver_sign[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_sample_handover_to_os[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                        <td style="border:1px solid #000; padding:4px;"><input name="row_os_lab_receiver_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                function clearSampleOutsourceFilters() {
+                    document.getElementById('soFromDate').value = '';
+                    document.getElementById('soToDate').value = '';
+                    document.getElementById('soLocation').value = '';
+                    document.getElementById('soDepartment').value = '';
+                    document.getElementById('soEquipmentId').value = '';
+                    const tbody = document.getElementById('soTableBody');
+                    if (tbody) {
+                        tbody.innerHTML = '';
+                        addEmptyRowREG005();
+                    }
+                }
+
+                // AJAX Submit for REG-005
+                (function() {
+                    function initSampleOutsourceForm() {
+                        const formContainer = document.querySelector('[id="TDPL/AS/REG-005"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn.textContent;
+
+                            submitBtn.textContent = 'Saving...';
+                            submitBtn.disabled = true;
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastREG005('success', result.message || 'Saved successfully!');
+
+                                    const tbody = document.getElementById('soTableBody');
+                                    if (tbody && result.data && result.data.length > 0) {
+                                        tbody.innerHTML = '';
+                                        result.data.forEach(row => {
+                                            const tr = document.createElement('tr');
+                                            tr.innerHTML = buildREG005RowHTML(row);
+                                            tbody.appendChild(tr);
+                                        });
+                                        addEmptyRowREG005();
+                                    }
+                                } else {
+                                    showToastREG005('error', result.message || 'Save failed!');
+                                }
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                                showToastREG005('error', 'Failed to save data');
+                            })
+                            .finally(() => {
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                            });
+                        });
+                    }
+
+                    function showToastREG005(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = `
+                            position:fixed; top:20px; right:20px; z-index:9999;
+                            padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                            box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                            background:${type === 'success' ? '#28a745' : '#dc3545'};
+                        `;
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initSampleOutsourceForm);
+                    } else {
+                        initSampleOutsourceForm();
+                    }
+                })();
+            </script>
 
         </x-formTemplete>
 
@@ -1123,94 +1811,9 @@
             });
     }
 
-    function loadSampleReceivingRegister() {
-        const fromDate = document.getElementById('srFromDate').value;
-        const toDate = document.getElementById('srToDate').value;
-        const location = document.getElementById('srLocation').value;
-        const department = document.getElementById('srDepartment').value;
-        const equipment = document.getElementById('srEquipmentId').value;
-
-        fetch(
-                `/newforms/as/sample-receiving-register/load?from_date=${fromDate}&to_date=${toDate}&location=${location}&department=${department}&equipment=${equipment}`
-            )
-            .then(res => res.json())
-            .then(res => {
-                const tbody = document.querySelector('#srTableBody');
-                renderTableRows(tbody, res.data, 'SR');
-            })
-            .catch(err => console.error(err));
-    }
-
-    function loadSampleDeliveryRegister() {
-
-        const fromDate = document.getElementById('sdFromDate').value;
-        const toDate = document.getElementById('sdToDate').value;
-        const location = document.getElementById('sdLocation').value;
-        const department = document.getElementById('sdDepartment').value;
-        const equipment = document.getElementById('sdEquipmentId').value;
-
-        fetch(
-                `/newforms/as/sample-delivery-register/load` +
-                `?from_date=${fromDate}` +
-                `&to_date=${toDate}` +
-                `&location=${location}` +
-                `&department=${department}` +
-                `&equipment=${equipment}`
-            )
-            .then(res => res.json())
-            .then(res => {
-                const tbody = document.getElementById('sdTableBody');
-                renderTableRows(tbody, res.data, 'SD');
-            })
-            .catch(err => console.error(err));
-    }
 
 
-    function loadIceGelRegister() {
 
-        const fromDate = document.getElementById('igFromDate').value;
-        const toDate = document.getElementById('igToDate').value;
-        const location = document.getElementById('igLocation').value;
-        const department = document.getElementById('igDepartment').value;
-
-        fetch(
-                `/newforms/as/ice-gel-register/load` +
-                `?from_date=${fromDate}` +
-                `&to_date=${toDate}` +
-                `&location=${location}` +
-                `&department=${department}`
-            )
-            .then(res => res.json())
-            .then(res => {
-                const tbody = document.getElementById('igTableBody');
-                renderTableRows(tbody, res.data, 'IG');
-            })
-            .catch(err => console.error(err));
-    }
-
-    function loadSampleOutsourceRegister() {
-
-        const fromDate = document.getElementById('soFromDate').value;
-        const toDate = document.getElementById('soToDate').value;
-        const location = document.getElementById('soLocation').value;
-        const department = document.getElementById('soDepartment').value;
-        const equipment = document.getElementById('soEquipmentId').value;
-
-        fetch(
-                `/newforms/as/sample-outsource-register/load` +
-                `?from_date=${fromDate}` +
-                `&to_date=${toDate}` +
-                `&location=${location}` +
-                `&department=${department}` +
-                `&equipment=${equipment}`
-            )
-            .then(res => res.json())
-            .then(res => {
-                const tbody = document.querySelector('#soTableBody');
-                renderTableRows(tbody, res.data, 'SO');
-            })
-            .catch(err => console.error(err));
-    }
 
     function renderTableRows(tbody, rows, type) {
 
