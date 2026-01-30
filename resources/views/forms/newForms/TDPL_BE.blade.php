@@ -376,7 +376,7 @@
 
 
     <x-formTemplete id="TDPL-BC-FOM-001" docNo="TDPL-BC-FOM-001" docName="Matermal Marker & Pre-eclampsia TRF"
-        issueNo="1.0" issueDate="01/10/2024" action="{{ route('be.forms.submit') }}" buttonText="Submit">
+        issueNo="1.0" issueDate="01/10/2024" action="{{ route('newforms.be.forms.submit') }}" buttonText="Submit">
         <input type="hidden" id="mm_form_id" name="form_id">
 
 
@@ -661,7 +661,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-0##" docNo="TDPL/BE/FOM-0##" docName="Daily QC Form for Hot Plate Maintenance"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         <style>
             .qc-table,
@@ -760,7 +760,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-006" docNo="TDPL/BE/FOM-006" docName="Bio Safety Cabinet Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
         <input type="hidden" name="bsc_form_id" id="bsc_form_id">
         <!-- ================= FILTER / HEADER DETAILS ================= -->
 
@@ -909,7 +909,7 @@
 
 
     <x-formTemplete id="TDPL/BE-FOM-007" docNo="TDPL/BE-FOM-007" docName="Hot Air Oven Temperature Monitoring Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="hao_form_id" id="hao_form_id">
@@ -1017,7 +1017,7 @@
 
 
     <x-formTemplete id="TDPL/BE-FOM-008" docNo="TDPL/BE-FOM-008" docName="Incubator Temperature Monitoring Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="inc_form_id" id="inc_form_id">
@@ -1106,7 +1106,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE-FOM-009" docNo="TDPL/BE-FOM-009" docName="Laminar Air Flow Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="laf_form_id" id="laf_form_id">
@@ -1283,7 +1283,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-010" docNo="TDPL/BE/FOM-010" docName="Autoclave Maintenance Form" issueNo="2.0"
-        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="aut_form_id" id="aut_form_id">
@@ -1398,7 +1398,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-012" docNo="TDPL/BE/FOM-012" docName="Hot Air Oven Maintenance Form" issueNo="2.0"
-        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="hao_maint_form_id" id="hao_maint_form_id">
@@ -1498,7 +1498,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-013" docNo="TDPL/BE/FOM-013" docName="Incubator Maintenance Form" issueNo="2.0"
-        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="inc_maint_form_id" id="inc_maint_form_id">
@@ -1581,7 +1581,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-014" docNo="TDPL/BE/FOM-014" docName="Centrifuge Maintenance Form" issueNo="2.0"
-        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="cen_form_id" id="cen_form_id">
@@ -1695,7 +1695,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-015" docNo="TDPL/BE/FOM-015" docName="Beckman Coulter DXC700AU Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="dxc_form_id" id="dxc_form_id">
@@ -1857,7 +1857,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-016" docNo="TDPL/BE/FOM-016" docName="Beckman Coulter DxI800 Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="dxi_form_id" id="dxi_form_id">
@@ -2007,7 +2007,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-017" docNo="TDPL/BE/FOM-017" docName="Sensa Core aQua ST-200 Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="st200_form_id" id="st200_form_id">
@@ -2110,7 +2110,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-018" docNo="TDPL/BE/FOM-018" docName="Tosoh HLC-723GX Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 INLINE EDIT ID --}}
         <input type="hidden" name="form_id" id="tosoh_form_id">
@@ -2212,7 +2212,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-019" docNo="TDPL/BE/FOM-019" docName="Beckman Coulter DXH560 Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE EDIT SUPPORT) --}}
         <input type="hidden" name="dxh560_form_id" id="dxh560_form_id">
@@ -2376,7 +2376,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-020" docNo="TDPL/BE/FOM-020" docName="HORIBA Yumizen H550 Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="h550_form_id" id="h550_form_id">
@@ -2489,7 +2489,7 @@
 
     </x-formTemplete>
     <x-formTemplete id="TDPL/BE/FOM-021" docNo="TDPL/BE/FOM-021" docName="Bio-Rad D10 Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID --}}
         <input type="hidden" name="d10_form_id" id="d10_form_id">
@@ -2689,7 +2689,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-022" docNo="TDPL/BE/FOM-022" docName="Automatic Tissue Processor Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE) --}}
         <input type="hidden" name="atp_form_id" id="atp_form_id">
@@ -2785,7 +2785,7 @@
 
     <x-formTemplete id="TDPL/BE/FOM-023" docNo="TDPL/BE/FOM-023"
         docName="Tissue Embedding Console System Equipment Maintenance Form" issueNo="2.0" issueDate="01/10/2024"
-        buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="tec_form_id" id="tec_form_id">
@@ -2878,7 +2878,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-024" docNo="TDPL/BE/FOM-024" docName="Bact Alert Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="ba_form_id" id="ba_form_id">
@@ -2967,7 +2967,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-025" docNo="TDPL/BE/FOM-025" docName="Vitek 2 Maintenance Form" issueNo="2.0"
-        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 INLINE EDIT SUPPORT --}}
         <input type="hidden" name="vitek_form_id" id="vitek_form_id">
@@ -3093,7 +3093,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-026" docNo="TDPL/BE/FOM-026" docName="Elisa Reader Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="elisa_form_id" id="elisa_form_id">
@@ -3175,7 +3175,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-028" docNo="TDPL/BE/FOM-028" docName="Real Time PCR Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="rtpcr_form_id" id="rtpcr_form_id">
@@ -3260,7 +3260,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-029" docNo="TDPL/BE/FOM-029" docName="Cooling Centrifuge Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="cc_form_id" id="cc_form_id">
@@ -3378,7 +3378,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-034" docNo="TDPL/BE/FOM-034" docName="Microscope Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="mic_form_id" id="mic_form_id">
@@ -3456,7 +3456,7 @@
     </x-formTemplete>
 
     <x-formTemplete id="TDPL/BE/FOM-035" docNo="TDPL/BE/FOM-035" docName="Laura M Maintenance Form" issueNo="2.0"
-        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="lauram_form_id" id="lauram_form_id">
@@ -3546,7 +3546,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-036" docNo="TDPL/BE/FOM-036" docName="Microtome Maintenance Form" issueNo="2.0"
-        issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="microtome_form_id" id="microtome_form_id">
@@ -3629,7 +3629,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-037" docNo="TDPL/BE/FOM-037" docName="Flotation Bath Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="fb_form_id" id="fb_form_id">
@@ -3716,7 +3716,7 @@
 
 
     <x-formTemplete id="TDPL/BE/FOM-038" docNo="TDPL/BE/FOM-038" docName="Grossing Station Maintenance Form"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 UNIQUE FORM ID (INLINE UPDATE SUPPORT) --}}
         <input type="hidden" name="gs_form_id" id="gs_form_id">
@@ -3792,7 +3792,7 @@
 
 
     <x-formTemplete id="TDPL/BE/REG-001" docNo="TDPL/BE/REG-001" docName="Equipment Breakdown Maintenance Register"
-        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.be.forms.submit') }}">
 
         {{-- 🔑 INLINE EDIT SUPPORT --}}
         <input type="hidden" name="eb_form_id" id="eb_form_id">
@@ -4052,7 +4052,7 @@
         const monthYear = document.getElementById('month_year').value;
         const instrument = document.getElementById('instrument_serial_no').value;
         if (!monthYear) return;
-        fetch(`/be/hot-plate-qc/load?month_year=${monthYear}&instrument_serial_no=${instrument}`, {
+        fetch(`/newforms/be/hot-plate-qc/load?month_year=${monthYear}&instrument_serial_no=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4156,7 +4156,7 @@
     //     const day = parts.pop();
     //     const row = parts.join('_');
 
-    //     fetch("{{ route('be.forms.inline') }}", {
+    //     fetch("{{ route('newforms.be.forms.inline') }}", {
     //         method: 'POST',
     //         headers: {
     //             'Content-Type': 'application/json',
@@ -4180,7 +4180,7 @@
 
         if (!monthYear) return;
 
-        fetch(`/be/bsc/load?bsc_month_year=${monthYear}&bsc_department=${department}&bsc_equipment_id=${equipment}`, {
+        fetch(`/newforms/be/bsc/load?bsc_month_year=${monthYear}&bsc_department=${department}&bsc_equipment_id=${equipment}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4239,7 +4239,7 @@
 
         if (!month) return;
 
-        fetch(`/be/hot-air-oven/load?hao_month_year=${month}&hao_instrument_id=${inst}`, {
+        fetch(`/newforms/be/hot-air-oven/load?hao_month_year=${month}&hao_instrument_id=${inst}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
@@ -4279,7 +4279,7 @@
 
         if (!month) return;
 
-        fetch(`/be/incubator/load?inc_month_year=${month}&inc_instrument_id=${inst}`)
+        fetch(`/newforms/be/incubator/load?inc_month_year=${month}&inc_instrument_id=${inst}`)
             .then(res => res.json())
             .then(res => {
 
@@ -4320,7 +4320,7 @@
 
         if (!monthYear) return;
 
-        fetch(`/be/laf/load?laf_month_year=${monthYear}&laf_department=${department}&laf_equipment_id=${equipment}`, {
+        fetch(`/newforms/be/laf/load?laf_month_year=${monthYear}&laf_department=${department}&laf_equipment_id=${equipment}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4379,7 +4379,7 @@
         // ❗ very important – do not load without month
         if (!monthYear) return;
 
-        fetch(`/be/autoclave/load?aut_month_year=${monthYear}&aut_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/autoclave/load?aut_month_year=${monthYear}&aut_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4434,7 +4434,7 @@
         // ❗ do not load without month
         if (!monthYear) return;
 
-        fetch(`/be/hao-maintenance/load?hao_maint_month_year=${monthYear}&hao_maint_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/hao-maintenance/load?hao_maint_month_year=${monthYear}&hao_maint_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4492,7 +4492,7 @@
         // ❗ DO NOT LOAD WITHOUT MONTH
         if (!monthYear) return;
 
-        fetch(`/be/incubator-maintenance/load?inc_maint_month_year=${monthYear}&inc_maint_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/incubator-maintenance/load?inc_maint_month_year=${monthYear}&inc_maint_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4541,7 +4541,7 @@
         // ❗ Do NOT load without month (same rule as others)
         if (!monthYear) return;
 
-        fetch(`/be/centrifuge/load?cen_month_year=${monthYear}&cen_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/centrifuge/load?cen_month_year=${monthYear}&cen_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4613,7 +4613,7 @@
         // ❗ month mandatory
         if (!monthYear) return;
 
-        fetch(`/be/dxc/load?dxc_month_year=${monthYear}&dxc_location=${location}&dxc_department=${department}`, {
+        fetch(`/newforms/be/dxc/load?dxc_month_year=${monthYear}&dxc_location=${location}&dxc_department=${department}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4678,7 +4678,7 @@
         // ❗ SAME RULE – DO NOT LOAD WITHOUT MONTH
         if (!monthYear) return;
 
-        fetch(`/be/dxi800/load?dxi_month_year=${monthYear}&dxi_location=${location}&dxi_department=${department}`, {
+        fetch(`/newforms/be/dxi800/load?dxi_month_year=${monthYear}&dxi_location=${location}&dxi_department=${department}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4743,7 +4743,7 @@
         // ❗ SAME RULE – DO NOT LOAD WITHOUT MONTH
         if (!monthYear) return;
 
-        fetch(`/be/st200/load?st200_month_year=${monthYear}&st200_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/st200/load?st200_month_year=${monthYear}&st200_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4786,7 +4786,7 @@
 
         if (!monthYear) return;
 
-        fetch(`/be/h550/load?h550_month_year=${monthYear}&h550_instrument_serial=${instrument}`, {
+        fetch(`/newforms/be/h550/load?h550_month_year=${monthYear}&h550_instrument_serial=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4839,7 +4839,7 @@
         // ❗ SAME RULE AS ALL FORMS
         if (!monthYear) return;
 
-        fetch(`/be/d10/load?d10_month_year=${monthYear}&d10_instrument_serial=${instrument}`, {
+        fetch(`/newforms/be/d10/load?d10_month_year=${monthYear}&d10_instrument_serial=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4894,7 +4894,7 @@
         const instrument = document.getElementById('atp_instrument_id').value;
         // ❗ SAME RULE AS ALL FORMS
         if (!monthYear) return;
-        fetch(`/be/atp/load?atp_month_year=${monthYear}&atp_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/atp/load?atp_month_year=${monthYear}&atp_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4942,7 +4942,7 @@
         // ❗ SAME RULE AS ALL BE FORMS
         if (!monthYear) return;
 
-        fetch(`/be/tec/load?tec_month_year=${monthYear}&tec_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/tec/load?tec_month_year=${monthYear}&tec_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -4990,7 +4990,7 @@
         // ❗ SAME RULE AS ALL FORMS
         if (!monthYear) return;
 
-        fetch(`/be/ba/load?ba_month_year=${monthYear}&ba_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/ba/load?ba_month_year=${monthYear}&ba_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5039,7 +5039,7 @@
         // ❗ SAME RULE AS ALL FORMS
         if (!monthYear) return;
 
-        fetch(`/be/elisa/load?elisa_month_year=${monthYear}&elisa_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/elisa/load?elisa_month_year=${monthYear}&elisa_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5093,7 +5093,7 @@
         // ❗ SAME RULE AS ALL FORMS
         if (!monthYear) return;
 
-        fetch(`/be/rtpcr/load?rtpcr_month_year=${monthYear}&rtpcr_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/rtpcr/load?rtpcr_month_year=${monthYear}&rtpcr_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5145,7 +5145,7 @@
 
         if (!monthYear) return;
 
-        fetch(`/be/cc/load?cc_month_year=${monthYear}&cc_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/cc/load?cc_month_year=${monthYear}&cc_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5209,7 +5209,7 @@
         // ❗ SAME RULE AS ALL FORMS
         if (!monthYear) return;
 
-        fetch(`/be/mic/load?mic_month_year=${monthYear}&mic_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/mic/load?mic_month_year=${monthYear}&mic_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5263,7 +5263,7 @@
         // ❗ GLOBAL RULE – Month mandatory
         if (!monthYear) return;
 
-        fetch(`/be/lauram/load?lauram_month_year=${monthYear}&lauram_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/lauram/load?lauram_month_year=${monthYear}&lauram_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5317,7 +5317,7 @@
         // ❗ At least ONE date required
         if (!fromDate && !toDate) return;
 
-        fetch(`/be/equipment-breakdown/load?eb_from_date=${fromDate}&eb_to_date=${toDate}&eb_location=${location}`, {
+        fetch(`/newforms/be/equipment-breakdown/load?eb_from_date=${fromDate}&eb_to_date=${toDate}&eb_location=${location}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5427,7 +5427,7 @@
         // ❗ GLOBAL RULE – Month mandatory
         if (!monthYear) return;
 
-        fetch(`/be/microtome/load?microtome_month_year=${monthYear}&microtome_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/microtome/load?microtome_month_year=${monthYear}&microtome_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5479,7 +5479,7 @@
         // ❗ GLOBAL RULE – month mandatory
         if (!monthYear) return;
 
-        fetch(`/be/fb/load?fb_month_year=${monthYear}&fb_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/fb/load?fb_month_year=${monthYear}&fb_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5532,7 +5532,7 @@
         // ❗ GLOBAL RULE – Month mandatory
         if (!monthYear) return;
 
-        fetch(`/be/gs/load?gs_month_year=${monthYear}&gs_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/gs/load?gs_month_year=${monthYear}&gs_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5598,7 +5598,7 @@
         // ❗ GLOBAL RULE – filter mandatory
         if (!mobile) return;
 
-        fetch(`/be/maternal-marker/load?filter_patient_mobile=${mobile}`, {
+        fetch(`/newforms/be/maternal-marker/load?filter_patient_mobile=${mobile}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5671,7 +5671,7 @@
         // ❗ SAME GLOBAL RULE AS OTHER FORMS
         if (!monthYear) return;
 
-        fetch(`/be/tosoh/load?tosoh_month_year=${monthYear}&tosoh_instrument_serial=${serial}`, {
+        fetch(`/newforms/be/tosoh/load?tosoh_month_year=${monthYear}&tosoh_instrument_serial=${serial}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5747,7 +5747,7 @@
         // ❗ GLOBAL RULE – Month mandatory
         if (!monthYear) return;
 
-        fetch(`/be/dxh560/load?dxh560_month_year=${monthYear}&dxh560_instrument_serial=${instrument}`, {
+        fetch(`/newforms/be/dxh560/load?dxh560_month_year=${monthYear}&dxh560_instrument_serial=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5867,7 +5867,7 @@
         // ❗ GLOBAL RULE – Month mandatory
         if (!monthYear) return;
 
-        fetch(`/be/vitek/load?vitek_month_year=${monthYear}&vitek_instrument_id=${instrument}`, {
+        fetch(`/newforms/be/vitek/load?vitek_month_year=${monthYear}&vitek_instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -5953,7 +5953,7 @@
         if (!fromDate && !toDate && !location) return;
 
         fetch(
-                `/be/equipment-breakdown/load?` +
+                `/newforms/be/equipment-breakdown/load?` +
                 `eb_from_date=${fromDate}` +
                 `&eb_to_date=${toDate}` +
                 `&eb_location=${location}`, {

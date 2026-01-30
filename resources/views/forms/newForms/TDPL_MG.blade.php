@@ -499,7 +499,27 @@
         docName="MRM Agenda Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.mg.forms.submit') }}">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>Meeting Date:</strong>
+                <input type="date" id="MG_FOM007__meeting_date"
+                    style="border:1px solid #000; padding:4px; width:170px;"
+                    onchange="loadFOM007Data()">
+            </div>
+            <div>
+                <button type="button" onclick="clearFOM007Filters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <input type="hidden" name="record_id" id="MG_FOM007__record_id" value="">
+
         <div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6;background-color:white; padding:20px; border-radius: 10px;border:1px solid #000">
 
             <h2 style="margin-bottom: 10px;">MRM Agenda</h2>
@@ -508,26 +528,26 @@
 
             <div style="margin-bottom: 10px;">
                 <label>Date of MRM:</label>
-                <input type="date" name="mrm_date" style="border:1px solid #ccc; padding:4px; margin-left:10px;">
+                <input type="date" name="mrm_date" id="MG_FOM007__mrm_date" style="border:1px solid #ccc; padding:4px; margin-left:10px;">
 
                 <label style="margin-left: 40px;">Time of MRM:</label>
-                <input type="text" name="mrm_time" placeholder="HH:MM" style="border:1px solid #ccc; padding:4px;">
+                <input type="text" name="mrm_time" id="MG_FOM007__mrm_time" placeholder="HH:MM" style="border:1px solid #ccc; padding:4px;">
             </div>
 
             <div style="margin-bottom: 10px;">
                 <label>Location:</label>
-                <input type="text" name="location" style="border:1px solid #ccc; padding:4px; width:250px; margin-left:10px;">
+                <input type="text" name="location" id="MG_FOM007__location" style="border:1px solid #ccc; padding:4px; width:250px; margin-left:10px;">
 
                 <label style="margin-left: 40px;">Expected Duration:</label>
-                <input type="text" name="duration" style="border:1px solid #ccc; padding:4px; width:200px;">
+                <input type="text" name="duration" id="MG_FOM007__duration" style="border:1px solid #ccc; padding:4px; width:200px;">
             </div>
 
             <div style="margin-bottom: 20px;">
                 <label>Chairperson:</label>
-                <input type="text" name="chairperson" style="border:1px solid #ccc; padding:4px; width:250px; margin-left:10px;">
+                <input type="text" name="chairperson" id="MG_FOM007__chairperson" style="border:1px solid #ccc; padding:4px; width:250px; margin-left:10px;">
 
                 <label style="margin-left: 40px;">Recorder:</label>
-                <input type="text" name="recorder" style="border:1px solid #ccc; padding:4px; width:250px;">
+                <input type="text" name="recorder" id="MG_FOM007__recorder" style="border:1px solid #ccc; padding:4px; width:250px;">
             </div>
 
             <h3>Attendees</h3>
@@ -540,6 +560,7 @@
                         <td style="padding: 6px;">
                             <input type="text"
                                 name="attendees[{{ $i }}]"
+                                id="MG_FOM007__attendee_{{ $i }}"
                                 style="width: 95%; border:1px solid #ccc; padding:4px;">
                         </td>
                     </tr>
@@ -551,7 +572,7 @@
 
             <p>You are cordially invited to attend the upcoming <strong>Management Review Meeting</strong>.
                 This meeting is conducted as part of our quality management and continuous improvement processes
-                to ensure that our system remains effective and aligned with the organization’s strategic direction.</p>
+                to ensure that our system remains effective and aligned with the organization's strategic direction.</p>
 
             <h2 style="margin-top: 30px;">AGENDA ITEMS</h2>
 
@@ -569,8 +590,8 @@
                 "Customer feedback and complaints",
                 "Supplier performance",
                 "Employee Feedback",
-                "Recommendations for improvement from HOD’s",
-                "Review of employees’ suggestions for improvement",
+                "Recommendations for improvement from HOD's",
+                "Review of employees' suggestions for improvement",
                 "Review of Risk & Opportunities",
                 "Changes in external/internal issues (legal, clinical ops, etc.)",
                 "Define, plan and allocate resources on action items for improvement",
@@ -578,7 +599,7 @@
                 "Conclusion and closing remarks",
                 ] as $index => $item)
                 <li style="margin-bottom: 6px;">
-                    <input type="checkbox" name="agenda_completed[{{ $index }}]" style="margin-right:6px;">
+                    <input type="checkbox" name="agenda_completed[{{ $index }}]" id="MG_FOM007__agenda_{{ $index }}" style="margin-right:6px;">
                     {{ $item }}
                 </li>
                 @endforeach
@@ -590,19 +611,19 @@
 
             <div style="margin-top: 20px;">
                 <label>Please confirm your availability by:</label>
-                <input type="date" name="confirmation_date" style="border:1px solid #ccc; padding:4px; margin-left:10px;">
+                <input type="date" name="confirmation_date" id="MG_FOM007__confirmation_date" style="border:1px solid #ccc; padding:4px; margin-left:10px;">
             </div>
 
             <h3 style="margin-top: 30px;">Warm regards,</h3>
 
             <div style="margin-top: 10px;">
-                <input type="text" name="sender_name" placeholder="Your Full Name"
+                <input type="text" name="sender_name" id="MG_FOM007__sender_name" placeholder="Your Full Name"
                     style="border:1px solid #ccc; padding:4px; width:250px;"><br>
 
                 <span>Executive Assistant to CMD</span><br>
                 <span>TRUSTlab Diagnostics Pvt Ltd</span><br>
 
-                <input type="text" name="contact_details" placeholder="Contact Details"
+                <input type="text" name="contact_details" id="MG_FOM007__contact_details" placeholder="Contact Details"
                     style="border:1px solid #ccc; padding:4px; width:250px; margin-top:5px;">
             </div>
 
@@ -617,9 +638,28 @@
         docName="MRM Attendance Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <div style="font-family: Arial, sans-serif; font-size:14px;">
+        buttonText="Submit"
+        action="{{ route('newforms.mg.forms.submit') }}">
 
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>Meeting Date:</strong>
+                <input type="date" id="MG_FOM008__filter_date"
+                    style="border:1px solid #000; padding:4px; width:170px;"
+                    onchange="loadFOM008Data()">
+            </div>
+            <div>
+                <button type="button" onclick="clearFOM008Filters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <input type="hidden" name="record_id" id="MG_FOM008__record_id" value="">
+
+        <div style="font-family: Arial, sans-serif; font-size:14px;">
 
             <table style="width:100%; border-collapse:collapse; margin-bottom:25px;">
                 <tr>
@@ -627,7 +667,7 @@
                         <label style="font-weight:600;">Meeting Date:</label>
                     </td>
                     <td style="padding:8px;">
-                        <input type="date" name="meeting_date"
+                        <input type="date" name="meeting_date" id="MG_FOM008__meeting_date"
                             style="width:100%; padding:6px; border:1px solid #ccc;" />
                     </td>
                 </tr>
@@ -637,7 +677,7 @@
                         <label style="font-weight:600;">Meeting Time:</label>
                     </td>
                     <td style="padding:8px;">
-                        <input type="time" name="meeting_time"
+                        <input type="time" name="meeting_time" id="MG_FOM008__meeting_time"
                             style="width:100%; padding:6px; border:1px solid #ccc;" />
                     </td>
                 </tr>
@@ -647,7 +687,7 @@
                         <label style="font-weight:600;">Venue:</label>
                     </td>
                     <td style="padding:8px;">
-                        <input type="text" name="venue"
+                        <input type="text" name="venue" id="MG_FOM008__venue"
                             style="width:100%; padding:6px; border:1px solid #ccc;" />
                     </td>
                 </tr>
@@ -675,21 +715,25 @@
 
                         <td style="border:1px solid #ccc; padding:8px;">
                             <input type="text" name="attendees[{{ $i }}][name]"
+                                id="MG_FOM008__att_name_{{ $i }}"
                                 style="width:100%; padding:6px; border:1px solid #ccc;">
                         </td>
 
                         <td style="border:1px solid #ccc; padding:8px;">
                             <input type="text" name="attendees[{{ $i }}][department]"
+                                id="MG_FOM008__att_dept_{{ $i }}"
                                 style="width:100%; padding:6px; border:1px solid #ccc;">
                         </td>
 
                         <td style="border:1px solid #ccc; padding:8px;">
                             <input type="text" name="attendees[{{ $i }}][designation]"
+                                id="MG_FOM008__att_desig_{{ $i }}"
                                 style="width:100%; padding:6px; border:1px solid #ccc;">
                         </td>
 
                         <td style="border:1px solid #ccc; padding:8px; text-align:center;">
                             <input type="text" name="attendees[{{ $i }}][signature]"
+                                id="MG_FOM008__att_sign_{{ $i }}"
                                 style="width:100%; padding:6px; border:1px solid #ccc;">
                         </td>
                     </tr>
@@ -699,7 +743,7 @@
 
             <h3 style="margin-top:20px;">Remarks / Notes (if any):</h3>
 
-            <textarea name="remarks"
+            <textarea name="remarks" id="MG_FOM008__remarks"
                 style="width:100%; height:120px; padding:10px; border:1px solid #ccc; margin-top:10px;"></textarea>
 
         </div>
@@ -712,7 +756,27 @@
         docName="Minutes of MRM"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.mg.forms.submit') }}">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>Meeting Date:</strong>
+                <input type="date" id="MG_FOM009__filter_date"
+                    style="border:1px solid #000; padding:4px; width:170px;"
+                    onchange="loadFOM009Data()">
+            </div>
+            <div>
+                <button type="button" onclick="clearFOM009Filters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <input type="hidden" name="record_id" id="MG_FOM009__record_id" value="">
+
         <div style="background:#fff; padding:25px; border-radius:12px; font-family:Arial, sans-serif; font-size:14px;">
 
             <table style="width:100%; border-collapse:collapse; margin-bottom:25px;">
@@ -728,7 +792,7 @@
                     <td colspan="2" style="padding:8px; font-weight:600;">Absent (include reason)</td>
                     <td colspan="2" style="padding:8px; font-weight:600;">
                         Date:
-                        <input type="date" name="date"
+                        <input type="date" name="date" id="MG_FOM009__date"
                             style="padding:6px; border:1px solid #ccc; width:100%; margin-top:5px;">
                     </td>
                 </tr>
@@ -738,6 +802,7 @@
                     <td colspan="3" style="padding:8px; vertical-align:top;">
                         @foreach(range(1, 6) as $i)
                         <input type="text" name="present[{{ $i }}]"
+                            id="MG_FOM009__present_{{ $i }}"
                             placeholder="Name {{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc; margin-bottom:6px;">
                         @endforeach
@@ -747,9 +812,11 @@
                     <td colspan="2" style="padding:8px; vertical-align:top;">
                         @foreach(range(1, 4) as $i)
                         <input type="text" name="absent[{{ $i }}][name]"
+                            id="MG_FOM009__absent_name_{{ $i }}"
                             placeholder="Name"
                             style="width:48%; padding:6px; border:1px solid #ccc; margin-bottom:6px;">
                         <input type="text" name="absent[{{ $i }}][reason]"
+                            id="MG_FOM009__absent_reason_{{ $i }}"
                             placeholder="Reason"
                             style="width:48%; padding:6px; border:1px solid #ccc; margin-bottom:6px;">
                         <br>
@@ -759,15 +826,15 @@
                     <!-- Venue / Time -->
                     <td colspan="2" style="padding:8px;">
                         <label style="font-weight:600;">Venue:</label>
-                        <input type="text" name="venue"
+                        <input type="text" name="venue" id="MG_FOM009__venue"
                             style="width:100%; padding:6px; border:1px solid #ccc; margin-bottom:10px;">
 
                         <label style="font-weight:600;">Start Time:</label>
-                        <input type="time" name="start_time"
+                        <input type="time" name="start_time" id="MG_FOM009__start_time"
                             style="width:100%; padding:6px; border:1px solid #ccc; margin-bottom:10px;">
 
                         <label style="font-weight:600;">End Time:</label>
-                        <input type="time" name="end_time"
+                        <input type="time" name="end_time" id="MG_FOM009__end_time"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
                 </tr>
@@ -801,18 +868,22 @@
                 <tr>
                     <td style="padding:6px;">
                         <input type="text" name="previous_actions[{{ $i }}][action]"
+                            id="MG_FOM009__prev_action_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
                     <td colspan="2" style="padding:6px;">
                         <input type="text" name="previous_actions[{{ $i }}][responsible]"
+                            id="MG_FOM009__prev_resp_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
                     <td colspan="2" style="padding:6px;">
                         <input type="date" name="previous_actions[{{ $i }}][target]"
+                            id="MG_FOM009__prev_target_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
                     <td style="padding:6px;">
                         <input type="text" name="previous_actions[{{ $i }}][status]"
+                            id="MG_FOM009__prev_status_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
                 </tr>
@@ -827,7 +898,7 @@
                 <tr>
                     <td colspan="6" style="padding:8px; font-weight:700; font-style:italic;">
                         Summary of Discussions & Key Points:
-                        <textarea name="summary"
+                        <textarea name="summary" id="MG_FOM009__summary"
                             style="width:100%; height:120px; padding:10px; border:1px solid #ccc; margin-top:10px;"></textarea>
                     </td>
                 </tr>
@@ -835,7 +906,7 @@
                 <tr>
                     <td colspan="6" style="padding:8px; font-weight:700; font-style:italic;">
                         Decisions Made:
-                        <textarea name="decisions"
+                        <textarea name="decisions" id="MG_FOM009__decisions"
                             style="width:100%; height:120px; padding:10px; border:1px solid #ccc; margin-top:10px;"></textarea>
                     </td>
                 </tr>
@@ -857,18 +928,22 @@
                 <tr>
                     <td style="padding:6px;">
                         <input type="text" name="current_actions[{{ $i }}][action]"
+                            id="MG_FOM009__curr_action_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
                     <td colspan="2" style="padding:6px;">
                         <input type="text" name="current_actions[{{ $i }}][responsible]"
+                            id="MG_FOM009__curr_resp_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
                     <td colspan="2" style="padding:6px;">
                         <input type="date" name="current_actions[{{ $i }}][target]"
+                            id="MG_FOM009__curr_target_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
                     <td style="padding:6px;">
                         <input type="text" name="current_actions[{{ $i }}][status]"
+                            id="MG_FOM009__curr_status_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
                 </tr>
@@ -881,18 +956,18 @@
 
             <p style="margin:10px 0;">
                 Overall Performance:
-                <label><input type="checkbox" name="performance" value="Satisfactory"> Satisfactory</label>
+                <label><input type="radio" name="performance" id="MG_FOM009__perf_sat" value="Satisfactory"> Satisfactory</label>
                 &nbsp;&nbsp;&nbsp;
-                <label><input type="checkbox" name="performance" value="Needs Improvement"> Needs Improvement</label>
+                <label><input type="radio" name="performance" id="MG_FOM009__perf_ni" value="Needs Improvement"> Needs Improvement</label>
             </p>
 
             <p>Additional remarks:</p>
-            <textarea name="remarks"
+            <textarea name="remarks" id="MG_FOM009__remarks"
                 style="width:100%; height:120px; padding:10px; border:1px solid #ccc;"></textarea>
 
             <p style="margin-top:15px;">
                 Next review scheduled on:
-                <input type="date" name="next_review"
+                <input type="date" name="next_review" id="MG_FOM009__next_review"
                     style="padding:6px; border:1px solid #ccc;">
             </p>
 
@@ -901,21 +976,21 @@
 
             <p>
                 <strong>Chairperson:</strong>
-                <input type="text" name="chairperson"
+                <input type="text" name="chairperson" id="MG_FOM009__chairperson"
                     style="padding:6px; border:1px solid #ccc; width:250px;">
                 &nbsp;&nbsp;
                 Date:
-                <input type="date" name="chairperson_date"
+                <input type="date" name="chairperson_date" id="MG_FOM009__chairperson_date"
                     style="padding:6px; border:1px solid #ccc;">
             </p>
 
             <p>
                 <strong>Recorder:</strong>
-                <input type="text" name="recorder"
+                <input type="text" name="recorder" id="MG_FOM009__recorder"
                     style="padding:6px; border:1px solid #ccc; width:250px;">
                 &nbsp;&nbsp;
                 Date:
-                <input type="date" name="recorder_date"
+                <input type="date" name="recorder_date" id="MG_FOM009__recorder_date"
                     style="padding:6px; border:1px solid #ccc;">
             </p>
 
@@ -928,7 +1003,28 @@
         docName="MRM Task Completion & Compliance"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.mg.forms.submit') }}">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>Meeting Date:</strong>
+                <input type="date" id="MG_FOM010__filter_date"
+                    style="border:1px solid #000; padding:4px; width:170px;"
+                    onchange="loadFOM010Data()">
+            </div>
+            <div>
+                <button type="button" onclick="clearFOM010Filters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <input type="hidden" name="record_id" id="MG_FOM010__record_id" value="">
+        <input type="hidden" name="meeting_date" id="MG_FOM010__meeting_date" value="">
+
         <div style="background:#fff; padding:25px; border-radius:12px; font-family:Arial, sans-serif; font-size:14px;">
 
             <table style="width:100%; border-collapse:collapse; margin-bottom:25px;">
@@ -957,31 +1053,37 @@
                 <tr>
                     <td style="padding:6px;">
                         <input type="text" name="tasks[{{ $i }}][action]"
+                            id="MG_FOM010__task_action_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
 
                     <td style="padding:6px;">
                         <input type="text" name="tasks[{{ $i }}][responsible]"
+                            id="MG_FOM010__task_resp_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
 
                     <td style="padding:6px;">
                         <input type="date" name="tasks[{{ $i }}][target_date]"
+                            id="MG_FOM010__task_target_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
 
                     <td style="padding:6px;">
                         <input type="text" name="tasks[{{ $i }}][status]"
+                            id="MG_FOM010__task_status_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
 
                     <td style="padding:6px;">
                         <input type="date" name="tasks[{{ $i }}][completed_on]"
+                            id="MG_FOM010__task_completed_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                     </td>
 
                     <td style="padding:6px;">
                         <select name="tasks[{{ $i }}][compliance]"
+                            id="MG_FOM010__task_compliance_{{ $i }}"
                             style="width:100%; padding:6px; border:1px solid #ccc;">
                             <option value="">Select</option>
                             <option value="Compliant">Compliant</option>
@@ -998,18 +1100,18 @@
 
             <p style="margin:10px 0;">
                 Overall Performance:
-                <label><input type="checkbox" name="performance" value="Satisfactory"> Satisfactory</label>
+                <label><input type="radio" name="performance" id="MG_FOM010__perf_sat" value="Satisfactory"> Satisfactory</label>
                 &nbsp;&nbsp;&nbsp;
-                <label><input type="checkbox" name="performance" value="Needs Improvement"> Needs Improvement</label>
+                <label><input type="radio" name="performance" id="MG_FOM010__perf_ni" value="Needs Improvement"> Needs Improvement</label>
             </p>
 
             <p>Additional remarks:</p>
-            <textarea name="remarks"
+            <textarea name="remarks" id="MG_FOM010__remarks"
                 style="width:100%; height:120px; padding:10px; border:1px solid #ccc;"></textarea>
 
             <p style="margin-top:15px;">
                 Next review scheduled on:
-                <input type="date" name="next_review"
+                <input type="date" name="next_review" id="MG_FOM010__next_review"
                     style="padding:6px; border:1px solid #ccc;">
             </p>
 
@@ -1018,21 +1120,21 @@
 
             <p>
                 <strong>Chairperson:</strong>
-                <input type="text" name="chairperson"
+                <input type="text" name="chairperson" id="MG_FOM010__chairperson"
                     style="padding:6px; border:1px solid #ccc; width:250px;">
                 &nbsp;&nbsp;
                 Date:
-                <input type="date" name="chairperson_date"
+                <input type="date" name="chairperson_date" id="MG_FOM010__chairperson_date"
                     style="padding:6px; border:1px solid #ccc;">
             </p>
 
             <p>
                 <strong>Recorder:</strong>
-                <input type="text" name="recorder"
+                <input type="text" name="recorder" id="MG_FOM010__recorder"
                     style="padding:6px; border:1px solid #ccc; width:250px;">
                 &nbsp;&nbsp;
                 Date:
-                <input type="date" name="recorder_date"
+                <input type="date" name="recorder_date" id="MG_FOM010__recorder_date"
                     style="padding:6px; border:1px solid #ccc;">
             </p>
 
@@ -1042,153 +1144,693 @@
 </body>
 <script>
     function showSection(sectionId) {
-
-
-        // Add 'inactive' class to all main sections
         const sections = document.querySelectorAll('.main');
         sections.forEach(section => section.classList.add('inactive'));
 
-        // Remove 'inactive' and add 'active' class to the selected section
         const selectedSection = document.getElementById(sectionId);
         selectedSection.classList.remove('inactive');
         selectedSection.classList.add('active');
-
-
     }
 
     function goBack() {
-        // Hide all main sections by adding 'inactive' class
         const sections = document.querySelectorAll('.main');
         sections.forEach(section => {
             section.classList.remove('active');
             section.classList.add('inactive');
         });
-        // Show the icon view
         document.querySelector('.icon-view').parentElement.classList.remove('inactive');
     }
 
-    // Add new row to tests table
-    document.getElementById('addRowBtn1').addEventListener('click', function() {
-        const tbody = document.querySelector('#testsTable tbody');
-        const newRow = tbody.insertRow();
-        const rowCount = tbody.rows.length;
+    /* ===================================================
+       FOM-007 – MRM Agenda Form
+       Single record per meeting date, Meeting Date filter
+       =================================================== */
 
-        // Create cells
-        ['', '', '', '', '', ''].forEach((content, index) => {
-            const cell = newRow.insertCell();
-            cell.contentEditable = 'true';
-            cell.textContent = index === 0 ? rowCount : content;
-        });
-    });
+    function clearFOM007Form() {
+        document.getElementById('MG_FOM007__record_id').value = '';
+        document.getElementById('MG_FOM007__mrm_date').value = '';
+        document.getElementById('MG_FOM007__mrm_time').value = '';
+        document.getElementById('MG_FOM007__location').value = '';
+        document.getElementById('MG_FOM007__duration').value = '';
+        document.getElementById('MG_FOM007__chairperson').value = '';
+        document.getElementById('MG_FOM007__recorder').value = '';
+        document.getElementById('MG_FOM007__confirmation_date').value = '';
+        document.getElementById('MG_FOM007__sender_name').value = '';
+        document.getElementById('MG_FOM007__contact_details').value = '';
 
-    // Submit form data
-    document.getElementById('submitBtn1').addEventListener('click', function() {
-        // Get analyzer data
-        // const analyzerRows = document.querySelectorAll('#analyzerTable tbody tr');
-        // const analyzerData = {
-        //     department: analyzerRows[0].cells[1].textContent.trim(),
-        //     analyzer_sr_no: analyzerRows[1].cells[1].textContent.trim(),
-        //     analyzer_type: analyzerRows[2].cells[1].textContent.trim(),
-        //     validation: analyzerRows[3].cells[1].textContent.trim(),
-        //     remarks: analyzerRows[5].cells[1].textContent.trim()
-        // };
+        // Clear attendees
+        for (let i = 1; i <= 10; i++) {
+            const el = document.getElementById('MG_FOM007__attendee_' + i);
+            if (el) el.value = '';
+        }
 
-        // Get tests data
-        const testRows = document.querySelectorAll('#testsTable tbody tr');
-        const testsData = [];
+        // Uncheck all agenda checkboxes
+        for (let i = 0; i < 19; i++) {
+            const el = document.getElementById('MG_FOM007__agenda_' + i);
+            if (el) el.checked = false;
+        }
+    }
 
-        testRows.forEach(row => {
-            const cells = row.cells;
-            testsData.push({
-                sr_no: cells[0].textContent.trim(),
-                device: cells[1].textContent.trim(),
-                assay_code: cells[2].textContent.trim(),
-                test_name: cells[3].textContent.trim(),
-                equipment: cells[4].textContent.trim(),
-                lis: cells[5].textContent.trim()
-            });
-        });
+    function clearFOM007Filters() {
+        document.getElementById('MG_FOM007__meeting_date').value = '';
+        clearFOM007Form();
+    }
 
-        // Prepare complete data
-        const formData = {
-            // analyzer: analyzerData,
-            tests: testsData
-        };
+    function populateFOM007(data) {
+        document.getElementById('MG_FOM007__record_id').value = data.id || '';
+        document.getElementById('MG_FOM007__mrm_date').value = data.mrm_date || '';
+        document.getElementById('MG_FOM007__mrm_time').value = data.mrm_time || '';
+        document.getElementById('MG_FOM007__location').value = data.location || '';
+        document.getElementById('MG_FOM007__duration').value = data.duration || '';
+        document.getElementById('MG_FOM007__chairperson').value = data.chairperson || '';
+        document.getElementById('MG_FOM007__recorder').value = data.recorder || '';
+        document.getElementById('MG_FOM007__confirmation_date').value = data.confirmation_date || '';
+        document.getElementById('MG_FOM007__sender_name').value = data.sender_name || '';
+        document.getElementById('MG_FOM007__contact_details').value = data.contact_details || '';
 
-        // Send to server
-        fetch('/lis-interface-logs-store', {
+        // Populate attendees
+        const attendees = data.attendees || [];
+        for (let i = 1; i <= 10; i++) {
+            const el = document.getElementById('MG_FOM007__attendee_' + i);
+            if (el) el.value = attendees[i - 1] || '';
+        }
+
+        // Check agenda checkboxes
+        const agendaCompleted = data.agenda_completed || [];
+        for (let i = 0; i < 19; i++) {
+            const el = document.getElementById('MG_FOM007__agenda_' + i);
+            if (el) el.checked = agendaCompleted.includes(i);
+        }
+    }
+
+    function loadFOM007Data() {
+        const meetingDate = document.getElementById('MG_FOM007__meeting_date').value;
+        if (!meetingDate) return;
+
+        const params = new URLSearchParams();
+        params.append('mrm_date', meetingDate);
+
+        fetch(`/newforms/mg/mrm-agenda/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success && res.data) {
+                populateFOM007(res.data);
+            } else {
+                clearFOM007Form();
+                // Set mrm_date to the selected filter date
+                document.getElementById('MG_FOM007__mrm_date').value = meetingDate;
+            }
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMGFOM007(type, message) {
+        const existing = document.querySelector('.mg-toast-fom007');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'mg-toast-fom007';
+        toast.textContent = message;
+        toast.style.cssText =
+            'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMGFOM007() {
+        const formContainer = document.querySelector('[id="TDPL/MG/FOM-007"]');
+        if (!formContainer) return;
+
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
                 method: 'POST',
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify(formData)
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Data saved successfully!');
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMGFOM007('success', result.message || 'Saved successfully!');
+                    if (result.data) {
+                        populateFOM007(result.data);
+                    }
                 } else {
-                    alert('Error: ' + (data.message || 'Failed to save data'));
+                    showToastMGFOM007('error', result.message || 'Failed to save');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to save data');
+                showToastMGFOM007('error', 'Failed to save. Please try again.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             });
-    });
 
-    // Load saved data
-    function loadLisData() {
-        fetch('/lis-interface-logs')
-            .then(response => response.json())
-            .then(data => {
-                // if (data.analyzer) {
-                //     // Update analyzer table
-                //     const analyzerRows = document.querySelectorAll('#analyzerTable tbody tr');
-                //     analyzerRows[1].cells[1].textContent = data.analyzer.analyzer_sr_no || '';
-                //     analyzerRows[2].cells[1].textContent = data.analyzer.analyzer_type || '';
-                //     analyzerRows[5].cells[1].textContent = data.analyzer.remarks || '';
-                // }
+            return false;
+        });
+    })();
 
-                if (data.tests && data.tests.length > 0) {
-                    // Update tests table
-                    const tbody = document.querySelector('#testsTable tbody');
+    /* ===================================================
+       FOM-008 – MRM Attendance Form
+       Single record per meeting date, Meeting Date filter
+       =================================================== */
 
-                    // Clear existing rows
-                    while (tbody.rows.length > 0) {
-                        tbody.deleteRow(0);
+    function clearFOM008Form() {
+        document.getElementById('MG_FOM008__record_id').value = '';
+        document.getElementById('MG_FOM008__meeting_date').value = '';
+        document.getElementById('MG_FOM008__meeting_time').value = '';
+        document.getElementById('MG_FOM008__venue').value = '';
+        document.getElementById('MG_FOM008__remarks').value = '';
+
+        for (let i = 1; i <= 10; i++) {
+            const n = document.getElementById('MG_FOM008__att_name_' + i);
+            const d = document.getElementById('MG_FOM008__att_dept_' + i);
+            const g = document.getElementById('MG_FOM008__att_desig_' + i);
+            const s = document.getElementById('MG_FOM008__att_sign_' + i);
+            if (n) n.value = '';
+            if (d) d.value = '';
+            if (g) g.value = '';
+            if (s) s.value = '';
+        }
+    }
+
+    function clearFOM008Filters() {
+        document.getElementById('MG_FOM008__filter_date').value = '';
+        clearFOM008Form();
+    }
+
+    function populateFOM008(data) {
+        document.getElementById('MG_FOM008__record_id').value = data.id || '';
+        document.getElementById('MG_FOM008__meeting_date').value = data.meeting_date || '';
+        document.getElementById('MG_FOM008__meeting_time').value = data.meeting_time || '';
+        document.getElementById('MG_FOM008__venue').value = data.venue || '';
+        document.getElementById('MG_FOM008__remarks').value = data.remarks || '';
+
+        const attendees = data.attendees || [];
+        for (let i = 1; i <= 10; i++) {
+            const att = attendees[i - 1] || {};
+            const n = document.getElementById('MG_FOM008__att_name_' + i);
+            const d = document.getElementById('MG_FOM008__att_dept_' + i);
+            const g = document.getElementById('MG_FOM008__att_desig_' + i);
+            const s = document.getElementById('MG_FOM008__att_sign_' + i);
+            if (n) n.value = att.name || '';
+            if (d) d.value = att.department || '';
+            if (g) g.value = att.designation || '';
+            if (s) s.value = att.signature || '';
+        }
+    }
+
+    function loadFOM008Data() {
+        const meetingDate = document.getElementById('MG_FOM008__filter_date').value;
+        if (!meetingDate) return;
+
+        const params = new URLSearchParams();
+        params.append('meeting_date', meetingDate);
+
+        fetch(`/newforms/mg/mrm-attendance/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success && res.data) {
+                populateFOM008(res.data);
+            } else {
+                clearFOM008Form();
+                document.getElementById('MG_FOM008__meeting_date').value = meetingDate;
+            }
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMGFOM008(type, message) {
+        const existing = document.querySelector('.mg-toast-fom008');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'mg-toast-fom008';
+        toast.textContent = message;
+        toast.style.cssText =
+            'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMGFOM008() {
+        const formContainer = document.querySelector('[id="TDPL/MG/FOM-008"]');
+        if (!formContainer) return;
+
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMGFOM008('success', result.message || 'Saved successfully!');
+                    if (result.data) {
+                        populateFOM008(result.data);
                     }
-
-                    // Add new rows with data
-                    data.tests.forEach((test, index) => {
-                        const newRow = tbody.insertRow();
-                        newRow.innerHTML = `
-                                                                                <td contenteditable="true">${index + 1}</td>
-                                                                                <td contenteditable="true">${test.device || ''}</td>
-                                                                                <td contenteditable="true">${test.assay_code || ''}</td>
-                                                                                <td contenteditable="true">${test.test_name || ''}</td>
-                                                                                <td contenteditable="true">${test.equipment || ''}</td>
-                                                                                <td contenteditable="true">${test.lis || ''}</td>
-                                                                            `;
-                    });
+                } else {
+                    showToastMGFOM008('error', result.message || 'Failed to save');
                 }
             })
             .catch(error => {
-                console.error('Error loading data:', error);
+                console.error('Error:', error);
+                showToastMGFOM008('error', 'Failed to save. Please try again.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             });
+
+            return false;
+        });
+    })();
+
+    /* ===================================================
+       FOM-009 – Minutes of MRM
+       Single record per meeting date, Meeting Date filter
+       =================================================== */
+
+    function clearFOM009Form() {
+        document.getElementById('MG_FOM009__record_id').value = '';
+        document.getElementById('MG_FOM009__date').value = '';
+        document.getElementById('MG_FOM009__venue').value = '';
+        document.getElementById('MG_FOM009__start_time').value = '';
+        document.getElementById('MG_FOM009__end_time').value = '';
+        document.getElementById('MG_FOM009__summary').value = '';
+        document.getElementById('MG_FOM009__decisions').value = '';
+        document.getElementById('MG_FOM009__remarks').value = '';
+        document.getElementById('MG_FOM009__next_review').value = '';
+        document.getElementById('MG_FOM009__chairperson').value = '';
+        document.getElementById('MG_FOM009__chairperson_date').value = '';
+        document.getElementById('MG_FOM009__recorder').value = '';
+        document.getElementById('MG_FOM009__recorder_date').value = '';
+
+        // Performance radio
+        document.getElementById('MG_FOM009__perf_sat').checked = false;
+        document.getElementById('MG_FOM009__perf_ni').checked = false;
+
+        // Present members
+        for (let i = 1; i <= 6; i++) {
+            const el = document.getElementById('MG_FOM009__present_' + i);
+            if (el) el.value = '';
+        }
+
+        // Absent members
+        for (let i = 1; i <= 4; i++) {
+            const n = document.getElementById('MG_FOM009__absent_name_' + i);
+            const r = document.getElementById('MG_FOM009__absent_reason_' + i);
+            if (n) n.value = '';
+            if (r) r.value = '';
+        }
+
+        // Previous actions
+        for (let i = 1; i <= 4; i++) {
+            const a = document.getElementById('MG_FOM009__prev_action_' + i);
+            const r = document.getElementById('MG_FOM009__prev_resp_' + i);
+            const t = document.getElementById('MG_FOM009__prev_target_' + i);
+            const s = document.getElementById('MG_FOM009__prev_status_' + i);
+            if (a) a.value = '';
+            if (r) r.value = '';
+            if (t) t.value = '';
+            if (s) s.value = '';
+        }
+
+        // Current actions
+        for (let i = 1; i <= 4; i++) {
+            const a = document.getElementById('MG_FOM009__curr_action_' + i);
+            const r = document.getElementById('MG_FOM009__curr_resp_' + i);
+            const t = document.getElementById('MG_FOM009__curr_target_' + i);
+            const s = document.getElementById('MG_FOM009__curr_status_' + i);
+            if (a) a.value = '';
+            if (r) r.value = '';
+            if (t) t.value = '';
+            if (s) s.value = '';
+        }
     }
 
-    // Load data when page loads
-    document.addEventListener('DOMContentLoaded', loadLisData);
-
-
-    // Helper function to safely escape the ID
-    function escapeSelector(selector) {
-        return selector.replace(/([!\"#$%&'()*+,\-./:;<=>?@[\\\]^`{|}~])/g, '\\$1');
+    function clearFOM009Filters() {
+        document.getElementById('MG_FOM009__filter_date').value = '';
+        clearFOM009Form();
     }
 
-    // Submit form function
+    function populateFOM009(data) {
+        document.getElementById('MG_FOM009__record_id').value = data.id || '';
+        document.getElementById('MG_FOM009__date').value = data.meeting_date || '';
+        document.getElementById('MG_FOM009__venue').value = data.venue || '';
+        document.getElementById('MG_FOM009__start_time').value = data.start_time || '';
+        document.getElementById('MG_FOM009__end_time').value = data.end_time || '';
+        document.getElementById('MG_FOM009__summary').value = data.summary || '';
+        document.getElementById('MG_FOM009__decisions').value = data.decisions || '';
+        document.getElementById('MG_FOM009__remarks').value = data.remarks || '';
+        document.getElementById('MG_FOM009__next_review').value = data.next_review || '';
+        document.getElementById('MG_FOM009__chairperson').value = data.chairperson || '';
+        document.getElementById('MG_FOM009__chairperson_date').value = data.chairperson_date || '';
+        document.getElementById('MG_FOM009__recorder').value = data.recorder || '';
+        document.getElementById('MG_FOM009__recorder_date').value = data.recorder_date || '';
+
+        // Performance radio
+        document.getElementById('MG_FOM009__perf_sat').checked = (data.performance === 'Satisfactory');
+        document.getElementById('MG_FOM009__perf_ni').checked = (data.performance === 'Needs Improvement');
+
+        // Present members
+        const present = data.present || [];
+        for (let i = 1; i <= 6; i++) {
+            const el = document.getElementById('MG_FOM009__present_' + i);
+            if (el) el.value = present[i - 1] || '';
+        }
+
+        // Absent members
+        const absent = data.absent || [];
+        for (let i = 1; i <= 4; i++) {
+            const ab = absent[i - 1] || {};
+            const n = document.getElementById('MG_FOM009__absent_name_' + i);
+            const r = document.getElementById('MG_FOM009__absent_reason_' + i);
+            if (n) n.value = ab.name || '';
+            if (r) r.value = ab.reason || '';
+        }
+
+        // Previous actions
+        const prevActions = data.previous_actions || [];
+        for (let i = 1; i <= 4; i++) {
+            const pa = prevActions[i - 1] || {};
+            const a = document.getElementById('MG_FOM009__prev_action_' + i);
+            const r = document.getElementById('MG_FOM009__prev_resp_' + i);
+            const t = document.getElementById('MG_FOM009__prev_target_' + i);
+            const s = document.getElementById('MG_FOM009__prev_status_' + i);
+            if (a) a.value = pa.action || '';
+            if (r) r.value = pa.responsible || '';
+            if (t) t.value = pa.target || '';
+            if (s) s.value = pa.status || '';
+        }
+
+        // Current actions
+        const currActions = data.current_actions || [];
+        for (let i = 1; i <= 4; i++) {
+            const ca = currActions[i - 1] || {};
+            const a = document.getElementById('MG_FOM009__curr_action_' + i);
+            const r = document.getElementById('MG_FOM009__curr_resp_' + i);
+            const t = document.getElementById('MG_FOM009__curr_target_' + i);
+            const s = document.getElementById('MG_FOM009__curr_status_' + i);
+            if (a) a.value = ca.action || '';
+            if (r) r.value = ca.responsible || '';
+            if (t) t.value = ca.target || '';
+            if (s) s.value = ca.status || '';
+        }
+    }
+
+    function loadFOM009Data() {
+        const meetingDate = document.getElementById('MG_FOM009__filter_date').value;
+        if (!meetingDate) return;
+
+        const params = new URLSearchParams();
+        params.append('meeting_date', meetingDate);
+
+        fetch(`/newforms/mg/minutes-of-mrm/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success && res.data) {
+                populateFOM009(res.data);
+            } else {
+                clearFOM009Form();
+                document.getElementById('MG_FOM009__date').value = meetingDate;
+            }
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMGFOM009(type, message) {
+        const existing = document.querySelector('.mg-toast-fom009');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'mg-toast-fom009';
+        toast.textContent = message;
+        toast.style.cssText =
+            'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMGFOM009() {
+        const formContainer = document.querySelector('[id="TDPL/MG/FOM-009"]');
+        if (!formContainer) return;
+
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMGFOM009('success', result.message || 'Saved successfully!');
+                    if (result.data) {
+                        populateFOM009(result.data);
+                    }
+                } else {
+                    showToastMGFOM009('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToastMGFOM009('error', 'Failed to save. Please try again.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+
+            return false;
+        });
+    })();
+
+    /* ===================================================
+       FOM-010 – MRM Task Completion & Compliance
+       Single record per meeting date, Meeting Date filter
+       =================================================== */
+
+    function clearFOM010Form() {
+        document.getElementById('MG_FOM010__record_id').value = '';
+        document.getElementById('MG_FOM010__meeting_date').value = '';
+        document.getElementById('MG_FOM010__remarks').value = '';
+        document.getElementById('MG_FOM010__next_review').value = '';
+        document.getElementById('MG_FOM010__chairperson').value = '';
+        document.getElementById('MG_FOM010__chairperson_date').value = '';
+        document.getElementById('MG_FOM010__recorder').value = '';
+        document.getElementById('MG_FOM010__recorder_date').value = '';
+
+        // Performance radio
+        document.getElementById('MG_FOM010__perf_sat').checked = false;
+        document.getElementById('MG_FOM010__perf_ni').checked = false;
+
+        // Tasks rows
+        for (let i = 1; i <= 8; i++) {
+            const a = document.getElementById('MG_FOM010__task_action_' + i);
+            const r = document.getElementById('MG_FOM010__task_resp_' + i);
+            const t = document.getElementById('MG_FOM010__task_target_' + i);
+            const s = document.getElementById('MG_FOM010__task_status_' + i);
+            const c = document.getElementById('MG_FOM010__task_completed_' + i);
+            const co = document.getElementById('MG_FOM010__task_compliance_' + i);
+            if (a) a.value = '';
+            if (r) r.value = '';
+            if (t) t.value = '';
+            if (s) s.value = '';
+            if (c) c.value = '';
+            if (co) co.value = '';
+        }
+    }
+
+    function clearFOM010Filters() {
+        document.getElementById('MG_FOM010__filter_date').value = '';
+        clearFOM010Form();
+    }
+
+    function populateFOM010(data) {
+        document.getElementById('MG_FOM010__record_id').value = data.id || '';
+        document.getElementById('MG_FOM010__meeting_date').value = data.meeting_date || '';
+        document.getElementById('MG_FOM010__remarks').value = data.remarks || '';
+        document.getElementById('MG_FOM010__next_review').value = data.next_review || '';
+        document.getElementById('MG_FOM010__chairperson').value = data.chairperson || '';
+        document.getElementById('MG_FOM010__chairperson_date').value = data.chairperson_date || '';
+        document.getElementById('MG_FOM010__recorder').value = data.recorder || '';
+        document.getElementById('MG_FOM010__recorder_date').value = data.recorder_date || '';
+
+        // Performance radio
+        document.getElementById('MG_FOM010__perf_sat').checked = (data.performance === 'Satisfactory');
+        document.getElementById('MG_FOM010__perf_ni').checked = (data.performance === 'Needs Improvement');
+
+        // Tasks rows
+        const tasks = data.tasks || [];
+        for (let i = 1; i <= 8; i++) {
+            const tk = tasks[i - 1] || {};
+            const a = document.getElementById('MG_FOM010__task_action_' + i);
+            const r = document.getElementById('MG_FOM010__task_resp_' + i);
+            const t = document.getElementById('MG_FOM010__task_target_' + i);
+            const s = document.getElementById('MG_FOM010__task_status_' + i);
+            const c = document.getElementById('MG_FOM010__task_completed_' + i);
+            const co = document.getElementById('MG_FOM010__task_compliance_' + i);
+            if (a) a.value = tk.action || '';
+            if (r) r.value = tk.responsible || '';
+            if (t) t.value = tk.target_date || '';
+            if (s) s.value = tk.status || '';
+            if (c) c.value = tk.completed_on || '';
+            if (co) co.value = tk.compliance || '';
+        }
+    }
+
+    function loadFOM010Data() {
+        const meetingDate = document.getElementById('MG_FOM010__filter_date').value;
+        if (!meetingDate) return;
+
+        // Also set hidden meeting_date so it gets submitted
+        document.getElementById('MG_FOM010__meeting_date').value = meetingDate;
+
+        const params = new URLSearchParams();
+        params.append('meeting_date', meetingDate);
+
+        fetch(`/newforms/mg/mrm-task-compliance/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            if (res.success && res.data) {
+                populateFOM010(res.data);
+            } else {
+                clearFOM010Form();
+                document.getElementById('MG_FOM010__meeting_date').value = meetingDate;
+            }
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMGFOM010(type, message) {
+        const existing = document.querySelector('.mg-toast-fom010');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'mg-toast-fom010';
+        toast.textContent = message;
+        toast.style.cssText =
+            'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMGFOM010() {
+        const formContainer = document.querySelector('[id="TDPL/MG/FOM-010"]');
+        if (!formContainer) return;
+
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMGFOM010('success', result.message || 'Saved successfully!');
+                    if (result.data) {
+                        populateFOM010(result.data);
+                    }
+                } else {
+                    showToastMGFOM010('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToastMGFOM010('error', 'Failed to save. Please try again.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+
+            return false;
+        });
+    })();
 </script>
 
 

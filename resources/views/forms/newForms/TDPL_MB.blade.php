@@ -266,12 +266,36 @@
         docName="Molecular Biology Work Register"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.mb.forms.submit') }}">
 
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MB_REG_001__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadREG001Data()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MB_REG_001__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadREG001Data()">
+            </div>
+            <div>
+                <button type="button" onclick="clearREG001MBFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse: collapse; font-size:14px;">
             <thead>
                 <tr>
-                    <th style="border:1px solid #000; padding:6px;">S. No.</th>
+                    <th style="border:1px solid #000; padding:6px;">Date</th>
                     <th style="border:1px solid #000; padding:6px;">Barcode</th>
                     <th style="border:1px solid #000; padding:6px;">Patient Name</th>
                     <th style="border:1px solid #000; padding:6px;">Age/Gender</th>
@@ -285,43 +309,10 @@
                     <th style="border:1px solid #000; padding:6px;">HoD Signature</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @for ($i = 1; $i <= 10; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">{{ $i }}</td>
-
-                    <td><input type="text" name="barcode_{{ $i }}" style="width:100%; border:none;"></td>
-
-                    <td><input type="text" name="patient_name_{{ $i }}" style="width:100%; border:none;"></td>
-
-                    <td><input type="text" name="age_gender_{{ $i }}" style="width:100%; border:none;"></td>
-
-                    <td><input type="text" name="investigation_{{ $i }}" style="width:100%; border:none;"></td>
-
-                    <td><input type="text" name="sample_type_{{ $i }}" style="width:100%; border:none;"></td>
-
-                    <td><input type="text" name="sample_received_datetime_{{ $i }}" style="width:100%; border:none;"></td>
-
-                    <td><input type="text" name="sample_received_by_{{ $i }}" style="width:100%; border:none;"></td>
-
-                    <td><input type="text" name="sample_processing_datetime_{{ $i }}" style="width:100%; border:none;"></td>
-
-                    <td><input type="text" name="sample_processed_by_{{ $i }}" style="width:100%; border:none;"></td>
-
-                    <td><input type="text" name="observations_{{ $i }}" style="width:100%; border:none;"></td>
-
-                    <td><input type="text" name="hod_signature_{{ $i }}" style="width:100%; border:none;"></td>
-                    </tr>
-                    @endfor
+            <tbody id="MB_REG_001__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
-
-        <p style="margin-top:12px; font-size:14px;">
-            <strong>Date:</strong>
-            <input type="text" name="form_date" style="border:1px solid #000; width:150px;">
-        </p>
-
 
     </x-formTemplete>
 
@@ -331,79 +322,51 @@
         docName="Master Mix Preparation Register"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.mb.forms.submit') }}">
 
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MB_REG_002__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadREG002Data()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MB_REG_002__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadREG002Data()">
+            </div>
+            <div>
+                <button type="button" onclick="clearREG002MBFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
-        <table style="width:100%; border-collapse: collapse;" border="1">
+        <!-- ===== TABLE ===== -->
+        <table border="1" style="width:100%; border-collapse: collapse; font-size:14px;">
             <thead>
                 <tr>
-                    <th style="border:1px solid #000; padding:6px;"><strong>S. No.</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Date</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Time</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Kit Name & Lot No</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Batch Number</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>No. of Reactions</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Reagent Name & Components</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Total Reaction Volume</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Prepared By</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Remarks</strong></th>
+                    <th style="border:1px solid #000; padding:6px;">Date</th>
+                    <th style="border:1px solid #000; padding:6px;">Time</th>
+                    <th style="border:1px solid #000; padding:6px;">Kit Name & Lot No</th>
+                    <th style="border:1px solid #000; padding:6px;">Batch Number</th>
+                    <th style="border:1px solid #000; padding:6px;">No. of Reactions</th>
+                    <th style="border:1px solid #000; padding:6px;">Reagent Name & Components</th>
+                    <th style="border:1px solid #000; padding:6px;">Total Reaction Volume</th>
+                    <th style="border:1px solid #000; padding:6px;">Prepared By</th>
+                    <th style="border:1px solid #000; padding:6px;">Remarks</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @for($i = 1; $i <= 30; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">{{ $i }}</td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][date]"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="time" name="rows[{{ $i }}][time]"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][kit]"
-                            placeholder="Kit name & Lot"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][batch]"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="number" name="rows[{{ $i }}][reactions]"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][reagent]"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][volume]"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][prepared_by]"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][remarks]"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MB_REG_002__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
+
     </x-formTemplete>
     <x-formTemplete
         id="TDPL/MB/REG-003"
@@ -411,82 +374,47 @@
         docName="Nucleic Acid Extraction Register"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <table style="width:100%; border-collapse: collapse;" border="1">
+        buttonText="Submit"
+        action="{{ route('newforms.mb.forms.submit') }}">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MB_REG_003__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadREG003Data()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MB_REG_003__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadREG003Data()">
+            </div>
+            <div>
+                <button type="button" onclick="clearREG003MBFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
+        <table border="1" style="width:100%; border-collapse: collapse; font-size:14px;">
             <thead>
                 <tr>
-                    <th style="border:1px solid #000; padding:6px;"><strong>S. No.</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Date</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Time of Sample Receipt</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Extraction Kit Lot No.</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Total Number of Samples</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Sample Barcode</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Performed By<br>(Name &amp; Sign)</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Verified By</strong></th>
-                    <th style="border:1px solid #000; padding:6px;"><strong>Remarks</strong></th>
+                    <th style="border:1px solid #000; padding:6px;">Date</th>
+                    <th style="border:1px solid #000; padding:6px;">Time of Sample Receipt</th>
+                    <th style="border:1px solid #000; padding:6px;">Extraction Kit Lot No.</th>
+                    <th style="border:1px solid #000; padding:6px;">Total Number of Samples</th>
+                    <th style="border:1px solid #000; padding:6px;">Sample Barcode</th>
+                    <th style="border:1px solid #000; padding:6px;">Performed By (Name & Sign)</th>
+                    <th style="border:1px solid #000; padding:6px;">Verified By</th>
+                    <th style="border:1px solid #000; padding:6px;">Remarks</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @for($i = 1; $i <= 25; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">{{ $i }}</td>
-
-                    <td style="padding:6px;">
-                        <input type="date"
-                            name="rows[{{ $i }}][date]"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="time"
-                            name="rows[{{ $i }}][time_receipt]"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text"
-                            name="rows[{{ $i }}][kit_lot_no]"
-                            placeholder="Lot No"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="number"
-                            name="rows[{{ $i }}][total_samples]"
-                            min="0"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text"
-                            name="rows[{{ $i }}][barcode]"
-                            placeholder="Barcode"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text"
-                            name="rows[{{ $i }}][performed_by]"
-                            placeholder="Name & Sign"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text"
-                            name="rows[{{ $i }}][verified_by]"
-                            placeholder="Verified By"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text"
-                            name="rows[{{ $i }}][remarks]"
-                            placeholder="Remarks"
-                            style="width:100%; border:1px solid #ccc; padding:4px;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MB_REG_003__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -495,153 +423,515 @@
 </body>
 <script>
     function showSection(sectionId) {
-
-
-        // Add 'inactive' class to all main sections
         const sections = document.querySelectorAll('.main');
         sections.forEach(section => section.classList.add('inactive'));
 
-        // Remove 'inactive' and add 'active' class to the selected section
         const selectedSection = document.getElementById(sectionId);
         selectedSection.classList.remove('inactive');
         selectedSection.classList.add('active');
-
-
     }
 
     function goBack() {
-        // Hide all main sections by adding 'inactive' class
         const sections = document.querySelectorAll('.main');
         sections.forEach(section => {
             section.classList.remove('active');
             section.classList.add('inactive');
         });
-        // Show the icon view
         document.querySelector('.icon-view').parentElement.classList.remove('inactive');
     }
 
-    // Add new row to tests table
-    document.getElementById('addRowBtn1').addEventListener('click', function() {
-        const tbody = document.querySelector('#testsTable tbody');
-        const newRow = tbody.insertRow();
-        const rowCount = tbody.rows.length;
+    /* ===================================================
+       REG-001 – Molecular Biology Work Register (Row-based)
+       Like LO FOM-006 / HP FOM-004: From/To date, dynamic rows
+       =================================================== */
 
-        // Create cells
-        ['', '', '', '', '', ''].forEach((content, index) => {
-            const cell = newRow.insertCell();
-            cell.contentEditable = 'true';
-            cell.textContent = index === 0 ? rowCount : content;
+    const MB_REG001_FIELDS = ['barcode','patient_name','age_gender','investigation','sample_type',
+        'sample_received_datetime','sample_received_by','sample_processing_datetime','sample_processed_by','observations','hod_signature'];
+
+    // ---- Build row HTML from loaded data ----
+    function buildMBREG001RowHTML(row) {
+        let html = `<td style="border:1px solid #000; padding:4px;">
+            <input type="hidden" name="row_id[]" value="${row.id}">
+            <input type="date" name="row_date[]" value="${row.row_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+        </td>`;
+        MB_REG001_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" value="${row[f] || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
         });
-    });
+        return html;
+    }
 
-    // Submit form data
-    document.getElementById('submitBtn1').addEventListener('click', function() {
-        // Get analyzer data
-        // const analyzerRows = document.querySelectorAll('#analyzerTable tbody tr');
-        // const analyzerData = {
-        //     department: analyzerRows[0].cells[1].textContent.trim(),
-        //     analyzer_sr_no: analyzerRows[1].cells[1].textContent.trim(),
-        //     analyzer_type: analyzerRows[2].cells[1].textContent.trim(),
-        //     validation: analyzerRows[3].cells[1].textContent.trim(),
-        //     remarks: analyzerRows[5].cells[1].textContent.trim()
-        // };
+    // ---- Add empty row (dynamic) ----
+    function addEmptyRowMBREG001() {
+        const tbody = document.getElementById('MB_REG_001__tbody');
+        if (!tbody) return;
 
-        // Get tests data
-        const testRows = document.querySelectorAll('#testsTable tbody tr');
-        const testsData = [];
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MB_REG001_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
 
-        testRows.forEach(row => {
-            const cells = row.cells;
-            testsData.push({
-                sr_no: cells[0].textContent.trim(),
-                device: cells[1].textContent.trim(),
-                assay_code: cells[2].textContent.trim(),
-                test_name: cells[3].textContent.trim(),
-                equipment: cells[4].textContent.trim(),
-                lis: cells[5].textContent.trim()
+    // ---- Clear form ----
+    function clearMBREG001Form() {
+        const tbody = document.getElementById('MB_REG_001__tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            addEmptyRowMBREG001();
+        }
+    }
+
+    // ---- Clear filters + form ----
+    function clearREG001MBFilters() {
+        document.getElementById('MB_REG_001__from_date').value = '';
+        document.getElementById('MB_REG_001__to_date').value = '';
+        clearMBREG001Form();
+    }
+
+    // ---- Load data from server ----
+    function loadREG001Data() {
+        const fromDate = document.getElementById('MB_REG_001__from_date').value;
+        const toDate   = document.getElementById('MB_REG_001__to_date').value;
+
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mb/mb-work-register/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MB_REG_001__tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (!res.data || res.data.length === 0) {
+                addEmptyRowMBREG001();
+                return;
+            }
+
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMBREG001RowHTML(row);
+                tbody.appendChild(tr);
             });
-        });
 
-        // Prepare complete data
-        const formData = {
-            // analyzer: analyzerData,
-            tests: testsData
-        };
+            addEmptyRowMBREG001();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
 
-        // Send to server
-        fetch('/lis-interface-logs-store', {
+    // ---- Toast helper ----
+    function showToastMBREG001(type, message) {
+        const existing = document.querySelector('.mb-toast-reg001');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'mb-toast-reg001';
+        toast.textContent = message;
+        toast.style.cssText =
+            'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    // ---- AJAX Submit ----
+    (function initMBREG001() {
+        const formContainer = document.querySelector('[id="TDPL/MB/REG-001"]');
+        if (!formContainer) return;
+
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
                 method: 'POST',
+                body: formData,
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify(formData)
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Data saved successfully!');
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMBREG001('success', result.message || 'Saved successfully!');
+
+                    const tbody = document.getElementById('MB_REG_001__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMBREG001RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowMBREG001();
+                    }
                 } else {
-                    alert('Error: ' + (data.message || 'Failed to save data'));
+                    showToastMBREG001('error', result.message || 'Failed to save');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to save data');
+                showToastMBREG001('error', 'Failed to save. Please try again.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             });
-    });
 
-    // Load saved data
-    function loadLisData() {
-        fetch('/lis-interface-logs')
-            .then(response => response.json())
-            .then(data => {
-                // if (data.analyzer) {
-                //     // Update analyzer table
-                //     const analyzerRows = document.querySelectorAll('#analyzerTable tbody tr');
-                //     analyzerRows[1].cells[1].textContent = data.analyzer.analyzer_sr_no || '';
-                //     analyzerRows[2].cells[1].textContent = data.analyzer.analyzer_type || '';
-                //     analyzerRows[5].cells[1].textContent = data.analyzer.remarks || '';
-                // }
+            return false;
+        });
 
-                if (data.tests && data.tests.length > 0) {
-                    // Update tests table
-                    const tbody = document.querySelector('#testsTable tbody');
+        // Start with one empty row
+        addEmptyRowMBREG001();
+    })();
 
-                    // Clear existing rows
-                    while (tbody.rows.length > 0) {
-                        tbody.deleteRow(0);
+    /* ===================================================
+       REG-002 – Master Mix Preparation Register (Row-based)
+       Same pattern as REG-001: From/To date, dynamic rows
+       =================================================== */
+
+    const MB_REG002_FIELDS = ['row_time','kit_name_lot_no','batch_number','no_of_reactions',
+        'reagent_name_components','total_reaction_volume','prepared_by','remarks'];
+
+    function buildMBREG002RowHTML(row) {
+        let html = `<td style="border:1px solid #000; padding:4px;">
+            <input type="hidden" name="row_id[]" value="${row.id}">
+            <input type="date" name="row_date[]" value="${row.row_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+        </td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input type="time" name="row_time[]" value="${row.row_time || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        const textFields = ['kit_name_lot_no','batch_number','no_of_reactions','reagent_name_components','total_reaction_volume','prepared_by','remarks'];
+        textFields.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" value="${row[f] || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        return html;
+    }
+
+    function addEmptyRowMBREG002() {
+        const tbody = document.getElementById('MB_REG_002__tbody');
+        if (!tbody) return;
+
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input type="time" name="row_time[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        const textFields = ['kit_name_lot_no','batch_number','no_of_reactions','reagent_name_components','total_reaction_volume','prepared_by','remarks'];
+        textFields.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMBREG002Form() {
+        const tbody = document.getElementById('MB_REG_002__tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            addEmptyRowMBREG002();
+        }
+    }
+
+    function clearREG002MBFilters() {
+        document.getElementById('MB_REG_002__from_date').value = '';
+        document.getElementById('MB_REG_002__to_date').value = '';
+        clearMBREG002Form();
+    }
+
+    function loadREG002Data() {
+        const fromDate = document.getElementById('MB_REG_002__from_date').value;
+        const toDate   = document.getElementById('MB_REG_002__to_date').value;
+
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mb/master-mix-preparation/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MB_REG_002__tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (!res.data || res.data.length === 0) {
+                addEmptyRowMBREG002();
+                return;
+            }
+
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMBREG002RowHTML(row);
+                tbody.appendChild(tr);
+            });
+
+            addEmptyRowMBREG002();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMBREG002(type, message) {
+        const existing = document.querySelector('.mb-toast-reg002');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'mb-toast-reg002';
+        toast.textContent = message;
+        toast.style.cssText =
+            'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMBREG002() {
+        const formContainer = document.querySelector('[id="TDPL/MB/REG-002"]');
+        if (!formContainer) return;
+
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMBREG002('success', result.message || 'Saved successfully!');
+
+                    const tbody = document.getElementById('MB_REG_002__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMBREG002RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowMBREG002();
                     }
-
-                    // Add new rows with data
-                    data.tests.forEach((test, index) => {
-                        const newRow = tbody.insertRow();
-                        newRow.innerHTML = `
-                                                                                <td contenteditable="true">${index + 1}</td>
-                                                                                <td contenteditable="true">${test.device || ''}</td>
-                                                                                <td contenteditable="true">${test.assay_code || ''}</td>
-                                                                                <td contenteditable="true">${test.test_name || ''}</td>
-                                                                                <td contenteditable="true">${test.equipment || ''}</td>
-                                                                                <td contenteditable="true">${test.lis || ''}</td>
-                                                                            `;
-                    });
+                } else {
+                    showToastMBREG002('error', result.message || 'Failed to save');
                 }
             })
             .catch(error => {
-                console.error('Error loading data:', error);
+                console.error('Error:', error);
+                showToastMBREG002('error', 'Failed to save. Please try again.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             });
+
+            return false;
+        });
+
+        addEmptyRowMBREG002();
+    })();
+
+    /* ===================================================
+       REG-003 – Nucleic Acid Extraction Register (Row-based)
+       Same pattern as REG-001: From/To date, dynamic rows
+       =================================================== */
+
+    const MB_REG003_FIELDS = ['time_of_sample_receipt','extraction_kit_lot_no','total_number_of_samples',
+        'sample_barcode','performed_by','verified_by','remarks'];
+
+    function buildMBREG003RowHTML(row) {
+        let html = `<td style="border:1px solid #000; padding:4px;">
+            <input type="hidden" name="row_id[]" value="${row.id}">
+            <input type="date" name="row_date[]" value="${row.row_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+        </td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input type="time" name="time_of_sample_receipt[]" value="${row.time_of_sample_receipt || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        const textFields = ['extraction_kit_lot_no','total_number_of_samples','sample_barcode','performed_by','verified_by','remarks'];
+        textFields.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" value="${row[f] || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        return html;
     }
 
-    // Load data when page loads
-    document.addEventListener('DOMContentLoaded', loadLisData);
+    function addEmptyRowMBREG003() {
+        const tbody = document.getElementById('MB_REG_003__tbody');
+        if (!tbody) return;
 
-
-    // Helper function to safely escape the ID
-    function escapeSelector(selector) {
-        return selector.replace(/([!\"#$%&'()*+,\-./:;<=>?@[\\\]^`{|}~])/g, '\\$1');
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input type="time" name="time_of_sample_receipt[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        const textFields = ['extraction_kit_lot_no','total_number_of_samples','sample_barcode','performed_by','verified_by','remarks'];
+        textFields.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
     }
 
-    // Submit form function
+    function clearMBREG003Form() {
+        const tbody = document.getElementById('MB_REG_003__tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            addEmptyRowMBREG003();
+        }
+    }
+
+    function clearREG003MBFilters() {
+        document.getElementById('MB_REG_003__from_date').value = '';
+        document.getElementById('MB_REG_003__to_date').value = '';
+        clearMBREG003Form();
+    }
+
+    function loadREG003Data() {
+        const fromDate = document.getElementById('MB_REG_003__from_date').value;
+        const toDate   = document.getElementById('MB_REG_003__to_date').value;
+
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mb/nucleic-acid-extraction/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MB_REG_003__tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (!res.data || res.data.length === 0) {
+                addEmptyRowMBREG003();
+                return;
+            }
+
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMBREG003RowHTML(row);
+                tbody.appendChild(tr);
+            });
+
+            addEmptyRowMBREG003();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMBREG003(type, message) {
+        const existing = document.querySelector('.mb-toast-reg003');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'mb-toast-reg003';
+        toast.textContent = message;
+        toast.style.cssText =
+            'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMBREG003() {
+        const formContainer = document.querySelector('[id="TDPL/MB/REG-003"]');
+        if (!formContainer) return;
+
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMBREG003('success', result.message || 'Saved successfully!');
+
+                    const tbody = document.getElementById('MB_REG_003__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMBREG003RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowMBREG003();
+                    }
+                } else {
+                    showToastMBREG003('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showToastMBREG003('error', 'Failed to save. Please try again.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
+
+            return false;
+        });
+
+        addEmptyRowMBREG003();
+    })();
 </script>
 
 

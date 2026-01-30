@@ -384,19 +384,28 @@
         docName="HIV Consent-Counselling Form (Trilingual)"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ route('newforms.mi.forms.submit') }}"
         buttonText="Submit">
+
+        <!-- Patient Mobile Filter -->
+        <div class="d-flex align-items-center gap-2 mb-3 flex-wrap">
+            <label class="fw-bold mb-0">Patient Mobile:</label>
+            <input type="tel" id="MI_FOM001__filter_mobile" style="width:200px;" class="form-control form-control-sm"
+                   placeholder="Enter mobile number">
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="clearFOM001Filters()">Clear</button>
+        </div>
+        <input type="hidden" name="record_id" id="MI_FOM001__record_id">
 
         <div style="margin: 0 auto;padding: 20px;font-family: Arial, sans-serif;background: #fff;border: 1px solid;border-radius: 16px;">
             <!-- Language Toggle -->
             <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 30px; text-align: center;">
                 <label style="margin-right: 20px; font-weight: bold; color: #333;">Select Language:</label>
-                <button onclick="TDPL_MI_FOM_001_showLanguage('english')" id="TDPL/MI/FOM-001_btn-english" style="padding: 10px 20px; margin: 5px; border: 2px solid #017535ff; background: #017535ff; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">English</button>
-                <button onclick="TDPL_MI_FOM_001_showLanguage('hindi')" id="TDPL/MI/FOM-001_btn-hindi" style="padding: 10px 20px; margin: 5px; border: 2px solid #017535ff; background: white; color: #017535ff; border-radius: 5px; cursor: pointer; font-weight: bold;">हिंदी</button>
-                <button onclick="TDPL_MI_FOM_001_showLanguage('telugu')" id="TDPL/MI/FOM-001_btn-telugu" style="padding: 10px 20px; margin: 5px; border: 2px solid #017535ff; background: white; color: #017535ff; border-radius: 5px; cursor: pointer; font-weight: bold;">తెలుగు</button>
+                <button type="button" onclick="TDPL_MI_FOM_001_showLanguage('english')" id="TDPL/MI/FOM-001_btn-english" style="padding: 10px 20px; margin: 5px; border: 2px solid #017535ff; background: #017535ff; color: white; border-radius: 5px; cursor: pointer; font-weight: bold;">English</button>
+                <button type="button" onclick="TDPL_MI_FOM_001_showLanguage('hindi')" id="TDPL/MI/FOM-001_btn-hindi" style="padding: 10px 20px; margin: 5px; border: 2px solid #017535ff; background: white; color: #017535ff; border-radius: 5px; cursor: pointer; font-weight: bold;">हिंदी</button>
+                <button type="button" onclick="TDPL_MI_FOM_001_showLanguage('telugu')" id="TDPL/MI/FOM-001_btn-telugu" style="padding: 10px 20px; margin: 5px; border: 2px solid #017535ff; background: white; color: #017535ff; border-radius: 5px; cursor: pointer; font-weight: bold;">తెలుగు</button>
             </div>
 
-            <form style="background: #ffffff; padding: 30px; border: 1px solid #ddd; border-radius: 8px;">
-                @csrf
+            <div style="background: #ffffff; padding: 30px; border: 1px solid #ddd; border-radius: 8px;">
 
                 <!-- ENGLISH VERSION -->
                 <div id="TDPL/MI/FOM-001_lang-english" class="language-content">
@@ -408,17 +417,17 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">Name:</label>
-                                <input type="text" name="name" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="name" id="MI_FOM001__name" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">Age:</label>
-                                <input type="number" name="age" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="number" name="age" id="MI_FOM001__age" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">Sex:</label>
-                                <select name="sex" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <select name="sex" id="MI_FOM001__sex" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                                     <option value="">Select</option>
                                     <option value="male">Male</option>
                                     <option value="female">Female</option>
@@ -427,21 +436,21 @@
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">Date:</label>
-                                <input type="date" name="date" value="{{ date('Y-m-d') }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="date" name="date" id="MI_FOM001__date" value="{{ date('Y-m-d') }}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Address:</label>
-                            <textarea name="address" required rows="2" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                            <textarea name="address" id="MI_FOM001__address" rows="2" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">Mobile:</label>
-                                <input type="tel" name="mobile" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="tel" name="mobile" id="MI_FOM001__mobile" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">Lab ID:</label>
-                                <input type="text" name="lab_id" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="lab_id" id="MI_FOM001__lab_id" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
                     </div>
@@ -500,7 +509,7 @@
 
                         <div style="margin-top: 15px;">
                             <label style="display: flex; align-items: center; cursor: pointer;">
-                                <input type="checkbox" name="consent_given" required style="width: 20px; height: 20px; margin-right: 10px;">
+                                <input type="checkbox" name="consent_given" id="MI_FOM001__consent_given" style="width: 20px; height: 20px; margin-right: 10px;">
                                 <span style="font-weight: bold;">I agree to the above terms and consent to HIV testing</span>
                             </label>
                         </div>
@@ -514,15 +523,15 @@
                         <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
                             <div style="margin-bottom: 15px;">
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">Registered Medical Practitioner/Clinician Name:</label>
-                                <input type="text" name="doctor_name" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="doctor_name" id="MI_FOM001__doctor_name" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div style="margin-bottom: 15px;">
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">Address:</label>
-                                <input type="text" name="doctor_address" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="doctor_address" id="MI_FOM001__doctor_address" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">Contact No:</label>
-                                <input type="tel" name="doctor_contact" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="tel" name="doctor_contact" id="MI_FOM001__doctor_contact" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
 
@@ -533,11 +542,11 @@
                     <div style="background: #e8f5e9; padding: 20px; border-radius: 5px; border-left: 4px solid #4caf50;">
                         <div style="margin-bottom: 20px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Signature of Patient/Attendant (in case of minors):</label>
-                            <input type="text" name="patient_signature" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Type your full name as signature">
+                            <input type="text" name="patient_signature" id="MI_FOM001__patient_signature" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Type your full name as signature">
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">Date:</label>
-                            <input type="date" name="signature_date" value="{{ date('Y-m-d') }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                            <input type="date" name="signature_date" id="MI_FOM001__signature_date" value="{{ date('Y-m-d') }}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                         </div>
                     </div>
                 </div>
@@ -552,17 +561,17 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">नाम:</label>
-                                <input type="text" name="name_hi" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="name_hi" id="MI_FOM001__name_hi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">आयु:</label>
-                                <input type="number" name="age_hi" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="number" name="age_hi" id="MI_FOM001__age_hi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">लिंग:</label>
-                                <select name="sex_hi" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <select name="sex_hi" id="MI_FOM001__sex_hi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                                     <option value="">चुनें</option>
                                     <option value="male">पुरुष</option>
                                     <option value="female">महिला</option>
@@ -571,21 +580,21 @@
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">तारीख:</label>
-                                <input type="date" name="date_hi" value="{{ date('Y-m-d') }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="date" name="date_hi" id="MI_FOM001__date_hi" value="{{ date('Y-m-d') }}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">पता:</label>
-                            <textarea name="address_hi" required rows="2" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                            <textarea name="address_hi" id="MI_FOM001__address_hi" rows="2" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">मोबाइल नं:</label>
-                                <input type="tel" name="mobile_hi" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="tel" name="mobile_hi" id="MI_FOM001__mobile_hi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">LAB ID संख्या:</label>
-                                <input type="text" name="lab_id_hi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="lab_id_hi" id="MI_FOM001__lab_id_hi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
                     </div>
@@ -644,7 +653,7 @@
 
                         <div style="margin-top: 15px;">
                             <label style="display: flex; align-items: center; cursor: pointer;">
-                                <input type="checkbox" name="consent_given_hi" required style="width: 20px; height: 20px; margin-right: 10px;">
+                                <input type="checkbox" name="consent_given_hi" id="MI_FOM001__consent_given_hi" style="width: 20px; height: 20px; margin-right: 10px;">
                                 <span style="font-weight: bold;">मैं उपरोक्त शर्तों से सहमत हूं और एचआईवी परीक्षण के लिए सहमति देता हूं</span>
                             </label>
                         </div>
@@ -658,15 +667,15 @@
                         <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
                             <div style="margin-bottom: 15px;">
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">परामर्श चिकित्सक का नाम:</label>
-                                <input type="text" name="doctor_name_hi" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="doctor_name_hi" id="MI_FOM001__doctor_name_hi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div style="margin-bottom: 15px;">
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">पता:</label>
-                                <input type="text" name="doctor_address_hi" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="doctor_address_hi" id="MI_FOM001__doctor_address_hi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">संपर्क नंबर:</label>
-                                <input type="tel" name="doctor_contact_hi" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="tel" name="doctor_contact_hi" id="MI_FOM001__doctor_contact_hi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
 
@@ -677,11 +686,11 @@
                     <div style="background: #e8f5e9; padding: 20px; border-radius: 5px; border-left: 4px solid #4caf50;">
                         <div style="margin-bottom: 20px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">रोगी का हस्ताक्षर/अभिभावक (नाबालिग के मामले):</label>
-                            <input type="text" name="patient_signature_hi" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="हस्ताक्षर के रूप में अपना पूरा नाम टाइप करें">
+                            <input type="text" name="patient_signature_hi" id="MI_FOM001__patient_signature_hi" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="हस्ताक्षर के रूप में अपना पूरा नाम टाइप करें">
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">तारीख:</label>
-                            <input type="date" name="signature_date_hi" value="{{ date('Y-m-d') }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                            <input type="date" name="signature_date_hi" id="MI_FOM001__signature_date_hi" value="{{ date('Y-m-d') }}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                         </div>
                     </div>
                 </div>
@@ -696,17 +705,17 @@
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">పేరు:</label>
-                                <input type="text" name="name_te" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="name_te" id="MI_FOM001__name_te" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">వయస్సు:</label>
-                                <input type="number" name="age_te" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="number" name="age_te" id="MI_FOM001__age_te" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">లింగం:</label>
-                                <select name="sex_te" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <select name="sex_te" id="MI_FOM001__sex_te" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                                     <option value="">ఎంచుకోండి</option>
                                     <option value="male">పురుషుడు</option>
                                     <option value="female">స్త్రీ</option>
@@ -715,21 +724,21 @@
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">తేదీ:</label>
-                                <input type="date" name="date_te" value="{{ date('Y-m-d') }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="date" name="date_te" id="MI_FOM001__date_te" value="{{ date('Y-m-d') }}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
                         <div style="margin-bottom: 15px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">చిరునామా:</label>
-                            <textarea name="address_te" required rows="2" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
+                            <textarea name="address_te" id="MI_FOM001__address_te" rows="2" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;"></textarea>
                         </div>
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">మొబైల్:</label>
-                                <input type="tel" name="mobile_te" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="tel" name="mobile_te" id="MI_FOM001__mobile_te" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">ల్యాబ్ ID:</label>
-                                <input type="text" name="lab_id_te" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="lab_id_te" id="MI_FOM001__lab_id_te" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
                     </div>
@@ -788,7 +797,7 @@
 
                         <div style="margin-top: 15px;">
                             <label style="display: flex; align-items: center; cursor: pointer;">
-                                <input type="checkbox" name="consent_given_te" required style="width: 20px; height: 20px; margin-right: 10px;">
+                                <input type="checkbox" name="consent_given_te" id="MI_FOM001__consent_given_te" style="width: 20px; height: 20px; margin-right: 10px;">
                                 <span style="font-weight: bold;">నేను పై నిబంధనలకు అంగీకరిస్తున్నాను మరియు HIV పరీక్షకు సమ్మతి ఇస్తున్నాను</span>
                             </label>
                         </div>
@@ -802,15 +811,15 @@
                         <div style="background: #f5f5f5; padding: 15px; border-radius: 5px;">
                             <div style="margin-bottom: 15px;">
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">రిజిస్టర్డ్ మెడికల్ ప్రాక్టీషనర్/క్లినిషియన్ పేరు:</label>
-                                <input type="text" name="doctor_name_te" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="doctor_name_te" id="MI_FOM001__doctor_name_te" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div style="margin-bottom: 15px;">
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">చిరునామా:</label>
-                                <input type="text" name="doctor_address_te" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="text" name="doctor_address_te" id="MI_FOM001__doctor_address_te" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                             <div>
                                 <label style="display: block; margin-bottom: 5px; font-weight: bold;">సంప్రదింపు నంబర్:</label>
-                                <input type="tel" name="doctor_contact_te" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                                <input type="tel" name="doctor_contact_te" id="MI_FOM001__doctor_contact_te" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                             </div>
                         </div>
 
@@ -821,22 +830,16 @@
                     <div style="background: #e8f5e9; padding: 20px; border-radius: 5px; border-left: 4px solid #4caf50;">
                         <div style="margin-bottom: 20px;">
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">రోగి/అటెండెంట్ సంతకం (మైనర్‌ల విషయంలో):</label>
-                            <input type="text" name="patient_signature_te" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="సంతకం కోసం మీ పూర్తి పేరును టైప్ చేయండి">
+                            <input type="text" name="patient_signature_te" id="MI_FOM001__patient_signature_te" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="సంతకం కోసం మీ పూర్తి పేరును టైప్ చేయండి">
                         </div>
                         <div>
                             <label style="display: block; margin-bottom: 5px; font-weight: bold;">తేదీ:</label>
-                            <input type="date" name="signature_date_te" value="{{ date('Y-m-d') }}" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
+                            <input type="date" name="signature_date_te" id="MI_FOM001__signature_date_te" value="{{ date('Y-m-d') }}" style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;">
                         </div>
                     </div>
                 </div>
 
-                <!-- Submit Button -->
-                <div style="text-align: center; margin-top: 30px;">
-                    <button type="submit" style="background: #4caf50; color: white; padding: 15px 40px; border: none; border-radius: 5px; font-size: 18px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-                        Submit Consent Form
-                    </button>
-                </div>
-            </form>
+            </div>
 
             <script>
                 function TDPL_MI_FOM_001_showLanguage(lang) {
@@ -869,15 +872,37 @@
         docName="Stain Quality Control Form (AFB Gram Stain)"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ route('newforms.mi.forms.submit') }}"
         buttonText="Submit">
-        <table style="width:100%; border-collapse:collapse; font-size:14px;" border="1">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM002__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM002Data()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM002__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM002Data()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM002Filters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
+        <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
-                    <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">S. No.</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Date of Quality Check</th>
-
                     <th colspan="3" style="border:1px solid #000; padding:6px; text-align:center;">Details of the kit</th>
-
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">ATCC Strain Used as Control</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Result Expected</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Result Obtained</th>
@@ -885,62 +910,14 @@
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Corrective & Preventive Action</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Microbiologist and Remarks</th>
                 </tr>
-
                 <tr>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Name of Manufacturer</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Code Lot Number</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Expiry Date</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">
-                        <input type="text" name="rows[{{ $i }}][sno]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][date_quality]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][manufacturer]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][lot_no]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][expiry_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][result_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][result_obtained]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][remarks]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM002__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -951,15 +928,37 @@
         docName="Stain Quality Control Form - Gram Stain"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ route('newforms.mi.forms.submit') }}"
         buttonText="Submit">
-        <table style="width:100%; border-collapse:collapse; font-size:14px;" border="1">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM002A__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM002AData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM002A__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM002AData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM002AFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
+        <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
-                    <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">S. No.</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Date of Quality Check</th>
-
                     <th colspan="3" style="border:1px solid #000; padding:6px; text-align:center;">Details of the kit</th>
-
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">ATCC Strain Used as Control</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Result Expected</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Result Obtained</th>
@@ -967,62 +966,14 @@
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Corrective & Preventive Action</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Microbiologist and Remarks</th>
                 </tr>
-
                 <tr>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Name of Manufacturer</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Code Lot Number</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Expiry Date</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">
-                        <input type="text" name="rows[{{ $i }}][sno]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][date_quality]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][manufacturer]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][lot_no]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][expiry_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][result_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][result_obtained]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][remarks]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM002A__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1033,15 +984,37 @@
         docName="Stain Quality Control Form - AFB Stain"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ route('newforms.mi.forms.submit') }}"
         buttonText="Submit">
-        <table style="width:100%; border-collapse:collapse; font-size:14px;" border="1">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM002B__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM002BData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM002B__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM002BData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM002BFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
+        <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
-                    <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">S. No.</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Date of Quality Check</th>
-
                     <th colspan="3" style="border:1px solid #000; padding:6px; text-align:center;">Details of the kit</th>
-
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">ATCC Strain Used as Control</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Result Expected</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Result Obtained</th>
@@ -1049,62 +1022,14 @@
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Corrective & Preventive Action</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Microbiologist and Remarks</th>
                 </tr>
-
                 <tr>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Name of Manufacturer</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Code Lot Number</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Expiry Date</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">
-                        <input type="text" name="rows[{{ $i }}][sno]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][date_quality]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][manufacturer]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][lot_no]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][expiry_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][result_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][result_obtained]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][remarks]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM002B__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1115,15 +1040,37 @@
         docName="Stain Quality Control Form - KOH Stain"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ route('newforms.mi.forms.submit') }}"
         buttonText="Submit">
-        <table style="width:100%; border-collapse:collapse; font-size:14px;" border="1">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM002C__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM002CData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM002C__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM002CData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM002CFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
+        <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
-                    <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">S. No.</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Date of Quality Check</th>
-
                     <th colspan="3" style="border:1px solid #000; padding:6px; text-align:center;">Details of the kit</th>
-
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">ATCC Strain Used as Control</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Result Expected</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Result Obtained</th>
@@ -1131,62 +1078,14 @@
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Corrective & Preventive Action</th>
                     <th rowspan="2" style="border:1px solid #000; padding:6px; text-align:center;">Microbiologist and Remarks</th>
                 </tr>
-
                 <tr>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Name of Manufacturer</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Code Lot Number</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Expiry Date</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">
-                        <input type="text" name="rows[{{ $i }}][sno]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][date_quality]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][manufacturer]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][lot_no]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][expiry_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][result_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][result_obtained]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][remarks]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM002C__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1197,80 +1096,49 @@
         docName="Biochemical Media QC Form"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ route('newforms.mi.forms.submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM003__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003Data()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM003__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003Data()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM003Filters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">
-                        Product name / Code / Manufacturer / Lot No. / Date of Expiry
-                    </th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">
-                        Date of Analysis / Done By
-                    </th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">
-                        Appearance of Media / pH / Appearance on Tube / Volume
-                    </th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">
-                        Incubation Period / Temperature
-                    </th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">
-                        ATCC Strain Used / Code
-                    </th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">
-                        Growth Expected
-                    </th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">
-                        Growth Observed
-                    </th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">
-                        Corrective & Preventive Action
-                    </th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">
-                        Microbiologist Signature
-                    </th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Date</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Product name / Code / Manufacturer / Lot No. / Date of Expiry</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Date of Analysis / Done By</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Appearance of Media / pH / Appearance on Tube / Volume</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Incubation Period / Temperature</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">ATCC Strain Used / Code</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Growth Expected</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Growth Observed</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Corrective & Preventive Action</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Microbiologist Signature</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][product_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][analysis_date_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][appearance]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][incubation]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_observed]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][signature]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM003__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1281,10 +1149,35 @@
         docName="Biochemical Media QC Form - Oxidase Disc"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM003A__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003AData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM003A__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003AData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM003AFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Date</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">
                         Product name / Code / Manufacturer / Lot No. / Date of Expiry
                     </th>
@@ -1315,46 +1208,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][product_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][analysis_date_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][appearance]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][incubation]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_observed]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][signature]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM003A__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1365,10 +1220,36 @@
         docName="Biochemical Media QC Form - Optochin Disc"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM003B__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003BData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM003B__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003BData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM003BFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Date</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">
                         Product name / Code / Manufacturer / Lot No. / Date of Expiry
                     </th>
@@ -1399,46 +1280,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][product_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][analysis_date_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][appearance]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][incubation]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_observed]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][signature]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM003B__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1449,10 +1292,36 @@
         docName="Biochemical Media QC Form - Urease Agar"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM003C__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003CData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM003C__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003CData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM003CFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Date</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">
                         Product name / Code / Manufacturer / Lot No. / Date of Expiry
                     </th>
@@ -1483,46 +1352,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][product_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][analysis_date_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][appearance]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][incubation]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_observed]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][signature]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM003C__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1533,10 +1364,36 @@
         docName="Biochemical Media QC Form - TSI Agar"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM003D__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003DData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM003D__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003DData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM003DFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Date</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">
                         Product name / Code / Manufacturer / Lot No. / Date of Expiry
                     </th>
@@ -1567,46 +1424,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][product_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][analysis_date_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][appearance]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][incubation]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_observed]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][signature]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM003D__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1617,10 +1436,36 @@
         docName="Biochemical Media QC Form - Citrate Agar"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM003E__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003EData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM003E__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003EData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM003EFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Date</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">
                         Product name / Code / Manufacturer / Lot No. / Date of Expiry
                     </th>
@@ -1651,46 +1496,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][product_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][analysis_date_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][appearance]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][incubation]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_observed]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][signature]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM003E__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1701,10 +1508,36 @@
         docName="Biochemical Media QC Form - BEA Agar"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM003F__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003FData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM003F__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003FData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM003FFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Date</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">
                         Product name / Code / Manufacturer / Lot No. / Date of Expiry
                     </th>
@@ -1735,46 +1568,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][product_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][analysis_date_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][appearance]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][incubation]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_observed]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][signature]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM003F__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1785,10 +1580,36 @@
         docName="Biochemical Media QC Form - Indole Test"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM003G__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003GData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM003G__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM003GData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM003GFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Date</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">
                         Product name / Code / Manufacturer / Lot No. / Date of Expiry
                     </th>
@@ -1819,46 +1640,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][product_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][analysis_date_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][appearance]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][incubation]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_expected]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][growth_observed]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][corrective_action]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][signature]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM003G__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1870,7 +1653,32 @@
         docName="ATCC Strain Quality Control Form"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM004__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004Data()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM004__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004Data()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM004Filters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
             <thead>
                 <tr>
@@ -1892,46 +1700,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 20; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="date" name="rows[{{ $i }}][qc_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][characteristics]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][antibiotic_name]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][expected_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][obtained_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][capa]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][approved_by]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM004__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -1942,7 +1712,32 @@
         docName="ATCC Strain Quality Control Form - E.Coli"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM004A__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004AData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM004A__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004AData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM004AFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
             <thead>
                 <tr>
@@ -1964,46 +1759,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 20; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="date" name="rows[{{ $i }}][qc_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][characteristics]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][antibiotic_name]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][expected_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][obtained_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][capa]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][approved_by]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM004A__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -2014,7 +1771,32 @@
         docName="ATCC Strain Quality Control Form - Pseudomonas aeruginosa"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM004B__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004BData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM004B__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004BData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM004BFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
             <thead>
                 <tr>
@@ -2036,46 +1818,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 20; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="date" name="rows[{{ $i }}][qc_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][characteristics]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][antibiotic_name]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][expected_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][obtained_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][capa]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][approved_by]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM004B__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -2086,7 +1830,32 @@
         docName="ATCC Strain Quality Control Form - Klebsiella pneumoniae"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM004C__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004CData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM004C__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004CData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM004CFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
             <thead>
                 <tr>
@@ -2108,46 +1877,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 20; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="date" name="rows[{{ $i }}][qc_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][characteristics]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][antibiotic_name]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][expected_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][obtained_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][capa]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][approved_by]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM004C__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -2158,7 +1889,32 @@
         docName="ATCC Strain Quality Control Form - Enterococcus faecalis"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM004D__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004DData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM004D__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004DData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM004DFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
             <thead>
                 <tr>
@@ -2180,46 +1936,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 20; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="date" name="rows[{{ $i }}][qc_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][characteristics]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][antibiotic_name]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][expected_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][obtained_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][capa]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][approved_by]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM004D__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -2230,7 +1948,32 @@
         docName="ATCC Strain Quality Control Form - Staphylococcus aureus"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM004E__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004EData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM004E__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004EData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM004EFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
             <thead>
                 <tr>
@@ -2252,46 +1995,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 20; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="date" name="rows[{{ $i }}][qc_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][characteristics]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][antibiotic_name]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][expected_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][obtained_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][capa]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][approved_by]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM004E__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -2302,7 +2007,32 @@
         docName="ATCC Strain Quality Control Form - Staphylococcus haemolyticus"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM004F__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004FData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM004F__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004FData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM004FFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
             <thead>
                 <tr>
@@ -2324,46 +2054,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 20; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="date" name="rows[{{ $i }}][qc_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][characteristics]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][antibiotic_name]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][expected_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][obtained_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][capa]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][approved_by]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM004F__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -2374,7 +2066,32 @@
         docName="ATCC Strain Quality Control Form - Candida albicans"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/mi/forms/submit') }}"
         buttonText="Submit">
+
+        <!-- ===== FILTER SECTION ===== -->
+        <div style="display:flex; flex-wrap:wrap; gap:12px; align-items:center; font-size:14px; margin-bottom:6px;">
+            <div>
+                <strong>From Date:</strong>
+                <input type="date" id="MI_FOM004G__from_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004GData()">
+            </div>
+            <div>
+                <strong>To Date:</strong>
+                <input type="date" id="MI_FOM004G__to_date"
+                    style="border:1px solid #000; padding:4px; width:150px;"
+                    onchange="loadMIFOM004GData()">
+            </div>
+            <div>
+                <button type="button" onclick="clearMIFOM004GFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- ===== TABLE ===== -->
         <table border="1" style="width:100%; border-collapse:collapse; font-size:14px; text-align:center;">
             <thead>
                 <tr>
@@ -2396,46 +2113,8 @@
                 </tr>
             </thead>
 
-            <tbody>
-                @for ($i = 1; $i <= 20; $i++)
-                    <tr>
-                    <td style="padding:4px;">
-                        <input type="date" name="rows[{{ $i }}][qc_date]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][atcc_info]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][characteristics]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][antibiotic_name]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][expected_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="number" name="rows[{{ $i }}][obtained_zone]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][capa]" style="width:100%; border:0;">
-                    </td>
-
-                    <td style="padding:4px;">
-                        <input type="text" name="rows[{{ $i }}][approved_by]" style="width:100%; border:0;">
-                    </td>
-                    </tr>
-                    @endfor
+            <tbody id="MI_FOM004G__tbody">
+                <!-- rows built by JS -->
             </tbody>
         </table>
 
@@ -3455,7 +3134,7 @@
             <tbody>
 
                 @for($i = 1; $i <= 2; $i++)
-           
+
 
                     @foreach(['E. Coli', 'S. Aureus', 'Streptococcus Pneumoniae'] as $index => $org)
                     <tr>
@@ -3570,128 +3249,2576 @@
         document.querySelector('.icon-view').parentElement.classList.remove('inactive');
     }
 
-    // Add new row to tests table
-    document.getElementById('addRowBtn1').addEventListener('click', function() {
-        const tbody = document.querySelector('#testsTable tbody');
-        const newRow = tbody.insertRow();
-        const rowCount = tbody.rows.length;
+    /* =========================================================
+       FOM-001 – HIV Consent-Counselling Form (Trilingual) AJAX
+       ========================================================= */
 
-        // Create cells
-        ['', '', '', '', '', ''].forEach((content, index) => {
-            const cell = newRow.insertCell();
-            cell.contentEditable = 'true';
-            cell.textContent = index === 0 ? rowCount : content;
+    // Toast helper
+    function showToast(msg, ok) {
+        const t = document.createElement('div');
+        t.textContent = msg;
+        Object.assign(t.style, {
+            position:'fixed',top:'20px',right:'20px',padding:'12px 24px',borderRadius:'6px',color:'#fff',zIndex:9999,
+            background: ok ? '#28a745' : '#dc3545',fontSize:'14px',boxShadow:'0 4px 12px rgba(0,0,0,.3)'
         });
-    });
+        document.body.appendChild(t);
+        setTimeout(() => t.remove(), 3500);
+    }
 
-    // Submit form data
-    document.getElementById('submitBtn1').addEventListener('click', function() {
-        // Get analyzer data
-        // const analyzerRows = document.querySelectorAll('#analyzerTable tbody tr');
-        // const analyzerData = {
-        //     department: analyzerRows[0].cells[1].textContent.trim(),
-        //     analyzer_sr_no: analyzerRows[1].cells[1].textContent.trim(),
-        //     analyzer_type: analyzerRows[2].cells[1].textContent.trim(),
-        //     validation: analyzerRows[3].cells[1].textContent.trim(),
-        //     remarks: analyzerRows[5].cells[1].textContent.trim()
-        // };
+    // ID helper
+    const f1 = id => document.getElementById('MI_FOM001__' + id);
 
-        // Get tests data
-        const testRows = document.querySelectorAll('#testsTable tbody tr');
-        const testsData = [];
-
-        testRows.forEach(row => {
-            const cells = row.cells;
-            testsData.push({
-                sr_no: cells[0].textContent.trim(),
-                device: cells[1].textContent.trim(),
-                assay_code: cells[2].textContent.trim(),
-                test_name: cells[3].textContent.trim(),
-                equipment: cells[4].textContent.trim(),
-                lis: cells[5].textContent.trim()
-            });
+    /* ---------- clear ---------- */
+    function clearFOM001Form() {
+        const fields = [
+            'name','age','sex','date','address','mobile','lab_id','consent_given',
+            'doctor_name','doctor_address','doctor_contact','patient_signature','signature_date',
+            'name_hi','age_hi','sex_hi','date_hi','address_hi','mobile_hi','lab_id_hi','consent_given_hi',
+            'doctor_name_hi','doctor_address_hi','doctor_contact_hi','patient_signature_hi','signature_date_hi',
+            'name_te','age_te','sex_te','date_te','address_te','mobile_te','lab_id_te','consent_given_te',
+            'doctor_name_te','doctor_address_te','doctor_contact_te','patient_signature_te','signature_date_te'
+        ];
+        fields.forEach(k => {
+            const el = f1(k);
+            if (!el) return;
+            if (el.type === 'checkbox') el.checked = false;
+            else if (el.tagName === 'SELECT') el.selectedIndex = 0;
+            else el.value = '';
         });
+        f1('record_id').value = '';
+    }
 
-        // Prepare complete data
-        const formData = {
-            // analyzer: analyzerData,
-            tests: testsData
-        };
+    function clearFOM001Filters() {
+        f1('filter_mobile').value = '';
+        clearFOM001Form();
+    }
 
-        // Send to server
-        fetch('/lis-interface-logs-store', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Data saved successfully!');
+    /* ---------- populate ---------- */
+    function populateFOM001(d) {
+        f1('record_id').value = d.id || '';
+
+        // English – note DB column names differ from form name attrs
+        f1('name').value             = d.patient_name || '';
+        f1('age').value              = d.age || '';
+        f1('sex').value              = d.sex || '';
+        f1('date').value             = d.form_date || '';
+        f1('address').value          = d.address || '';
+        f1('mobile').value           = d.mobile || '';
+        f1('lab_id').value           = d.lab_id || '';
+        f1('consent_given').checked  = !!d.consent_given;
+        f1('doctor_name').value      = d.doctor_name || '';
+        f1('doctor_address').value   = d.doctor_address || '';
+        f1('doctor_contact').value   = d.doctor_contact || '';
+        f1('patient_signature').value= d.patient_signature || '';
+        f1('signature_date').value   = d.signature_date || '';
+
+        // Hindi
+        f1('name_hi').value             = d.patient_name_hi || '';
+        f1('age_hi').value              = d.age_hi || '';
+        f1('sex_hi').value              = d.sex_hi || '';
+        f1('date_hi').value             = d.form_date_hi || '';
+        f1('address_hi').value          = d.address_hi || '';
+        f1('mobile_hi').value           = d.mobile_hi || '';
+        f1('lab_id_hi').value           = d.lab_id_hi || '';
+        f1('consent_given_hi').checked  = !!d.consent_given_hi;
+        f1('doctor_name_hi').value      = d.doctor_name_hi || '';
+        f1('doctor_address_hi').value   = d.doctor_address_hi || '';
+        f1('doctor_contact_hi').value   = d.doctor_contact_hi || '';
+        f1('patient_signature_hi').value= d.patient_signature_hi || '';
+        f1('signature_date_hi').value   = d.signature_date_hi || '';
+
+        // Telugu
+        f1('name_te').value             = d.patient_name_te || '';
+        f1('age_te').value              = d.age_te || '';
+        f1('sex_te').value              = d.sex_te || '';
+        f1('date_te').value             = d.form_date_te || '';
+        f1('address_te').value          = d.address_te || '';
+        f1('mobile_te').value           = d.mobile_te || '';
+        f1('lab_id_te').value           = d.lab_id_te || '';
+        f1('consent_given_te').checked  = !!d.consent_given_te;
+        f1('doctor_name_te').value      = d.doctor_name_te || '';
+        f1('doctor_address_te').value   = d.doctor_address_te || '';
+        f1('doctor_contact_te').value   = d.doctor_contact_te || '';
+        f1('patient_signature_te').value= d.patient_signature_te || '';
+        f1('signature_date_te').value   = d.signature_date_te || '';
+    }
+
+    /* ---------- load on filter change ---------- */
+    function loadFOM001Data() {
+        const mobile = f1('filter_mobile').value.trim();
+        if (!mobile) return;
+
+        fetch(`/newforms/mi/hiv-consent/load?mobile=${encodeURIComponent(mobile)}`)
+            .then(r => r.json())
+            .then(res => {
+                if (res.success && res.data) {
+                    populateFOM001(res.data);
+                    showToast('Patient data loaded.', true);
                 } else {
-                    alert('Error: ' + (data.message || 'Failed to save data'));
+                    clearFOM001Form();
+                    showToast('No record found for this mobile.', false);
+                }
+            })
+            .catch(() => showToast('Error loading data.', false));
+    }
+
+    f1('filter_mobile').addEventListener('change', loadFOM001Data);
+
+    /* ---------- AJAX submit ---------- */
+    (function() {
+        const formEl = document.getElementById('TDPL/MI/FOM-001');
+        if (!formEl) return;
+        const form = formEl.querySelector('form');
+        if (!form) return;
+
+        // Disable browser validation – hidden language tabs have required fields
+        form.setAttribute('novalidate', '');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const fd = new FormData(form);
+            fd.set('doc_no', 'TDPL/MI/FOM-001');
+
+            fetch(form.action, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                body: fd
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    showToast(res.message, true);
+                    if (res.data && res.data.id) f1('record_id').value = res.data.id;
+                } else {
+                    showToast(res.message || 'Save failed.', false);
+                }
+            })
+            .catch(() => showToast('Network error.', false));
+        });
+    })();
+
+    /* ===================================================
+       FOM-002 – Stain Quality Control Form (AFB Gram Stain)
+       Row-based: From/To date filter on row_date
+       =================================================== */
+
+    const MI_FOM002_FIELDS = ['manufacturer','lot_no','atcc','result_expected','result_obtained','done_by','corrective_action','remarks'];
+
+    function buildMIFOM002RowHTML(row) {
+        let html = `<td style="border:1px solid #000; padding:4px;">
+            <input type="hidden" name="row_id[]" value="${row.id}">
+            <input type="date" name="row_date[]" value="${row.row_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+        </td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input name="manufacturer[]" value="${row.manufacturer || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input name="lot_no[]" value="${row.lot_no || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input type="date" name="expiry_date[]" value="${row.expiry_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        const textFields = ['atcc','result_expected','result_obtained','done_by','corrective_action','remarks'];
+        textFields.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" value="${row[f] || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        return html;
+    }
+
+    function addEmptyRowMIFOM002() {
+        const tbody = document.getElementById('MI_FOM002__tbody');
+        if (!tbody) return;
+
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input name="manufacturer[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input name="lot_no[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input type="date" name="expiry_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        const textFields = ['atcc','result_expected','result_obtained','done_by','corrective_action','remarks'];
+        textFields.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM002Form() {
+        const tbody = document.getElementById('MI_FOM002__tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            addEmptyRowMIFOM002();
+        }
+    }
+
+    function clearMIFOM002Filters() {
+        document.getElementById('MI_FOM002__from_date').value = '';
+        document.getElementById('MI_FOM002__to_date').value = '';
+        clearMIFOM002Form();
+    }
+
+    function loadMIFOM002Data() {
+        const fromDate = document.getElementById('MI_FOM002__from_date').value;
+        const toDate   = document.getElementById('MI_FOM002__to_date').value;
+
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-002');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/stain-qc-afb-gram/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM002__tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (!res.data || res.data.length === 0) {
+                addEmptyRowMIFOM002();
+                return;
+            }
+
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM002RowHTML(row);
+                tbody.appendChild(tr);
+            });
+
+            addEmptyRowMIFOM002();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM002(type, message) {
+        const existing = document.querySelector('.mi-toast-fom002');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom002';
+        toast.textContent = message;
+        toast.style.cssText =
+            'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM002() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-002"]');
+        if (!formContainer) return;
+
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM002('success', result.message || 'Saved successfully!');
+
+                    const tbody = document.getElementById('MI_FOM002__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM002RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowMIFOM002();
+                    }
+                } else {
+                    showToastMIFOM002('error', result.message || 'Failed to save');
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('Failed to save data');
+                showToastMIFOM002('error', 'Failed to save. Please try again.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             });
-    });
 
-    // Load saved data
-    function loadLisData() {
-        fetch('/lis-interface-logs')
-            .then(response => response.json())
-            .then(data => {
-                // if (data.analyzer) {
-                //     // Update analyzer table
-                //     const analyzerRows = document.querySelectorAll('#analyzerTable tbody tr');
-                //     analyzerRows[1].cells[1].textContent = data.analyzer.analyzer_sr_no || '';
-                //     analyzerRows[2].cells[1].textContent = data.analyzer.analyzer_type || '';
-                //     analyzerRows[5].cells[1].textContent = data.analyzer.remarks || '';
-                // }
+            return false;
+        });
 
-                if (data.tests && data.tests.length > 0) {
-                    // Update tests table
-                    const tbody = document.querySelector('#testsTable tbody');
+        addEmptyRowMIFOM002();
+    })();
 
-                    // Clear existing rows
-                    while (tbody.rows.length > 0) {
-                        tbody.deleteRow(0);
+    /* ===================================================
+       FOM-002(A) – Stain Quality Control Form - Gram Stain
+       Same table as FOM-002, differentiated by doc_no
+       =================================================== */
+
+    function buildMIFOM002ARowHTML(row) {
+        return buildMIFOM002RowHTML(row);
+    }
+
+    function addEmptyRowMIFOM002A() {
+        const tbody = document.getElementById('MI_FOM002A__tbody');
+        if (!tbody) return;
+
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input name="manufacturer[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input name="lot_no[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input type="date" name="expiry_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        const textFields = ['atcc','result_expected','result_obtained','done_by','corrective_action','remarks'];
+        textFields.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM002AForm() {
+        const tbody = document.getElementById('MI_FOM002A__tbody');
+        if (tbody) {
+            tbody.innerHTML = '';
+            addEmptyRowMIFOM002A();
+        }
+    }
+
+    function clearMIFOM002AFilters() {
+        document.getElementById('MI_FOM002A__from_date').value = '';
+        document.getElementById('MI_FOM002A__to_date').value = '';
+        clearMIFOM002AForm();
+    }
+
+    function loadMIFOM002AData() {
+        const fromDate = document.getElementById('MI_FOM002A__from_date').value;
+        const toDate   = document.getElementById('MI_FOM002A__to_date').value;
+
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-002(A)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/stain-qc-afb-gram/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM002A__tbody');
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (!res.data || res.data.length === 0) {
+                addEmptyRowMIFOM002A();
+                return;
+            }
+
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM002ARowHTML(row);
+                tbody.appendChild(tr);
+            });
+
+            addEmptyRowMIFOM002A();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM002A(type, message) {
+        const existing = document.querySelector('.mi-toast-fom002a');
+        if (existing) existing.remove();
+
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom002a';
+        toast.textContent = message;
+        toast.style.cssText =
+            'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM002A() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-002(A)"]');
+        if (!formContainer) return;
+
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM002A('success', result.message || 'Saved successfully!');
+
+                    const tbody = document.getElementById('MI_FOM002A__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM002ARowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+
+                        addEmptyRowMIFOM002A();
                     }
-
-                    // Add new rows with data
-                    data.tests.forEach((test, index) => {
-                        const newRow = tbody.insertRow();
-                        newRow.innerHTML = `
-                                                                                <td contenteditable="true">${index + 1}</td>
-                                                                                <td contenteditable="true">${test.device || ''}</td>
-                                                                                <td contenteditable="true">${test.assay_code || ''}</td>
-                                                                                <td contenteditable="true">${test.test_name || ''}</td>
-                                                                                <td contenteditable="true">${test.equipment || ''}</td>
-                                                                                <td contenteditable="true">${test.lis || ''}</td>
-                                                                            `;
-                    });
+                } else {
+                    showToastMIFOM002A('error', result.message || 'Failed to save');
                 }
             })
             .catch(error => {
-                console.error('Error loading data:', error);
+                console.error('Error:', error);
+                showToastMIFOM002A('error', 'Failed to save. Please try again.');
+            })
+            .finally(() => {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             });
+
+            return false;
+        });
+
+        addEmptyRowMIFOM002A();
+    })();
+
+    /* ===================================================
+       FOM-002(B) – Stain Quality Control Form - AFB Stain
+       Same table as FOM-002, differentiated by doc_no
+       =================================================== */
+
+    function addEmptyRowMIFOM002B() {
+        const tbody = document.getElementById('MI_FOM002B__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input name="manufacturer[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input name="lot_no[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input type="date" name="expiry_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        ['atcc','result_expected','result_obtained','done_by','corrective_action','remarks'].forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
     }
 
-    // Load data when page loads
-    document.addEventListener('DOMContentLoaded', loadLisData);
-
-
-    // Helper function to safely escape the ID
-    function escapeSelector(selector) {
-        return selector.replace(/([!\"#$%&'()*+,\-./:;<=>?@[\\\]^`{|}~])/g, '\\$1');
+    function clearMIFOM002BForm() {
+        const tbody = document.getElementById('MI_FOM002B__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM002B(); }
     }
 
-    // Submit form function
+    function clearMIFOM002BFilters() {
+        document.getElementById('MI_FOM002B__from_date').value = '';
+        document.getElementById('MI_FOM002B__to_date').value = '';
+        clearMIFOM002BForm();
+    }
+
+    function loadMIFOM002BData() {
+        const fromDate = document.getElementById('MI_FOM002B__from_date').value;
+        const toDate   = document.getElementById('MI_FOM002B__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-002(B)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/stain-qc-afb-gram/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM002B__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM002B(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM002RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM002B();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM002B(type, message) {
+        const existing = document.querySelector('.mi-toast-fom002b');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom002b';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM002B() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-002(B)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM002B('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM002B__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM002RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM002B();
+                    }
+                } else {
+                    showToastMIFOM002B('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM002B('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM002B();
+    })();
+
+    /* ===================================================
+       FOM-002(C) – Stain Quality Control Form - KOH Stain
+       Same table as FOM-002, differentiated by doc_no
+       =================================================== */
+
+    function addEmptyRowMIFOM002C() {
+        const tbody = document.getElementById('MI_FOM002C__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input name="manufacturer[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input name="lot_no[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        html += `<td style="border:1px solid #000; padding:4px;"><input type="date" name="expiry_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        ['atcc','result_expected','result_obtained','done_by','corrective_action','remarks'].forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM002CForm() {
+        const tbody = document.getElementById('MI_FOM002C__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM002C(); }
+    }
+
+    function clearMIFOM002CFilters() {
+        document.getElementById('MI_FOM002C__from_date').value = '';
+        document.getElementById('MI_FOM002C__to_date').value = '';
+        clearMIFOM002CForm();
+    }
+
+    function loadMIFOM002CData() {
+        const fromDate = document.getElementById('MI_FOM002C__from_date').value;
+        const toDate   = document.getElementById('MI_FOM002C__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-002(C)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/stain-qc-afb-gram/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM002C__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM002C(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM002RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM002C();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM002C(type, message) {
+        const existing = document.querySelector('.mi-toast-fom002c');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom002c';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM002C() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-002(C)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM002C('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM002C__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM002RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM002C();
+                    }
+                } else {
+                    showToastMIFOM002C('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM002C('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM002C();
+    })();
+
+    /* ===================================================
+       FOM-003 – Biochemical Media QC Form (Row-based)
+       Shared table for FOM-003, FOM-003(A)–(G)
+       =================================================== */
+
+    const MI_FOM003_TEXT_FIELDS = ['product_info','analysis_done_by','appearance','incubation','atcc','growth_expected','growth_observed','corrective_action','signature'];
+
+    function buildMIFOM003RowHTML(row) {
+        let html = `<td style="border:1px solid #000; padding:4px;">
+            <input type="hidden" name="row_id[]" value="${row.id}">
+            <input type="date" name="row_date[]" value="${row.row_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+        </td>`;
+        MI_FOM003_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" value="${row[f] || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        return html;
+    }
+
+    function addEmptyRowMIFOM003() {
+        const tbody = document.getElementById('MI_FOM003__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM003_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM003Form() {
+        const tbody = document.getElementById('MI_FOM003__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM003(); }
+    }
+
+    function clearMIFOM003Filters() {
+        document.getElementById('MI_FOM003__from_date').value = '';
+        document.getElementById('MI_FOM003__to_date').value = '';
+        clearMIFOM003Form();
+    }
+
+    function loadMIFOM003Data() {
+        const fromDate = document.getElementById('MI_FOM003__from_date').value;
+        const toDate   = document.getElementById('MI_FOM003__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-003');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/biochemical-media-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM003__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM003(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM003RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM003();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM003(type, message) {
+        const existing = document.querySelector('.mi-toast-fom003');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom003';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM003() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-003"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM003('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM003__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM003RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM003();
+                    }
+                } else {
+                    showToastMIFOM003('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM003('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM003();
+    })();
+
+    /* ===================================================
+       FOM-003(A) – Biochemical Media QC Form - Oxidase Disc
+       Reuses buildMIFOM003RowHTML() + MI_FOM003_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM003A() {
+        const tbody = document.getElementById('MI_FOM003A__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM003_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM003AForm() {
+        const tbody = document.getElementById('MI_FOM003A__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM003A(); }
+    }
+
+    function clearMIFOM003AFilters() {
+        document.getElementById('MI_FOM003A__from_date').value = '';
+        document.getElementById('MI_FOM003A__to_date').value = '';
+        clearMIFOM003AForm();
+    }
+
+    function loadMIFOM003AData() {
+        const fromDate = document.getElementById('MI_FOM003A__from_date').value;
+        const toDate   = document.getElementById('MI_FOM003A__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-003(A)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/biochemical-media-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM003A__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM003A(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM003RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM003A();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM003A(type, message) {
+        const existing = document.querySelector('.mi-toast-fom003a');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom003a';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM003A() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-003(A)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM003A('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM003A__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM003RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM003A();
+                    }
+                } else {
+                    showToastMIFOM003A('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM003A('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM003A();
+    })();
+
+    /* ===================================================
+       FOM-003(B) – Biochemical Media QC Form - Optochin Disc
+       Reuses buildMIFOM003RowHTML() + MI_FOM003_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM003B() {
+        const tbody = document.getElementById('MI_FOM003B__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM003_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM003BForm() {
+        const tbody = document.getElementById('MI_FOM003B__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM003B(); }
+    }
+
+    function clearMIFOM003BFilters() {
+        document.getElementById('MI_FOM003B__from_date').value = '';
+        document.getElementById('MI_FOM003B__to_date').value = '';
+        clearMIFOM003BForm();
+    }
+
+    function loadMIFOM003BData() {
+        const fromDate = document.getElementById('MI_FOM003B__from_date').value;
+        const toDate   = document.getElementById('MI_FOM003B__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-003(B)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/biochemical-media-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM003B__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM003B(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM003RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM003B();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM003B(type, message) {
+        const existing = document.querySelector('.mi-toast-fom003b');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom003b';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM003B() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-003(B)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM003B('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM003B__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM003RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM003B();
+                    }
+                } else {
+                    showToastMIFOM003B('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM003B('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM003B();
+    })();
+
+    /* ===================================================
+       FOM-003(C) – Biochemical Media QC Form - Urease Agar
+       Reuses buildMIFOM003RowHTML() + MI_FOM003_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM003C() {
+        const tbody = document.getElementById('MI_FOM003C__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM003_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM003CForm() {
+        const tbody = document.getElementById('MI_FOM003C__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM003C(); }
+    }
+
+    function clearMIFOM003CFilters() {
+        document.getElementById('MI_FOM003C__from_date').value = '';
+        document.getElementById('MI_FOM003C__to_date').value = '';
+        clearMIFOM003CForm();
+    }
+
+    function loadMIFOM003CData() {
+        const fromDate = document.getElementById('MI_FOM003C__from_date').value;
+        const toDate   = document.getElementById('MI_FOM003C__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-003(C)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/biochemical-media-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM003C__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM003C(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM003RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM003C();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM003C(type, message) {
+        const existing = document.querySelector('.mi-toast-fom003c');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom003c';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM003C() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-003(C)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM003C('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM003C__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM003RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM003C();
+                    }
+                } else {
+                    showToastMIFOM003C('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM003C('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM003C();
+    })();
+
+    /* ===================================================
+       FOM-003(D) – Biochemical Media QC Form - TSI Agar
+       Reuses buildMIFOM003RowHTML() + MI_FOM003_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM003D() {
+        const tbody = document.getElementById('MI_FOM003D__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM003_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM003DForm() {
+        const tbody = document.getElementById('MI_FOM003D__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM003D(); }
+    }
+
+    function clearMIFOM003DFilters() {
+        document.getElementById('MI_FOM003D__from_date').value = '';
+        document.getElementById('MI_FOM003D__to_date').value = '';
+        clearMIFOM003DForm();
+    }
+
+    function loadMIFOM003DData() {
+        const fromDate = document.getElementById('MI_FOM003D__from_date').value;
+        const toDate   = document.getElementById('MI_FOM003D__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-003(D)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/biochemical-media-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM003D__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM003D(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM003RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM003D();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM003D(type, message) {
+        const existing = document.querySelector('.mi-toast-fom003d');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom003d';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM003D() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-003(D)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM003D('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM003D__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM003RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM003D();
+                    }
+                } else {
+                    showToastMIFOM003D('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM003D('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM003D();
+    })();
+
+    /* ===================================================
+       FOM-003(E) – Biochemical Media QC Form - Citrate Agar
+       Reuses buildMIFOM003RowHTML() + MI_FOM003_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM003E() {
+        const tbody = document.getElementById('MI_FOM003E__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM003_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM003EForm() {
+        const tbody = document.getElementById('MI_FOM003E__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM003E(); }
+    }
+
+    function clearMIFOM003EFilters() {
+        document.getElementById('MI_FOM003E__from_date').value = '';
+        document.getElementById('MI_FOM003E__to_date').value = '';
+        clearMIFOM003EForm();
+    }
+
+    function loadMIFOM003EData() {
+        const fromDate = document.getElementById('MI_FOM003E__from_date').value;
+        const toDate   = document.getElementById('MI_FOM003E__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-003(E)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/biochemical-media-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM003E__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM003E(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM003RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM003E();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM003E(type, message) {
+        const existing = document.querySelector('.mi-toast-fom003e');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom003e';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM003E() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-003(E)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM003E('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM003E__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM003RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM003E();
+                    }
+                } else {
+                    showToastMIFOM003E('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM003E('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM003E();
+    })();
+
+    /* ===================================================
+       FOM-003(F) – Biochemical Media QC Form - BEA Agar
+       Reuses buildMIFOM003RowHTML() + MI_FOM003_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM003F() {
+        const tbody = document.getElementById('MI_FOM003F__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM003_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM003FForm() {
+        const tbody = document.getElementById('MI_FOM003F__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM003F(); }
+    }
+
+    function clearMIFOM003FFilters() {
+        document.getElementById('MI_FOM003F__from_date').value = '';
+        document.getElementById('MI_FOM003F__to_date').value = '';
+        clearMIFOM003FForm();
+    }
+
+    function loadMIFOM003FData() {
+        const fromDate = document.getElementById('MI_FOM003F__from_date').value;
+        const toDate   = document.getElementById('MI_FOM003F__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-003(F)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/biochemical-media-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM003F__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM003F(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM003RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM003F();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM003F(type, message) {
+        const existing = document.querySelector('.mi-toast-fom003f');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom003f';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM003F() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-003(F)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM003F('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM003F__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM003RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM003F();
+                    }
+                } else {
+                    showToastMIFOM003F('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM003F('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM003F();
+    })();
+
+    /* ===================================================
+       FOM-003(G) – Biochemical Media QC Form - Indole Test
+       Reuses buildMIFOM003RowHTML() + MI_FOM003_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM003G() {
+        const tbody = document.getElementById('MI_FOM003G__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM003_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM003GForm() {
+        const tbody = document.getElementById('MI_FOM003G__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM003G(); }
+    }
+
+    function clearMIFOM003GFilters() {
+        document.getElementById('MI_FOM003G__from_date').value = '';
+        document.getElementById('MI_FOM003G__to_date').value = '';
+        clearMIFOM003GForm();
+    }
+
+    function loadMIFOM003GData() {
+        const fromDate = document.getElementById('MI_FOM003G__from_date').value;
+        const toDate   = document.getElementById('MI_FOM003G__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-003(G)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/biochemical-media-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM003G__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM003G(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM003RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM003G();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM003G(type, message) {
+        const existing = document.querySelector('.mi-toast-fom003g');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom003g';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM003G() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-003(G)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM003G('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM003G__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM003RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM003G();
+                    }
+                } else {
+                    showToastMIFOM003G('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM003G('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM003G();
+    })();
+
+    /* ===================================================
+       FOM-004 – ATCC Strain Quality Control Form
+       Shared table for FOM-004, FOM-004(A)–(G)
+       =================================================== */
+
+    const MI_FOM004_TEXT_FIELDS = ['atcc_info','characteristics','antibiotic_name','expected_zone','obtained_zone','done_by','capa','approved_by'];
+
+    function buildMIFOM004RowHTML(row) {
+        let html = `<td style="border:1px solid #000; padding:4px;">
+            <input type="hidden" name="row_id[]" value="${row.id}">
+            <input type="date" name="row_date[]" value="${row.row_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;">
+        </td>`;
+        MI_FOM004_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" value="${row[f] || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        return html;
+    }
+
+    function addEmptyRowMIFOM004() {
+        const tbody = document.getElementById('MI_FOM004__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM004_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM004Form() {
+        const tbody = document.getElementById('MI_FOM004__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM004(); }
+    }
+
+    function clearMIFOM004Filters() {
+        document.getElementById('MI_FOM004__from_date').value = '';
+        document.getElementById('MI_FOM004__to_date').value = '';
+        clearMIFOM004Form();
+    }
+
+    function loadMIFOM004Data() {
+        const fromDate = document.getElementById('MI_FOM004__from_date').value;
+        const toDate   = document.getElementById('MI_FOM004__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-004');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/atcc-strain-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM004__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM004(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM004RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM004();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM004(type, message) {
+        const existing = document.querySelector('.mi-toast-fom004');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom004';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM004() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-004"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM004('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM004__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM004RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM004();
+                    }
+                } else {
+                    showToastMIFOM004('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM004('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM004();
+    })();
+
+    /* ===================================================
+       FOM-004(A) – ATCC Strain QC Form - E.Coli
+       Reuses buildMIFOM004RowHTML() + MI_FOM004_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM004A() {
+        const tbody = document.getElementById('MI_FOM004A__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM004_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM004AForm() {
+        const tbody = document.getElementById('MI_FOM004A__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM004A(); }
+    }
+
+    function clearMIFOM004AFilters() {
+        document.getElementById('MI_FOM004A__from_date').value = '';
+        document.getElementById('MI_FOM004A__to_date').value = '';
+        clearMIFOM004AForm();
+    }
+
+    function loadMIFOM004AData() {
+        const fromDate = document.getElementById('MI_FOM004A__from_date').value;
+        const toDate   = document.getElementById('MI_FOM004A__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-004(A)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/atcc-strain-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM004A__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM004A(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM004RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM004A();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM004A(type, message) {
+        const existing = document.querySelector('.mi-toast-fom004a');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom004a';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM004A() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-004(A)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM004A('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM004A__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM004RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM004A();
+                    }
+                } else {
+                    showToastMIFOM004A('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM004A('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM004A();
+    })();
+
+    /* ===================================================
+       FOM-004(B) – ATCC Strain QC Form - Pseudomonas aeruginosa
+       Reuses buildMIFOM004RowHTML() + MI_FOM004_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM004B() {
+        const tbody = document.getElementById('MI_FOM004B__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM004_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM004BForm() {
+        const tbody = document.getElementById('MI_FOM004B__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM004B(); }
+    }
+
+    function clearMIFOM004BFilters() {
+        document.getElementById('MI_FOM004B__from_date').value = '';
+        document.getElementById('MI_FOM004B__to_date').value = '';
+        clearMIFOM004BForm();
+    }
+
+    function loadMIFOM004BData() {
+        const fromDate = document.getElementById('MI_FOM004B__from_date').value;
+        const toDate   = document.getElementById('MI_FOM004B__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-004(B)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/atcc-strain-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM004B__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM004B(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM004RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM004B();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM004B(type, message) {
+        const existing = document.querySelector('.mi-toast-fom004b');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom004b';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM004B() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-004(B)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM004B('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM004B__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM004RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM004B();
+                    }
+                } else {
+                    showToastMIFOM004B('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM004B('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM004B();
+    })();
+
+    /* ===================================================
+       FOM-004(C) – ATCC Strain QC Form - Klebsiella pneumoniae
+       Reuses buildMIFOM004RowHTML() + MI_FOM004_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM004C() {
+        const tbody = document.getElementById('MI_FOM004C__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM004_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM004CForm() {
+        const tbody = document.getElementById('MI_FOM004C__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM004C(); }
+    }
+
+    function clearMIFOM004CFilters() {
+        document.getElementById('MI_FOM004C__from_date').value = '';
+        document.getElementById('MI_FOM004C__to_date').value = '';
+        clearMIFOM004CForm();
+    }
+
+    function loadMIFOM004CData() {
+        const fromDate = document.getElementById('MI_FOM004C__from_date').value;
+        const toDate   = document.getElementById('MI_FOM004C__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-004(C)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/atcc-strain-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM004C__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM004C(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM004RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM004C();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM004C(type, message) {
+        const existing = document.querySelector('.mi-toast-fom004c');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom004c';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM004C() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-004(C)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM004C('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM004C__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM004RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM004C();
+                    }
+                } else {
+                    showToastMIFOM004C('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM004C('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM004C();
+    })();
+
+    /* ===================================================
+       FOM-004(D) – ATCC Strain QC Form - Enterococcus faecalis
+       Reuses buildMIFOM004RowHTML() + MI_FOM004_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM004D() {
+        const tbody = document.getElementById('MI_FOM004D__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM004_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM004DForm() {
+        const tbody = document.getElementById('MI_FOM004D__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM004D(); }
+    }
+
+    function clearMIFOM004DFilters() {
+        document.getElementById('MI_FOM004D__from_date').value = '';
+        document.getElementById('MI_FOM004D__to_date').value = '';
+        clearMIFOM004DForm();
+    }
+
+    function loadMIFOM004DData() {
+        const fromDate = document.getElementById('MI_FOM004D__from_date').value;
+        const toDate   = document.getElementById('MI_FOM004D__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-004(D)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/atcc-strain-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM004D__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM004D(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM004RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM004D();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM004D(type, message) {
+        const existing = document.querySelector('.mi-toast-fom004d');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom004d';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM004D() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-004(D)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM004D('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM004D__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM004RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM004D();
+                    }
+                } else {
+                    showToastMIFOM004D('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM004D('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM004D();
+    })();
+
+    /* ===================================================
+       FOM-004(E) – ATCC Strain QC Form - Staphylococcus aureus
+       Reuses buildMIFOM004RowHTML() + MI_FOM004_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM004E() {
+        const tbody = document.getElementById('MI_FOM004E__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM004_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM004EForm() {
+        const tbody = document.getElementById('MI_FOM004E__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM004E(); }
+    }
+
+    function clearMIFOM004EFilters() {
+        document.getElementById('MI_FOM004E__from_date').value = '';
+        document.getElementById('MI_FOM004E__to_date').value = '';
+        clearMIFOM004EForm();
+    }
+
+    function loadMIFOM004EData() {
+        const fromDate = document.getElementById('MI_FOM004E__from_date').value;
+        const toDate   = document.getElementById('MI_FOM004E__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-004(E)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/atcc-strain-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM004E__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM004E(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM004RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM004E();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM004E(type, message) {
+        const existing = document.querySelector('.mi-toast-fom004e');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom004e';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM004E() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-004(E)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM004E('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM004E__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM004RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM004E();
+                    }
+                } else {
+                    showToastMIFOM004E('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM004E('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM004E();
+    })();
+
+    /* ===================================================
+       FOM-004(F) – ATCC Strain QC Form - Staphylococcus haemolyticus
+       Reuses buildMIFOM004RowHTML() + MI_FOM004_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM004F() {
+        const tbody = document.getElementById('MI_FOM004F__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM004_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM004FForm() {
+        const tbody = document.getElementById('MI_FOM004F__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM004F(); }
+    }
+
+    function clearMIFOM004FFilters() {
+        document.getElementById('MI_FOM004F__from_date').value = '';
+        document.getElementById('MI_FOM004F__to_date').value = '';
+        clearMIFOM004FForm();
+    }
+
+    function loadMIFOM004FData() {
+        const fromDate = document.getElementById('MI_FOM004F__from_date').value;
+        const toDate   = document.getElementById('MI_FOM004F__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-004(F)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/atcc-strain-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM004F__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM004F(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM004RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM004F();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM004F(type, message) {
+        const existing = document.querySelector('.mi-toast-fom004f');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom004f';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM004F() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-004(F)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM004F('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM004F__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM004RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM004F();
+                    }
+                } else {
+                    showToastMIFOM004F('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM004F('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM004F();
+    })();
+
+    /* ===================================================
+       FOM-004(G) – ATCC Strain QC Form - Candida albicans
+       Reuses buildMIFOM004RowHTML() + MI_FOM004_TEXT_FIELDS
+       =================================================== */
+
+    function addEmptyRowMIFOM004G() {
+        const tbody = document.getElementById('MI_FOM004G__tbody');
+        if (!tbody) return;
+        const tr = document.createElement('tr');
+        let html = `<td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        MI_FOM004_TEXT_FIELDS.forEach(f => {
+            html += `<td style="border:1px solid #000; padding:4px;"><input name="${f}[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>`;
+        });
+        tr.innerHTML = html;
+        tbody.appendChild(tr);
+    }
+
+    function clearMIFOM004GForm() {
+        const tbody = document.getElementById('MI_FOM004G__tbody');
+        if (tbody) { tbody.innerHTML = ''; addEmptyRowMIFOM004G(); }
+    }
+
+    function clearMIFOM004GFilters() {
+        document.getElementById('MI_FOM004G__from_date').value = '';
+        document.getElementById('MI_FOM004G__to_date').value = '';
+        clearMIFOM004GForm();
+    }
+
+    function loadMIFOM004GData() {
+        const fromDate = document.getElementById('MI_FOM004G__from_date').value;
+        const toDate   = document.getElementById('MI_FOM004G__to_date').value;
+        if (!fromDate && !toDate) return;
+
+        const params = new URLSearchParams();
+        params.append('doc_no', 'TDPL/MI/FOM-004(G)');
+        if (fromDate) params.append('from_date', fromDate);
+        params.append('to_date', toDate || fromDate);
+
+        fetch(`/newforms/mi/atcc-strain-qc/load?${params.toString()}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(r => r.json())
+        .then(res => {
+            const tbody = document.getElementById('MI_FOM004G__tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+            if (!res.data || res.data.length === 0) { addEmptyRowMIFOM004G(); return; }
+            res.data.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = buildMIFOM004RowHTML(row);
+                tbody.appendChild(tr);
+            });
+            addEmptyRowMIFOM004G();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function showToastMIFOM004G(type, message) {
+        const existing = document.querySelector('.mi-toast-fom004g');
+        if (existing) existing.remove();
+        const toast = document.createElement('div');
+        toast.className = 'mi-toast-fom004g';
+        toast.textContent = message;
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+            (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+
+    (function initMIFOM004G() {
+        const formContainer = document.querySelector('[id="TDPL/MI/FOM-004(G)"]');
+        if (!formContainer) return;
+        const form = formContainer.querySelector('form');
+        if (!form || form.dataset.ajaxBound === 'true') return;
+        form.dataset.ajaxBound = 'true';
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const formData = new FormData(form);
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+
+            fetch(form.action, {
+                method: 'POST', body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' }
+            })
+            .then(r => r.json())
+            .then(result => {
+                if (result.success) {
+                    showToastMIFOM004G('success', result.message || 'Saved successfully!');
+                    const tbody = document.getElementById('MI_FOM004G__tbody');
+                    if (tbody && result.data && result.data.length > 0) {
+                        tbody.innerHTML = '';
+                        result.data.forEach(row => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = buildMIFOM004RowHTML(row);
+                            tbody.appendChild(tr);
+                        });
+                        addEmptyRowMIFOM004G();
+                    }
+                } else {
+                    showToastMIFOM004G('error', result.message || 'Failed to save');
+                }
+            })
+            .catch(error => { console.error('Error:', error); showToastMIFOM004G('error', 'Failed to save. Please try again.'); })
+            .finally(() => { submitBtn.textContent = originalText; submitBtn.disabled = false; });
+            return false;
+        });
+
+        addEmptyRowMIFOM004G();
+    })();
 </script>
 
 

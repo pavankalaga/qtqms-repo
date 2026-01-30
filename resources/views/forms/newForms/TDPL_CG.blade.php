@@ -256,7 +256,7 @@
 
 
         <x-formTemplete id="TDPL/CG/FOM-001" docNo="TDPL/CG/FOM-001" docName="Cytogenetics Test Request Form" issueNo="2.0"
-            issueDate="01/10/2024" buttonText="Submit" action="{{ route('cg.forms.submit') }}">
+            issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cg.forms.submit') }}">
 
             <div style="width:100%; font-family:Arial; font-size:14px; line-height:1.4;">
 
@@ -468,7 +468,7 @@
         </x-formTemplete>
 
      <x-formTemplete id="TDPL/CG/FOM-002" docNo="TDPL/CG/FOM-002" docName=" Cytogenetics Consent Form" issueNo="2.0"
-            issueDate="01/10/2024" buttonText="Submit" action="{{ route('cg.forms.submit') }}">
+            issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cg.forms.submit') }}">
 
             <form style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; padding: 10px;">
 

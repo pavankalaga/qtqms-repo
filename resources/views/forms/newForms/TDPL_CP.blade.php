@@ -264,7 +264,7 @@
 
 
         <x-formTemplete id="TDPL/CP/FOM-001" docNo="TDPL/CP/FOM-001" docName="Daily Urine QC Form" issueNo="2.0"
-            issueDate="01/10/2024" buttonText="Submit" action="{{ route('cp.forms.submit') }}">
+            issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cp.forms.submit') }}">
 
 
             {{-- 🔑 INLINE EDIT ID (ADDED – REQUIRED) --}}
@@ -413,7 +413,7 @@
 
         <x-formTemplete id="TDPL/CP/REG-001" docNo="TDPL/CP/REG-001"
             docName="Manual Method for Clinical Pathology CUE (Once in 6 Months)" issueNo="2.0" issueDate="01/10/2024"
-            buttonText="Submit" action="{{ route('cp.forms.submit') }}">
+            buttonText="Submit" action="{{ route('newforms.cp.forms.submit') }}">
 
             {{-- 🔑 INLINE EDIT PRIMARY ID --}}
             <input type="hidden" name="cue_form_id" id="cue_form_id">
@@ -524,7 +524,7 @@
 
 
         <x-formTemplete id="TDPL/CP/REG-002" docNo="TDPL/CP/REG-002" docName="Stool Examination Result Register"
-            issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('cp.forms.submit') }}">
+            issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cp.forms.submit') }}">
 
             {{-- 🔑 INLINE EDIT ID --}}
             <input type="hidden" name="stool_register_id" id="stool_register_id">
@@ -628,7 +628,7 @@
         </x-formTemplete>
 
         <x-formTemplete id="TDPL/CP/REG-003" docNo="TDPL/CP/REG-003" docName="Urine Examination Result Register"
-            issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('cp.forms.submit') }}">
+            issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cp.forms.submit') }}">
 
             {{-- 🔑 INLINE EDIT ID --}}
             <input type="hidden" name="urine_register_id" id="urine_register_id">
@@ -876,7 +876,7 @@
         // ❗ GLOBAL RULE – Month mandatory
         if (!monthYear) return;
 
-        fetch(`/cp/urine-qc/load?month_year=${monthYear}&instrument_id=${instrument}`, {
+        fetch(`/newforms/cp/urine-qc/load?month_year=${monthYear}&instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -962,7 +962,7 @@
         // ❗ GLOBAL RULE – Month mandatory (SAME AS QC)
         if (!monthYear) return;
 
-        fetch(`/cp/manual-cue/load?month_year=${monthYear}&instrument_id=${instrument}`, {
+        fetch(`/newforms/cp/manual-cue/load?month_year=${monthYear}&instrument_id=${instrument}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 },
@@ -1027,7 +1027,7 @@
 
         if (!fromDate && !toDate) return;
 
-        fetch(`/cp/stool-register/load?from_date=${fromDate}&to_date=${toDate}`, {
+        fetch(`/newforms/cp/stool-register/load?from_date=${fromDate}&to_date=${toDate}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 }
@@ -1109,7 +1109,7 @@
         // ❗ at least one filter required
         if (!fromDate && !toDate) return;
 
-        fetch(`/cp/urine-register/load?from_date=${fromDate}&to_date=${toDate}`, {
+        fetch(`/newforms/cp/urine-register/load?from_date=${fromDate}&to_date=${toDate}`, {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
                 }

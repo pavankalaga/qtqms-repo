@@ -259,7 +259,7 @@
                 <div class="pc-folder" onclick="showSection('TDPL/IT/FOM-005')">
                     <i class="fa-solid fa-file-signature pc-folder-icon"></i>
                     <span class="pc-folder-label">LIMS User Role Access Matrix</span>
-                </div>  
+                </div>
             </div>
         </div>
     </div>
@@ -271,7 +271,8 @@
         docName="LIS Interface Validation Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.it.forms.submit') }}">
         <!-- MAIN ANALYZER INFORMATION TABLE -->
         <table style="width:100%; border-collapse: collapse;" border="1">
             <tbody>
@@ -451,12 +452,13 @@
         docName="Auto Approval Authorization"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.it.forms.submit') }}">
 
-        <p><strong>Department: <select name="" id="">
-                    <option value="">Bio</option>
-                    <option value="">It</option>
-                    <option value=""></option>
+        <p><strong>Department: <select name="department">
+                    <option value="">-- Select --</option>
+                    <option value="Bio">Bio</option>
+                    <option value="IT">IT</option>
                 </select></strong></p>
         <p><strong>Section A:<input type="text" name="Test and Equipment Details" value="Test and Equipment Details" style="width:200px; ">
             </strong></p>
@@ -574,7 +576,8 @@
         docName="LIS User ID & Mail ID Login Creation Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.it.forms.submit') }}">
         <!-- IT Department Form -->
         <table style="width:100%; border-collapse: collapse;">
             <tr>
@@ -702,7 +705,7 @@
         issueNo="2.0"
         issueDate="01/10/2024"
         buttonText="Submit">
-        
+
         <table>
             <tbody>
                 <tr>
@@ -812,153 +815,152 @@
 </body>
 <script>
     function showSection(sectionId) {
-
-
-        // Add 'inactive' class to all main sections
         const sections = document.querySelectorAll('.main');
         sections.forEach(section => section.classList.add('inactive'));
 
-        // Remove 'inactive' and add 'active' class to the selected section
         const selectedSection = document.getElementById(sectionId);
         selectedSection.classList.remove('inactive');
         selectedSection.classList.add('active');
-
-
     }
 
     function goBack() {
-        // Hide all main sections by adding 'inactive' class
         const sections = document.querySelectorAll('.main');
         sections.forEach(section => {
             section.classList.remove('active');
             section.classList.add('inactive');
         });
-        // Show the icon view
         document.querySelector('.icon-view').parentElement.classList.remove('inactive');
     }
 
-    // Add new row to tests table
-    document.getElementById('addRowBtn1').addEventListener('click', function() {
-        const tbody = document.querySelector('#testsTable tbody');
-        const newRow = tbody.insertRow();
-        const rowCount = tbody.rows.length;
+    /* ===================================================
+       FOM-001 – LIS Interface Validation Form (AJAX)
+       =================================================== */
+    (function initFOM001() {
+        const wrapper = document.getElementById('TDPL/IT/FOM-001');
+        if (!wrapper) return;
+        const formEl = wrapper.querySelector('form');
+        if (!formEl) return;
 
-        // Create cells
-        ['', '', '', '', '', ''].forEach((content, index) => {
-            const cell = newRow.insertCell();
-            cell.contentEditable = 'true';
-            cell.textContent = index === 0 ? rowCount : content;
-        });
-    });
+        // Toast helper
+        function showToastFOM001(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText =
+                'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+                (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
 
-    // Submit form data
-    document.getElementById('submitBtn1').addEventListener('click', function() {
-        // Get analyzer data
-        // const analyzerRows = document.querySelectorAll('#analyzerTable tbody tr');
-        // const analyzerData = {
-        //     department: analyzerRows[0].cells[1].textContent.trim(),
-        //     analyzer_sr_no: analyzerRows[1].cells[1].textContent.trim(),
-        //     analyzer_type: analyzerRows[2].cells[1].textContent.trim(),
-        //     validation: analyzerRows[3].cells[1].textContent.trim(),
-        //     remarks: analyzerRows[5].cells[1].textContent.trim()
-        // };
+        formEl.addEventListener('submit', function (e) {
+            e.preventDefault();
 
-        // Get tests data
-        const testRows = document.querySelectorAll('#testsTable tbody tr');
-        const testsData = [];
+            const fd = new FormData(formEl);
 
-        testRows.forEach(row => {
-            const cells = row.cells;
-            testsData.push({
-                sr_no: cells[0].textContent.trim(),
-                device: cells[1].textContent.trim(),
-                assay_code: cells[2].textContent.trim(),
-                test_name: cells[3].textContent.trim(),
-                equipment: cells[4].textContent.trim(),
-                lis: cells[5].textContent.trim()
-            });
-        });
-
-        // Prepare complete data
-        const formData = {
-            // analyzer: analyzerData,
-            tests: testsData
-        };
-
-        // Send to server
-        fetch('/lis-interface-logs-store', {
+            fetch(formEl.action, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                 },
-                body: JSON.stringify(formData)
+                body: fd,
             })
-            .then(response => response.json())
+            .then(r => r.json())
             .then(data => {
                 if (data.success) {
-                    alert('Data saved successfully!');
+                    showToastFOM001(data.message || 'Saved successfully!', 'success');
                 } else {
-                    alert('Error: ' + (data.message || 'Failed to save data'));
+                    showToastFOM001(data.message || 'Save failed.', 'error');
                 }
             })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Failed to save data');
-            });
-    });
+            .catch(() => showToastFOM001('Network error.', 'error'));
+        });
+    })();
 
-    // Load saved data
-    function loadLisData() {
-        fetch('/lis-interface-logs')
-            .then(response => response.json())
+    /* ===================================================
+       FOM-003 – Auto Approval Authorization (AJAX)
+       =================================================== */
+    (function initFOM003() {
+        const wrapper = document.getElementById('TDPL/IT/FOM-003');
+        if (!wrapper) return;
+        const formEl = wrapper.querySelector('form');
+        if (!formEl) return;
+
+        function showToastFOM003(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText =
+                'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+                (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        formEl.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const fd = new FormData(formEl);
+
+            fetch(formEl.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: fd,
+            })
+            .then(r => r.json())
             .then(data => {
-                // if (data.analyzer) {
-                //     // Update analyzer table
-                //     const analyzerRows = document.querySelectorAll('#analyzerTable tbody tr');
-                //     analyzerRows[1].cells[1].textContent = data.analyzer.analyzer_sr_no || '';
-                //     analyzerRows[2].cells[1].textContent = data.analyzer.analyzer_type || '';
-                //     analyzerRows[5].cells[1].textContent = data.analyzer.remarks || '';
-                // }
-
-                if (data.tests && data.tests.length > 0) {
-                    // Update tests table
-                    const tbody = document.querySelector('#testsTable tbody');
-
-                    // Clear existing rows
-                    while (tbody.rows.length > 0) {
-                        tbody.deleteRow(0);
-                    }
-
-                    // Add new rows with data
-                    data.tests.forEach((test, index) => {
-                        const newRow = tbody.insertRow();
-                        newRow.innerHTML = `
-                                                                                <td contenteditable="true">${index + 1}</td>
-                                                                                <td contenteditable="true">${test.device || ''}</td>
-                                                                                <td contenteditable="true">${test.assay_code || ''}</td>
-                                                                                <td contenteditable="true">${test.test_name || ''}</td>
-                                                                                <td contenteditable="true">${test.equipment || ''}</td>
-                                                                                <td contenteditable="true">${test.lis || ''}</td>
-                                                                            `;
-                    });
+                if (data.success) {
+                    showToastFOM003(data.message || 'Saved successfully!', 'success');
+                } else {
+                    showToastFOM003(data.message || 'Save failed.', 'error');
                 }
             })
-            .catch(error => {
-                console.error('Error loading data:', error);
-            });
-    }
+            .catch(() => showToastFOM003('Network error.', 'error'));
+        });
+    })();
 
-    // Load data when page loads
-    document.addEventListener('DOMContentLoaded', loadLisData);
+    /* ===================================================
+       FOM-004 – LIS User ID & Mail ID Login Creation (AJAX)
+       =================================================== */
+    (function initFOM004() {
+        const wrapper = document.getElementById('TDPL/IT/FOM-004');
+        if (!wrapper) return;
+        const formEl = wrapper.querySelector('form');
+        if (!formEl) return;
 
+        function showToastFOM004(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText =
+                'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-size:14px;' +
+                (type === 'success' ? 'background:#28a745;' : 'background:#dc3545;');
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
 
-    // Helper function to safely escape the ID
-    function escapeSelector(selector) {
-        return selector.replace(/([!\"#$%&'()*+,\-./:;<=>?@[\\\]^`{|}~])/g, '\\$1');
-    }
+        formEl.addEventListener('submit', function (e) {
+            e.preventDefault();
 
-    // Submit form function
+            const fd = new FormData(formEl);
+
+            fetch(formEl.action, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                },
+                body: fd,
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    showToastFOM004(data.message || 'Saved successfully!', 'success');
+                } else {
+                    showToastFOM004(data.message || 'Save failed.', 'error');
+                }
+            })
+            .catch(() => showToastFOM004('Network error.', 'error'));
+        });
+    })();
 </script>
 
 

@@ -270,7 +270,7 @@
 
 
         <x-formTemplete id="TDPL/AS/FOM-001" docNo="TDPL/AS/FOM-001" docName="Sample Volume Check Form" issueNo="2.0"
-            issueDate="01/10/2024" buttonText="Submit" action="{{ route('as.forms.submit') }}">
+            issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.as.forms.submit') }}">
 
             {{-- FORM BODY GOES HERE --}}
 
@@ -394,119 +394,137 @@
             </p>
         </x-formTemplete>
 
-        <x-formTemplete id="TDPL/BE/REG-001" docNo="TDPL/BE/REG-001" docName="Equipment Breakdown Maintenance Register"
-            issueNo="2.0" issueDate="01/10/2024" buttonText="Submit" action="{{ route('be.forms.submit') }}">
+        <x-formTemplete id="TDPL/AS/REG-001" docNo="TDPL/AS/REG-001" docName="Sample Receiving Register" issueNo="2.0"
+            issueDate="01/10/2024" buttonText="Submit" data-inline="true" action="{{ route('newforms.as.forms.submit') }}">
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <label><strong>From Date</strong></label>
+                    <input type="date" id="srFromDate" name="srFromDate" class="form-control"
+                        onchange="loadSampleReceivingRegister()">
+                </div>
 
-            {{-- 🔑 INLINE EDIT SUPPORT --}}
-            <input type="hidden" name="eb_form_id" id="eb_form_id">
+                <div class="col-md-2">
+                    <label><strong>To Date</strong></label>
+                    <input type="date" id="srToDate" class="form-control" onchange="loadSampleReceivingRegister()">
+                </div>
 
-            <div class="p-4">
-                @csrf
-
-                {{-- 🔹 FILTERS (HORIZONTAL – CLEAN FIT) --}}
-                <div class="flex gap-4 mb-4 items-end">
-
-                    <span>
-                        <label class="block font-semibold">Month & Year:</label>
-                        <input type="month" name="eb_month_year" id="eb_month_year"
-                            class="border rounded px-2 py-1 w-40">
-                    </span>
-
-                    <span>
-                        <label class="block font-semibold">Location:</label>
-                        <input type="text" name="eb_location" id="eb_location" class="border rounded px-2 py-1 w-60">
-                    </span>
-
-                    <span>
-                        <label class="block font-semibold">From Date:</label>
-                        <input type="date" name="eb_from_date" id="eb_from_date"
-                            class="border rounded px-2 py-1 w-44" onchange="loadEquipmentBreakdownRegister()">
-                    </span>
-
-                    <span>
-                        <label class="block font-semibold">To Date:</label>
-                        <input type="date" name="eb_to_date" id="eb_to_date" class="border rounded px-2 py-1 w-44"
-                            onchange="loadEquipmentBreakdownRegister()">
-                    </span>
+                <div class="col-md-2">
+                    <label><strong>Location</strong></label>
+                    <input list="srLocList" id="srLocation" name="srLocation" class="form-control"
+                        onfocus="resetIfMatched(this)"
+                        oninput="handleDatalistInput(this,'srLocList',loadSampleReceivingRegister)">
+                    <datalist id="srLocList">
+                        <option value="Hyderabad">
+                        <option value="Bangalore">
+                        <option value="Chennai">
+                    </datalist>
 
                 </div>
 
-                {{-- 🔹 REGISTER TABLE --}}
-                <table class="table-auto border-collapse border border-gray-300 w-full text-center">
-                    <thead>
-                        <tr class="bg-gray-200">
-                            <th rowspan="2" class="border px-2 py-1">Date</th>
-                            <th rowspan="2" class="border px-2 py-1">Equipment Name & ID</th>
-                            <th rowspan="2" class="border px-2 py-1">Problem Identified</th>
-                            <th colspan="3" class="border px-2 py-1">Time attended & Other details</th>
-                            <th rowspan="2" class="border px-2 py-1">Total Downtime</th>
-                            <th rowspan="2" class="border px-2 py-1">Remarks if any</th>
-                            <th rowspan="2" class="border px-2 py-1">Signature</th>
-                        </tr>
-                        <tr class="bg-gray-200">
-                            <th class="border px-2 py-1">Breakdown Time</th>
-                            <th class="border px-2 py-1">Action Taken</th>
-                            <th class="border px-2 py-1">Name of Engineer</th>
-                        </tr>
-                    </thead>
+                <div class="col-md-2">
+                    <label><strong>Department</strong></label>
+                    <input list="srDeptList" id="srDepartment" name="srDepartment" class="form-control"
+                        placeholder="All" oninput="handleDatalistInput(this,'srDeptList',loadSampleReceivingRegister)">
+                    <datalist id="srDeptList">
+                        <option value="Biochemistry">
+                        <option value="Pathology">
+                        <option value="Hematology">
+                    </datalist>
 
-                    <tbody>
-                        <tr>
-                            <td class="border px-2 py-1">
-                                <input type="date" name="eb_date" id="eb_date"
-                                    class="border rounded px-1 py-1 w-full">
-                            </td>
+                </div>
 
-                            <td class="border px-2 py-1">
-                                <input type="text" name="eb_equipment" id="eb_equipment"
-                                    class="border rounded px-1 py-1 w-full">
-                            </td>
+                <div class="col-md-2">
+                    <label><strong>Equipment / TL Code</strong></label>
+                    <input list="srEquipList" id="srEquipmentId" name="srEquipmentId" class="form-control"
+                        placeholder="All" oninput="handleDatalistInput(this,'srEquipList',loadSampleReceivingRegister)">
+                    <datalist id="srEquipList">
+                        <option value="TL001">
+                        <option value="TL002">
+                    </datalist>
 
-                            <td class="border px-2 py-1">
-                                <input type="text" name="eb_problem" id="eb_problem"
-                                    class="border rounded px-1 py-1 w-full">
-                            </td>
-
-                            <td class="border px-2 py-1">
-                                <input type="text" name="eb_breakdown_time" id="eb_breakdown_time"
-                                    class="border rounded px-1 py-1 w-full">
-                            </td>
-
-                            <td class="border px-2 py-1">
-                                <input type="text" name="eb_action_taken" id="eb_action_taken"
-                                    class="border rounded px-1 py-1 w-full">
-                            </td>
-
-                            <td class="border px-2 py-1">
-                                <input type="text" name="eb_engineer_name" id="eb_engineer_name"
-                                    class="border rounded px-1 py-1 w-full">
-                            </td>
-
-                            <td class="border px-2 py-1">
-                                <input type="text" name="eb_total_downtime" id="eb_total_downtime"
-                                    class="border rounded px-1 py-1 w-full">
-                            </td>
-
-                            <td class="border px-2 py-1">
-                                <input type="text" name="eb_remarks" id="eb_remarks"
-                                    class="border rounded px-1 py-1 w-full">
-                            </td>
-
-                            <td class="border px-2 py-1">
-                                <input type="text" name="eb_signature" id="eb_signature"
-                                    class="border rounded px-1 py-1 w-full">
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-
+                </div>
             </div>
-        </x-formTemplete>
 
+
+
+
+            {{-- MAIN FORM TABLE --}}
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Time</th>
+                        <th>Client Location</th>
+                        <th>Client Name</th>
+                        <th>TL Code</th>
+                        <th># of Blood Samples</th>
+                        <th># of Other Samples</th>
+                        <th>CSR Name</th>
+                        <th>CSR Sign</th>
+                        <th>Sample Temperature</th>
+                        <th>Receiver Name</th>
+                        <th>Remarks</th>
+                    </tr>
+                </thead>
+
+                <tbody id="srTableBody">
+                    <tr>
+                        <td>
+                            <input type="date" name="date" class="form-control" required>
+                        </td>
+
+                        <td>
+                            <input type="time" name="time" class="form-control" required>
+                        </td>
+
+                        <td>
+                            <input type="text" name="client_location" class="form-control" required>
+                        </td>
+
+                        <td>
+                            <input type="text" name="client_name" class="form-control" required>
+                        </td>
+
+                        <td>
+                            <input type="text" name="tl_code" class="form-control">
+                        </td>
+
+                        <td>
+                            <input type="number" name="blood_samples" class="form-control">
+                        </td>
+
+                        <td>
+                            <input type="number" name="other_samples" class="form-control">
+                        </td>
+
+                        <td>
+                            <input type="text" name="csr_name" class="form-control">
+                        </td>
+
+                        <td>
+                            <input type="text" name="csr_sign" class="form-control">
+                        </td>
+
+                        <td>
+                            <input type="text" name="sample_temp" class="form-control">
+                        </td>
+
+                        <td>
+                            <input type="text" name="receiver_name" class="form-control">
+                        </td>
+
+                        <td>
+                            <input type="text" name="remarks" class="form-control">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </x-formTemplete>
 
         <x-formTemplete id="TDPL/AS/REG-003" data-inline="true" docNo="TDPL/AS/REG-003"
             docName="Sample Delivery Register" issueNo="2.0" issueDate="01/10/2024" buttonText="Submit"
-            action="{{ route('as.forms.submit') }}">
+            action="{{ route('newforms.as.forms.submit') }}">
             <div class="row mb-3">
                 <div class="col-md-2">
                     <label><strong>From Date</strong></label>
@@ -611,7 +629,7 @@
 
         <x-formTemplete id="TDPL/AS/REG-004" docNo="TDPL/AS/REG-004" docName="Ice Gel Packs Distribution Register"
             data-inline="true" issueNo="2.0" issueDate="01/10/2024" buttonText="Submit"
-            action="{{ route('as.forms.submit') }}">
+            action="{{ route('newforms.as.forms.submit') }}">
 
             <div class="row mb-3">
                 <div class="col-md-3">
@@ -703,7 +721,7 @@
 
 
         <x-formTemplete id="TDPL/AS/REG-005" docNo="TDPL/AS/REG-005" docName="Sample Outsource Register" issueNo="2.0"
-            issueDate="01/10/2024" buttonText="Submit" action="{{ route('as.forms.submit') }}">
+            issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.as.forms.submit') }}">
 
             <!-- =================== FILTER SECTION (ONCHANGE ONLY) =================== -->
             <div class="row mb-3">
@@ -988,7 +1006,7 @@
             const monthYear = e.target.value;
             if (!monthYear) return;
 
-            fetch(`/as/sample-volume-check/load?month_year=${monthYear}`)
+            fetch(`/newforms/as/sample-volume-check/load?month_year=${monthYear}`)
                 .then(res => res.json())
                 .then(res => {
 
@@ -1036,7 +1054,7 @@
 
         if (!monthYear) return;
 
-        fetch(`/as/sample-volume-check/load?month_year=${monthYear}`)
+        fetch(`/newforms/as/sample-volume-check/load?month_year=${monthYear}`)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('HTTP error ' + response.status);
@@ -1113,7 +1131,7 @@
         const equipment = document.getElementById('srEquipmentId').value;
 
         fetch(
-                `/as/sample-receiving-register/load?from_date=${fromDate}&to_date=${toDate}&location=${location}&department=${department}&equipment=${equipment}`
+                `/newforms/as/sample-receiving-register/load?from_date=${fromDate}&to_date=${toDate}&location=${location}&department=${department}&equipment=${equipment}`
             )
             .then(res => res.json())
             .then(res => {
@@ -1132,7 +1150,7 @@
         const equipment = document.getElementById('sdEquipmentId').value;
 
         fetch(
-                `/as/sample-delivery-register/load` +
+                `/newforms/as/sample-delivery-register/load` +
                 `?from_date=${fromDate}` +
                 `&to_date=${toDate}` +
                 `&location=${location}` +
@@ -1156,7 +1174,7 @@
         const department = document.getElementById('igDepartment').value;
 
         fetch(
-                `/as/ice-gel-register/load` +
+                `/newforms/as/ice-gel-register/load` +
                 `?from_date=${fromDate}` +
                 `&to_date=${toDate}` +
                 `&location=${location}` +
@@ -1179,7 +1197,7 @@
         const equipment = document.getElementById('soEquipmentId').value;
 
         fetch(
-                `/as/sample-outsource-register/load` +
+                `/newforms/as/sample-outsource-register/load` +
                 `?from_date=${fromDate}` +
                 `&to_date=${toDate}` +
                 `&location=${location}` +

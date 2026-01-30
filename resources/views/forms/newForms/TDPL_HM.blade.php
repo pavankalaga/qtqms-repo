@@ -304,7 +304,9 @@
         docName="Coagulation MNPT Form."
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
+
         <div style="margin-bottom:20px;">
             <strong>Location:</strong> <input type="text" name="location" style="width:200px;">
             <strong>Instrument Name:</strong> <input type="text" name="instrument_name" style="width:200px;">
@@ -332,91 +334,91 @@
                     <input type="text" name="rows[{{ $i }}][aptt]" style="width:100%;">
                 </td>
                 </tr>
-                @endfor
+            @endfor
 
-                <tr>
-                    <td></td>
-                    <td colspan="2" style="padding:6px;">Geometric Mean</td>
-                    <td><input type="text" name="geo_mean_pt" style="width:100%;"></td>
-                    <td><input type="text" name="geo_mean_aptt" style="width:100%;"></td>
-                </tr>
+            <tr>
+                <td></td>
+                <td colspan="2" style="padding:6px;">Geometric Mean</td>
+                <td><input type="text" name="geo_mean_pt" style="width:100%;"></td>
+                <td><input type="text" name="geo_mean_aptt" style="width:100%;"></td>
+            </tr>
 
-                <tr>
-                    <td></td>
-                    <td colspan="2" style="padding:6px;">Arithmetic Mean</td>
-                    <td><input type="text" name="arith_mean_pt" style="width:100%;"></td>
-                    <td><input type="text" name="arith_mean_aptt" style="width:100%;"></td>
-                </tr>
+            <tr>
+                <td></td>
+                <td colspan="2" style="padding:6px;">Arithmetic Mean</td>
+                <td><input type="text" name="arith_mean_pt" style="width:100%;"></td>
+                <td><input type="text" name="arith_mean_aptt" style="width:100%;"></td>
+            </tr>
 
-                <tr>
-                    <td></td>
-                    <td colspan="2" style="padding:6px;">SD</td>
-                    <td><input type="text" name="sd_pt" style="width:100%;"></td>
-                    <td><input type="text" name="sd_aptt" style="width:100%;"></td>
-                </tr>
+            <tr>
+                <td></td>
+                <td colspan="2" style="padding:6px;">SD</td>
+                <td><input type="text" name="sd_pt" style="width:100%;"></td>
+                <td><input type="text" name="sd_aptt" style="width:100%;"></td>
+            </tr>
 
-                <tr>
-                    <td></td>
-                    <td colspan="2" style="padding:6px;">Mean + 2SD</td>
-                    <td><input type="text" name="mean2sd_pt" style="width:100%;"></td>
-                    <td><input type="text" name="mean2sd_aptt" style="width:100%;"></td>
-                </tr>
+            <tr>
+                <td></td>
+                <td colspan="2" style="padding:6px;">Mean + 2SD</td>
+                <td><input type="text" name="mean2sd_pt" style="width:100%;"></td>
+                <td><input type="text" name="mean2sd_aptt" style="width:100%;"></td>
+            </tr>
 
-                <tr>
-                    <td></td>
-                    <td colspan="2" style="padding:6px;">Mean - 2SD</td>
-                    <td><input type="text" name="mean_minus_2sd_pt" style="width:100%;"></td>
-                    <td><input type="text" name="mean_minus_2sd_aptt" style="width:100%;"></td>
-                </tr>
+            <tr>
+                <td></td>
+                <td colspan="2" style="padding:6px;">Mean - 2SD</td>
+                <td><input type="text" name="mean_minus_2sd_pt" style="width:100%;"></td>
+                <td><input type="text" name="mean_minus_2sd_aptt" style="width:100%;"></td>
+            </tr>
 
-                <tr>
-                    <td></td>
-                    <td colspan="2" style="padding:6px;">CV%</td>
-                    <td><input type="text" name="cv_pt" style="width:100%;"></td>
-                    <td><input type="text" name="cv_aptt" style="width:100%;"></td>
-                </tr>
+            <tr>
+                <td></td>
+                <td colspan="2" style="padding:6px;">CV%</td>
+                <td><input type="text" name="cv_pt" style="width:100%;"></td>
+                <td><input type="text" name="cv_aptt" style="width:100%;"></td>
+            </tr>
 
-                <!-- PT Section -->
-                <tr>
-                    <td rowspan="3" style="padding:6px;"><strong>PT</strong></td>
-                    <td style="padding:6px;">Lot #</td>
-                    <td colspan="3">
-                        <input type="text" name="pt_lot" style="width:100%;">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:6px;">Expiry Date</td>
-                    <td colspan="3">
-                        <input type="date" name="pt_expiry" style="width:100%;">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:6px;">Performed Date</td>
-                    <td colspan="3">
-                        <input type="date" name="pt_performed" style="width:100%;">
-                    </td>
-                </tr>
+            <!-- PT Section -->
+            <tr>
+                <td rowspan="3" style="padding:6px;"><strong>PT</strong></td>
+                <td style="padding:6px;">Lot #</td>
+                <td colspan="3">
+                    <input type="text" name="pt_lot" style="width:100%;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:6px;">Expiry Date</td>
+                <td colspan="3">
+                    <input type="date" name="pt_expiry" style="width:100%;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:6px;">Performed Date</td>
+                <td colspan="3">
+                    <input type="date" name="pt_performed" style="width:100%;">
+                </td>
+            </tr>
 
-                <!-- APTT Section -->
-                <tr>
-                    <td rowspan="3" style="padding:6px;"><strong>APTT</strong></td>
-                    <td style="padding:6px;">Lot #</td>
-                    <td colspan="3">
-                        <input type="text" name="aptt_lot" style="width:100%;">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:6px;">Expiry Date</td>
-                    <td colspan="3">
-                        <input type="date" name="aptt_expiry" style="width:100%;">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:6px;">Performed Date</td>
-                    <td colspan="3">
-                        <input type="date" name="aptt_performed" style="width:100%;">
-                    </td>
-                </tr>
+            <!-- APTT Section -->
+            <tr>
+                <td rowspan="3" style="padding:6px;"><strong>APTT</strong></td>
+                <td style="padding:6px;">Lot #</td>
+                <td colspan="3">
+                    <input type="text" name="aptt_lot" style="width:100%;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:6px;">Expiry Date</td>
+                <td colspan="3">
+                    <input type="date" name="aptt_expiry" style="width:100%;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:6px;">Performed Date</td>
+                <td colspan="3">
+                    <input type="date" name="aptt_performed" style="width:100%;">
+                </td>
+            </tr>
         </table>
 
         <div style="margin-top:20px;">
@@ -427,6 +429,77 @@
             <input type="text" name="verified_by" style="width:200px;">
         </div>
 
+        <script>
+            // AJAX Submit for Coagulation MNPT Form
+            (function() {
+                function initCoagulationMnptForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/FOM-001"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastHMFOM001('success', result.message || 'Saved successfully!');
+                            } else {
+                                showToastHMFOM001('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastHMFOM001('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastHMFOM001(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initCoagulationMnptForm);
+                } else {
+                    initCoagulationMnptForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -435,72 +508,330 @@
         docName="ABO & Rh Typing QC Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
 
-        <table style="width:100%; border-collapse: collapse;" border="1">
-            <thead>
-                <tr>
-                    <td rowspan="2" style="padding:4px; text-align:center;">Date</td>
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="HM_FOM_002__from_date"
+                    onchange="loadAboRhTypingQcData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="HM_FOM_002__to_date"
+                    onchange="loadAboRhTypingQcData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearAboRhTypingQcFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
-                    @foreach (['Anti-A','Anti-B','Anti-D IgM','Anti-D IgG','Anti-A1','Anti-H'] as $group)
-                    <td colspan="4" style="padding:4px; text-align:center; font-weight:bold;">{{ $group }}</td>
-                    @endforeach
-
-                    <td rowspan="2" style="padding:4px; text-align:center;">Done By</td>
-                    <td rowspan="2" style="padding:4px; text-align:center;">Verified By</td>
-                    <td rowspan="2" style="padding:4px; text-align:center;">Remarks</td>
-                </tr>
-
-                <tr>
-                    @for ($i = 0; $i < 6; $i++)
-                        @foreach (['Appearance','A','B','O'] as $label)
-                        <td style="padding:4px; text-align:center; font-weight:bold;">{{ $label }}</td>
-                        @endforeach
-                        @endfor
-                </tr>
-            </thead>
-
-            <tbody>
-                @for ($row = 1; $row <= 10; $row++)
+        <!-- Data Table -->
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; min-width:1400px;" border="1">
+                <thead>
                     <tr>
-                    <!-- DATE -->
-                    <td style="padding:2px;">
-                        <input type="date" name="rows[{{ $row }}][date]"
-                            style="width:100%; border:0; padding:4px;" />
-                    </td>
-
-                    <!-- 6 Groups × 4 Columns = 24 inputs -->
-                    @for ($g = 1; $g <= 6; $g++)
-                        @foreach (['appearance','a','b','o'] as $field)
-                        <td style="padding:2px;">
-                        <input type="text"
-                            name="rows[{{ $row }}][group{{ $g }}][{{ $field }}]"
-                            style="width:100%; border:0; padding:4px;" />
-                        </td>
-                        @endforeach
+                        <td rowspan="2" style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">Date</td>
+                        <td colspan="4" style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">Anti-A</td>
+                        <td colspan="4" style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">Anti-B</td>
+                        <td colspan="4" style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">Anti-D IgM</td>
+                        <td colspan="4" style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">Anti-D IgG</td>
+                        <td colspan="4" style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">Anti-A1</td>
+                        <td colspan="4" style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">Anti-H</td>
+                        <td rowspan="2" style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">Done By</td>
+                        <td rowspan="2" style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">Verified By</td>
+                        <td rowspan="2" style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">Remarks</td>
+                    </tr>
+                    <tr>
+                        @for ($i = 0; $i < 6; $i++)
+                            <td style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">App</td>
+                            <td style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">A</td>
+                            <td style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">B</td>
+                            <td style="padding:4px; text-align:center; border:1px solid #000; font-weight:bold;">O</td>
                         @endfor
+                    </tr>
+                </thead>
+                <tbody id="HM_FOM_002__tbody">
+                    <!-- Empty row for new entry -->
+                    <tr>
+                        <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_a_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_a_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_a_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_a_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_b_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_b_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_b_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_b_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_h_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_h_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_h_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_h_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-                        <!-- Done By -->
-                        <td style="padding:2px;">
-                            <input type="text" name="rows[{{ $row }}][done_by]"
-                                style="width:100%; border:0; padding:4px;" />
-                        </td>
+        <script>
+            // Load ABO & Rh Typing QC records based on date range filters
+            function loadAboRhTypingQcData() {
+                const fromDate = document.getElementById('HM_FOM_002__from_date').value;
+                const toDate = document.getElementById('HM_FOM_002__to_date').value;
 
-                        <!-- Verified By -->
-                        <td style="padding:2px;">
-                            <input type="text" name="rows[{{ $row }}][verified_by]"
-                                style="width:100%; border:0; padding:4px;" />
-                        </td>
+                // At least one date filter required
+                if (!fromDate && !toDate) return;
 
-                        <!-- Remarks -->
-                        <td style="padding:2px;">
-                            <input type="text" name="rows[{{ $row }}][remarks]"
-                                style="width:100%; border:0; padding:4px;" />
-                        </td>
-                        </tr>
-                        @endfor
-            </tbody>
-        </table>
+                const params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
+
+                fetch(`/newforms/hm/abo-rh-typing-qc/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('HM_FOM_002__tbody');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowFOM002();
+                        return;
+                    }
+
+                    res.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="border:1px solid #000; padding:2px;">
+                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                            </td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a_appearance[]" value="${row.anti_a_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a_a[]" value="${row.anti_a_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a_b[]" value="${row.anti_a_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a_o[]" value="${row.anti_a_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_b_appearance[]" value="${row.anti_b_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_b_a[]" value="${row.anti_b_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_b_b[]" value="${row.anti_b_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_b_o[]" value="${row.anti_b_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_appearance[]" value="${row.anti_d_igm_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_a[]" value="${row.anti_d_igm_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_b[]" value="${row.anti_d_igm_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_o[]" value="${row.anti_d_igm_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_appearance[]" value="${row.anti_d_igg_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_a[]" value="${row.anti_d_igg_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_b[]" value="${row.anti_d_igg_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_o[]" value="${row.anti_d_igg_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_appearance[]" value="${row.anti_a1_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_a[]" value="${row.anti_a1_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_b[]" value="${row.anti_a1_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_o[]" value="${row.anti_a1_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_h_appearance[]" value="${row.anti_h_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_h_a[]" value="${row.anti_h_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_h_b[]" value="${row.anti_h_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_h_o[]" value="${row.anti_h_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" value="${row.done_by || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    addEmptyRowFOM002();
+                })
+                .catch(error => console.error('Error loading data:', error));
+            }
+
+            function clearAboRhTypingQcForm() {
+                const tbody = document.getElementById('HM_FOM_002__tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowFOM002();
+                }
+            }
+
+            function addEmptyRowFOM002() {
+                const tbody = document.getElementById('HM_FOM_002__tbody');
+                if (!tbody) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_a_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_a_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_a_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_a_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_b_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_b_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_b_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_b_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_h_appearance[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_h_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_h_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_h_o[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearAboRhTypingQcFilters() {
+                document.getElementById('HM_FOM_002__from_date').value = '';
+                document.getElementById('HM_FOM_002__to_date').value = '';
+                clearAboRhTypingQcForm();
+            }
+
+            // AJAX Submit for FOM-002
+            (function() {
+                function initAboRhTypingQcForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/FOM-002"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastFOM002('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('HM_FOM_002__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach(row => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:2px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a_appearance[]" value="${row.anti_a_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a_a[]" value="${row.anti_a_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a_b[]" value="${row.anti_a_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a_o[]" value="${row.anti_a_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_b_appearance[]" value="${row.anti_b_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_b_a[]" value="${row.anti_b_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_b_b[]" value="${row.anti_b_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_b_o[]" value="${row.anti_b_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_appearance[]" value="${row.anti_d_igm_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_a[]" value="${row.anti_d_igm_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_b[]" value="${row.anti_d_igm_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igm_o[]" value="${row.anti_d_igm_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_appearance[]" value="${row.anti_d_igg_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_a[]" value="${row.anti_d_igg_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_b[]" value="${row.anti_d_igg_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d_igg_o[]" value="${row.anti_d_igg_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_appearance[]" value="${row.anti_a1_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_a[]" value="${row.anti_a1_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_b[]" value="${row.anti_a1_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a1_o[]" value="${row.anti_a1_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_h_appearance[]" value="${row.anti_h_appearance || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_h_a[]" value="${row.anti_h_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_h_b[]" value="${row.anti_h_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_h_o[]" value="${row.anti_h_o || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" value="${row.done_by || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    addEmptyRowFOM002();
+                                }
+                            } else {
+                                showToastFOM002('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastFOM002('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastFOM002(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initAboRhTypingQcForm);
+                } else {
+                    initAboRhTypingQcForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -509,59 +840,245 @@
         docName="Titration of Antibody Reagent in Blood Grouping"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <table style="width:100%; border-collapse:collapse;" border="1">
-            <thead>
-                <tr>
-                    @foreach ([
-                    'DATE',
-                    'Anti Body Reagent',
-                    'Company',
-                    'Lot Number',
-                    'Expiry Date',
-                    'Time',
-                    'Performed By',
-                    'Reviewed By',
-                    'Remarks'
-                    ] as $header)
-                    <td style="padding:6px; text-align:center; font-weight:bold;">
-                        {{ $header }}
-                    </td>
-                    @endforeach
-                </tr>
-            </thead>
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
 
-            <tbody>
-                @for ($row = 1; $row <= 18; $row++)
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="HM_FOM_003__from_date"
+                    onchange="loadTitrationData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="HM_FOM_003__to_date"
+                    onchange="loadTitrationData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearTitrationFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse;" border="1">
+                <thead>
                     <tr>
-                    <!-- DATE -->
-                    <td style="padding:4px;">
-                        <input type="date"
-                            name="rows[{{ $row }}][date]"
-                            style="width:100%; border:0; padding:4px;">
-                    </td>
-
-                    <!-- TEXT INPUT COLUMNS -->
-                    @foreach ([
-                    'reagent',
-                    'company',
-                    'lot_number',
-                    'expiry_date',
-                    'time',
-                    'performed_by',
-                    'reviewed_by',
-                    'remarks'
-                    ] as $field)
-                    <td style="padding:4px;">
-                        <input type="text"
-                            name="rows[{{ $row }}][{{ $field }}]"
-                            style="width:100%; border:0; padding:4px;">
-                    </td>
-                    @endforeach
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Date</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Antibody Reagent</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Company</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Lot Number</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Expiry Date</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Time</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Performed By</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Reviewed By</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Remarks</td>
                     </tr>
-                    @endfor
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="HM_FOM_003__tbody">
+                    <!-- Empty row for new entry -->
+                    <tr>
+                        <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="antibody_reagent[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="company[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="lot_number[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="expiry_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="time[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="performed_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="reviewed_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            // Load Titration records based on date range filters
+            function loadTitrationData() {
+                const fromDate = document.getElementById('HM_FOM_003__from_date').value;
+                const toDate = document.getElementById('HM_FOM_003__to_date').value;
+
+                // At least one date filter required
+                if (!fromDate && !toDate) return;
+
+                const params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
+
+                fetch(`/newforms/hm/titration-antibody-reagent/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('HM_FOM_003__tbody');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowFOM003();
+                        return;
+                    }
+
+                    res.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="border:1px solid #000; padding:2px;">
+                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                            </td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="antibody_reagent[]" value="${row.antibody_reagent || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="company[]" value="${row.company || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="lot_number[]" value="${row.lot_number || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="expiry_date[]" value="${row.expiry_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="time[]" value="${row.time || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="performed_by[]" value="${row.performed_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="reviewed_by[]" value="${row.reviewed_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    addEmptyRowFOM003();
+                })
+                .catch(error => console.error('Error loading data:', error));
+            }
+
+            function clearTitrationForm() {
+                const tbody = document.getElementById('HM_FOM_003__tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowFOM003();
+                }
+            }
+
+            function addEmptyRowFOM003() {
+                const tbody = document.getElementById('HM_FOM_003__tbody');
+                if (!tbody) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="antibody_reagent[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="company[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="lot_number[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="expiry_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="time[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="performed_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="reviewed_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearTitrationFilters() {
+                document.getElementById('HM_FOM_003__from_date').value = '';
+                document.getElementById('HM_FOM_003__to_date').value = '';
+                clearTitrationForm();
+            }
+
+            // AJAX Submit for FOM-003
+            (function() {
+                function initTitrationForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/FOM-003"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastFOM003('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('HM_FOM_003__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach(row => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:2px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="antibody_reagent[]" value="${row.antibody_reagent || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="company[]" value="${row.company || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="lot_number[]" value="${row.lot_number || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="expiry_date[]" value="${row.expiry_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="time[]" value="${row.time || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="performed_by[]" value="${row.performed_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="reviewed_by[]" value="${row.reviewed_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    addEmptyRowFOM003();
+                                }
+                            } else {
+                                showToastFOM003('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastFOM003('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastFOM003(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initTitrationForm);
+                } else {
+                    initTitrationForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -570,59 +1087,246 @@
         docName="Avidity of Antibody Reagent in Blood Grouping"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <table style="width:100%; border-collapse:collapse;" border="1">
-            <thead>
-                <tr>
-                    @foreach ([
-                    'DATE',
-                    'Anti Body Reagent',
-                    'Company',
-                    'Lot Number',
-                    'Expiry Date',
-                    'Time',
-                    'Performed By',
-                    'Reviewed By',
-                    'Remarks'
-                    ] as $header)
-                    <td style="padding:6px; text-align:center; font-weight:bold;">
-                        {{ $header }}
-                    </td>
-                    @endforeach
-                </tr>
-            </thead>
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
 
-            <tbody>
-                @for ($row = 1; $row <= 18; $row++)
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="HM_FOM_004__from_date"
+                    onchange="loadAvidityData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="HM_FOM_004__to_date"
+                    onchange="loadAvidityData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearAvidityFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse;" border="1">
+                <thead>
                     <tr>
-                    <!-- DATE -->
-                    <td style="padding:4px;">
-                        <input type="date"
-                            name="rows[{{ $row }}][date]"
-                            style="width:100%; border:0; padding:4px;">
-                    </td>
-
-                    <!-- TEXT INPUT COLUMNS -->
-                    @foreach ([
-                    'reagent',
-                    'company',
-                    'lot_number',
-                    'expiry_date',
-                    'time',
-                    'performed_by',
-                    'reviewed_by',
-                    'remarks'
-                    ] as $field)
-                    <td style="padding:4px;">
-                        <input type="text"
-                            name="rows[{{ $row }}][{{ $field }}]"
-                            style="width:100%; border:0; padding:4px;">
-                    </td>
-                    @endforeach
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Date</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Antibody Reagent</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Company</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Lot Number</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Expiry Date</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Time</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Performed By</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Reviewed By</td>
+                        <td style="padding:6px; text-align:center; border:1px solid #000; font-weight:bold;">Remarks</td>
                     </tr>
-                    @endfor
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="HM_FOM_004__tbody">
+                    <!-- Empty row for new entry -->
+                    <tr>
+                        <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="antibody_reagent[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="company[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="lot_number[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="expiry_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="time[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="performed_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="reviewed_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            // Load Avidity records based on date range filters
+            function loadAvidityData() {
+                const fromDate = document.getElementById('HM_FOM_004__from_date').value;
+                const toDate = document.getElementById('HM_FOM_004__to_date').value;
+
+                // At least one date filter required
+                if (!fromDate && !toDate) return;
+
+                const params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
+
+                fetch(`/newforms/hm/avidity-antibody-reagent/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('HM_FOM_004__tbody');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowFOM004();
+                        return;
+                    }
+
+                    res.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="border:1px solid #000; padding:2px;">
+                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                            </td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="antibody_reagent[]" value="${row.antibody_reagent || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="company[]" value="${row.company || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="lot_number[]" value="${row.lot_number || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="expiry_date[]" value="${row.expiry_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="time[]" value="${row.time || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="performed_by[]" value="${row.performed_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="reviewed_by[]" value="${row.reviewed_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    addEmptyRowFOM004();
+                })
+                .catch(error => console.error('Error loading data:', error));
+            }
+
+            function clearAvidityForm() {
+                const tbody = document.getElementById('HM_FOM_004__tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowFOM004();
+                }
+            }
+
+            function addEmptyRowFOM004() {
+                const tbody = document.getElementById('HM_FOM_004__tbody');
+                if (!tbody) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="antibody_reagent[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="company[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="lot_number[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="expiry_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="time[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="performed_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="reviewed_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearAvidityFilters() {
+                document.getElementById('HM_FOM_004__from_date').value = '';
+                document.getElementById('HM_FOM_004__to_date').value = '';
+                clearAvidityForm();
+            }
+
+            // AJAX Submit for FOM-004
+            (function() {
+                function initAvidityForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/FOM-004"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastFOM004('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('HM_FOM_004__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach(row => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:2px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="antibody_reagent[]" value="${row.antibody_reagent || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="company[]" value="${row.company || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="lot_number[]" value="${row.lot_number || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="expiry_date[]" value="${row.expiry_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="time[]" value="${row.time || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="performed_by[]" value="${row.performed_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="reviewed_by[]" value="${row.reviewed_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    addEmptyRowFOM004();
+                                }
+                            } else {
+                                showToastFOM004('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastFOM004('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastFOM004(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initAvidityForm);
+                } else {
+                    initAvidityForm();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
     <x-formTemplete
         id="TDPL/HM/FOM-005"
@@ -630,72 +1334,103 @@
         docName="Bone Marrow Examination Requisition Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <div style="    width:100%;font-size:14px;background:#fff;padding:25px;border-radius:12px;border:1px solid #ddd;">
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
+        <div style="width:100%;font-size:14px;background:#fff;padding:25px;border-radius:12px;border:1px solid #ddd;">
 
             <h3 style="text-align:center; margin-bottom:20px;">
                 <strong>BONE MARROW EXAMINATION REQUISITION FORM</strong>
             </h3>
 
             <!-- TOP FIELDS -->
-            @foreach ([
-            ['Patient Name', 'Lab Number'],
-            ['Age & Sex', 'Date'],
-            ['Ref. Doctor', 'Time'],
-            ['Client Name', 'Mobile No.'],
-            ['Client Code', ''],
-            ] as $row)
             <div style="display:flex; margin-bottom:8px; gap:20px;">
                 <div style="flex:1;">
-                    <label>{{ $row[0] }}:</label>
-                    <input type="text"
-                        name="{{ \Str::snake(str_replace(' ', '_', strtolower($row[0]))) }}"
-                        style="width:100%; border:1px solid #000; padding:4px;">
+                    <label>Patient Name:</label>
+                    <input type="text" name="patient_name" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
-
-                @if($row[1] != '')
                 <div style="flex:1;">
-                    <label>{{ $row[1] }}:</label>
-                    <input type="text"
-                        name="{{ \Str::snake(str_replace(' ', '_', strtolower($row[1]))) }}"
-                        style="width:100%; border:1px solid #000; padding:4px;">
+                    <label>Lab Number:</label>
+                    <input type="text" name="lab_number" style="width:100%; border:1px solid #000; padding:4px;">
                 </div>
-                @endif
             </div>
-            @endforeach
+            <div style="display:flex; margin-bottom:8px; gap:20px;">
+                <div style="flex:1;">
+                    <label>Age & Sex:</label>
+                    <input type="text" name="age_sex" style="width:100%; border:1px solid #000; padding:4px;">
+                </div>
+                <div style="flex:1;">
+                    <label>Date:</label>
+                    <input type="date" name="exam_date" style="width:100%; border:1px solid #000; padding:4px;">
+                </div>
+            </div>
+            <div style="display:flex; margin-bottom:8px; gap:20px;">
+                <div style="flex:1;">
+                    <label>Ref. Doctor:</label>
+                    <input type="text" name="ref_doctor" style="width:100%; border:1px solid #000; padding:4px;">
+                </div>
+                <div style="flex:1;">
+                    <label>Time:</label>
+                    <input type="text" name="time" style="width:100%; border:1px solid #000; padding:4px;">
+                </div>
+            </div>
+            <div style="display:flex; margin-bottom:8px; gap:20px;">
+                <div style="flex:1;">
+                    <label>Client Name:</label>
+                    <input type="text" name="client_name" style="width:100%; border:1px solid #000; padding:4px;">
+                </div>
+                <div style="flex:1;">
+                    <label>Mobile No.:</label>
+                    <input type="text" name="mobile_no" style="width:100%; border:1px solid #000; padding:4px;">
+                </div>
+            </div>
+            <div style="display:flex; margin-bottom:8px; gap:20px;">
+                <div style="flex:1;">
+                    <label>Client Code:</label>
+                    <input type="text" name="client_code" style="width:100%; border:1px solid #000; padding:4px;">
+                </div>
+                <div style="flex:1;"></div>
+            </div>
 
             <!-- CLINICAL HISTORY -->
             <div style="margin:15px 0;">
                 <label>Relevant Clinical History:</label>
-                <textarea name="clinical_history"
-                    rows="4"
-                    style="width:100%; border:1px solid #000; padding:6px;"></textarea>
+                <textarea name="clinical_history" rows="4" style="width:100%; border:1px solid #000; padding:6px;"></textarea>
             </div>
 
             <!-- CBC FIELDS -->
-            @foreach ([
-            'Hemoglobin',
-            'RBC count',
-            'MCV',
-            'RDW',
-            'Total leukocyte count',
-            'Differential leukocyte count',
-            'Platelet count'
-            ] as $cbcField)
             <div style="margin-bottom:8px;">
-                <label>{{ $cbcField }}:</label>
-                <input type="text"
-                    name="{{ \Str::snake(str_replace(' ', '_', strtolower($cbcField))) }}"
-                    style="width:100%; border:1px solid #000; padding:4px;">
+                <label>Hemoglobin:</label>
+                <input type="text" name="hemoglobin" style="width:100%; border:1px solid #000; padding:4px;">
             </div>
-            @endforeach
+            <div style="margin-bottom:8px;">
+                <label>RBC count:</label>
+                <input type="text" name="rbc_count" style="width:100%; border:1px solid #000; padding:4px;">
+            </div>
+            <div style="margin-bottom:8px;">
+                <label>MCV:</label>
+                <input type="text" name="mcv" style="width:100%; border:1px solid #000; padding:4px;">
+            </div>
+            <div style="margin-bottom:8px;">
+                <label>RDW:</label>
+                <input type="text" name="rdw" style="width:100%; border:1px solid #000; padding:4px;">
+            </div>
+            <div style="margin-bottom:8px;">
+                <label>Total leukocyte count:</label>
+                <input type="text" name="total_leukocyte_count" style="width:100%; border:1px solid #000; padding:4px;">
+            </div>
+            <div style="margin-bottom:8px;">
+                <label>Differential leukocyte count:</label>
+                <input type="text" name="differential_leukocyte_count" style="width:100%; border:1px solid #000; padding:4px;">
+            </div>
+            <div style="margin-bottom:8px;">
+                <label>Platelet count:</label>
+                <input type="text" name="platelet_count" style="width:100%; border:1px solid #000; padding:4px;">
+            </div>
 
             <!-- PERIPHERAL SMEAR -->
             <div style="margin:15px 0;">
                 <label>Peripheral Smear Findings:</label>
-                <textarea name="peripheral_smear_findings"
-                    rows="4"
-                    style="width:100%; border:1px solid #000; padding:6px;"></textarea>
+                <textarea name="peripheral_smear_findings" rows="4" style="width:100%; border:1px solid #000; padding:6px;"></textarea>
             </div>
 
             <!-- NOTE -->
@@ -705,6 +1440,80 @@
 
         </div>
 
+        <script>
+            // AJAX Submit for FOM-005 (Bone Marrow Examination)
+            (function() {
+                function initBoneMarrowForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/FOM-005"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastFOM005('success', result.message || 'Saved successfully!');
+                                // Clear form after successful save
+                                form.reset();
+                            } else {
+                                showToastFOM005('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastFOM005('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastFOM005(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initBoneMarrowForm);
+                } else {
+                    initBoneMarrowForm();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
     <x-formTemplete
         id="TDPL/HM/FOM-006"
@@ -712,8 +1521,9 @@
         docName="Coagulation Requisition Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <div style="    width:100%;background:#fff;padding:25px;border-radius:12px;border:1px solid #ccc;font-size:14px;line-height:1.6;">
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
+        <div style="width:100%;background:#fff;padding:25px;border-radius:12px;border:1px solid #ccc;font-size:14px;line-height:1.6;">
 
             <h2 style="text-align:center; margin-bottom:20px;">
                 <strong>COAGULATION REQUISITION FORM</strong>
@@ -728,7 +1538,7 @@
                 </div>
                 <div style="flex:1;">
                     <label>Date:</label>
-                    <input type="date" name="date"
+                    <input type="date" name="form_date"
                         style="width:100%; border:1px solid #777; padding:6px; border-radius:8px;">
                 </div>
             </div>
@@ -951,6 +1761,81 @@
             </div>
 
         </div>
+
+        <script>
+            // AJAX Submit for FOM-006 (Coagulation Requisition)
+            (function() {
+                function initCoagulationReqForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/FOM-006"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastFOM006('success', result.message || 'Saved successfully!');
+                                // Clear form after successful save
+                                form.reset();
+                            } else {
+                                showToastFOM006('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastFOM006('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastFOM006(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initCoagulationReqForm);
+                } else {
+                    initCoagulationReqForm();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
     <x-formTemplete
         id="TDPL/HM/REG-001"
@@ -958,66 +1843,235 @@
         docName="PT APTT Results Register"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <table style="width:100%; border-collapse:collapse; font-size:14px;">
-            <thead>
-                <tr>
-                    <th style="border:1px solid #000; padding:6px;">S. No.</th>
-                    <th style="border:1px solid #000; padding:6px;">Date</th>
-                    <th style="border:1px solid #000; padding:6px;">SIN No</th>
-                    <th style="border:1px solid #000; padding:6px;">Analyte Name</th>
-                    <th style="border:1px solid #000; padding:6px;">Result</th>
-                    <th style="border:1px solid #000; padding:6px;">Done By</th>
-                    <th style="border:1px solid #000; padding:6px;">Verified By</th>
-                    <th style="border:1px solid #000; padding:6px;">Remarks</th>
-                </tr>
-            </thead>
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
 
-            <tbody>
-                @foreach(range(1,10) as $i)
-                <tr>
-                    <td style="border:1px solid #000; padding:6px; text-align:center;">
-                        {{ $i }}
-                    </td>
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="HM_REG_001__from_date"
+                    onchange="loadPtApttData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="HM_REG_001__to_date"
+                    onchange="loadPtApttData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearPtApttFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][date]"
-                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+        <!-- Data Table -->
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                <thead>
+                    <tr>
+                        <th style="border:1px solid #000; padding:6px;">Date</th>
+                        <th style="border:1px solid #000; padding:6px;">SIN No</th>
+                        <th style="border:1px solid #000; padding:6px;">Analyte Name</th>
+                        <th style="border:1px solid #000; padding:6px;">Result</th>
+                        <th style="border:1px solid #000; padding:6px;">Done By</th>
+                        <th style="border:1px solid #000; padding:6px;">Verified By</th>
+                        <th style="border:1px solid #000; padding:6px;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody id="HM_REG_001__tbody">
+                    <!-- Empty row for new entry -->
+                    <tr>
+                        <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="result[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][sin_no]"
-                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+        <script>
+            // Load PT APTT records based on date range filters
+            function loadPtApttData() {
+                const fromDate = document.getElementById('HM_REG_001__from_date').value;
+                const toDate = document.getElementById('HM_REG_001__to_date').value;
 
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][analyte]"
-                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                // At least one date filter required
+                if (!fromDate && !toDate) return;
 
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][result]"
-                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                const params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
 
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]"
-                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                fetch(`/newforms/hm/pt-aptt-results/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('HM_REG_001__tbody');
+                    if (!tbody) return;
 
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][verified_by]"
-                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                    tbody.innerHTML = '';
 
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][remarks]"
-                            style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowREG001();
+                        return;
+                    }
+
+                    res.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="border:1px solid #000; padding:2px;">
+                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                            </td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" value="${row.analyte_name || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="result[]" value="${row.result || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" value="${row.done_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    addEmptyRowREG001();
+                })
+                .catch(error => console.error('Error loading data:', error));
+            }
+
+            function clearPtApttForm() {
+                const tbody = document.getElementById('HM_REG_001__tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowREG001();
+                }
+            }
+
+            function addEmptyRowREG001() {
+                const tbody = document.getElementById('HM_REG_001__tbody');
+                if (!tbody) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="result[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearPtApttFilters() {
+                document.getElementById('HM_REG_001__from_date').value = '';
+                document.getElementById('HM_REG_001__to_date').value = '';
+                clearPtApttForm();
+            }
+
+            // AJAX Submit for REG-001
+            (function() {
+                function initPtApttForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/REG-001"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastREG001('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('HM_REG_001__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach(row => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:2px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" value="${row.analyte_name || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="result[]" value="${row.result || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" value="${row.done_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    addEmptyRowREG001();
+                                }
+                            } else {
+                                showToastREG001('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastREG001('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastREG001(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initPtApttForm);
+                } else {
+                    initPtApttForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -1026,129 +2080,284 @@
         docName="Leishman Stain QC Register"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <table style="width:100%; border-collapse:collapse; font-size:13px;">
-            <thead>
-                <tr>
-                    @foreach([
-                    'Date','Buffer PH','SIN No','Smear Prepared By','Shape','Thickness','Length of Smear',
-                    'Distribution of Cells','Uniform Stain','Deposit','RBC Cytoplasm','WBC Cytoplasm',
-                    'Eosinophils Granules','Overall Stain','Verified By','Approved By HOD','Remarks'
-                    ] as $header)
-                    <th style="border:1px solid #000; padding:6px; white-space:nowrap;">
-                        {{ $header }}
-                    </th>
-                    @endforeach
-                </tr>
-            </thead>
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
 
-            <tbody>
-                @foreach(range(1,5) as $i)
-                <tr>
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][date]"
-                            style="width:120px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="HM_REG_002__from_date"
+                    onchange="loadLeishmanData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="HM_REG_002__to_date"
+                    onchange="loadLeishmanData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearLeishmanFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
-                    {{-- Buffer PH --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][buffer_ph]"
-                            style="width:80px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+        <!-- Data Table -->
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:13px; min-width:1800px;">
+                <thead>
+                    <tr>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Date</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Buffer PH</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">SIN No</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Smear Prepared By</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Shape</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Thickness</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Length of Smear</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Distribution of Cells</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Uniform Stain</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Deposit</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">RBC Cytoplasm</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">WBC Cytoplasm</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Eosinophils Granules</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Overall Stain</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Verified By</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Approved By HOD</th>
+                        <th style="border:1px solid #000; padding:6px; white-space:nowrap;">Remarks</th>
+                    </tr>
+                </thead>
+                <tbody id="HM_REG_002__tbody">
+                    <!-- Empty row for new entry -->
+                    <tr>
+                        <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:110px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="buffer_ph[]" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="smear_prepared_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="shape[]" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="thickness[]" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="length_of_smear[]" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="distribution_of_cells[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="uniform_stain[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="deposit[]" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="rbc_cytoplasm[]" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="wbc_cytoplasm[]" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="eosinophils_granules[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="overall_stain[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="approved_by_hod[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
-                    {{-- SIN No --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][sin_no]"
-                            style="width:110px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+        <script>
+            // Load Leishman Stain QC records based on date range filters
+            function loadLeishmanData() {
+                const fromDate = document.getElementById('HM_REG_002__from_date').value;
+                const toDate = document.getElementById('HM_REG_002__to_date').value;
 
-                    {{-- Smear Prepared By --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][smear_prepared_by]"
-                            style="width:140px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                if (!fromDate && !toDate) return;
 
-                    {{-- Shape --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][shape]"
-                            style="width:100px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                const params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
 
-                    {{-- Thickness --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][thickness]"
-                            style="width:100px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                fetch(`/newforms/hm/leishman-stain-qc/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('HM_REG_002__tbody');
+                    if (!tbody) return;
 
-                    {{-- Length of Smear --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][length_of_smear]"
-                            style="width:130px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                    tbody.innerHTML = '';
 
-                    {{-- Distribution of Cells --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][distribution_of_cells]"
-                            style="width:150px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowREG002();
+                        return;
+                    }
 
-                    {{-- Uniform Stain --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][uniform_stain]"
-                            style="width:110px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                    res.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="border:1px solid #000; padding:2px;">
+                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:110px; border:1px solid #ccc; padding:2px;">
+                            </td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="buffer_ph[]" value="${row.buffer_ph || ''}" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="smear_prepared_by[]" value="${row.smear_prepared_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="shape[]" value="${row.shape || ''}" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="thickness[]" value="${row.thickness || ''}" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="length_of_smear[]" value="${row.length_of_smear || ''}" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="distribution_of_cells[]" value="${row.distribution_of_cells || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="uniform_stain[]" value="${row.uniform_stain || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="deposit[]" value="${row.deposit || ''}" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="rbc_cytoplasm[]" value="${row.rbc_cytoplasm || ''}" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="wbc_cytoplasm[]" value="${row.wbc_cytoplasm || ''}" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="eosinophils_granules[]" value="${row.eosinophils_granules || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="overall_stain[]" value="${row.overall_stain || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="approved_by_hod[]" value="${row.approved_by_hod || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
 
-                    {{-- Deposit --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][deposit]"
-                            style="width:110px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                    addEmptyRowREG002();
+                })
+                .catch(error => console.error('Error loading data:', error));
+            }
 
-                    {{-- RBC Cytoplasm --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][rbc_cytoplasm]"
-                            style="width:130px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+            function clearLeishmanForm() {
+                const tbody = document.getElementById('HM_REG_002__tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowREG002();
+                }
+            }
 
-                    {{-- WBC Cytoplasm --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][wbc_cytoplasm]"
-                            style="width:130px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+            function addEmptyRowREG002() {
+                const tbody = document.getElementById('HM_REG_002__tbody');
+                if (!tbody) return;
 
-                    {{-- Eosinophils Granules --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][eosinophils_granules]"
-                            style="width:150px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:110px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="buffer_ph[]" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="smear_prepared_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="shape[]" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="thickness[]" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="length_of_smear[]" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="distribution_of_cells[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="uniform_stain[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="deposit[]" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="rbc_cytoplasm[]" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="wbc_cytoplasm[]" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="eosinophils_granules[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="overall_stain[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="approved_by_hod[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
 
-                    {{-- Overall Stain --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][overall_stain]"
-                            style="width:120px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+            function clearLeishmanFilters() {
+                document.getElementById('HM_REG_002__from_date').value = '';
+                document.getElementById('HM_REG_002__to_date').value = '';
+                clearLeishmanForm();
+            }
 
-                    {{-- Verified By --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][verified_by]"
-                            style="width:120px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+            // AJAX Submit for REG-002
+            (function() {
+                function initLeishmanForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/REG-002"]');
+                    if (!formContainer) return;
 
-                    {{-- Approved By HOD --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][approved_by_hod]"
-                            style="width:130px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
 
-                    {{-- Remarks --}}
-                    <td style="border:1px solid #000; padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][remarks]"
-                            style="width:150px; padding:4px; border:1px solid #aaa; border-radius:4px;">
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastREG002('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('HM_REG_002__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach(row => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:2px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:110px; border:1px solid #ccc; padding:2px;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="buffer_ph[]" value="${row.buffer_ph || ''}" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="smear_prepared_by[]" value="${row.smear_prepared_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="shape[]" value="${row.shape || ''}" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="thickness[]" value="${row.thickness || ''}" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="length_of_smear[]" value="${row.length_of_smear || ''}" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="distribution_of_cells[]" value="${row.distribution_of_cells || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="uniform_stain[]" value="${row.uniform_stain || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="deposit[]" value="${row.deposit || ''}" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="rbc_cytoplasm[]" value="${row.rbc_cytoplasm || ''}" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="wbc_cytoplasm[]" value="${row.wbc_cytoplasm || ''}" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="eosinophils_granules[]" value="${row.eosinophils_granules || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="overall_stain[]" value="${row.overall_stain || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:90px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="approved_by_hod[]" value="${row.approved_by_hod || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    addEmptyRowREG002();
+                                }
+                            } else {
+                                showToastREG002('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastREG002('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastREG002(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initLeishmanForm);
+                } else {
+                    initLeishmanForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -1157,83 +2366,278 @@
         docName="ABO & Rh Typing Result Register"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
 
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="HM_REG_003__from_date"
+                    onchange="loadAboRhResultData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="HM_REG_003__to_date"
+                    onchange="loadAboRhResultData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearAboRhResultFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
-        <table style="width:100%; border-collapse:collapse; font-size:14px;">
-            <thead>
-                <tr>
-                    <th style="border:1px solid #000; padding:6px;" rowspan="2">Date/Time</th>
-                    <th style="border:1px solid #000; padding:6px;" rowspan="2">SIN No</th>
-                    <th style="border:1px solid #000; padding:6px;" rowspan="2">Patient Name</th>
-                    <th style="border:1px solid #000; padding:6px;" rowspan="2">Age/Sex</th>
-
-                    <th style="border:1px solid #000; padding:6px;" colspan="3">Reverse Grouping</th>
-                    <th style="border:1px solid #000; padding:6px;" colspan="3">Forward Grouping</th>
-
-                    <th style="border:1px solid #000; padding:6px;" rowspan="2">Result</th>
-                    <th style="border:1px solid #000; padding:6px;" rowspan="2">Test Done By</th>
-                    <th style="border:1px solid #000; padding:6px;" rowspan="2">Test Verified By</th>
-                    <th style="border:1px solid #000; padding:6px;" rowspan="2">Approved By</th>
-                </tr>
-
-                <tr>
-                    <th style="border:1px solid #000; padding:6px;">Pool-A cells</th>
-                    <th style="border:1px solid #000; padding:6px;">Pool-B cells</th>
-                    <th style="border:1px solid #000; padding:6px;">Pool-O cells</th>
-
-                    <th style="border:1px solid #000; padding:6px;">Anti-A</th>
-                    <th style="border:1px solid #000; padding:6px;">Anti-B</th>
-                    <th style="border:1px solid #000; padding:6px;">Anti-D</th>
-                </tr>
-            </thead>
-
-            <tbody>
-                @for($i = 1; $i <= 12; $i++)
+        <!-- Data Table -->
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:14px; min-width:1400px;">
+                <thead>
                     <tr>
-                    <!-- 4 Normal Columns -->
-                    <td><input type="text" name="rows[{{ $i }}][datetime]" class="cell-input"></td>
-                    <td><input type="text" name="rows[{{ $i }}][sin]" class="cell-input"></td>
-                    <td><input type="text" name="rows[{{ $i }}][patient]" class="cell-input"></td>
-                    <td><input type="text" name="rows[{{ $i }}][age_sex]" class="cell-input"></td>
-
-                    <!-- Reverse Grouping (3) -->
-                    <td><input type="text" name="rows[{{ $i }}][pool_a]" class="cell-input"></td>
-                    <td><input type="text" name="rows[{{ $i }}][pool_b]" class="cell-input"></td>
-                    <td><input type="text" name="rows[{{ $i }}][pool_o]" class="cell-input"></td>
-
-                    <!-- Forward Grouping (3) -->
-                    <td><input type="text" name="rows[{{ $i }}][anti_a]" class="cell-input"></td>
-                    <td><input type="text" name="rows[{{ $i }}][anti_b]" class="cell-input"></td>
-                    <td><input type="text" name="rows[{{ $i }}][anti_d]" class="cell-input"></td>
-
-                    <!-- Remaining Columns -->
-                    <td><input type="text" name="rows[{{ $i }}][result]" class="cell-input"></td>
-                    <td><input type="text" name="rows[{{ $i }}][done_by]" class="cell-input"></td>
-                    <td><input type="text" name="rows[{{ $i }}][verified_by]" class="cell-input"></td>
-                    <td><input type="text" name="rows[{{ $i }}][approved_by]" class="cell-input"></td>
+                        <th style="border:1px solid #000; padding:4px;" rowspan="2">Date</th>
+                        <th style="border:1px solid #000; padding:4px;" rowspan="2">Time</th>
+                        <th style="border:1px solid #000; padding:4px;" rowspan="2">SIN No</th>
+                        <th style="border:1px solid #000; padding:4px;" rowspan="2">Patient Name</th>
+                        <th style="border:1px solid #000; padding:4px;" rowspan="2">Age/Sex</th>
+                        <th style="border:1px solid #000; padding:4px;" colspan="3">Reverse Grouping</th>
+                        <th style="border:1px solid #000; padding:4px;" colspan="3">Forward Grouping</th>
+                        <th style="border:1px solid #000; padding:4px;" rowspan="2">Result</th>
+                        <th style="border:1px solid #000; padding:4px;" rowspan="2">Done By</th>
+                        <th style="border:1px solid #000; padding:4px;" rowspan="2">Verified By</th>
+                        <th style="border:1px solid #000; padding:4px;" rowspan="2">Approved By</th>
                     </tr>
-                    @endfor
-            </tbody>
-        </table>
+                    <tr>
+                        <th style="border:1px solid #000; padding:4px;">Pool-A</th>
+                        <th style="border:1px solid #000; padding:4px;">Pool-B</th>
+                        <th style="border:1px solid #000; padding:4px;">Pool-O</th>
+                        <th style="border:1px solid #000; padding:4px;">Anti-A</th>
+                        <th style="border:1px solid #000; padding:4px;">Anti-B</th>
+                        <th style="border:1px solid #000; padding:4px;">Anti-D</th>
+                    </tr>
+                </thead>
+                <tbody id="HM_REG_003__tbody">
+                    <!-- Empty row for new entry -->
+                    <tr>
+                        <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input type="time" name="check_time[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="patient_name[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="age_sex[]" style="width:60px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="pool_a_cells[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="pool_b_cells[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="pool_o_cells[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="anti_d[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="result[]" style="width:60px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="test_done_by[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="test_verified_by[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="approved_by[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
 
+        <script>
+            // Load ABO & Rh Typing Result records based on date range filters
+            function loadAboRhResultData() {
+                const fromDate = document.getElementById('HM_REG_003__from_date').value;
+                const toDate = document.getElementById('HM_REG_003__to_date').value;
 
-        <style>
-            .cell-input {
-                width: 100%;
-                border: 0;
-                padding: 6px;
-                font-size: 14px;
-                outline: none;
-                box-sizing: border-box;
+                if (!fromDate && !toDate) return;
+
+                const params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
+
+                fetch(`/newforms/hm/abo-rh-typing-result/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('HM_REG_003__tbody');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowREG003();
+                        return;
+                    }
+
+                    res.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="border:1px solid #000; padding:2px;">
+                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                            </td>
+                            <td style="border:1px solid #000; padding:2px;"><input type="time" name="check_time[]" value="${row.check_time || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="patient_name[]" value="${row.patient_name || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="age_sex[]" value="${row.age_sex || ''}" style="width:60px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="pool_a_cells[]" value="${row.pool_a_cells || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="pool_b_cells[]" value="${row.pool_b_cells || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="pool_o_cells[]" value="${row.pool_o_cells || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a[]" value="${row.anti_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_b[]" value="${row.anti_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d[]" value="${row.anti_d || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="result[]" value="${row.result || ''}" style="width:60px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="test_done_by[]" value="${row.test_done_by || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="test_verified_by[]" value="${row.test_verified_by || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="approved_by[]" value="${row.approved_by || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    addEmptyRowREG003();
+                })
+                .catch(error => console.error('Error loading data:', error));
             }
 
-            table th,
-            table td {
-                padding: 6px;
-                text-align: center;
+            function clearAboRhResultForm() {
+                const tbody = document.getElementById('HM_REG_003__tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowREG003();
+                }
             }
-        </style>
+
+            function addEmptyRowREG003() {
+                const tbody = document.getElementById('HM_REG_003__tbody');
+                if (!tbody) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input type="time" name="check_time[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="patient_name[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="age_sex[]" style="width:60px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="pool_a_cells[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="pool_b_cells[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="pool_o_cells[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_a[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_b[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="anti_d[]" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="result[]" style="width:60px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="test_done_by[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="test_verified_by[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="approved_by[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearAboRhResultFilters() {
+                document.getElementById('HM_REG_003__from_date').value = '';
+                document.getElementById('HM_REG_003__to_date').value = '';
+                clearAboRhResultForm();
+            }
+
+            // AJAX Submit for REG-003
+            (function() {
+                function initAboRhResultForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/REG-003"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastREG003('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('HM_REG_003__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach(row => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:2px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:2px;"><input type="time" name="check_time[]" value="${row.check_time || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:70px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="patient_name[]" value="${row.patient_name || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="age_sex[]" value="${row.age_sex || ''}" style="width:60px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="pool_a_cells[]" value="${row.pool_a_cells || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="pool_b_cells[]" value="${row.pool_b_cells || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="pool_o_cells[]" value="${row.pool_o_cells || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_a[]" value="${row.anti_a || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_b[]" value="${row.anti_b || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="anti_d[]" value="${row.anti_d || ''}" style="width:40px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="result[]" value="${row.result || ''}" style="width:60px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="test_done_by[]" value="${row.test_done_by || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="test_verified_by[]" value="${row.test_verified_by || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="approved_by[]" value="${row.approved_by || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    addEmptyRowREG003();
+                                }
+                            } else {
+                                showToastREG003('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastREG003('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastREG003(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initAboRhResultForm);
+                } else {
+                    initAboRhResultForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -1242,56 +2646,244 @@
         docName="ICT DCT Malaria Result Register"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <table style="width:100%; border-collapse: collapse;" border="1">
-            <thead>
-                <tr style="text-align: center; font-weight: bold;">
-                    <td style="border:1px solid #000;padding:6px;">Date</td>
-                    <td style="border:1px solid #000;padding:6px;">Sin No.</td>
-                    <td style="border:1px solid #000;padding:6px;">Patient Name</td>
-                    <td style="border:1px solid #000;padding:6px;">Age/Sex</td>
-                    <td style="border:1px solid #000;padding:6px;">Analyte Name</td>
-                    <td style="border:1px solid #000;padding:6px;">Result</td>
-                    <td style="border:1px solid #000;padding:6px;">Done By</td>
-                    <td style="border:1px solid #000;padding:6px;">Verified By</td>
-                    <td style="border:1px solid #000;padding:6px;">Remarks</td>
-                </tr>
-            </thead>
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
 
-            <tbody>
-                @for ($i = 0; $i < 20; $i++)
-                    <tr>
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][date]" style="width:100%; border:none;">
-                    </td>
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][sin_no]" style="width:100%; border:none;">
-                    </td>
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][patient_name]" style="width:100%; border:none;">
-                    </td>
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][age_sex]" style="width:100%; border:none;">
-                    </td>
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][analyte_name]" style="width:100%; border:none;">
-                    </td>
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][result]" style="width:100%; border:none;">
-                    </td>
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:none;">
-                    </td>
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][verified_by]" style="width:100%; border:none;">
-                    </td>
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][remarks]" style="width:100%; border:none;">
-                    </td>
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="HM_REG_004__from_date"
+                    onchange="loadIctDctMalariaData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="HM_REG_004__to_date"
+                    onchange="loadIctDctMalariaData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearIctDctMalariaFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Table -->
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                <thead>
+                    <tr style="text-align: center; font-weight: bold;">
+                        <th style="border:1px solid #000; padding:6px;">Date</th>
+                        <th style="border:1px solid #000; padding:6px;">Sin No.</th>
+                        <th style="border:1px solid #000; padding:6px;">Patient Name</th>
+                        <th style="border:1px solid #000; padding:6px;">Age/Sex</th>
+                        <th style="border:1px solid #000; padding:6px;">Analyte Name</th>
+                        <th style="border:1px solid #000; padding:6px;">Result</th>
+                        <th style="border:1px solid #000; padding:6px;">Done By</th>
+                        <th style="border:1px solid #000; padding:6px;">Verified By</th>
+                        <th style="border:1px solid #000; padding:6px;">Remarks</th>
                     </tr>
-                    @endfor
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="HM_REG_004__tbody">
+                    <!-- Empty row for new entry -->
+                    <tr>
+                        <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:130px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="patient_name[]" style="width:150px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="age_sex[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" style="width:130px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="result[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:150px; border:1px solid #ccc; padding:2px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            // Load ICT DCT Malaria Result records based on date range filters
+            function loadIctDctMalariaData() {
+                const fromDate = document.getElementById('HM_REG_004__from_date').value;
+                const toDate = document.getElementById('HM_REG_004__to_date').value;
+
+                if (!fromDate && !toDate) return;
+
+                const params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
+
+                fetch(`/newforms/hm/ict-dct-malaria-result/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('HM_REG_004__tbody');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowREG004();
+                        return;
+                    }
+
+                    res.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="border:1px solid #000; padding:2px;">
+                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:130px; border:1px solid #ccc; padding:2px;">
+                            </td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="patient_name[]" value="${row.patient_name || ''}" style="width:150px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="age_sex[]" value="${row.age_sex || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" value="${row.analyte_name || ''}" style="width:130px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="result[]" value="${row.result || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" value="${row.done_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:150px; border:1px solid #ccc; padding:2px;"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    addEmptyRowREG004();
+                })
+                .catch(error => console.error('Error loading data:', error));
+            }
+
+            function clearIctDctMalariaForm() {
+                const tbody = document.getElementById('HM_REG_004__tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowREG004();
+                }
+            }
+
+            function addEmptyRowREG004() {
+                const tbody = document.getElementById('HM_REG_004__tbody');
+                if (!tbody) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:130px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="patient_name[]" style="width:150px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="age_sex[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" style="width:130px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="result[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:150px; border:1px solid #ccc; padding:2px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearIctDctMalariaFilters() {
+                document.getElementById('HM_REG_004__from_date').value = '';
+                document.getElementById('HM_REG_004__to_date').value = '';
+                clearIctDctMalariaForm();
+            }
+
+            // AJAX Submit for REG-004
+            (function() {
+                function initIctDctMalariaForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/REG-004"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastREG004('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('HM_REG_004__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach(row => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:2px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:130px; border:1px solid #ccc; padding:2px;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="patient_name[]" value="${row.patient_name || ''}" style="width:150px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="age_sex[]" value="${row.age_sex || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" value="${row.analyte_name || ''}" style="width:130px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="result[]" value="${row.result || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" value="${row.done_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:150px; border:1px solid #ccc; padding:2px;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    addEmptyRowREG004();
+                                }
+                            } else {
+                                showToastREG004('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastREG004('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastREG004(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initIctDctMalariaForm);
+                } else {
+                    initIctDctMalariaForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -1300,59 +2892,239 @@
         docName="Erythrocyte Sedimentation Rate (ESR) Results Register"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <table style="width:100%; border-collapse: collapse;" border="1">
-            <thead>
-                <tr style="text-align: center; font-weight: bold;">
-                    <td style="border:1px solid #000;padding:6px;">S. No.</td>
-                    <td style="border:1px solid #000;padding:6px;">Date</td>
-                    <td style="border:1px solid #000;padding:6px;">SIN No</td>
-                    <td style="border:1px solid #000;padding:6px;">ESR Start Time</td>
-                    <td style="border:1px solid #000;padding:6px;">ESR End Time</td>
-                    <td style="border:1px solid #000;padding:6px;">ESR Result</td>
-                    <td style="border:1px solid #000;padding:6px;">Done By</td>
-                    <td style="border:1px solid #000;padding:6px;">Verified By</td>
-                </tr>
-            </thead>
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
 
-            <tbody>
-                @for ($i = 1; $i <= 20; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">
-                        {{ $i }}
-                    </td>
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="HM_REG_005__from_date"
+                    onchange="loadEsrResultsData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="HM_REG_005__to_date"
+                    onchange="loadEsrResultsData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearEsrResultsFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][date]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][sin_no]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="time" name="rows[{{ $i }}][esr_start]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="time" name="rows[{{ $i }}][esr_end]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][esr_result]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][verified_by]" style="width:100%; border:none;">
-                    </td>
+        <!-- Data Table -->
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                <thead>
+                    <tr style="text-align: center; font-weight: bold;">
+                        <th style="border:1px solid #000; padding:6px;">S. No.</th>
+                        <th style="border:1px solid #000; padding:6px;">Date</th>
+                        <th style="border:1px solid #000; padding:6px;">SIN No</th>
+                        <th style="border:1px solid #000; padding:6px;">ESR Start Time</th>
+                        <th style="border:1px solid #000; padding:6px;">ESR End Time</th>
+                        <th style="border:1px solid #000; padding:6px;">ESR Result</th>
+                        <th style="border:1px solid #000; padding:6px;">Done By</th>
+                        <th style="border:1px solid #000; padding:6px;">Verified By</th>
                     </tr>
-                    @endfor
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="HM_REG_005__tbody">
+                    <!-- Empty row for new entry -->
+                    <tr>
+                        <td style="border:1px solid #000; padding:2px; text-align:center;">1</td>
+                        <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:130px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input type="time" name="esr_start_time[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input type="time" name="esr_end_time[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="esr_result[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            // Load ESR Results records based on date range filters
+            function loadEsrResultsData() {
+                const fromDate = document.getElementById('HM_REG_005__from_date').value;
+                const toDate = document.getElementById('HM_REG_005__to_date').value;
+
+                if (!fromDate && !toDate) return;
+
+                const params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
+
+                fetch(`/newforms/hm/esr-results/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('HM_REG_005__tbody');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowREG005(1);
+                        return;
+                    }
+
+                    res.data.forEach((row, index) => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="border:1px solid #000; padding:2px; text-align:center;">${index + 1}</td>
+                            <td style="border:1px solid #000; padding:2px;">
+                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:130px; border:1px solid #ccc; padding:2px;">
+                            </td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input type="time" name="esr_start_time[]" value="${row.esr_start_time || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input type="time" name="esr_end_time[]" value="${row.esr_end_time || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="esr_result[]" value="${row.esr_result || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" value="${row.done_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    addEmptyRowREG005(res.data.length + 1);
+                })
+                .catch(error => console.error('Error loading data:', error));
+            }
+
+            function clearEsrResultsForm() {
+                const tbody = document.getElementById('HM_REG_005__tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowREG005(1);
+                }
+            }
+
+            function addEmptyRowREG005(rowNum) {
+                const tbody = document.getElementById('HM_REG_005__tbody');
+                if (!tbody) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:2px; text-align:center;">${rowNum}</td>
+                    <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:130px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input type="time" name="esr_start_time[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input type="time" name="esr_end_time[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="esr_result[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearEsrResultsFilters() {
+                document.getElementById('HM_REG_005__from_date').value = '';
+                document.getElementById('HM_REG_005__to_date').value = '';
+                clearEsrResultsForm();
+            }
+
+            // AJAX Submit for REG-005
+            (function() {
+                function initEsrResultsForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/REG-005"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastREG005('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('HM_REG_005__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach((row, index) => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:2px; text-align:center;">${index + 1}</td>
+                                            <td style="border:1px solid #000; padding:2px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:130px; border:1px solid #ccc; padding:2px;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input type="time" name="esr_start_time[]" value="${row.esr_start_time || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input type="time" name="esr_end_time[]" value="${row.esr_end_time || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="esr_result[]" value="${row.esr_result || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" value="${row.done_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    addEmptyRowREG005(result.data.length + 1);
+                                }
+                            } else {
+                                showToastREG005('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastREG005('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastREG005(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initEsrResultsForm);
+                } else {
+                    initEsrResultsForm();
+                }
+            })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -1361,56 +3133,230 @@
         docName="Body Fluids Examination Results Register"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-         <table style="width:100%; border-collapse: collapse;" border="1">
-            <thead>
-                <tr style="text-align: center; font-weight: bold;">
-                    <td style="border:1px solid #000;padding:6px;">S. No.</td>
-                    <td style="border:1px solid #000;padding:6px;">Date</td>
-                    <td style="border:1px solid #000;padding:6px;">SIN No</td>
-                    <td style="border:1px solid #000;padding:6px;">Analyte name</td>
-                    <td style="border:1px solid #000;padding:6px;">Done By</td>
-                    <td style="border:1px solid #000;padding:6px;">Verified By</td>
-                    <td style="border:1px solid #000;padding:6px;">Remarks</td>
-                </tr>
-            </thead>
+        buttonText="Submit"
+        action="{{ route('newforms.hm.forms.submit') }}">
 
-            <tbody>
-                @for ($i = 1; $i <= 20; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">
-                        {{ $i }}
-                    </td>
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="HM_REG_006__from_date"
+                    onchange="loadBodyFluidsResultData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="HM_REG_006__to_date"
+                    onchange="loadBodyFluidsResultData()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearBodyFluidsResultFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
 
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][date]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][sin_no]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][esr_start]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][esr_end]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][esr_result]" style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][done_by]" style="width:100%; border:none;">
-                    </td>
-
-               
+        <!-- Data Table -->
+        <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:14px;">
+                <thead>
+                    <tr style="text-align: center; font-weight: bold;">
+                        <th style="border:1px solid #000; padding:6px;">Date</th>
+                        <th style="border:1px solid #000; padding:6px;">SIN No</th>
+                        <th style="border:1px solid #000; padding:6px;">Analyte Name</th>
+                        <th style="border:1px solid #000; padding:6px;">Done By</th>
+                        <th style="border:1px solid #000; padding:6px;">Verified By</th>
+                        <th style="border:1px solid #000; padding:6px;">Remarks</th>
                     </tr>
-                    @endfor
-            </tbody>
-        </table>
+                </thead>
+                <tbody id="HM_REG_006__tbody">
+                    <!-- Empty row for new entry -->
+                    <tr>
+                        <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" style="width:120px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                        <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:120px; border:1px solid #ccc; padding:2px;"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            // Load Body Fluids Examination Result records based on date range filters
+            function loadBodyFluidsResultData() {
+                const fromDate = document.getElementById('HM_REG_006__from_date').value;
+                const toDate = document.getElementById('HM_REG_006__to_date').value;
+
+                if (!fromDate && !toDate) return;
+
+                const params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
+
+                fetch(`/newforms/hm/body-fluids-examination-result/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('HM_REG_006__tbody');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+
+                    if (!res.data || res.data.length === 0) {
+                        addEmptyRowREG006();
+                        return;
+                    }
+
+                    res.data.forEach(row => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td style="border:1px solid #000; padding:2px;">
+                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                            </td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" value="${row.analyte_name || ''}" style="width:120px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" value="${row.done_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:120px; border:1px solid #ccc; padding:2px;"></td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+
+                    addEmptyRowREG006();
+                })
+                .catch(error => console.error('Error loading data:', error));
+            }
+
+            function clearBodyFluidsResultForm() {
+                const tbody = document.getElementById('HM_REG_006__tbody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    addEmptyRowREG006();
+                }
+            }
+
+            function addEmptyRowREG006() {
+                const tbody = document.getElementById('HM_REG_006__tbody');
+                if (!tbody) return;
+
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:2px;"><input type="date" name="check_date[]" style="width:100%; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" style="width:120px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                    <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" style="width:120px; border:1px solid #ccc; padding:2px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearBodyFluidsResultFilters() {
+                document.getElementById('HM_REG_006__from_date').value = '';
+                document.getElementById('HM_REG_006__to_date').value = '';
+                clearBodyFluidsResultForm();
+            }
+
+            // AJAX Submit for REG-006
+            (function() {
+                function initBodyFluidsResultForm() {
+                    const formContainer = document.querySelector('[id="TDPL/HM/REG-006"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastREG006('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('HM_REG_006__tbody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+
+                                    result.data.forEach(row => {
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = `
+                                            <td style="border:1px solid #000; padding:2px;">
+                                                <input type="hidden" name="row_id[]" value="${row.id}">
+                                                <input type="date" name="check_date[]" value="${row.check_date || ''}" style="width:100%; border:1px solid #ccc; padding:2px;">
+                                            </td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="sin_no[]" value="${row.sin_no || ''}" style="width:80px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="analyte_name[]" value="${row.analyte_name || ''}" style="width:120px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="done_by[]" value="${row.done_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="verified_by[]" value="${row.verified_by || ''}" style="width:100px; border:1px solid #ccc; padding:2px;"></td>
+                                            <td style="border:1px solid #000; padding:2px;"><input name="remarks[]" value="${row.remarks || ''}" style="width:120px; border:1px solid #ccc; padding:2px;"></td>
+                                        `;
+                                        tbody.appendChild(tr);
+                                    });
+
+                                    addEmptyRowREG006();
+                                }
+                            } else {
+                                showToastREG006('error', result.message || 'Failed to save');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastREG006('error', 'Failed to save. Please try again.');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+
+                        return false;
+                    });
+                }
+
+                function showToastREG006(type, message) {
+                    const toast = document.createElement('div');
+                    toast.style.cssText = `
+                        position: fixed; top: 20px; right: 20px; z-index: 9999;
+                        padding: 15px 25px; border-radius: 5px; color: white;
+                        font-weight: bold; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+                        background-color: ${type === 'success' ? '#28a745' : '#dc3545'};
+                    `;
+                    toast.textContent = message;
+                    document.body.appendChild(toast);
+                    setTimeout(() => toast.remove(), 3000);
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initBodyFluidsResultForm);
+                } else {
+                    initBodyFluidsResultForm();
+                }
+            })();
+        </script>
+
     </x-formTemplete>
 
 </body>
