@@ -30,9 +30,10 @@ class CGFormsController extends Controller
 
     public function storeCytogeneticsTrf(Request $request)
     {
+        $isAjax = $request->ajax() || $request->wantsJson();
 
         // 🔑 Inline edit support
-        $formId = $request->cg_form_id;   // ✅ THIS WAS MISSING
+        $formId = $request->cg_form_id;
 
         $data = $request->only([
             'patient_name',
@@ -114,14 +115,37 @@ class CGFormsController extends Controller
             $form = CgCytogeneticsTrf::create($data);
         }
 
+        if ($isAjax) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cytogenetics Test Request Form saved successfully',
+                'form_id' => $form->id,
+            ]);
+        }
+
         return back()->with([
             'success' => 'Cytogenetics Test Request Form saved successfully',
             'cg_form_id' => $form->id,
         ]);
     }
 
+    public function loadCytogeneticsTrf(Request $request)
+    {
+        if (!$request->filled('patient_name')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = CgCytogeneticsTrf::where('patient_name', $request->patient_name)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
+    }
+
     public function storeCytogeneticsConsent(Request $request)
     {
+        $isAjax = $request->ajax() || $request->wantsJson();
+
         // 🔑 Inline edit support
         $formId = $request->cg_consent_id;
 
@@ -149,9 +173,30 @@ class CGFormsController extends Controller
             $form = CgCytogeneticsConsent::create($data);
         }
 
+        if ($isAjax) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Cytogenetics Consent Form saved successfully',
+                'form_id' => $form->id,
+            ]);
+        }
+
         return back()->with([
             'success' => 'Cytogenetics Consent Form saved successfully',
             'cg_consent_id' => $form->id,
         ]);
+    }
+
+    public function loadCytogeneticsConsent(Request $request)
+    {
+        if (!$request->filled('patient_full_name')) {
+            return response()->json(['data' => null]);
+        }
+
+        $form = CgCytogeneticsConsent::where('patient_full_name', $request->patient_full_name)
+            ->latest()
+            ->first();
+
+        return response()->json(['data' => $form]);
     }
 }

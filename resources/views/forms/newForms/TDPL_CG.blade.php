@@ -258,6 +258,27 @@
         <x-formTemplete id="TDPL/CG/FOM-001" docNo="TDPL/CG/FOM-001" docName="Cytogenetics Test Request Form" issueNo="2.0"
             issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cg.forms.submit') }}">
 
+            <input type="hidden" name="cg_form_id" id="cg_form_id">
+
+            <!-- Filter Section -->
+            <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
+                    <label><strong>Patient Name</strong></label>
+                    <input type="text" id="cgTrfFilterName"
+                        style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type patient name">
+                </div>
+                <div style="display:flex; gap:8px; align-items:flex-end;">
+                    <button type="button" onclick="loadCgTrfForm()"
+                        style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Search
+                    </button>
+                    <button type="button" onclick="clearCgTrfForm()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
             <div style="width:100%; font-family:Arial; font-size:14px; line-height:1.4;">
 
                 <h2 style="text-align:center; margin-bottom:10px;">CYTOGENETICS TEST REQUISITION FORM</h2>
@@ -266,7 +287,7 @@
                 <table style="width:100%; border-collapse:collapse;">
                     <tr>
                         <td style="width:50%; vertical-align:top; padding:8px; border:1px solid #000;">
-                            Patient’s Name: <input type="text" id="patient_name" name="patient_name"
+                            Patient's Name: <input type="text" id="patient_name" name="patient_name"
                                 style="width:90%;"><br><br>
                             Age: <input type="text" id="patient_age" name="patient_age" style="width:25%;"> &nbsp;&nbsp;
                             Gender: <input type="text" id="patient_gender" name="patient_gender"
@@ -465,12 +486,191 @@
                 ________________________________
             </div>
 
+            <script>
+                // ── LOAD ──
+                function loadCgTrfForm() {
+                    const patientName = document.getElementById('cgTrfFilterName').value.trim();
+                    if (!patientName) return;
+
+                    fetch(`/newforms/cg/cytogenetics-trf/load?patient_name=${encodeURIComponent(patientName)}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        clearCgTrfFields();
+
+                        if (!res.data) {
+                            document.getElementById('cg_form_id').value = '';
+                            return;
+                        }
+
+                        document.getElementById('cg_form_id').value = res.data.id;
+
+                        // Simple text / date / time / textarea fields
+                        const textFields = [
+                            'patient_name','patient_age','patient_gender','patient_address',
+                            'physician_address','physician_phone','hospital_lab',
+                            'collection_date','collection_time','specimen_type',
+                            'sample_received_at','sample_condition',
+                            'study_other_details',
+                            'prenatal_ultrasound_details','prenatal_other_details',
+                            'pediatric_cardiac_details','pediatric_anomalies_details',
+                            'familial_translocation_details','previous_child_details','adult_other_details',
+                            'suspected_chromosome','study_indication',
+                            'suspected_trisomy','major_birth_defect','multiple_anomalies',
+                            'parental_followup','other_notes',
+                            'oncology_diagnosis','wbc','blasts_percentage'
+                        ];
+
+                        textFields.forEach(field => {
+                            const el = document.getElementById(field);
+                            if (el && res.data[field] != null) el.value = res.data[field];
+                        });
+
+                        // Checkbox arrays
+                        const arrayFields = [
+                            'study_requests','prenatal_studies','pediatric_studies',
+                            'adult_studies','additional_conditions','sample_types','study_categories'
+                        ];
+
+                        arrayFields.forEach(field => {
+                            const values = res.data[field];
+                            if (!Array.isArray(values)) return;
+                            values.forEach(val => {
+                                const cb = document.querySelector(`input[name="${field}[]"][value="${val}"]`);
+                                if (cb) cb.checked = true;
+                            });
+                        });
+
+                        // Single-value checkboxes (yes/no style)
+                        const singleCbFields = ['new_diagnosis','repeat_study','bone_marrow_transplant','donor_sex','previous_therapy'];
+                        singleCbFields.forEach(field => {
+                            const val = res.data[field];
+                            if (!val) return;
+                            const cb = document.querySelector(`input[name="${field}"][value="${val}"]`);
+                            if (cb) cb.checked = true;
+                        });
+                    })
+                    .catch(err => console.error('Load error:', err));
+                }
+
+                // ── CLEAR ──
+                function clearCgTrfForm() {
+                    document.getElementById('cgTrfFilterName').value = '';
+                    document.getElementById('cg_form_id').value = '';
+                    clearCgTrfFields();
+                }
+
+                function clearCgTrfFields() {
+                    const container = document.querySelector('[id="TDPL/CG/FOM-001"]');
+                    if (!container) return;
+                    container.querySelectorAll('input, textarea, select').forEach(el => {
+                        if (el.id === 'cgTrfFilterName' || el.id === 'cg_form_id' || el.name === 'doc_no') return;
+                        if (el.type === 'checkbox') {
+                            el.checked = false;
+                        } else {
+                            el.value = '';
+                        }
+                    });
+                }
+
+                // ── AJAX SUBMIT + TOAST ──
+                (function() {
+                    function initCgTrfForm() {
+                        const formContainer = document.querySelector('[id="TDPL/CG/FOM-001"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                            if (submitBtn) {
+                                submitBtn.textContent = 'Saving...';
+                                submitBtn.disabled = true;
+                            }
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastCgTrf('success', result.message || 'Saved successfully!');
+                                    if (result.form_id) {
+                                        document.getElementById('cg_form_id').value = result.form_id;
+                                    }
+                                } else {
+                                    showToastCgTrf('error', result.message || 'Failed to save');
+                                }
+                            })
+                            .catch(err => {
+                                showToastCgTrf('error', 'Failed to save. Please try again.');
+                            })
+                            .finally(() => {
+                                if (submitBtn) {
+                                    submitBtn.textContent = originalText;
+                                    submitBtn.disabled = false;
+                                }
+                            });
+                        });
+                    }
+
+                    function showToastCgTrf(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initCgTrfForm);
+                    } else {
+                        initCgTrfForm();
+                    }
+                })();
+            </script>
+
         </x-formTemplete>
 
      <x-formTemplete id="TDPL/CG/FOM-002" docNo="TDPL/CG/FOM-002" docName=" Cytogenetics Consent Form" issueNo="2.0"
             issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.cg.forms.submit') }}">
 
-            <form style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; padding: 10px;">
+            <input type="hidden" name="cg_consent_id" id="cg_consent_id">
+
+            <!-- Filter Section -->
+            <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+                <div>
+                    <label><strong>Patient Full Name</strong></label>
+                    <input type="text" id="cgConsentFilterName"
+                        style="border:1px solid #000; padding:4px; width:250px; display:block;" placeholder="Type patient full name">
+                </div>
+                <div style="display:flex; gap:8px; align-items:flex-end;">
+                    <button type="button" onclick="loadCgConsentForm()"
+                        style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Search
+                    </button>
+                    <button type="button" onclick="clearCgConsentForm()"
+                        style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                        Clear
+                    </button>
+                </div>
+            </div>
+
+            <div style="font-family: Arial, sans-serif; font-size: 14px; line-height: 1.6; padding: 10px;">
 
                 <h2 style="text-align: center; margin-bottom: 15px;">
                     INFORMED CONSENT AND RELEASE FOR CONVENTIONAL AND MOLECULAR CYTOGENETIC STUDIES, CONSTITUTIONAL GENETICS
@@ -616,7 +816,146 @@
                     </div>
                 </div>
 
-            </form>
+            </div>
+
+            <script>
+                // ── LOAD ──
+                function loadCgConsentForm() {
+                    const fullName = document.getElementById('cgConsentFilterName').value.trim();
+                    if (!fullName) return;
+
+                    fetch(`/newforms/cg/cytogenetics-consent/load?patient_full_name=${encodeURIComponent(fullName)}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        clearCgConsentFields();
+
+                        if (!res.data) {
+                            document.getElementById('cg_consent_id').value = '';
+                            return;
+                        }
+
+                        document.getElementById('cg_consent_id').value = res.data.id;
+
+                        // Text / date fields
+                        const textFields = [
+                            'patient_signature','patient_full_name','patient_date','patient_time',
+                            'obtainer_signature','obtainer_full_name','obtainer_date','obtainer_time'
+                        ];
+
+                        textFields.forEach(field => {
+                            const el = document.getElementById(field);
+                            if (el && res.data[field] != null) {
+                                // Handle date fields that come as ISO datetime
+                                if (el.type === 'date' && res.data[field]) {
+                                    el.value = res.data[field].substring(0, 10);
+                                } else {
+                                    el.value = res.data[field];
+                                }
+                            }
+                        });
+
+                        // Boolean checkboxes
+                        if (res.data.consent_karyotype) {
+                            document.getElementById('consent_karyotype').checked = true;
+                        }
+                        if (res.data.consent_fish) {
+                            document.getElementById('consent_fish').checked = true;
+                        }
+                    })
+                    .catch(err => console.error('Load error:', err));
+                }
+
+                // ── CLEAR ──
+                function clearCgConsentForm() {
+                    document.getElementById('cgConsentFilterName').value = '';
+                    document.getElementById('cg_consent_id').value = '';
+                    clearCgConsentFields();
+                }
+
+                function clearCgConsentFields() {
+                    const container = document.querySelector('[id="TDPL/CG/FOM-002"]');
+                    if (!container) return;
+                    container.querySelectorAll('input, textarea, select').forEach(el => {
+                        if (el.id === 'cgConsentFilterName' || el.id === 'cg_consent_id' || el.name === 'doc_no') return;
+                        if (el.type === 'checkbox') {
+                            el.checked = false;
+                        } else {
+                            el.value = '';
+                        }
+                    });
+                }
+
+                // ── AJAX SUBMIT + TOAST ──
+                (function() {
+                    function initCgConsentForm() {
+                        const formContainer = document.querySelector('[id="TDPL/CG/FOM-002"]');
+                        if (!formContainer) return;
+
+                        const form = formContainer.querySelector('form');
+                        if (!form || form.dataset.ajaxBound === 'true') return;
+                        form.dataset.ajaxBound = 'true';
+
+                        form.addEventListener('submit', function(e) {
+                            e.preventDefault();
+                            e.stopPropagation();
+
+                            const formData = new FormData(form);
+                            const submitBtn = form.querySelector('button[type="submit"]');
+                            const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                            if (submitBtn) {
+                                submitBtn.textContent = 'Saving...';
+                                submitBtn.disabled = true;
+                            }
+
+                            fetch(form.action, {
+                                method: 'POST',
+                                body: formData,
+                                headers: {
+                                    'X-Requested-With': 'XMLHttpRequest',
+                                    'Accept': 'application/json'
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(result => {
+                                if (result.success) {
+                                    showToastCgConsent('success', result.message || 'Saved successfully!');
+                                    if (result.form_id) {
+                                        document.getElementById('cg_consent_id').value = result.form_id;
+                                    }
+                                } else {
+                                    showToastCgConsent('error', result.message || 'Failed to save');
+                                }
+                            })
+                            .catch(err => {
+                                showToastCgConsent('error', 'Failed to save. Please try again.');
+                            })
+                            .finally(() => {
+                                if (submitBtn) {
+                                    submitBtn.textContent = originalText;
+                                    submitBtn.disabled = false;
+                                }
+                            });
+                        });
+                    }
+
+                    function showToastCgConsent(type, message) {
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (type === 'success' ? '#28a745' : '#dc3545');
+                        toast.textContent = message;
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 3000);
+                    }
+
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', initCgConsentForm);
+                    } else {
+                        initCgConsentForm();
+                    }
+                })();
+            </script>
 
         </x-formTemplete>
 

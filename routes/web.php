@@ -1065,6 +1065,10 @@ Route::prefix('newforms')->name('newforms.')->group(function () {
         ->group(function () {
             Route::post('/forms/submit', [CGFormsController::class, 'store'])
                 ->name('forms.submit');
+            Route::get('/cytogenetics-trf/load', [CGFormsController::class, 'loadCytogeneticsTrf'])
+                ->name('cytogenetics-trf.load');
+            Route::get('/cytogenetics-consent/load', [CGFormsController::class, 'loadCytogeneticsConsent'])
+                ->name('cytogenetics-consent.load');
         });
 
     Route::prefix('cp')
