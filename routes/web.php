@@ -81,6 +81,9 @@ use App\Http\Controllers\NewForms\LOFormsController;
 use App\Http\Controllers\NewForms\MBFormsController;
 use App\Http\Controllers\NewForms\MGFormsController;
 use App\Http\Controllers\NewForms\MIFormsController;
+use App\Http\Controllers\NewForms\PRFormsController;
+use App\Http\Controllers\NewForms\QAFormsController;
+use App\Http\Controllers\NewForms\SMFormsController;
 
 // use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
@@ -2011,5 +2014,145 @@ Route::prefix('newforms')->name('newforms.')->group(function () {
                 '/atcc-strain-qc/load',
                 [MIFormsController::class, 'loadAtccStrainQc']
             )->name('atcc-strain-qc.load');
+
+            /**
+             * MEDIA QC FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/media-qc/load',
+                [MIFormsController::class, 'loadMediaQc']
+            )->name('media-qc.load');
+
+            /**
+             * MICROBIOLOGY WORK REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/microbiology-work-register/load',
+                [MIFormsController::class, 'loadMicrobiologyWorkRegister']
+            )->name('microbiology-work-register.load');
+
+            /**
+             * MEDIA PREPARATION REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/media-preparation-register/load',
+                [MIFormsController::class, 'loadMediaPreparationRegister']
+            )->name('media-preparation-register.load');
+
+            /**
+             * MEDIA STERILITY CHECK REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/media-sterility-check-register/load',
+                [MIFormsController::class, 'loadMediaSterilityCheckRegister']
+            )->name('media-sterility-check-register.load');
+
+            /**
+             * VITEK 2 SALINE QC REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/vitek2-saline-qc-register/load',
+                [MIFormsController::class, 'loadVitek2SalineQcRegister']
+            )->name('vitek2-saline-qc-register.load');
+
+            /**
+             * LOOP MAINTENANCE REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/loop-maintenance-register/load',
+                [MIFormsController::class, 'loadLoopMaintenanceRegister']
+            )->name('loop-maintenance-register.load');
+
+            /**
+             * BACT ALERT QC REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/bact-alert-qc-register/load',
+                [MIFormsController::class, 'loadBactAlertQcRegister']
+            )->name('bact-alert-qc-register.load');
         });
+
+    /**
+     * ========================================
+     * PR FORMS (TDPL_PR)
+     * ========================================
+     */
+    Route::prefix('pr')->name('pr.')->group(function () {
+        Route::post('/forms/submit', [PRFormsController::class, 'store'])
+            ->name('forms.submit');
+
+        Route::get('/chemical-waste/load', [PRFormsController::class, 'loadChemicalWaste'])
+            ->name('chemical-waste.load');
+
+        Route::get('/new-supplier/load', [PRFormsController::class, 'loadNewSupplier'])
+            ->name('new-supplier.load');
+
+        Route::get('/supplier-evaluation/load', [PRFormsController::class, 'loadSupplierEvaluation'])
+            ->name('supplier-evaluation.load');
+
+        Route::get('/approved-product-providers/load', [PRFormsController::class, 'loadApprovedProductProviders'])
+            ->name('approved-product-providers.load');
+
+        Route::get('/annual-supplier-evaluation/load', [PRFormsController::class, 'loadAnnualSupplierEvaluation'])
+            ->name('annual-supplier-evaluation.load');
+    });
+
+    /**
+     * ========================================
+     * QA FORMS (TDPL_QA)
+     * ========================================
+     */
+    Route::prefix('qa')->name('qa.')->group(function () {
+        Route::post('/forms/submit', [QAFormsController::class, 'store'])
+            ->name('forms.submit');
+
+        Route::get('/dcr/load', [QAFormsController::class, 'loadDcr'])
+            ->name('dcr.load');
+
+        Route::get('/internal-auditors/load', [QAFormsController::class, 'loadInternalAuditors'])
+            ->name('internal-auditors.load');
+
+        Route::get('/annual-audit-plan/load', [QAFormsController::class, 'loadAnnualAuditPlan'])
+            ->name('annual-audit-plan.load');
+
+        Route::get('/authorized-signatures/load', [QAFormsController::class, 'loadAuthorizedSignatures'])
+            ->name('authorized-signatures.load');
+
+        Route::get('/authorized-signatory-list/load', [QAFormsController::class, 'loadAuthorizedSignatoryList'])
+            ->name('authorized-signatory-list.load');
+
+        Route::get('/vaccination-procurement/load', [QAFormsController::class, 'loadVaccinationProcurement'])
+            ->name('vaccination-procurement.load');
+
+        Route::get('/employee-vaccination-records/load', [QAFormsController::class, 'loadEmployeeVaccinationRecords'])
+            ->name('employee-vaccination-records.load');
+    });
+
+    /*
+     * ========================================
+     * SM FORMS (TDPL_SM)
+     * ========================================
+     */
+    Route::prefix('sm')->name('sm.')->group(function () {
+        Route::post('/forms/submit', [SMFormsController::class, 'store'])
+            ->name('forms.submit');
+
+        Route::get('/serology-work-register/load', [SMFormsController::class, 'loadSerologyWorkRegister'])
+            ->name('serology-work-register.load');
+
+        Route::get('/incoming-material-inspection/load', [SMFormsController::class, 'loadIncomingMaterialInspection'])
+            ->name('incoming-material-inspection.load');
+
+        Route::get('/supplier-corrective-action/load', [SMFormsController::class, 'loadSupplierCorrectiveAction'])
+            ->name('supplier-corrective-action.load');
+
+        Route::get('/expired-reagent-tracking/load', [SMFormsController::class, 'loadExpiredReagentTracking'])
+            ->name('expired-reagent-tracking.load');
+
+        Route::get('/borrowing-tracking/load', [SMFormsController::class, 'loadBorrowingTracking'])
+            ->name('borrowing-tracking.load');
+
+        Route::get('/recall-tracking/load', [SMFormsController::class, 'loadRecallTracking'])
+            ->name('recall-tracking.load');
+    });
 });

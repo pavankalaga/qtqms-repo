@@ -276,147 +276,243 @@
         docName="Chemical Waste Disposal Form"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/pr/forms/submit') }}"
         buttonText="Submit">
 
+        <!-- ===== FILTER / HEADER SECTION ===== -->
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Month &amp; Year:</strong>
+                <input type="month" name="month_year" id="cwd_month_year" required
+                    style="border:1px solid #000; padding:5px;"
+                    onchange="loadChemicalWaste()" oninput="loadChemicalWaste()">
+            </div>
+            <div>
+                <strong>Location:</strong>
+                <input type="text" name="location" id="cwd_location" list="cwdLocationList"
+                    style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                    onchange="loadChemicalWaste()" onblur="loadChemicalWaste()">
+                <datalist id="cwdLocationList">
+                    <option value="Hyderabad">
+                    <option value="Bangalore">
+                    <option value="Chennai">
+                    <option value="Mumbai">
+                    <option value="Delhi">
+                </datalist>
+            </div>
+            <button type="button" onclick="clearChemicalWaste()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-        <style>
-            table {
-                width: 100%;
-                border-collapse: collapse;
-            }
+        <!-- Hidden Form ID for create/update -->
+        <input type="hidden" name="form_id" id="cwd_form_id">
 
-            th,
-            td {
-                border: 1px solid #000;
-                padding: 6px;
-                font-size: 14px;
-            }
-        </style>
-        <p><strong>Month & Year:</strong> <input type="text" name="month_year">
-            <strong>Location:</strong> <input type="text" name="location">
-        </p>
-        <table>
+        <!-- ===== TABLE ===== -->
+        <table border="1" style="width:100%; border-collapse:collapse; font-size:14px;">
             <thead>
                 <tr>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;"><strong>Item</strong></th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;"><strong>Product Description</strong></th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;"><strong>Unit Pack</strong></th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;"><strong>Reason for Disposal</strong></th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;"><strong>Disposal Method</strong></th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;"><strong>Quantity</strong></th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;"><strong>Unit Cost</strong></th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;"><strong>Total Value</strong></th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;"><strong>Remarks</strong></th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Item</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Product Description</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Unit Pack</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Reason for Disposal</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Disposal Method</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Quantity</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Unit Cost</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Total Value</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Remarks</th>
                 </tr>
             </thead>
 
             <tbody>
-
-                {{-- Example Row 1 --}}
-                <tr>
-                    <td>e.g. 1</td>
-                    <td>Chloramphenicol eye drops</td>
-                    <td>10 ml</td>
-                    <td>Expired 11/04</td>
-                    <td>Sewer</td>
-                    <td>50</td>
-                    <td>5.00</td>
-                    <td>250.00</td>
-                    <td></td>
-                </tr>
-
-                {{-- Example Row 2 --}}
-                <tr>
-                    <td>e.g. 2</td>
-                    <td>Vit. B Co syrup</td>
-                    <td>100 ml</td>
-                    <td>Broken bottles</td>
-                    <td>Sewer</td>
-                    <td>12</td>
-                    <td>10.00</td>
-                    <td>120.00</td>
-                    <td>Slipped through unsealed carton bottom</td>
-                </tr>
-
-                {{-- Example Row 3 --}}
-                <tr>
-                    <td>e.g. 3</td>
-                    <td>Penicillin tabs</td>
-                    <td>1000</td>
-                    <td>Expired</td>
-                    <td>Encapsulation</td>
-                    <td>8</td>
-                    <td>20.00</td>
-                    <td>160.00</td>
-                    <td>Antibiotic, do not destroy by landfill</td>
-                </tr>
-
-                {{-- Dynamic empty rows --}}
                 @for ($i = 1; $i <= 10; $i++)
-                    <tr>
-                    <td><input type="text" name="item[{{ $i }}]"></td>
-                    <td><input type="text" name="description[{{ $i }}]"></td>
-                    <td><input type="text" name="unit_pack[{{ $i }}]"></td>
-                    <td><input type="text" name="reason[{{ $i }}]"></td>
-                    <td><input type="text" name="method[{{ $i }}]"></td>
-                    <td><input type="number" step="1" name="qty[{{ $i }}]"></td>
-                    <td><input type="number" step="0.01" name="unit_cost[{{ $i }}]"></td>
-                    <td><input type="number" step="0.01" name="total_value[{{ $i }}]"></td>
-                    <td><input type="text" name="remarks[{{ $i }}]"></td>
-                    </tr>
-                    @endfor
+                <tr>
+                    <td style="border:1px solid #000; padding:4px;"><input type="text" name="item_{{ $i }}" id="cwd_item_{{ $i }}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="text" name="description_{{ $i }}" id="cwd_description_{{ $i }}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="text" name="unit_pack_{{ $i }}" id="cwd_unit_pack_{{ $i }}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="text" name="reason_{{ $i }}" id="cwd_reason_{{ $i }}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="text" name="method_{{ $i }}" id="cwd_method_{{ $i }}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="text" name="qty_{{ $i }}" id="cwd_qty_{{ $i }}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="text" name="unit_cost_{{ $i }}" id="cwd_unit_cost_{{ $i }}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="text" name="total_value_{{ $i }}" id="cwd_total_value_{{ $i }}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="text" name="remarks_{{ $i }}" id="cwd_remarks_{{ $i }}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                </tr>
+                @endfor
 
-                    {{-- Total Row --}}
-                    <tr>
-                        <td colspan="7" style="text-align:right;"><strong>Total on this form:</strong></td>
-                        <td><input type="number" step="0.01" name="overall_total"></td>
-                        <td></td>
-                    </tr>
+                <!-- Total Row -->
+                <tr>
+                    <td colspan="7" style="border:1px solid #000; padding:6px; text-align:right;"><strong>Total on this form:</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="text" name="overall_total" id="cwd_overall_total" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"></td>
+                </tr>
 
-                    {{-- Store In-charge --}}
-                    <tr>
-                        <td></td>
-                        <td><strong>Store In-charge:</strong></td>
-                        <td></td>
-                        <td></td>
-                        <td><strong>Signature:</strong></td>
-                        <td></td>
-                        <td><strong>Date:</strong></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                <!-- Store In-charge -->
+                <tr>
+                    <td colspan="2" style="border:1px solid #000; padding:6px;"><strong>Store In-charge:</strong>
+                        <input type="text" name="store_incharge" id="cwd_store_incharge" style="border:1px solid #ccc; padding:4px; width:60%;">
+                    </td>
+                    <td colspan="4" style="border:1px solid #000; padding:6px;"><strong>Signature:</strong>
+                        <input type="text" name="store_incharge_sign" id="cwd_store_incharge_sign" style="border:1px solid #ccc; padding:4px; width:60%;">
+                    </td>
+                    <td colspan="3" style="border:1px solid #000; padding:6px;"><strong>Date:</strong>
+                        <input type="date" name="store_incharge_date" id="cwd_store_incharge_date" style="border:1px solid #ccc; padding:4px;">
+                    </td>
+                </tr>
 
-                    {{-- Head of facility --}}
-                    <tr>
-                        <td></td>
-                        <td><strong>Head of Facility:</strong></td>
-                        <td></td>
-                        <td></td>
-                        <td><strong>Signature:</strong></td>
-                        <td></td>
-                        <td><strong>Date:</strong></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
+                <!-- Head of Facility -->
+                <tr>
+                    <td colspan="2" style="border:1px solid #000; padding:6px;"><strong>Head of Facility:</strong>
+                        <input type="text" name="head_facility" id="cwd_head_facility" style="border:1px solid #ccc; padding:4px; width:60%;">
+                    </td>
+                    <td colspan="4" style="border:1px solid #000; padding:6px;"><strong>Signature:</strong>
+                        <input type="text" name="head_facility_sign" id="cwd_head_facility_sign" style="border:1px solid #ccc; padding:4px; width:60%;">
+                    </td>
+                    <td colspan="3" style="border:1px solid #000; padding:6px;"><strong>Date:</strong>
+                        <input type="date" name="head_facility_date" id="cwd_head_facility_date" style="border:1px solid #ccc; padding:4px;">
+                    </td>
+                </tr>
 
-                    {{-- Disposing Staff --}}
-                    <tr>
-                        <td></td>
-                        <td><strong>Disposing Staff:</strong></td>
-                        <td></td>
-                        <td></td>
-                        <td><strong>Signature:</strong></td>
-                        <td></td>
-                        <td><strong>Date Disposed:</strong></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
+                <!-- Disposing Staff -->
+                <tr>
+                    <td colspan="2" style="border:1px solid #000; padding:6px;"><strong>Disposing Staff:</strong>
+                        <input type="text" name="disposing_staff" id="cwd_disposing_staff" style="border:1px solid #ccc; padding:4px; width:60%;">
+                    </td>
+                    <td colspan="4" style="border:1px solid #000; padding:6px;"><strong>Signature:</strong>
+                        <input type="text" name="disposing_staff_sign" id="cwd_disposing_staff_sign" style="border:1px solid #ccc; padding:4px; width:60%;">
+                    </td>
+                    <td colspan="3" style="border:1px solid #000; padding:6px;"><strong>Date Disposed:</strong>
+                        <input type="date" name="disposing_staff_date" id="cwd_disposing_staff_date" style="border:1px solid #ccc; padding:4px;">
+                    </td>
+                </tr>
             </tbody>
         </table>
 
+        <script>
+        /* =========================================================
+         *  Chemical Waste Disposal Form – Inline AJAX (FOM-002)
+         * ========================================================= */
+        const CWD_ROW_FIELDS = [];
+        for (let i = 1; i <= 10; i++) {
+            ['item','description','unit_pack','reason','method','qty','unit_cost','total_value','remarks']
+                .forEach(f => CWD_ROW_FIELDS.push(f + '_' + i));
+        }
+        const CWD_SIGN_FIELDS = [
+            'store_incharge','store_incharge_sign','store_incharge_date',
+            'head_facility','head_facility_sign','head_facility_date',
+            'disposing_staff','disposing_staff_sign','disposing_staff_date'
+        ];
 
+        function loadChemicalWaste() {
+            const my = document.getElementById('cwd_month_year').value;
+            if (!my) return;
+            const loc = document.getElementById('cwd_location').value;
+            let url = "{{ url('/newforms/pr/chemical-waste/load') }}?month_year=" + encodeURIComponent(my);
+            if (loc) url += '&location=' + encodeURIComponent(loc);
 
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(r => r.json())
+                .then(res => {
+                    clearChemicalWasteInputs();
+                    if (res.data) {
+                        document.getElementById('cwd_form_id').value = res.data.id;
+                        CWD_ROW_FIELDS.forEach(f => {
+                            const el = document.querySelector('[name="' + f + '"]');
+                            if (el && res.data[f] !== null && res.data[f] !== undefined) el.value = res.data[f];
+                        });
+                        const ot = document.querySelector('[name="overall_total"]');
+                        if (ot && res.data.overall_total) ot.value = res.data.overall_total;
+                        CWD_SIGN_FIELDS.forEach(f => {
+                            const el = document.getElementById('cwd_' + f);
+                            if (el && res.data[f] !== null && res.data[f] !== undefined) el.value = res.data[f];
+                        });
+                    } else {
+                        document.getElementById('cwd_form_id').value = '';
+                    }
+                })
+                .catch(err => console.error('Load CWD error:', err));
+        }
+
+        function clearChemicalWasteInputs() {
+            document.getElementById('cwd_form_id').value = '';
+            CWD_ROW_FIELDS.forEach(f => {
+                const el = document.querySelector('[name="' + f + '"]');
+                if (el) el.value = '';
+            });
+            const ot = document.querySelector('[name="overall_total"]');
+            if (ot) ot.value = '';
+            CWD_SIGN_FIELDS.forEach(f => {
+                const el = document.getElementById('cwd_' + f);
+                if (el) el.value = '';
+            });
+        }
+
+        function clearChemicalWaste() {
+            document.getElementById('cwd_month_year').value = '';
+            document.getElementById('cwd_location').value = '';
+            clearChemicalWasteInputs();
+        }
+
+        /* --- Toast helper --- */
+        function showToastCWD(msg, isError) {
+            let t = document.getElementById('cwdToast');
+            if (!t) {
+                t = document.createElement('div');
+                t.id = 'cwdToast';
+                t.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-weight:600;transition:opacity .4s;';
+                document.body.appendChild(t);
+            }
+            t.textContent = msg;
+            t.style.background = isError ? '#dc3545' : '#28a745';
+            t.style.opacity = '1';
+            setTimeout(() => { t.style.opacity = '0'; }, 3000);
+        }
+
+        /* --- AJAX Submit --- */
+        (function() {
+            const wrapper = document.getElementById('TDPL/OH/FOM-002');
+            if (!wrapper) return;
+            const form = wrapper.querySelector('form');
+            if (!form) return;
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const my = document.getElementById('cwd_month_year');
+                if (!my || !my.value) {
+                    showToastCWD('Month & Year is required', true);
+                    if (my) my.focus();
+                    return;
+                }
+
+                const fd = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: fd
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) {
+                        showToastCWD(res.message || 'Saved successfully');
+                        if (res.form_id) {
+                            document.getElementById('cwd_form_id').value = res.form_id;
+                        }
+                        loadChemicalWaste();
+                    } else {
+                        showToastCWD(res.message || 'Save failed', true);
+                    }
+                })
+                .catch(err => {
+                    console.error('CWD submit error:', err);
+                    showToastCWD('Network error', true);
+                });
+            });
+        })();
+        </script>
 
     </x-formTemplete>
 
@@ -426,228 +522,347 @@
         docName="New Supplier Verification Form"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/pr/forms/submit') }}"
         buttonText="Submit">
-        <form>
 
-            {{-- ===================== BASIC FIELDS ===================== --}}
+        {{-- ===== FILTER / SEARCH SECTION ===== --}}
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Supplier Name:</strong>
+                <input type="text" id="nsv_filter_name" style="border:1px solid #000; padding:5px; width:250px;"
+                    placeholder="Type supplier name">
+            </div>
+            <button type="button" onclick="loadNsvForm()"
+                style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Search
+            </button>
+            <button type="button" onclick="clearNsvForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-            <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
-                <tr>
-                    <td style="padding:6px;">Supplier Name</td>
-                    <td style="padding:6px;">
-                        <input type="text" name="supplier_name" style="width:100%; padding:4px;">
-                    </td>
-                    <td style="padding:6px;">Location</td>
-                    <td style="padding:6px;">
-                        <input type="text" name="location" style="width:100%; padding:4px;">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:6px;">Verification Date</td>
-                    <td style="padding:6px;">
-                        <input type="date" name="verification_date" style="width:100%; padding:4px;">
-                    </td>
-                    <td style="padding:6px;">Inspector Name</td>
-                    <td style="padding:6px;">
-                        <input type="text" name="inspector_name" style="width:100%; padding:4px;">
-                    </td>
-                </tr>
-            </table>
+        {{-- Hidden Form ID for create/update --}}
+        <input type="hidden" name="form_id" id="nsv_form_id">
 
+        {{-- ===================== BASIC FIELDS ===================== --}}
 
-            {{-- ===================== SUPPLIER TYPE ===================== --}}
+        <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+            <tr>
+                <td style="padding:6px;">Supplier Name</td>
+                <td style="padding:6px;">
+                    <input type="text" name="supplier_name" id="nsv_supplier_name" style="width:100%; padding:4px;">
+                </td>
+                <td style="padding:6px;">Location</td>
+                <td style="padding:6px;">
+                    <input type="text" name="location" id="nsv_location" style="width:100%; padding:4px;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:6px;">Verification Date</td>
+                <td style="padding:6px;">
+                    <input type="date" name="verification_date" id="nsv_verification_date" style="width:100%; padding:4px;">
+                </td>
+                <td style="padding:6px;">Inspector Name</td>
+                <td style="padding:6px;">
+                    <input type="text" name="inspector_name" id="nsv_inspector_name" style="width:100%; padding:4px;">
+                </td>
+            </tr>
+        </table>
 
-            <!-- @foreach([
-            'Reagents / Kits',
-            'Consumables',
-            'Capex',
-            'Service Provider',
-            'Subcontractor',
-            'Other Products'
-            ] as $type)
+        {{-- ===================== SECTIONS LOOP ===================== --}}
 
-            <table style="width:100%; border-collapse:collapse;">
-                <tr>
-                    @if($loop->first)
-                    <td rowspan="6" style="width:150px; padding:6px;">Supplier Type</td>
-                    @endif
-                    <td style="padding:6px;">
-                        <input type="checkbox" name="supplier_type[]" value="{{ $type }}">
-                    </td>
-                    <td style="padding:6px;">{{ $type }}</td>
-                    <td style="padding:6px;"></td>
-                </tr>
-            </table>
+        @foreach([
+        '1. SUPPLIER INFORMATION' => [
+        'Supplier Name: Verify the name and contact information of the supplier.',
+        'Verify the supplier GST number',
+        'Verify the Supplier Medical Registration Number'
+        ],
+        '2. QUALITY MANAGEMENT SYSTEM' => [
+        'Quality Assurance Program: Verify that the supplier has a comprehensive quality management system.',
+        'Compliance Records: Check if the supplier maintains records.',
+        'Verify if the supplier has written policies on stock management.'
+        ],
+        '3. PRODUCT SAFETY PRACTICES' => [
+        'Verify appropriate product storage practices.',
+        'Allergen Controls: Check if measures are in place.',
+        'Traceability: Ensure supplier can provide traceability.'
+        ],
+        '4. PACKAGING AND TRANSPORTATION' => [
+        'Packaging Quality meets safety standards.',
+        'Transportation controls are in place.',
+        'Temperature-sensitive products transported properly.'
+        ],
+        '5. REGULATORY COMPLIANCE' => [
+        'Regulatory Compliance: Supplier complies with rules.',
+        'Inspection Records maintained.',
+        'Compliance documentation available.'
+        ]
+        ] as $sectionTitle => $questions)
 
-            @endforeach -->
+        <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
 
-            <br><br>
+            {{-- SECTION HEADER --}}
+            <tr>
+                <td style="padding:6px; font-weight:bold;">{{ $sectionTitle }}</td>
+            </tr>
 
+            {{-- QUESTIONS --}}
+            @foreach($questions as $q)
+            <tr>
+                <td style="padding:8px; border-top:1px solid #ddd;">
+                    {{ $q }}
+                </td>
 
-            {{-- ===================== SECTIONS LOOP ===================== --}}
-
-            @foreach([
-            '1. SUPPLIER INFORMATION' => [
-            'Supplier Name: Verify the name and contact information of the supplier.',
-            'Verify the supplier GST number',
-            'Verify the Supplier Medical Registration Number'
-            ],
-            '2. QUALITY MANAGEMENT SYSTEM' => [
-            'Quality Assurance Program: Verify that the supplier has a comprehensive quality management system.',
-            'Compliance Records: Check if the supplier maintains records.',
-            'Verify if the supplier has written policies on stock management.'
-            ],
-            '3. PRODUCT SAFETY PRACTICES' => [
-            'Verify appropriate product storage practices.',
-            'Allergen Controls: Check if measures are in place.',
-            'Traceability: Ensure supplier can provide traceability.'
-            ],
-            '4. PACKAGING AND TRANSPORTATION' => [
-            'Packaging Quality meets safety standards.',
-            'Transportation controls are in place.',
-            'Temperature-sensitive products transported properly.'
-            ],
-            '5. REGULATORY COMPLIANCE' => [
-            'Regulatory Compliance: Supplier complies with rules.',
-            'Inspection Records maintained.',
-            'Compliance documentation available.'
-            ]
-            ] as $sectionTitle => $questions)
-
-            <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
-
-                {{-- SECTION HEADER --}}
-                <tr>
-                    <td style="padding:6px; font-weight:bold;">{{ $sectionTitle }}</td>
-                </tr>
-
-                {{-- QUESTIONS --}}
-                @foreach($questions as $q)
-                <tr>
-                    <td style="padding:8px; border-top:1px solid #ddd;">
-                        {{ $q }}
-                    </td>
-
-                    {{-- YES / NO / NA CHECKBOX GROUP --}}
-                    <td style="padding:8px;">
-                        <label>
-                            <input type="radio" value="" value="yes"> Yes
-                        </label>
-                    </td>
-                    <td style="padding:8px;">
-                        <label>
-                            <input type="radio" value="" value="no"> No
-                        </label>
-                    </td>
-                    <td style="padding:8px;">
-                        <label>
-                            <input type="radio" value="" value="na"> NA
-                        </label>
-                    </td>
-                </tr>
-                @endforeach
-
-                {{-- OBSERVATIONS --}}
-                <tr>
-                    <td style="padding:10px; padding-top:20px;">
-                        Observations / Notes / Corrective Actions:
-                        <textarea name="{{ Str::slug($sectionTitle) }}_notes"
-                            style="width:100%; height:80px; margin-top:6px; padding:6px;"></textarea>
-                    </td>
-                </tr>
-            </table>
-
+                {{-- YES / NO / NA RADIO GROUP --}}
+                <td style="padding:8px;">
+                    <label>
+                        <input type="radio" name="sec{{ $loop->parent->iteration }}_q{{ $loop->iteration }}" value="yes"> Yes
+                    </label>
+                </td>
+                <td style="padding:8px;">
+                    <label>
+                        <input type="radio" name="sec{{ $loop->parent->iteration }}_q{{ $loop->iteration }}" value="no"> No
+                    </label>
+                </td>
+                <td style="padding:8px;">
+                    <label>
+                        <input type="radio" name="sec{{ $loop->parent->iteration }}_q{{ $loop->iteration }}" value="na"> NA
+                    </label>
+                </td>
+            </tr>
             @endforeach
 
+            {{-- OBSERVATIONS --}}
+            <tr>
+                <td colspan="4" style="padding:10px; padding-top:20px;">
+                    Observations / Notes / Corrective Actions:
+                    <textarea name="sec{{ $loop->iteration }}_notes" id="nsv_sec{{ $loop->iteration }}_notes"
+                        style="width:100%; height:80px; margin-top:6px; padding:6px;"></textarea>
+                </td>
+            </tr>
+        </table>
 
-            {{-- ===================== ADDITIONAL NOTES ===================== --}}
-
-            <p style="font-weight:bold;">ADDITIONAL NOTES / OBSERVATIONS</p>
-            <textarea name="additional_notes" style="width:100%; height:150px; padding:8px;"></textarea>
-
-            <br><br>
-
-
-            {{-- ===================== STATEMENT ===================== --}}
-
-            <p><strong>STATEMENT OF VERIFICATION</strong></p>
-            <p>I hereby certify that I have conducted the Supplier Verification as per the checklist above.</p>
-
-            <br>
-
-            <table style="width:100%; border-collapse:collapse;">
-                <tr>
-                    <td style="padding:6px;">Inspector’s Name</td>
-                    <td style="padding:6px;">
-                        <input type="text" name="inspector_signature_name" style="width:100%; padding:4px;">
-                    </td>
-                    <td rowspan="2" style="padding:6px;">Signature</td>
-                    <td rowspan="2" style="padding:6px;">
-                        <input type="text" name="inspector_signature" style="width:100%; padding:4px;">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:6px;">Inspection Date</td>
-                    <td style="padding:6px;">
-                        <input type="date" name="inspector_signature_date" style="width:100%; padding:4px;">
-                    </td>
-                </tr>
-            </table>
-
-            <br><br>
+        @endforeach
 
 
-            {{-- ===================== APPROVAL STATUS ===================== --}}
+        {{-- ===================== ADDITIONAL NOTES ===================== --}}
 
-            <p><strong>APPROVAL STATUS</strong></p>
+        <p style="font-weight:bold;">ADDITIONAL NOTES / OBSERVATIONS</p>
+        <textarea name="additional_notes" id="nsv_additional_notes" style="width:100%; height:150px; padding:8px;"></textarea>
 
-            <table style="width:100%; border-collapse:collapse;">
-                <tr>
-                    <td style="padding:6px; width:200px;">Risk Level</td>
-                    <td style="padding:6px;">
-                        <label><input type="radio" name="risk_level" value="low"> Low</label>
-                        <label><input type="radio" name="risk_level" value="medium"> Medium</label>
-                        <label><input type="radio" name="risk_level" value="high"> High</label>
-                    </td>
-                </tr>
-
-                <tr>
-                    <td style="padding:6px;">Approval Status</td>
-                    <td style="padding:6px;">
-                        <label><input type="radio" name="approval_status" value="accept"> Accept Supplier</label>
-
-                        <label><input type="radio" name="approval_status" value="reject"> Reject Supplier</label>
-                    </td>
-                </tr>
-            </table>
-
-            <br><br>
+        <br><br>
 
 
-            {{-- ===================== APPROVED BY ===================== --}}
+        {{-- ===================== STATEMENT ===================== --}}
 
-            <p><strong>APPROVED BY</strong></p>
+        <p><strong>STATEMENT OF VERIFICATION</strong></p>
+        <p>I hereby certify that I have conducted the Supplier Verification as per the checklist above.</p>
 
-            <table style="width:100%; border-collapse:collapse;">
-                <tr>
-                    <td style="padding:6px;">Name</td>
-                    <td style="padding:6px;">
-                        <input type="text" name="approved_by_name" style="width:100%; padding:4px;">
-                    </td>
-                    <td rowspan="2" style="padding:6px;">Signature</td>
-                    <td rowspan="2" style="padding:6px;">
-                        <input type="text" name="approved_by_signature" style="width:100%; padding:4px;">
-                    </td>
-                </tr>
-                <tr>
-                    <td style="padding:6px;">Date</td>
-                    <td style="padding:6px;">
-                        <input type="date" name="approved_by_date" style="width:100%; padding:4px;">
-                    </td>
-                </tr>
-            </table>
+        <br>
 
-        </form>
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <td style="padding:6px;">Inspector's Name</td>
+                <td style="padding:6px;">
+                    <input type="text" name="inspector_signature_name" id="nsv_inspector_signature_name" style="width:100%; padding:4px;">
+                </td>
+                <td rowspan="2" style="padding:6px;">Signature</td>
+                <td rowspan="2" style="padding:6px;">
+                    <input type="text" name="inspector_signature" id="nsv_inspector_signature" style="width:100%; padding:4px;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:6px;">Inspection Date</td>
+                <td style="padding:6px;">
+                    <input type="date" name="inspector_signature_date" id="nsv_inspector_signature_date" style="width:100%; padding:4px;">
+                </td>
+            </tr>
+        </table>
+
+        <br><br>
+
+
+        {{-- ===================== APPROVAL STATUS ===================== --}}
+
+        <p><strong>APPROVAL STATUS</strong></p>
+
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <td style="padding:6px; width:200px;">Risk Level</td>
+                <td style="padding:6px;">
+                    <label><input type="radio" name="risk_level" value="low"> Low</label>
+                    <label><input type="radio" name="risk_level" value="medium"> Medium</label>
+                    <label><input type="radio" name="risk_level" value="high"> High</label>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="padding:6px;">Approval Status</td>
+                <td style="padding:6px;">
+                    <label><input type="radio" name="approval_status" value="accept"> Accept Supplier</label>
+                    <label><input type="radio" name="approval_status" value="reject"> Reject Supplier</label>
+                </td>
+            </tr>
+        </table>
+
+        <br><br>
+
+
+        {{-- ===================== APPROVED BY ===================== --}}
+
+        <p><strong>APPROVED BY</strong></p>
+
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <td style="padding:6px;">Name</td>
+                <td style="padding:6px;">
+                    <input type="text" name="approved_by_name" id="nsv_approved_by_name" style="width:100%; padding:4px;">
+                </td>
+                <td rowspan="2" style="padding:6px;">Signature</td>
+                <td rowspan="2" style="padding:6px;">
+                    <input type="text" name="approved_by_signature" id="nsv_approved_by_signature" style="width:100%; padding:4px;">
+                </td>
+            </tr>
+            <tr>
+                <td style="padding:6px;">Date</td>
+                <td style="padding:6px;">
+                    <input type="date" name="approved_by_date" id="nsv_approved_by_date" style="width:100%; padding:4px;">
+                </td>
+            </tr>
+        </table>
+
+        <script>
+        /* =========================================================
+         *  New Supplier Verification Form – Inline AJAX (FOM-001)
+         * ========================================================= */
+
+        /* --- Field lists for populate/clear --- */
+        const NSV_TEXT_FIELDS = [
+            'supplier_name','location','verification_date','inspector_name',
+            'additional_notes',
+            'inspector_signature_name','inspector_signature','inspector_signature_date',
+            'approved_by_name','approved_by_signature','approved_by_date'
+        ];
+        // Add section notes
+        for (let s = 1; s <= 5; s++) NSV_TEXT_FIELDS.push('sec' + s + '_notes');
+
+        const NSV_RADIO_FIELDS = ['risk_level','approval_status'];
+        // Add section question radios
+        for (let s = 1; s <= 5; s++) {
+            for (let q = 1; q <= 3; q++) NSV_RADIO_FIELDS.push('sec' + s + '_q' + q);
+        }
+
+        // Scope all queries to this form's wrapper so shared field names
+        // (e.g. supplier_name, location) don't target another form
+        const NSV_WRAPPER = document.getElementById('TDPL/PR/FOM-001');
+
+        /* --- Load data by supplier name --- */
+        function loadNsvForm() {
+            const name = document.getElementById('nsv_filter_name').value.trim();
+            if (!name) return;
+
+            const url = "{{ url('/newforms/pr/new-supplier/load') }}?supplier_name=" + encodeURIComponent(name);
+
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(r => r.json())
+                .then(res => {
+                    clearNsvFields();
+                    if (res.data) {
+                        document.getElementById('nsv_form_id').value = res.data.id;
+
+                        // Populate text/date/textarea fields
+                        NSV_TEXT_FIELDS.forEach(f => {
+                            const el = NSV_WRAPPER.querySelector('[name="' + f + '"]');
+                            if (el && res.data[f] !== null && res.data[f] !== undefined) el.value = res.data[f];
+                        });
+
+                        // Populate radio buttons
+                        NSV_RADIO_FIELDS.forEach(f => {
+                            if (res.data[f]) {
+                                const radio = NSV_WRAPPER.querySelector('input[name="' + f + '"][value="' + res.data[f] + '"]');
+                                if (radio) radio.checked = true;
+                            }
+                        });
+                    } else {
+                        document.getElementById('nsv_form_id').value = '';
+                    }
+                })
+                .catch(err => console.error('Load NSV error:', err));
+        }
+
+        /* --- Clear all form fields --- */
+        function clearNsvFields() {
+            document.getElementById('nsv_form_id').value = '';
+
+            NSV_TEXT_FIELDS.forEach(f => {
+                const el = NSV_WRAPPER.querySelector('[name="' + f + '"]');
+                if (el) el.value = '';
+            });
+
+            NSV_RADIO_FIELDS.forEach(f => {
+                const radios = NSV_WRAPPER.querySelectorAll('input[name="' + f + '"]');
+                radios.forEach(r => r.checked = false);
+            });
+        }
+
+        function clearNsvForm() {
+            document.getElementById('nsv_filter_name').value = '';
+            clearNsvFields();
+        }
+
+        /* --- Toast helper --- */
+        function showToastNSV(msg, isError) {
+            let t = document.getElementById('nsvToast');
+            if (!t) {
+                t = document.createElement('div');
+                t.id = 'nsvToast';
+                t.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-weight:600;transition:opacity .4s;';
+                document.body.appendChild(t);
+            }
+            t.textContent = msg;
+            t.style.background = isError ? '#dc3545' : '#28a745';
+            t.style.opacity = '1';
+            setTimeout(() => { t.style.opacity = '0'; }, 3000);
+        }
+
+        /* --- AJAX Submit --- */
+        (function() {
+            const wrapper = document.getElementById('TDPL/PR/FOM-001');
+            if (!wrapper) return;
+            const form = wrapper.querySelector('form');
+            if (!form) return;
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const fd = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: fd
+                })
+                .then(r => r.json())
+                .then(res => {
+                    if (res.success) {
+                        showToastNSV(res.message || 'Saved successfully');
+                        if (res.form_id) {
+                            document.getElementById('nsv_form_id').value = res.form_id;
+                        }
+                    } else {
+                        showToastNSV(res.message || 'Save failed', true);
+                    }
+                })
+                .catch(err => {
+                    console.error('NSV submit error:', err);
+                    showToastNSV('Network error', true);
+                });
+            });
+        })();
+        </script>
 
     </x-formTemplete>
 
@@ -658,165 +873,316 @@
         docName="Supplier Evaluation Form"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/pr/forms/submit') }}"
         buttonText="Submit">
-        <form>
 
-            {{-- ================= HEADER FIELDS ================= --}}
+        {{-- ===== FILTER / SEARCH SECTION ===== --}}
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Supplier Name:</strong>
+                <input type="text" id="se_filter_name" style="border:1px solid #000; padding:5px; width:250px;"
+                    placeholder="Type supplier name">
+            </div>
+            <button type="button" onclick="loadSeForm()"
+                style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Search
+            </button>
+            <button type="button" onclick="clearSeForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-            <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
-                @foreach([
-                ['SUPPLIER NAME', 'supplier_name', 'AGREEMENT REFERENCE #', 'agreement_reference'],
-                ['CONTRACT DESCRIPTION', 'contract_description', 'TIME PERIOD COVERED', 'time_period'],
-                ['NAME OF EVALUATOR', 'evaluator_name', 'DATE EVALUATION COMPLETED', 'evaluation_date']
-                ] as $row)
-                <tr>
-                    <td style="padding:8px; font-weight:bold;">{{ $row[0] }}</td>
-                    <td style="padding:8px;">
-                        <input type="text" name="{{ $row[1] }}" style="width:100%; padding:5px;">
-                    </td>
+        {{-- Hidden Form ID for create/update --}}
+        <input type="hidden" name="form_id" id="se_form_id">
 
-                    <td style="padding:8px; font-weight:bold;">{{ $row[2] }}</td>
-                    <td style="padding:8px;">
-                        <input type="{{ $row[3] == 'evaluation_date' ? 'date' : 'text' }}"
-                            name="{{ $row[3] }}" style="width:100%; padding:5px;">
-                    </td>
-                </tr>
-                @endforeach
-            </table>
+        {{-- ================= HEADER FIELDS ================= --}}
 
+        <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+            @foreach([
+            ['SUPPLIER NAME', 'supplier_name', 'AGREEMENT REFERENCE #', 'agreement_reference'],
+            ['CONTRACT DESCRIPTION', 'contract_description', 'TIME PERIOD COVERED', 'time_period'],
+            ['NAME OF EVALUATOR', 'evaluator_name', 'DATE EVALUATION COMPLETED', 'evaluation_date']
+            ] as $row)
+            <tr>
+                <td style="padding:8px; font-weight:bold;">{{ $row[0] }}</td>
+                <td style="padding:8px;">
+                    <input type="text" name="{{ $row[1] }}" id="se_{{ $row[1] }}" style="width:100%; padding:5px;">
+                </td>
 
-
-            {{-- ================= SCORE KEY ================= --}}
-
-            <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
-                @foreach([
-                ['5', 'Very Good; Exceeds expectations', '1', 'Unsatisfactory; Misses most expectations'],
-                ['4', 'Good; Meets expectations', '0', 'Substandard; Falls far below expectations'],
-                ['3', 'Standard; Meets most expectations', 'N/A', 'Not Applicable'],
-                ['2', 'Adequate; Meets some expectations', '', '']
-                ] as $key)
-                <tr>
-                    <td style="padding:6px; font-weight:bold;">{{ $key[0] }}</td>
-                    <td style="padding:6px;">{{ $key[1] }}</td>
-
-                    @if($key[2] !== '')
-                    <td style="padding:6px; font-weight:bold;">{{ $key[2] }}</td>
-                    <td style="padding:6px;">{{ $key[3] }}</td>
-                    @else
-                    <td></td>
-                    <td></td>
-                    @endif
-                </tr>
-                @endforeach
-            </table>
+                <td style="padding:8px; font-weight:bold;">{{ $row[2] }}</td>
+                <td style="padding:8px;">
+                    <input type="{{ $row[3] == 'evaluation_date' ? 'date' : 'text' }}"
+                        name="{{ $row[3] }}" id="se_{{ $row[3] }}" style="width:100%; padding:5px;">
+                </td>
+            </tr>
+            @endforeach
+        </table>
 
 
 
-            {{-- ================= EVALUATION SECTIONS ================= --}}
+        {{-- ================= SCORE KEY ================= --}}
 
-            <table style="width:100%; border-collapse:collapse;">
+        <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+            @foreach([
+            ['5', 'Very Good; Exceeds expectations', '1', 'Unsatisfactory; Misses most expectations'],
+            ['4', 'Good; Meets expectations', '0', 'Substandard; Falls far below expectations'],
+            ['3', 'Standard; Meets most expectations', 'N/A', 'Not Applicable'],
+            ['2', 'Adequate; Meets some expectations', '', '']
+            ] as $key)
+            <tr>
+                <td style="padding:6px; font-weight:bold;">{{ $key[0] }}</td>
+                <td style="padding:6px;">{{ $key[1] }}</td>
 
-                {{-- TABLE HEADER --}}
-                <tr>
-                    <td style="padding:8px; font-weight:bold;">EVALUATION CATEGORY</td>
-                    <td colspan="2" style="padding:8px; font-weight:bold;">PERFORMANCE EXPECTATIONS</td>
-                    <td style="padding:8px; font-weight:bold;">SCORE</td>
-                    <td colspan="2" style="padding:8px; font-weight:bold;">CORRECTIVE ACTION (IF NECESSARY)</td>
-                </tr>
-
-
-                {{-- MAIN BLOCKS WITH QUESTIONS --}}
-                @foreach([
-                'Consistency of Performance' => [
-                'On-time delivery',
-                'Number of defects/damages',
-                'Temperature maintenance',
-                'Product expiry period'
-                ],
-                'Cost' => [
-                'The supplier’s ability to provide products/services at a competitive cost.',
-                'Number of invoice errors pertaining to product price.'
-                ],
-                'Capacity' => [
-                'Is the supplier capable of providing additional quantities on short notice?'
-                ],
-                'Communications' => [
-                'Communication turnaround time with purchase orders and general communication.'
-                ],
-                'Commitment to Quality' => [
-                'Number of product returns due to wrong/inconsistent results.',
-                'Number of product recalls.'
-                ]
-                ] as $category => $items)
-
-                {{-- Category title row if multiple rows --}}
-                @foreach($items as $i => $question)
-                <tr>
-                    {{-- Show category name once only --}}
-                    @if($i == 0)
-                    <td rowspan="{{ count($items) }}" style="padding:8px; vertical-align:top;">
-                        {{ $category }}
-                    </td>
-                    @endif
-
-                    {{-- QUESTION --}}
-                    <td colspan="2" style="padding:8px;">
-                        {{ $question }}
-                    </td>
-
-                    {{-- SCORE INPUT --}}
-                    <td style="padding:8px; width:80px;">
-                        <input type="text" name="{{ Str::slug($category) }}_score_{{ $i }}"
-                            style="width:60px; padding:4px;">
-                    </td>
-
-                    {{-- CORRECTIVE ACTION --}}
-                    <td colspan="2" style="padding:8px;">
-                        <input type="text" name="{{ Str::slug($category) }}_action_{{ $i }}"
-                            style="width:100%; padding:4px;">
-                    </td>
-                </tr>
-                @endforeach
-
-                {{-- CATEGORY TOTAL --}}
-                <tr>
-                    <td colspan="3" style="padding:8px; font-weight:bold;">
-                        {{ strtoupper($category) }} TOTAL SCORE
-                    </td>
-                    <td style="padding:8px;">
-                        <input type="text" name="{{ Str::slug($category) }}_total"
-                            style="width:60px; padding:4px;">
-                    </td>
-                    <td colspan="2"></td>
-                </tr>
-
-                @endforeach
-
-
-                {{-- FINAL TOTAL --}}
-                <tr>
-                    <td colspan="3" style="padding:8px; font-weight:bold;">TOTAL SCORE</td>
-                    <td style="padding:8px;">
-                        <input type="text" name="final_total_score" style="width:60px; padding:4px;">
-                    </td>
-
-                    <td style="padding:8px; font-weight:bold;">Purchase Manager Signature:</td>
-                    <td style="padding:8px;">
-                        <input type="text" name="purchase_manager_signature" style="width:100%; padding:4px;">
-                    </td>
-                </tr>
-            </table>
+                @if($key[2] !== '')
+                <td style="padding:6px; font-weight:bold;">{{ $key[2] }}</td>
+                <td style="padding:6px;">{{ $key[3] }}</td>
+                @else
+                <td></td>
+                <td></td>
+                @endif
+            </tr>
+            @endforeach
+        </table>
 
 
 
-            {{-- ================= OVERALL COMMENTS ================= --}}
+        {{-- ================= EVALUATION SECTIONS ================= --}}
 
-            <p style="margin-top:20px; font-weight:bold;">OVERALL EVALUATION COMMENTS</p>
+        <table style="width:100%; border-collapse:collapse;">
 
-            <textarea name="overall_comments"
-                style="width:100%; height:120px; padding:8px;"></textarea>
+            {{-- TABLE HEADER --}}
+            <tr>
+                <td style="padding:8px; font-weight:bold;">EVALUATION CATEGORY</td>
+                <td colspan="2" style="padding:8px; font-weight:bold;">PERFORMANCE EXPECTATIONS</td>
+                <td style="padding:8px; font-weight:bold;">SCORE</td>
+                <td colspan="2" style="padding:8px; font-weight:bold;">CORRECTIVE ACTION (IF NECESSARY)</td>
+            </tr>
 
-        </form>
+
+            {{-- MAIN BLOCKS WITH QUESTIONS --}}
+            @foreach([
+            'Consistency of Performance' => [
+            'On-time delivery',
+            'Number of defects/damages',
+            'Temperature maintenance',
+            'Product expiry period'
+            ],
+            'Cost' => [
+            'The supplier\'s ability to provide products/services at a competitive cost.',
+            'Number of invoice errors pertaining to product price.'
+            ],
+            'Capacity' => [
+            'Is the supplier capable of providing additional quantities on short notice?'
+            ],
+            'Communications' => [
+            'Communication turnaround time with purchase orders and general communication.'
+            ],
+            'Commitment to Quality' => [
+            'Number of product returns due to wrong/inconsistent results.',
+            'Number of product recalls.'
+            ]
+            ] as $category => $items)
+
+            {{-- Category title row if multiple rows --}}
+            @foreach($items as $i => $question)
+            <tr>
+                {{-- Show category name once only --}}
+                @if($i == 0)
+                <td rowspan="{{ count($items) }}" style="padding:8px; vertical-align:top;">
+                    {{ $category }}
+                </td>
+                @endif
+
+                {{-- QUESTION --}}
+                <td colspan="2" style="padding:8px;">
+                    {{ $question }}
+                </td>
+
+                {{-- SCORE INPUT --}}
+                <td style="padding:8px; width:80px;">
+                    <input type="text" name="cat{{ $loop->parent->iteration }}_score_{{ $loop->iteration }}"
+                        style="width:60px; padding:4px;">
+                </td>
+
+                {{-- CORRECTIVE ACTION --}}
+                <td colspan="2" style="padding:8px;">
+                    <input type="text" name="cat{{ $loop->parent->iteration }}_action_{{ $loop->iteration }}"
+                        style="width:100%; padding:4px;">
+                </td>
+            </tr>
+            @endforeach
+
+            {{-- CATEGORY TOTAL --}}
+            <tr>
+                <td colspan="3" style="padding:8px; font-weight:bold;">
+                    {{ strtoupper($category) }} TOTAL SCORE
+                </td>
+                <td style="padding:8px;">
+                    <input type="text" name="cat{{ $loop->iteration }}_total"
+                        style="width:60px; padding:4px;">
+                </td>
+                <td colspan="2"></td>
+            </tr>
+
+            @endforeach
+
+
+            {{-- FINAL TOTAL --}}
+            <tr>
+                <td colspan="3" style="padding:8px; font-weight:bold;">TOTAL SCORE</td>
+                <td style="padding:8px;">
+                    <input type="text" name="final_total_score" id="se_final_total_score" style="width:60px; padding:4px;">
+                </td>
+
+                <td style="padding:8px; font-weight:bold;">Purchase Manager Signature:</td>
+                <td style="padding:8px;">
+                    <input type="text" name="purchase_manager_signature" id="se_purchase_manager_signature" style="width:100%; padding:4px;">
+                </td>
+            </tr>
+        </table>
+
+
+
+        {{-- ================= OVERALL COMMENTS ================= --}}
+
+        <p style="margin-top:20px; font-weight:bold;">OVERALL EVALUATION COMMENTS</p>
+
+        <textarea name="overall_comments" id="se_overall_comments"
+            style="width:100%; height:120px; padding:8px;"></textarea>
+
+        <script>
+        /* =========================================================
+         *  Supplier Evaluation Form – Inline AJAX (FOM-003)
+         * ========================================================= */
+
+        /* --- Field lists for populate/clear --- */
+        const SE_TEXT_FIELDS = [
+            'supplier_name','agreement_reference','contract_description',
+            'time_period','evaluator_name','evaluation_date',
+            'final_total_score','purchase_manager_signature','overall_comments'
+        ];
+
+        // Category score/action/total fields: items per cat = [4,2,1,1,2]
+        const SE_CAT_ITEMS = [4, 2, 1, 1, 2];
+        const SE_CAT_FIELDS = [];
+        SE_CAT_ITEMS.forEach(function(count, idx) {
+            var c = idx + 1;
+            for (var q = 1; q <= count; q++) {
+                SE_CAT_FIELDS.push('cat' + c + '_score_' + q);
+                SE_CAT_FIELDS.push('cat' + c + '_action_' + q);
+            }
+            SE_CAT_FIELDS.push('cat' + c + '_total');
+        });
+
+        // Scope all queries to this form's wrapper so shared field names
+        // (e.g. supplier_name) don't accidentally target another form
+        var SE_WRAPPER = document.getElementById('TDPL/PR/FOM-003');
+
+        /* --- Load data by supplier name --- */
+        function loadSeForm() {
+            var name = document.getElementById('se_filter_name').value.trim();
+            if (!name) return;
+
+            var url = "{{ url('/newforms/pr/supplier-evaluation/load') }}?supplier_name=" + encodeURIComponent(name);
+
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    clearSeFields();
+                    if (res.data) {
+                        document.getElementById('se_form_id').value = res.data.id;
+
+                        // Populate text/date/textarea fields
+                        SE_TEXT_FIELDS.forEach(function(f) {
+                            var el = SE_WRAPPER.querySelector('[name="' + f + '"]');
+                            if (el && res.data[f] !== null && res.data[f] !== undefined) el.value = res.data[f];
+                        });
+
+                        // Populate category fields
+                        SE_CAT_FIELDS.forEach(function(f) {
+                            var el = SE_WRAPPER.querySelector('[name="' + f + '"]');
+                            if (el && res.data[f] !== null && res.data[f] !== undefined) el.value = res.data[f];
+                        });
+                    } else {
+                        document.getElementById('se_form_id').value = '';
+                    }
+                })
+                .catch(function(err) { console.error('Load SE error:', err); });
+        }
+
+        /* --- Clear all form fields --- */
+        function clearSeFields() {
+            document.getElementById('se_form_id').value = '';
+
+            SE_TEXT_FIELDS.forEach(function(f) {
+                var el = SE_WRAPPER.querySelector('[name="' + f + '"]');
+                if (el) el.value = '';
+            });
+
+            SE_CAT_FIELDS.forEach(function(f) {
+                var el = SE_WRAPPER.querySelector('[name="' + f + '"]');
+                if (el) el.value = '';
+            });
+        }
+
+        function clearSeForm() {
+            document.getElementById('se_filter_name').value = '';
+            clearSeFields();
+        }
+
+        /* --- Toast helper --- */
+        function showToastSE(msg, isError) {
+            var t = document.getElementById('seToast');
+            if (!t) {
+                t = document.createElement('div');
+                t.id = 'seToast';
+                t.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-weight:600;transition:opacity .4s;';
+                document.body.appendChild(t);
+            }
+            t.textContent = msg;
+            t.style.background = isError ? '#dc3545' : '#28a745';
+            t.style.opacity = '1';
+            setTimeout(function() { t.style.opacity = '0'; }, 3000);
+        }
+
+        /* --- AJAX Submit --- */
+        (function() {
+            var wrapper = document.getElementById('TDPL/PR/FOM-003');
+            if (!wrapper) return;
+            var form = wrapper.querySelector('form');
+            if (!form) return;
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                var fd = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: fd
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (res.success) {
+                        showToastSE(res.message || 'Saved successfully');
+                        if (res.form_id) {
+                            document.getElementById('se_form_id').value = res.form_id;
+                        }
+                    } else {
+                        showToastSE(res.message || 'Save failed', true);
+                    }
+                })
+                .catch(function(err) {
+                    console.error('SE submit error:', err);
+                    showToastSE('Network error', true);
+                });
+            });
+        })();
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -965,8 +1331,14 @@
         docName="List of Approved External Product Providers"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/pr/forms/submit') }}"
         buttonText="Submit">
-        <table style="width:100%; border-collapse:collapse;background-color:#FFF" border="1">
+
+        {{-- Hidden fields --}}
+        <input type="hidden" name="form_id" id="app_form_id">
+        <input type="hidden" name="form_data" id="app_form_data">
+
+        <table id="app_table" style="width:100%; border-collapse:collapse;background-color:#FFF" border="1">
             <thead>
                 <tr>
                     <th>
@@ -26661,6 +27033,106 @@
             </tbody>
         </table>
 
+        <script>
+        /* =========================================================
+         *  Approved External Product Providers – JSON save (FOM-005)
+         * ========================================================= */
+        (function() {
+            var wrapper = document.getElementById('TDPL/PR/FOM-005');
+            if (!wrapper) return;
+            var form = wrapper.querySelector('form');
+            if (!form) return;
+            var tbl = document.getElementById('app_table');
+
+            /* Collect all input values in DOM order */
+            function collectInputs() {
+                var inputs = tbl.querySelectorAll('input[type="text"]');
+                var values = [];
+                inputs.forEach(function(inp) { values.push(inp.value); });
+                return values;
+            }
+
+            /* Populate inputs from saved array */
+            function populateInputs(arr) {
+                if (!arr || !arr.length) return;
+                var inputs = tbl.querySelectorAll('input[type="text"]');
+                inputs.forEach(function(inp, i) {
+                    if (i < arr.length && arr[i] !== null && arr[i] !== undefined) {
+                        inp.value = arr[i];
+                    }
+                });
+            }
+
+            /* Load existing data on page load */
+            function loadAppData() {
+                fetch("{{ url('/newforms/pr/approved-product-providers/load') }}", {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (res.data) {
+                        document.getElementById('app_form_id').value = res.data.id;
+                        var fd = res.data.form_data;
+                        if (typeof fd === 'string') fd = JSON.parse(fd);
+                        populateInputs(fd);
+                    }
+                })
+                .catch(function(err) { console.error('Load APP error:', err); });
+            }
+
+            /* Toast */
+            function showToastAPP(msg, isError) {
+                var t = document.getElementById('appToast');
+                if (!t) {
+                    t = document.createElement('div');
+                    t.id = 'appToast';
+                    t.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-weight:600;transition:opacity .4s;';
+                    document.body.appendChild(t);
+                }
+                t.textContent = msg;
+                t.style.background = isError ? '#dc3545' : '#28a745';
+                t.style.opacity = '1';
+                setTimeout(function() { t.style.opacity = '0'; }, 3000);
+            }
+
+            /* AJAX Submit */
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Serialize inputs into hidden field
+                document.getElementById('app_form_data').value = JSON.stringify(collectInputs());
+
+                var fd = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: fd
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (res.success) {
+                        showToastAPP(res.message || 'Saved successfully');
+                        if (res.form_id) {
+                            document.getElementById('app_form_id').value = res.form_id;
+                        }
+                    } else {
+                        showToastAPP(res.message || 'Save failed', true);
+                    }
+                })
+                .catch(function(err) {
+                    console.error('APP submit error:', err);
+                    showToastAPP('Network error', true);
+                });
+            });
+
+            /* Auto-load on init */
+            loadAppData();
+        })();
+        </script>
+
     </x-formTemplete>
 
     <x-formTemplete
@@ -26669,419 +27141,331 @@
         docName="Annual Supplier Evaluation Form"
         issueNo="2.0"
         issueDate="01/10/2024"
+        action="{{ url('/newforms/pr/forms/submit') }}"
         buttonText="Submit">
 
-        <form method="POST" class="supplier-evaluation-form">
-            @csrf
-
-            {{-- HEADER SECTION --}}
-            <section class="form-section">
-                <h2 class="section-title">Evaluation Details</h2>
-                <div class="details-grid">
-                    @php
-                    $headerFields = [
-                    ['label' => 'SUPPLIER NAME', 'name' => 'supplier_name'],
-                    ['label' => 'AGREEMENT REFERENCE #', 'name' => 'agreement_reference'],
-                    ['label' => 'CONTRACT DESCRIPTION', 'name' => 'contract_description'],
-                    ['label' => 'TIME PERIOD COVERED', 'name' => 'time_period'],
-                    ['label' => 'NAME OF EVALUATOR', 'name' => 'evaluator_name'],
-                    ['label' => 'DATE EVALUATION COMPLETED', 'name' => 'evaluation_date', 'type' => 'date']
-                    ];
-                    @endphp
-
-                    @foreach($headerFields as $field)
-                    <div class="form-group">
-                        <label class="form-label">{{ $field['label'] }}</label>
-                        <input
-                            type="{{ $field['type'] ?? 'text' }}"
-                            name="{{ $field['name'] }}"
-                            class="form-input"
-                            required>
-                    </div>
-                    @endforeach
-                </div>
-            </section>
-
-            {{-- SCORE KEY SECTION --}}
-            <section class="form-section">
-                <h2 class="section-title">Score Key</h2>
-                <div class="score-key">
-                    @php
-                    $scoreKey = [
-                    ['range' => '> 80%', 'description' => 'Very Good; Exceeds expectations'],
-                    ['range' => '70 - 80%', 'description' => 'Good; Meets expectations'],
-                    ['range' => '60 - 70%', 'description' => 'Standard; Meets most expectations'],
-                    ['range' => '< 60%', 'description'=> 'Unsatisfactory; Misses most expectations']
-                        ];
-                        @endphp
-
-                        @foreach($scoreKey as $key)
-                        <div class="score-item">
-                            <span class="score-range">{{ $key['range'] }}</span>
-                            <span class="score-description">{{ $key['description'] }}</span>
-                        </div>
-                        @endforeach
-                </div>
-            </section>
-
-            {{-- PERFORMANCE EVALUATION SECTION --}}
-            <section class="form-section">
-                <h2 class="section-title">Performance Evaluation</h2>
-
-                @php
-                $categories = [
-                'Consistency of Performance' => [
-                'Ontime delivery',
-                'Number of defects/damages',
-                'Temperature maintenance',
-                'Product expiry period'
-                ],
-                'Cost' => [
-                'The supplier\'s ability to provide products/services at a competitive cost.',
-                'Number of invoices errors pertaining to product price.'
-                ],
-                'Capacity' => [
-                'Is the supplier capable of providing additional quantities on short notice?'
-                ],
-                'Communications' => [
-                'Communication turnaround time during purchase cycle.'
-                ],
-                'Commitment to Quality' => [
-                'Number of product returns due to inconsistency.',
-                'Number of product recalls.'
-                ]
-                ];
-                @endphp
-
-                <div class="evaluation-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Evaluation Category</th>
-                                <th>Performance Expectations</th>
-                                <th>Score</th>
-                                <th>Corrective Action (if necessary)</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($categories as $category => $expectations)
-                            @foreach($expectations as $index => $expectation)
-                            <tr>
-                                @if($index === 0)
-                                <td class="category-cell" rowspan="{{ count($expectations) + 1 }}">
-                                    <strong>{{ $category }}</strong>
-                                </td>
-                                @endif
-                                <td class="expectation-cell">{{ $expectation }}</td>
-                                <td class="score-cell">
-                                    <input
-                                        type="number"
-                                        name="score[{{ Str::slug($category) }}][{{ $index }}]"
-                                        class="score-input"
-                                        min="0"
-                                        max="10"
-                                        step="0.1">
-                                </td>
-                                <td class="action-cell">
-                                    <input
-                                        type="text"
-                                        name="corrective[{{ Str::slug($category) }}][{{ $index }}]"
-                                        class="action-input">
-                                </td>
-                            </tr>
-                            @endforeach
-
-                            <tr class="category-total-row">
-                                <td colspan="2" class="total-label">
-                                    <strong>{{ strtoupper($category) }} TOTAL SCORE</strong>
-                                </td>
-                                <td>
-                                    <input
-                                        type="number"
-                                        name="total[{{ Str::slug($category) }}]"
-                                        class="total-input"
-                                        readonly>
-                                </td>
-                                <td></td>
-                            </tr>
-                            @endforeach
-
-                            <tr class="grand-total-row">
-                                <td colspan="2"><strong>TOTAL SCORE</strong></td>
-                                <td>
-                                    <input
-                                        type="number"
-                                        name="grand_total"
-                                        class="grand-total-input"
-                                        readonly>
-                                </td>
-                                <td class="percentage-note">
-                                    Percentage Score: (Total Score / 50) × 100
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            {{-- COMMENTS SECTION --}}
-            <section class="form-section">
-                <h2 class="section-title">Overall Evaluation Comments</h2>
-                <textarea
-                    name="overall_comments"
-                    class="comments-textarea"
-                    rows="6"
-                    placeholder="Enter your evaluation comments here..."></textarea>
-            </section>
-
-            {{-- APPROVAL SECTION --}}
-            <section class="form-section">
-                <h2 class="section-title">Approval Status</h2>
-
-                <div class="approval-options">
-                    <label class="radio-label">
-                        <input type="radio" name="approval_status" value="Approved" required>
-                        <span>Approved</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="approval_status" value="Conditionally Approved">
-                        <span>Conditionally Approved</span>
-                    </label>
-                    <label class="radio-label">
-                        <input type="radio" name="approval_status" value="Not Approved">
-                        <span>Not Approved</span>
-                    </label>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Conditions (if conditionally approved):</label>
-                    <textarea
-                        name="conditions"
-                        class="conditions-textarea"
-                        rows="4"></textarea>
-                </div>
-
-                <div class="approval-details-grid">
-                    <div class="form-group">
-                        <label class="form-label">Approved By:</label>
-                        <input type="text" name="approved_by" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Date:</label>
-                        <input type="date" name="approved_date" class="form-input">
-                    </div>
-                    <div class="form-group">
-                        <label class="form-label">Next Evaluation Date:</label>
-                        <input type="date" name="next_evaluation_date" class="form-input">
-                    </div>
-                </div>
-            </section>
-
-            {{-- SUBMIT BUTTON --}}
-            <div class="form-actions">
-                <button type="submit" class="btn-submit">Submit Evaluation</button>
+        {{-- ===== FILTER / SEARCH SECTION ===== --}}
+        <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+            <div>
+                <strong>Supplier Name:</strong>
+                <input type="text" id="ase_filter_name" style="border:1px solid #000; padding:5px; width:250px;"
+                    placeholder="Type supplier name">
             </div>
-        </form>
+            <button type="button" onclick="loadAseForm()"
+                style="padding:6px 15px; background:#007bff; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Search
+            </button>
+            <button type="button" onclick="clearAseForm()"
+                style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                Clear
+            </button>
+        </div>
 
-        <style>
-            .supplier-evaluation-form {
-                margin: 0 auto;
-               
+        {{-- Hidden Form ID for create/update --}}
+        <input type="hidden" name="form_id" id="ase_form_id">
+
+        {{-- ================= HEADER FIELDS ================= --}}
+
+        <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+            @foreach([
+            ['SUPPLIER NAME', 'supplier_name', 'AGREEMENT REFERENCE #', 'agreement_reference'],
+            ['CONTRACT DESCRIPTION', 'contract_description', 'TIME PERIOD COVERED', 'time_period'],
+            ['NAME OF EVALUATOR', 'evaluator_name', 'DATE EVALUATION COMPLETED', 'evaluation_date']
+            ] as $row)
+            <tr>
+                <td style="padding:8px; font-weight:bold;">{{ $row[0] }}</td>
+                <td style="padding:8px;">
+                    <input type="text" name="{{ $row[1] }}" id="ase_{{ $row[1] }}" style="width:100%; padding:5px;">
+                </td>
+                <td style="padding:8px; font-weight:bold;">{{ $row[2] }}</td>
+                <td style="padding:8px;">
+                    <input type="{{ $row[3] == 'evaluation_date' ? 'date' : 'text' }}"
+                        name="{{ $row[3] }}" id="ase_{{ $row[3] }}" style="width:100%; padding:5px;">
+                </td>
+            </tr>
+            @endforeach
+        </table>
+
+        {{-- ================= SCORE KEY ================= --}}
+
+        <table style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+            @foreach([
+            ['> 80%', 'Very Good; Exceeds expectations', '< 60%', 'Unsatisfactory; Misses most expectations'],
+            ['70 - 80%', 'Good; Meets expectations', '', ''],
+            ['60 - 70%', 'Standard; Meets most expectations', '', '']
+            ] as $key)
+            <tr>
+                <td style="padding:6px; font-weight:bold;">{{ $key[0] }}</td>
+                <td style="padding:6px;">{{ $key[1] }}</td>
+                @if($key[2] !== '')
+                <td style="padding:6px; font-weight:bold;">{{ $key[2] }}</td>
+                <td style="padding:6px;">{{ $key[3] }}</td>
+                @else
+                <td></td><td></td>
+                @endif
+            </tr>
+            @endforeach
+        </table>
+
+        {{-- ================= EVALUATION SECTIONS ================= --}}
+
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <td style="padding:8px; font-weight:bold;">EVALUATION CATEGORY</td>
+                <td colspan="2" style="padding:8px; font-weight:bold;">PERFORMANCE EXPECTATIONS</td>
+                <td style="padding:8px; font-weight:bold;">SCORE</td>
+                <td colspan="2" style="padding:8px; font-weight:bold;">CORRECTIVE ACTION (IF NECESSARY)</td>
+            </tr>
+
+            @foreach([
+            'Consistency of Performance' => [
+            'Ontime delivery',
+            'Number of defects/damages',
+            'Temperature maintenance',
+            'Product expiry period'
+            ],
+            'Cost' => [
+            'The supplier\'s ability to provide products/services at a competitive cost.',
+            'Number of invoices errors pertaining to product price.'
+            ],
+            'Capacity' => [
+            'Is the supplier capable of providing additional quantities on short notice?'
+            ],
+            'Communications' => [
+            'Communication turnaround time during purchase cycle.'
+            ],
+            'Commitment to Quality' => [
+            'Number of product returns due to inconsistency.',
+            'Number of product recalls.'
+            ]
+            ] as $category => $items)
+
+            @foreach($items as $i => $question)
+            <tr>
+                @if($i == 0)
+                <td rowspan="{{ count($items) }}" style="padding:8px; vertical-align:top;">
+                    {{ $category }}
+                </td>
+                @endif
+                <td colspan="2" style="padding:8px;">{{ $question }}</td>
+                <td style="padding:8px; width:80px;">
+                    <input type="text" name="cat{{ $loop->parent->iteration }}_score_{{ $loop->iteration }}"
+                        style="width:60px; padding:4px;">
+                </td>
+                <td colspan="2" style="padding:8px;">
+                    <input type="text" name="cat{{ $loop->parent->iteration }}_action_{{ $loop->iteration }}"
+                        style="width:100%; padding:4px;">
+                </td>
+            </tr>
+            @endforeach
+
+            <tr>
+                <td colspan="3" style="padding:8px; font-weight:bold;">
+                    {{ strtoupper($category) }} TOTAL SCORE
+                </td>
+                <td style="padding:8px;">
+                    <input type="text" name="cat{{ $loop->iteration }}_total" style="width:60px; padding:4px;">
+                </td>
+                <td colspan="2"></td>
+            </tr>
+            @endforeach
+
+            <tr style="background:#e8e8e8; font-weight:bold;">
+                <td colspan="3" style="padding:8px;">TOTAL SCORE</td>
+                <td style="padding:8px;">
+                    <input type="text" name="grand_total" id="ase_grand_total" style="width:60px; padding:4px;">
+                </td>
+                <td colspan="2" style="padding:8px; font-size:12px; font-style:italic;">
+                    Percentage Score: (Total Score / 50) × 100
+                </td>
+            </tr>
+        </table>
+
+        <br>
+
+        {{-- ================= OVERALL COMMENTS ================= --}}
+
+        <p style="font-weight:bold;">OVERALL EVALUATION COMMENTS</p>
+        <textarea name="overall_comments" id="ase_overall_comments"
+            style="width:100%; height:120px; padding:8px;"></textarea>
+
+        <br><br>
+
+        {{-- ================= APPROVAL STATUS ================= --}}
+
+        <p><strong>APPROVAL STATUS</strong></p>
+
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <td style="padding:6px; width:200px;">Approval Status</td>
+                <td style="padding:6px;">
+                    <label><input type="radio" name="approval_status" value="Approved"> Approved</label>&nbsp;&nbsp;
+                    <label><input type="radio" name="approval_status" value="Conditionally Approved"> Conditionally Approved</label>&nbsp;&nbsp;
+                    <label><input type="radio" name="approval_status" value="Not Approved"> Not Approved</label>
+                </td>
+            </tr>
+        </table>
+
+        <br>
+
+        <p><strong>Conditions (if conditionally approved):</strong></p>
+        <textarea name="conditions" id="ase_conditions"
+            style="width:100%; height:80px; padding:8px;"></textarea>
+
+        <br><br>
+
+        <table style="width:100%; border-collapse:collapse;">
+            <tr>
+                <td style="padding:6px; font-weight:bold;">Approved By:</td>
+                <td style="padding:6px;">
+                    <input type="text" name="approved_by" id="ase_approved_by" style="width:100%; padding:4px;">
+                </td>
+                <td style="padding:6px; font-weight:bold;">Date:</td>
+                <td style="padding:6px;">
+                    <input type="date" name="approved_date" id="ase_approved_date" style="width:100%; padding:4px;">
+                </td>
+                <td style="padding:6px; font-weight:bold;">Next Evaluation Date:</td>
+                <td style="padding:6px;">
+                    <input type="date" name="next_evaluation_date" id="ase_next_evaluation_date" style="width:100%; padding:4px;">
+                </td>
+            </tr>
+        </table>
+
+        <script>
+        /* =========================================================
+         *  Annual Supplier Evaluation Form – Inline AJAX (FOM-011)
+         * ========================================================= */
+        var ASE_WRAPPER = document.getElementById('TDPL/PR/FOM-011');
+
+        var ASE_TEXT_FIELDS = [
+            'supplier_name','agreement_reference','contract_description',
+            'time_period','evaluator_name','evaluation_date',
+            'grand_total','overall_comments','conditions',
+            'approved_by','approved_date','next_evaluation_date'
+        ];
+
+        var ASE_RADIO_FIELDS = ['approval_status'];
+
+        var ASE_CAT_ITEMS = [4, 2, 1, 1, 2];
+        var ASE_CAT_FIELDS = [];
+        ASE_CAT_ITEMS.forEach(function(count, idx) {
+            var c = idx + 1;
+            for (var q = 1; q <= count; q++) {
+                ASE_CAT_FIELDS.push('cat' + c + '_score_' + q);
+                ASE_CAT_FIELDS.push('cat' + c + '_action_' + q);
             }
+            ASE_CAT_FIELDS.push('cat' + c + '_total');
+        });
 
-            .form-section {
-                margin-bottom: 40px;
-                background: #fff;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        function loadAseForm() {
+            var name = document.getElementById('ase_filter_name').value.trim();
+            if (!name) return;
+
+            var url = "{{ url('/newforms/pr/annual-supplier-evaluation/load') }}?supplier_name=" + encodeURIComponent(name);
+
+            fetch(url, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    clearAseFields();
+                    if (res.data) {
+                        document.getElementById('ase_form_id').value = res.data.id;
+
+                        ASE_TEXT_FIELDS.forEach(function(f) {
+                            var el = ASE_WRAPPER.querySelector('[name="' + f + '"]');
+                            if (el && res.data[f] !== null && res.data[f] !== undefined) el.value = res.data[f];
+                        });
+
+                        ASE_CAT_FIELDS.forEach(function(f) {
+                            var el = ASE_WRAPPER.querySelector('[name="' + f + '"]');
+                            if (el && res.data[f] !== null && res.data[f] !== undefined) el.value = res.data[f];
+                        });
+
+                        ASE_RADIO_FIELDS.forEach(function(f) {
+                            if (res.data[f]) {
+                                var radio = ASE_WRAPPER.querySelector('input[name="' + f + '"][value="' + res.data[f] + '"]');
+                                if (radio) radio.checked = true;
+                            }
+                        });
+                    } else {
+                        document.getElementById('ase_form_id').value = '';
+                    }
+                })
+                .catch(function(err) { console.error('Load ASE error:', err); });
+        }
+
+        function clearAseFields() {
+            document.getElementById('ase_form_id').value = '';
+
+            ASE_TEXT_FIELDS.forEach(function(f) {
+                var el = ASE_WRAPPER.querySelector('[name="' + f + '"]');
+                if (el) el.value = '';
+            });
+
+            ASE_CAT_FIELDS.forEach(function(f) {
+                var el = ASE_WRAPPER.querySelector('[name="' + f + '"]');
+                if (el) el.value = '';
+            });
+
+            ASE_RADIO_FIELDS.forEach(function(f) {
+                var radios = ASE_WRAPPER.querySelectorAll('input[name="' + f + '"]');
+                radios.forEach(function(r) { r.checked = false; });
+            });
+        }
+
+        function clearAseForm() {
+            document.getElementById('ase_filter_name').value = '';
+            clearAseFields();
+        }
+
+        function showToastASE(msg, isError) {
+            var t = document.getElementById('aseToast');
+            if (!t) {
+                t = document.createElement('div');
+                t.id = 'aseToast';
+                t.style.cssText = 'position:fixed;top:20px;right:20px;padding:12px 24px;border-radius:6px;color:#fff;z-index:9999;font-weight:600;transition:opacity .4s;';
+                document.body.appendChild(t);
             }
+            t.textContent = msg;
+            t.style.background = isError ? '#dc3545' : '#28a745';
+            t.style.opacity = '1';
+            setTimeout(function() { t.style.opacity = '0'; }, 3000);
+        }
 
-            .section-title {
-                font-size: 18px;
-                font-weight: bold;
-                margin-bottom: 20px;
-                padding-bottom: 10px;
-                border-bottom: 2px solid #333;
-            }
+        (function() {
+            if (!ASE_WRAPPER) return;
+            var form = ASE_WRAPPER.querySelector('form');
+            if (!form) return;
 
-            .details-grid {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
 
-            .form-group {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .form-label {
-                font-weight: bold;
-                margin-bottom: 8px;
-                font-size: 14px;
-            }
-
-            .form-input {
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                font-size: 14px;
-            }
-
-            .score-key {
-                display: grid;
-                gap: 10px;
-            }
-
-            .score-item {
-                display: grid;
-                grid-template-columns: 150px 1fr;
-                padding: 10px;
-                background: #f9f9f9;
-                border-radius: 4px;
-            }
-
-            .score-range {
-                font-weight: bold;
-            }
-
-            .evaluation-table {
-                overflow-x: auto;
-            }
-
-            .evaluation-table table {
-                width: 100%;
-                border-collapse: collapse;
-                border: 1px solid #ddd;
-            }
-
-            .evaluation-table th,
-            .evaluation-table td {
-                padding: 12px;
-                border: 1px solid #ddd;
-                text-align: left;
-            }
-
-            .evaluation-table th {
-                background: #f0f0f0;
-                font-weight: bold;
-            }
-
-            .category-cell {
-                background: #f9f9f9;
-                vertical-align: top;
-                width: 200px;
-            }
-
-            .expectation-cell {
-                width: 40%;
-            }
-
-            .score-cell {
-                width: 100px;
-            }
-
-            .score-input,
-            .total-input,
-            .grand-total-input {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                text-align: center;
-            }
-
-            .action-input {
-                width: 100%;
-                padding: 8px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
-
-            .category-total-row {
-                background: #f5f5f5;
-                font-weight: bold;
-            }
-
-            .grand-total-row {
-                background: #e8e8e8;
-                font-weight: bold;
-            }
-
-            .percentage-note {
-                font-size: 12px;
-                font-style: italic;
-            }
-
-            .comments-textarea,
-            .conditions-textarea {
-                width: 100%;
-                padding: 12px;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-                font-family: Arial, sans-serif;
-                font-size: 14px;
-                resize: vertical;
-            }
-
-            .approval-options {
-                display: flex;
-                gap: 30px;
-                margin-bottom: 20px;
-            }
-
-            .radio-label {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                cursor: pointer;
-            }
-
-            .radio-label input[type="radio"] {
-                cursor: pointer;
-            }
-
-            .approval-details-grid {
-                display: grid;
-                grid-template-columns: repeat(3, 1fr);
-                gap: 20px;
-            }
-
-            .form-actions {
-                text-align: center;
-                margin-top: 30px;
-            }
-
-            .btn-submit {
-                background: #4CAF50;
-                color: white;
-                padding: 14px 40px;
-                border: none;
-                border-radius: 4px;
-                font-size: 16px;
-                font-weight: bold;
-                cursor: pointer;
-                transition: background 0.3s;
-            }
-
-            .btn-submit:hover {
-                background: #45a049;
-            }
-
-            @media (max-width: 768px) {
-
-                .details-grid,
-                .approval-details-grid {
-                    grid-template-columns: 1fr;
-                }
-
-                .approval-options {
-                    flex-direction: column;
-                    gap: 15px;
-                }
-            }
-        </style>
+                var fd = new FormData(form);
+                fetch(form.action, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: fd
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(res) {
+                    if (res.success) {
+                        showToastASE(res.message || 'Saved successfully');
+                        if (res.form_id) {
+                            document.getElementById('ase_form_id').value = res.form_id;
+                        }
+                    } else {
+                        showToastASE(res.message || 'Save failed', true);
+                    }
+                })
+                .catch(function(err) {
+                    console.error('ASE submit error:', err);
+                    showToastASE('Network error', true);
+                });
+            });
+        })();
+        </script>
 
     </x-formTemplete>
 </body>

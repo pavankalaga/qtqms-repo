@@ -8,6 +8,13 @@ use App\Models\HivConsentForm;
 use App\Models\StainQcAfbGramForm;
 use App\Models\BiochemicalMediaQcForm;
 use App\Models\AtccStrainQcForm;
+use App\Models\MediaQcForm;
+use App\Models\MicrobiologyWorkRegister;
+use App\Models\MediaPreparationRegister;
+use App\Models\MediaSterilityCheckRegister;
+use App\Models\Vitek2SalineQcRegister;
+use App\Models\LoopMaintenanceRegister;
+use App\Models\BactAlertQcRegister;
 
 class MIFormsController extends Controller
 {
@@ -51,6 +58,32 @@ class MIFormsController extends Controller
             case 'FOM-004(F)':
             case 'FOM-004(G)':
                 return $this->storeAtccStrainQc($request);
+
+            case 'FOM-005':
+            case 'FOM-005(A)':
+            case 'FOM-005(B)':
+            case 'FOM-005(C)':
+            case 'FOM-005(D)':
+            case 'FOM-005(E)':
+                return $this->storeMediaQc($request);
+
+            case 'REG-001':
+                return $this->storeMicrobiologyWorkRegister($request);
+
+            case 'REG-002':
+                return $this->storeMediaPreparationRegister($request);
+
+            case 'REG-003':
+                return $this->storeMediaSterilityCheckRegister($request);
+
+            case 'REG-004':
+                return $this->storeVitek2SalineQcRegister($request);
+
+            case 'REG-005':
+                return $this->storeLoopMaintenanceRegister($request);
+
+            case 'REG-006':
+                return $this->storeBactAlertQcRegister($request);
 
             default:
                 return response()->json([
@@ -426,6 +459,675 @@ class MIFormsController extends Controller
     public function loadAtccStrainQc(Request $request)
     {
         $query = AtccStrainQcForm::query();
+
+        if ($request->filled('doc_no')) {
+            $query->where('doc_no', $request->doc_no);
+        }
+        if ($request->filled('from_date')) {
+            $query->where('row_date', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->where('row_date', '<=', $request->to_date);
+        }
+
+        $rows = $query->orderBy('id')->get();
+
+        return response()->json([
+            'success' => $rows->isNotEmpty(),
+            'data'    => $rows,
+        ]);
+    }
+
+    /**
+     * =============================================
+     * FOM-005 – Media Quality Control Form
+     * Row-based: From/To date filter on row_date
+     * Shared table for FOM-005, FOM-005(A)–(E)
+     * =============================================
+     */
+    private function storeMediaQc(Request $request)
+    {
+        $rowIds          = $request->input('row_id', []);
+        $rowDates        = $request->input('row_date', []);
+        $productInfos    = $request->input('product_info', []);
+        $analysisDoneBys = $request->input('analysis_done_by', []);
+        $appearances     = $request->input('appearance', []);
+        $incubations     = $request->input('incubation', []);
+        $atccs           = $request->input('atcc', []);
+        $growthExpecteds = $request->input('growth_expected', []);
+        $growthObserveds = $request->input('growth_observed', []);
+        $capas           = $request->input('capa', []);
+        $signatures      = $request->input('signature', []);
+
+        $savedIds = [];
+        $count    = count($productInfos);
+
+        for ($i = 0; $i < $count; $i++) {
+            $prod = trim($productInfos[$i] ?? '');
+            $atcc = trim($atccs[$i] ?? '');
+            $sig  = trim($signatures[$i] ?? '');
+            if ($prod === '' && $atcc === '' && $sig === '') {
+                continue;
+            }
+
+            $rowDate = ($rowDates[$i] ?? '') !== '' ? $rowDates[$i] : null;
+
+            $payload = [
+                'doc_no'           => $request->doc_no,
+                'row_date'         => $rowDate,
+                'product_info'     => $prod,
+                'analysis_done_by' => trim($analysisDoneBys[$i] ?? ''),
+                'appearance'       => trim($appearances[$i] ?? ''),
+                'incubation'       => trim($incubations[$i] ?? ''),
+                'atcc'             => $atcc,
+                'growth_expected'  => trim($growthExpecteds[$i] ?? ''),
+                'growth_observed'  => trim($growthObserveds[$i] ?? ''),
+                'capa'             => trim($capas[$i] ?? ''),
+                'signature'        => $sig,
+            ];
+
+            $existingId = $rowIds[$i] ?? null;
+
+            if ($existingId) {
+                MediaQcForm::where('id', $existingId)->update(
+                    array_merge($payload, ['updated_by' => auth()->id()])
+                );
+                $savedIds[] = (int) $existingId;
+            } else {
+                $rec = MediaQcForm::create(
+                    array_merge($payload, ['created_by' => auth()->id()])
+                );
+                $savedIds[] = $rec->id;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Media Quality Control Form saved successfully.',
+            'saved_ids' => $savedIds,
+            'data'      => MediaQcForm::whereIn('id', $savedIds)->orderBy('id')->get(),
+        ]);
+    }
+
+    /**
+     * LOAD Media QC data (AJAX)
+     */
+    public function loadMediaQc(Request $request)
+    {
+        $query = MediaQcForm::query();
+
+        if ($request->filled('doc_no')) {
+            $query->where('doc_no', $request->doc_no);
+        }
+        if ($request->filled('from_date')) {
+            $query->where('row_date', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->where('row_date', '<=', $request->to_date);
+        }
+
+        $rows = $query->orderBy('id')->get();
+
+        return response()->json([
+            'success' => $rows->isNotEmpty(),
+            'data'    => $rows,
+        ]);
+    }
+
+    /**
+     * =============================================
+     * REG-001 – Microbiology Work Register
+     * Row-based: From/To date filter on row_date
+     * =============================================
+     */
+    private function storeMicrobiologyWorkRegister(Request $request)
+    {
+        $rowIds              = $request->input('row_id', []);
+        $rowDates            = $request->input('row_date', []);
+        $barcodes            = $request->input('barcode', []);
+        $patientNames        = $request->input('patient_name', []);
+        $ageGenders          = $request->input('age_gender', []);
+        $investigations      = $request->input('investigation', []);
+        $sampleTypes         = $request->input('sample_type', []);
+        $sampleReceivedDts   = $request->input('sample_received_dt', []);
+        $sampleReceivedBys   = $request->input('sample_received_by', []);
+        $sampleProcessingDts = $request->input('sample_processing_dt', []);
+        $sampleProcessedBys  = $request->input('sample_processed_by', []);
+        $observationsList    = $request->input('observations', []);
+        $hodSignatures       = $request->input('hod_signature', []);
+
+        $savedIds = [];
+        $count    = count($barcodes);
+
+        for ($i = 0; $i < $count; $i++) {
+            $barcode = trim($barcodes[$i] ?? '');
+            $patient = trim($patientNames[$i] ?? '');
+            $invest  = trim($investigations[$i] ?? '');
+            if ($barcode === '' && $patient === '' && $invest === '') {
+                continue;
+            }
+
+            $rowDate = ($rowDates[$i] ?? '') !== '' ? $rowDates[$i] : null;
+
+            $payload = [
+                'doc_no'               => $request->doc_no,
+                'row_date'             => $rowDate,
+                'barcode'              => $barcode,
+                'patient_name'         => $patient,
+                'age_gender'           => trim($ageGenders[$i] ?? ''),
+                'investigation'        => $invest,
+                'sample_type'          => trim($sampleTypes[$i] ?? ''),
+                'sample_received_dt'   => trim($sampleReceivedDts[$i] ?? ''),
+                'sample_received_by'   => trim($sampleReceivedBys[$i] ?? ''),
+                'sample_processing_dt' => trim($sampleProcessingDts[$i] ?? ''),
+                'sample_processed_by'  => trim($sampleProcessedBys[$i] ?? ''),
+                'observations'         => trim($observationsList[$i] ?? ''),
+                'hod_signature'        => trim($hodSignatures[$i] ?? ''),
+            ];
+
+            $existingId = $rowIds[$i] ?? null;
+
+            if ($existingId) {
+                MicrobiologyWorkRegister::where('id', $existingId)->update(
+                    array_merge($payload, ['updated_by' => auth()->id()])
+                );
+                $savedIds[] = (int) $existingId;
+            } else {
+                $rec = MicrobiologyWorkRegister::create(
+                    array_merge($payload, ['created_by' => auth()->id()])
+                );
+                $savedIds[] = $rec->id;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Microbiology Work Register saved successfully.',
+            'saved_ids' => $savedIds,
+            'data'      => MicrobiologyWorkRegister::whereIn('id', $savedIds)->orderBy('id')->get(),
+        ]);
+    }
+
+    /**
+     * LOAD Microbiology Work Register data (AJAX)
+     */
+    public function loadMicrobiologyWorkRegister(Request $request)
+    {
+        $query = MicrobiologyWorkRegister::query();
+
+        if ($request->filled('doc_no')) {
+            $query->where('doc_no', $request->doc_no);
+        }
+        if ($request->filled('from_date')) {
+            $query->where('row_date', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->where('row_date', '<=', $request->to_date);
+        }
+
+        $rows = $query->orderBy('id')->get();
+
+        return response()->json([
+            'success' => $rows->isNotEmpty(),
+            'data'    => $rows,
+        ]);
+    }
+
+    /**
+     * =============================================
+     * REG-002 – Media Preparation Register
+     * Row-based: From/To date filter on row_date
+     * =============================================
+     */
+    private function storeMediaPreparationRegister(Request $request)
+    {
+        $rowIds               = $request->input('row_id', []);
+        $rowDates             = $request->input('row_date', []);
+        $mediaNames           = $request->input('media_name', []);
+        $lotDetails           = $request->input('lot_details', []);
+        $volumePrepareds      = $request->input('volume_prepared', []);
+        $weightPrepareds      = $request->input('weight_prepared', []);
+        $autoclaveStarts      = $request->input('autoclave_start', []);
+        $autoclaveEnds        = $request->input('autoclave_end', []);
+        $sterileHoldings      = $request->input('sterile_holding', []);
+        $totalDurations       = $request->input('total_duration', []);
+        $temperatures         = $request->input('temperature', []);
+        $pressures            = $request->input('pressure', []);
+        $chemicalIndicators   = $request->input('chemical_indicators', []);
+        $biologicalIndicators = $request->input('biological_indicators', []);
+        $hodSigns             = $request->input('hod_sign', []);
+
+        $savedIds = [];
+        $count    = count($mediaNames);
+
+        for ($i = 0; $i < $count; $i++) {
+            $mediaName = trim($mediaNames[$i] ?? '');
+            $lot       = trim($lotDetails[$i] ?? '');
+            $volume    = trim($volumePrepareds[$i] ?? '');
+            if ($mediaName === '' && $lot === '' && $volume === '') {
+                continue;
+            }
+
+            $rowDate = ($rowDates[$i] ?? '') !== '' ? $rowDates[$i] : null;
+
+            $payload = [
+                'doc_no'                => $request->doc_no,
+                'row_date'              => $rowDate,
+                'media_name'            => $mediaName,
+                'lot_details'           => $lot,
+                'volume_prepared'       => $volume,
+                'weight_prepared'       => trim($weightPrepareds[$i] ?? ''),
+                'autoclave_start'       => trim($autoclaveStarts[$i] ?? ''),
+                'autoclave_end'         => trim($autoclaveEnds[$i] ?? ''),
+                'sterile_holding'       => trim($sterileHoldings[$i] ?? ''),
+                'total_duration'        => trim($totalDurations[$i] ?? ''),
+                'temperature'           => trim($temperatures[$i] ?? ''),
+                'pressure'              => trim($pressures[$i] ?? ''),
+                'chemical_indicators'   => trim($chemicalIndicators[$i] ?? ''),
+                'biological_indicators' => trim($biologicalIndicators[$i] ?? ''),
+                'hod_sign'              => trim($hodSigns[$i] ?? ''),
+            ];
+
+            $existingId = $rowIds[$i] ?? null;
+
+            if ($existingId) {
+                MediaPreparationRegister::where('id', $existingId)->update(
+                    array_merge($payload, ['updated_by' => auth()->id()])
+                );
+                $savedIds[] = (int) $existingId;
+            } else {
+                $rec = MediaPreparationRegister::create(
+                    array_merge($payload, ['created_by' => auth()->id()])
+                );
+                $savedIds[] = $rec->id;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Media Preparation Register saved successfully.',
+            'saved_ids' => $savedIds,
+            'data'      => MediaPreparationRegister::whereIn('id', $savedIds)->orderBy('id')->get(),
+        ]);
+    }
+
+    /**
+     * LOAD Media Preparation Register data (AJAX)
+     */
+    public function loadMediaPreparationRegister(Request $request)
+    {
+        $query = MediaPreparationRegister::query();
+
+        if ($request->filled('doc_no')) {
+            $query->where('doc_no', $request->doc_no);
+        }
+        if ($request->filled('from_date')) {
+            $query->where('row_date', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->where('row_date', '<=', $request->to_date);
+        }
+
+        $rows = $query->orderBy('id')->get();
+
+        return response()->json([
+            'success' => $rows->isNotEmpty(),
+            'data'    => $rows,
+        ]);
+    }
+
+    /**
+     * =============================================
+     * REG-003 – Media Sterility Check Register
+     * Row-based: From/To date filter on row_date
+     * =============================================
+     */
+    private function storeMediaSterilityCheckRegister(Request $request)
+    {
+        $rowIds            = $request->input('row_id', []);
+        $rowDates          = $request->input('row_date', []);
+        $batchNos          = $request->input('batch_no', []);
+        $mediaDetails      = $request->input('media_details', []);
+        $expectedGrowths   = $request->input('expected_growth', []);
+        $sterility24s      = $request->input('sterility_24', []);
+        $sterility48s      = $request->input('sterility_48', []);
+        $sterilityCheckeds = $request->input('sterility_checked', []);
+        $doneBys           = $request->input('done_by', []);
+        $checkedBys        = $request->input('checked_by', []);
+        $hodRemarks        = $request->input('hod_remarks', []);
+
+        $savedIds = [];
+        $count    = count($batchNos);
+
+        for ($i = 0; $i < $count; $i++) {
+            $batch = trim($batchNos[$i] ?? '');
+            $media = trim($mediaDetails[$i] ?? '');
+            $done  = trim($doneBys[$i] ?? '');
+            if ($batch === '' && $media === '' && $done === '') {
+                continue;
+            }
+
+            $rowDate = ($rowDates[$i] ?? '') !== '' ? $rowDates[$i] : null;
+
+            $payload = [
+                'doc_no'             => $request->doc_no,
+                'row_date'           => $rowDate,
+                'batch_no'           => $batch,
+                'media_details'      => $media,
+                'expected_growth'    => trim($expectedGrowths[$i] ?? ''),
+                'sterility_24'       => trim($sterility24s[$i] ?? ''),
+                'sterility_48'       => trim($sterility48s[$i] ?? ''),
+                'sterility_checked'  => trim($sterilityCheckeds[$i] ?? ''),
+                'done_by'            => $done,
+                'checked_by'         => trim($checkedBys[$i] ?? ''),
+                'hod_remarks'        => trim($hodRemarks[$i] ?? ''),
+            ];
+
+            $existingId = $rowIds[$i] ?? null;
+
+            if ($existingId) {
+                MediaSterilityCheckRegister::where('id', $existingId)->update(
+                    array_merge($payload, ['updated_by' => auth()->id()])
+                );
+                $savedIds[] = (int) $existingId;
+            } else {
+                $rec = MediaSterilityCheckRegister::create(
+                    array_merge($payload, ['created_by' => auth()->id()])
+                );
+                $savedIds[] = $rec->id;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Media Sterility Check Register saved successfully.',
+            'saved_ids' => $savedIds,
+            'data'      => MediaSterilityCheckRegister::whereIn('id', $savedIds)->orderBy('id')->get(),
+        ]);
+    }
+
+    /**
+     * LOAD Media Sterility Check Register data (AJAX)
+     */
+    public function loadMediaSterilityCheckRegister(Request $request)
+    {
+        $query = MediaSterilityCheckRegister::query();
+
+        if ($request->filled('doc_no')) {
+            $query->where('doc_no', $request->doc_no);
+        }
+        if ($request->filled('from_date')) {
+            $query->where('row_date', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->where('row_date', '<=', $request->to_date);
+        }
+
+        $rows = $query->orderBy('id')->get();
+
+        return response()->json([
+            'success' => $rows->isNotEmpty(),
+            'data'    => $rows,
+        ]);
+    }
+
+    /**
+     * =============================================
+     * REG-004 – Vitek 2 Saline Quality Control Register
+     * Row-based: From/To date filter on row_date
+     * =============================================
+     */
+    private function storeVitek2SalineQcRegister(Request $request)
+    {
+        $rowIds          = $request->input('row_id', []);
+        $rowDates        = $request->input('row_date', []);
+        $vitekSalines    = $request->input('vitek_saline', []);
+        $bloodAgarGrowths = $request->input('blood_agar_growth', []);
+        $qcStatuses      = $request->input('qc_status', []);
+        $doneBys         = $request->input('done_by', []);
+        $hodSigns        = $request->input('hod_sign', []);
+
+        $savedIds = [];
+        $count    = count($vitekSalines);
+
+        for ($i = 0; $i < $count; $i++) {
+            $vitek = trim($vitekSalines[$i] ?? '');
+            $blood = trim($bloodAgarGrowths[$i] ?? '');
+            $done  = trim($doneBys[$i] ?? '');
+            if ($vitek === '' && $blood === '' && $done === '') {
+                continue;
+            }
+
+            $rowDate = ($rowDates[$i] ?? '') !== '' ? $rowDates[$i] : null;
+
+            $payload = [
+                'doc_no'            => $request->doc_no,
+                'row_date'          => $rowDate,
+                'vitek_saline'      => $vitek,
+                'blood_agar_growth' => $blood,
+                'qc_status'         => trim($qcStatuses[$i] ?? ''),
+                'done_by'           => $done,
+                'hod_sign'          => trim($hodSigns[$i] ?? ''),
+            ];
+
+            $existingId = $rowIds[$i] ?? null;
+
+            if ($existingId) {
+                Vitek2SalineQcRegister::where('id', $existingId)->update(
+                    array_merge($payload, ['updated_by' => auth()->id()])
+                );
+                $savedIds[] = (int) $existingId;
+            } else {
+                $rec = Vitek2SalineQcRegister::create(
+                    array_merge($payload, ['created_by' => auth()->id()])
+                );
+                $savedIds[] = $rec->id;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Vitek 2 Saline QC Register saved successfully.',
+            'saved_ids' => $savedIds,
+            'data'      => Vitek2SalineQcRegister::whereIn('id', $savedIds)->orderBy('id')->get(),
+        ]);
+    }
+
+    /**
+     * LOAD Vitek 2 Saline QC Register data (AJAX)
+     */
+    public function loadVitek2SalineQcRegister(Request $request)
+    {
+        $query = Vitek2SalineQcRegister::query();
+
+        if ($request->filled('doc_no')) {
+            $query->where('doc_no', $request->doc_no);
+        }
+        if ($request->filled('from_date')) {
+            $query->where('row_date', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->where('row_date', '<=', $request->to_date);
+        }
+
+        $rows = $query->orderBy('id')->get();
+
+        return response()->json([
+            'success' => $rows->isNotEmpty(),
+            'data'    => $rows,
+        ]);
+    }
+
+    /**
+     * =============================================
+     * REG-005 – Loop Maintenance Register
+     * Row-based: From/To date filter on row_date
+     * =============================================
+     */
+    private function storeLoopMaintenanceRegister(Request $request)
+    {
+        $rowIds              = $request->input('row_id', []);
+        $rowDates            = $request->input('row_date', []);
+        $lotNumbers          = $request->input('lot_number', []);
+        $dateCalibrations    = $request->input('date_calibration', []);
+        $calibrationStatuses = $request->input('calibration_status', []);
+        $verifiedBys         = $request->input('verified_by', []);
+        $hodSigns            = $request->input('hod_sign', []);
+        $remarksList         = $request->input('remarks', []);
+
+        $savedIds = [];
+        $count    = count($lotNumbers);
+
+        for ($i = 0; $i < $count; $i++) {
+            $lot      = trim($lotNumbers[$i] ?? '');
+            $verified = trim($verifiedBys[$i] ?? '');
+            $calStat  = trim($calibrationStatuses[$i] ?? '');
+            if ($lot === '' && $verified === '' && $calStat === '') {
+                continue;
+            }
+
+            $rowDate = ($rowDates[$i] ?? '') !== '' ? $rowDates[$i] : null;
+            $dateCal = ($dateCalibrations[$i] ?? '') !== '' ? $dateCalibrations[$i] : null;
+
+            $payload = [
+                'doc_no'             => $request->doc_no,
+                'row_date'           => $rowDate,
+                'lot_number'         => $lot,
+                'date_calibration'   => $dateCal,
+                'calibration_status' => $calStat,
+                'verified_by'        => $verified,
+                'hod_sign'           => trim($hodSigns[$i] ?? ''),
+                'remarks'            => trim($remarksList[$i] ?? ''),
+            ];
+
+            $existingId = $rowIds[$i] ?? null;
+
+            if ($existingId) {
+                LoopMaintenanceRegister::where('id', $existingId)->update(
+                    array_merge($payload, ['updated_by' => auth()->id()])
+                );
+                $savedIds[] = (int) $existingId;
+            } else {
+                $rec = LoopMaintenanceRegister::create(
+                    array_merge($payload, ['created_by' => auth()->id()])
+                );
+                $savedIds[] = $rec->id;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Loop Maintenance Register saved successfully.',
+            'saved_ids' => $savedIds,
+            'data'      => LoopMaintenanceRegister::whereIn('id', $savedIds)->orderBy('id')->get(),
+        ]);
+    }
+
+    /**
+     * LOAD Loop Maintenance Register data (AJAX)
+     */
+    public function loadLoopMaintenanceRegister(Request $request)
+    {
+        $query = LoopMaintenanceRegister::query();
+
+        if ($request->filled('doc_no')) {
+            $query->where('doc_no', $request->doc_no);
+        }
+        if ($request->filled('from_date')) {
+            $query->where('row_date', '>=', $request->from_date);
+        }
+        if ($request->filled('to_date')) {
+            $query->where('row_date', '<=', $request->to_date);
+        }
+
+        $rows = $query->orderBy('id')->get();
+
+        return response()->json([
+            'success' => $rows->isNotEmpty(),
+            'data'    => $rows,
+        ]);
+    }
+
+    /**
+     * =============================================
+     * REG-006 – Bact Alert QC Register
+     * Row-based: From/To date filter on row_date
+     * =============================================
+     */
+    private function storeBactAlertQcRegister(Request $request)
+    {
+        $rowIds               = $request->input('row_id', []);
+        $rowDates             = $request->input('row_date', []);
+        $lotExpiries          = $request->input('lot_expiry', []);
+        $atccNos              = $request->input('atcc_no', []);
+        $inoculumDensities    = $request->input('inoculum_density', []);
+        $growthObservations   = $request->input('growth_observation', []);
+        $gramStainObs         = $request->input('gram_stain_observation', []);
+        $acceptables          = $request->input('acceptable', []);
+        $notAcceptables       = $request->input('not_acceptable', []);
+        $doneBys              = $request->input('done_by', []);
+        $checkedBys           = $request->input('checked_by', []);
+        $hodSigns             = $request->input('hod_sign', []);
+        $remarksList          = $request->input('remarks', []);
+
+        $savedIds = [];
+        $count    = count($atccNos);
+
+        for ($i = 0; $i < $count; $i++) {
+            $atcc    = trim($atccNos[$i] ?? '');
+            $density = trim($inoculumDensities[$i] ?? '');
+            $done    = trim($doneBys[$i] ?? '');
+            if ($atcc === '' && $density === '' && $done === '') {
+                continue;
+            }
+
+            $rowDate = ($rowDates[$i] ?? '') !== '' ? $rowDates[$i] : null;
+
+            $payload = [
+                'doc_no'                => $request->doc_no,
+                'row_date'              => $rowDate,
+                'lot_expiry'            => trim($lotExpiries[$i] ?? ''),
+                'atcc_no'               => $atcc,
+                'inoculum_density'      => $density,
+                'growth_observation'    => trim($growthObservations[$i] ?? ''),
+                'gram_stain_observation' => trim($gramStainObs[$i] ?? ''),
+                'acceptable'            => trim($acceptables[$i] ?? ''),
+                'not_acceptable'        => trim($notAcceptables[$i] ?? ''),
+                'done_by'               => $done,
+                'checked_by'            => trim($checkedBys[$i] ?? ''),
+                'hod_sign'              => trim($hodSigns[$i] ?? ''),
+                'remarks'               => trim($remarksList[$i] ?? ''),
+            ];
+
+            $existingId = $rowIds[$i] ?? null;
+
+            if ($existingId) {
+                BactAlertQcRegister::where('id', $existingId)->update(
+                    array_merge($payload, ['updated_by' => auth()->id()])
+                );
+                $savedIds[] = (int) $existingId;
+            } else {
+                $rec = BactAlertQcRegister::create(
+                    array_merge($payload, ['created_by' => auth()->id()])
+                );
+                $savedIds[] = $rec->id;
+            }
+        }
+
+        return response()->json([
+            'success'   => true,
+            'message'   => 'Bact Alert QC Register saved successfully.',
+            'saved_ids' => $savedIds,
+            'data'      => BactAlertQcRegister::whereIn('id', $savedIds)->orderBy('id')->get(),
+        ]);
+    }
+
+    /**
+     * LOAD Bact Alert QC Register data (AJAX)
+     */
+    public function loadBactAlertQcRegister(Request $request)
+    {
+        $query = BactAlertQcRegister::query();
 
         if ($request->filled('doc_no')) {
             $query->where('doc_no', $request->doc_no);

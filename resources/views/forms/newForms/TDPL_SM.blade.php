@@ -277,108 +277,299 @@
         docName="SerologyWork Register"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.sm.forms.submit') }}">
 
-        <p style="margin-top:10px;">
-            <strong>Date:</strong>
-            <input type="date" name="form_date" style=" border:1px solid #000; padding:4px;">
-        </p>
-        <br>
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>From Date</strong></label>
+                <input type="date" id="swrFromDate" name="swrFromDate"
+                    onchange="loadSerologyWorkRegister()" oninput="loadSerologyWorkRegister()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>To Date</strong></label>
+                <input type="date" id="swrToDate"
+                    onchange="loadSerologyWorkRegister()" oninput="loadSerologyWorkRegister()"
+                    style="border:1px solid #000; padding:4px; width:140px; display:block;">
+            </div>
+            <div>
+                <label><strong>Investigation</strong></label>
+                <input type="text" id="swrInvestigation" list="swrInvestigationList"
+                    onchange="loadSerologyWorkRegister()" onblur="loadSerologyWorkRegister()"
+                    style="border:1px solid #000; padding:4px; width:180px; display:block;" placeholder="Select or type">
+                <datalist id="swrInvestigationList">
+                    <option value="HIV">
+                    <option value="HBsAg">
+                    <option value="HCV">
+                    <option value="VDRL">
+                    <option value="Dengue NS1">
+                    <option value="Dengue IgM/IgG">
+                    <option value="Widal">
+                    <option value="CRP">
+                    <option value="ASO">
+                    <option value="RF">
+                    <option value="ANA">
+                    <option value="Troponin">
+                </datalist>
+            </div>
+            <div>
+                <label><strong>Sample Type</strong></label>
+                <input type="text" id="swrSampleType" list="swrSampleTypeList"
+                    onchange="loadSerologyWorkRegister()" onblur="loadSerologyWorkRegister()"
+                    style="border:1px solid #000; padding:4px; width:160px; display:block;" placeholder="Select or type">
+                <datalist id="swrSampleTypeList">
+                    <option value="Serum">
+                    <option value="Plasma">
+                    <option value="Whole Blood">
+                    <option value="CSF">
+                    <option value="Urine">
+                </datalist>
+            </div>
+            <div style="display:flex; align-items:flex-end;">
+                <button type="button" onclick="clearSwrFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Table -->
         <table border="1" style="width:100%; border-collapse:collapse; text-align:left;">
             <thead>
                 <tr>
-                    <td style="padding:6px;"><strong>S. No.</strong></td>
-                    <td style="padding:6px;"><strong>Barcode</strong></td>
-                    <td style="padding:6px;"><strong>Patient Name</strong></td>
-                    <td style="padding:6px;"><strong>Age/Gender</strong></td>
-                    <td style="padding:6px;"><strong>Investigation</strong></td>
-
-                    <td colspan="2" style="padding:6px; text-align:center;"><strong>Sample Type</strong></td>
-
-                    <td colspan="2" style="padding:6px; text-align:center;">
-                        <strong>Sample Received<br>Date/Time</strong>
-                    </td>
-
-                    <td style="padding:6px;"><strong>Sample Received by</strong></td>
-
-                    <td style="padding:6px;">
-                        <strong>Sample Processing<br>Date/Time</strong>
-                    </td>
-
-                    <td colspan="2" style="padding:6px; text-align:center;"><strong>Sample Processed by</strong></td>
-
-                    <td colspan="2" style="padding:6px; text-align:center;"><strong>Observations</strong></td>
-
-                    <td style="padding:6px;"><strong>HoD Signature</strong></td>
+                    <td style="padding:6px; border:1px solid #000;"><strong>S. No.</strong></td>
+                    <td style="padding:6px; border:1px solid #000;"><strong>Barcode</strong></td>
+                    <td style="padding:6px; border:1px solid #000;"><strong>Patient Name</strong></td>
+                    <td style="padding:6px; border:1px solid #000;"><strong>Age/Gender</strong></td>
+                    <td style="padding:6px; border:1px solid #000;"><strong>Investigation</strong></td>
+                    <td colspan="2" style="padding:6px; text-align:center; border:1px solid #000;"><strong>Sample Type</strong></td>
+                    <td colspan="2" style="padding:6px; text-align:center; border:1px solid #000;"><strong>Sample Received<br>Date/Time</strong></td>
+                    <td style="padding:6px; border:1px solid #000;"><strong>Sample Received by</strong></td>
+                    <td style="padding:6px; border:1px solid #000;"><strong>Sample Processing<br>Date/Time</strong></td>
+                    <td colspan="2" style="padding:6px; text-align:center; border:1px solid #000;"><strong>Sample Processed by</strong></td>
+                    <td colspan="2" style="padding:6px; text-align:center; border:1px solid #000;"><strong>Observations</strong></td>
+                    <td style="padding:6px; border:1px solid #000;"><strong>HoD Signature</strong></td>
                 </tr>
             </thead>
-
-            <tbody>
-                @foreach(range(1,3) as $i)
+            <tbody id="swrTableBody">
                 <tr>
-                    <!-- S.No -->
-                    <td style="padding:6px;"><strong>{{ $i }}</strong></td>
-
-                    <!-- Barcode -->
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][barcode]" style="width:100%; border:none;">
-                    </td>
-
-                    <!-- Patient Name -->
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][patient_name]" style="width:100%; border:none;">
-                    </td>
-
-                    <!-- Age / Gender -->
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][age_gender]" style="width:100%; border:none;">
-                    </td>
-
-                    <!-- Investigation -->
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][investigation]" style="width:100%; border:none;">
-                    </td>
-
-                    <!-- Sample Type -->
-                    <td colspan="2" style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][sample_type]" style="width:100%; border:none;">
-                    </td>
-
-                    <!-- Sample Received Date / Time -->
-                    <td colspan="2" style="padding:6px;">
-                        <input type="datetime-local" name="rows[{{ $i }}][sample_received]" style="width:100%; border:none;">
-                    </td>
-
-                    <!-- Sample Received By -->
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][sample_received_by]" style="width:100%; border:none;">
-                    </td>
-
-                    <!-- Sample Processing Date/Time -->
-                    <td style="padding:6px;">
-                        <input type="datetime-local" name="rows[{{ $i }}][processing_datetime]" style="width:100%; border:none;">
-                    </td>
-
-                    <!-- Sample Processed By -->
-                    <td colspan="2" style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][processed_by]" style="width:100%; border:none;">
-                    </td>
-
-                    <!-- Observations -->
-                    <td colspan="2" style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][observations]" style="width:100%; border:none;">
-                    </td>
-
-                    <!-- HoD Signature -->
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][hod_signature]" style="width:100%; border:none;">
-                    </td>
+                    <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>1</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_barcode[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_patient_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_age_gender[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_investigation[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input name="row_sample_type[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="row_sample_received[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_sample_received_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="row_processing_datetime[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input name="row_processed_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input name="row_observations[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_hod_signature[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
                 </tr>
-                @endforeach
             </tbody>
         </table>
-        <br>
 
+        <script>
+            var swrRowCounter = 1;
+
+            function loadSerologyWorkRegister() {
+                const fromDate = document.getElementById('swrFromDate').value;
+                const toDate = document.getElementById('swrToDate').value;
+                const investigation = document.getElementById('swrInvestigation').value;
+                const sampleType = document.getElementById('swrSampleType').value;
+
+                if (!fromDate && !toDate && !investigation && !sampleType) return;
+
+                const params = new URLSearchParams();
+                if (fromDate) params.append('from_date', fromDate);
+                if (toDate) params.append('to_date', toDate);
+                if (investigation) params.append('investigation', investigation);
+                if (sampleType) params.append('sample_type', sampleType);
+
+                fetch(`/newforms/sm/serology-work-register/load?${params.toString()}`, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(res => res.json())
+                .then(res => {
+                    const tbody = document.getElementById('swrTableBody');
+                    if (!tbody) return;
+
+                    tbody.innerHTML = '';
+                    swrRowCounter = 0;
+
+                    if (!res.data || res.data.length === 0) {
+                        showToastREG001SM('info', 'No records found. You can add new entries below.');
+                        addEmptyRowREG001_SM();
+                        return;
+                    }
+
+                    showToastREG001SM('success', res.data.length + ' record(s) loaded.');
+                    res.data.forEach(row => {
+                        swrRowCounter++;
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = buildREG001_SM_RowHTML(row, swrRowCounter);
+                        tbody.appendChild(tr);
+                    });
+
+                    addEmptyRowREG001_SM();
+                })
+                .catch(error => console.error('Error loading data:', error));
+            }
+
+            function formatDatetimeLocal(val) {
+                if (!val) return '';
+                // Handle "2026-01-31 14:30:00" → "2026-01-31T14:30"
+                if (val.includes(' ')) {
+                    return val.replace(' ', 'T').substring(0, 16);
+                }
+                return val.substring(0, 16);
+            }
+
+            function buildREG001_SM_RowHTML(row, sno) {
+                return `
+                    <td style="border:1px solid #000; padding:4px; text-align:center;">
+                        <input type="hidden" name="row_id[]" value="${row.id}">
+                        <strong>${sno}</strong>
+                    </td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_barcode[]" value="${row.barcode || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_patient_name[]" value="${row.patient_name || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_age_gender[]" value="${row.age_gender || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_investigation[]" value="${row.investigation || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input name="row_sample_type[]" value="${row.sample_type || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="row_sample_received[]" value="${formatDatetimeLocal(row.sample_received)}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_sample_received_by[]" value="${row.sample_received_by || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="row_processing_datetime[]" value="${formatDatetimeLocal(row.processing_datetime)}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input name="row_processed_by[]" value="${row.processed_by || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input name="row_observations[]" value="${row.observations || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_hod_signature[]" value="${row.hod_signature || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                `;
+            }
+
+            function addEmptyRowREG001_SM() {
+                const tbody = document.getElementById('swrTableBody');
+                if (!tbody) return;
+
+                swrRowCounter++;
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>${swrRowCounter}</strong></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_barcode[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_patient_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_age_gender[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_investigation[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input name="row_sample_type[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="row_sample_received[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_sample_received_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input type="datetime-local" name="row_processing_datetime[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input name="row_processed_by[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td colspan="2" style="border:1px solid #000; padding:4px;"><input name="row_observations[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                    <td style="border:1px solid #000; padding:4px;"><input name="row_hod_signature[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                `;
+                tbody.appendChild(tr);
+            }
+
+            function clearSwrFilters() {
+                document.getElementById('swrFromDate').value = '';
+                document.getElementById('swrToDate').value = '';
+                document.getElementById('swrInvestigation').value = '';
+                document.getElementById('swrSampleType').value = '';
+                const tbody = document.getElementById('swrTableBody');
+                if (tbody) {
+                    tbody.innerHTML = '';
+                    swrRowCounter = 0;
+                    addEmptyRowREG001_SM();
+                }
+            }
+
+            // AJAX Submit for REG-001 (Serology)
+            (function() {
+                function initSerologyWorkForm() {
+                    const formContainer = document.querySelector('[id="TDPL/SE/REG-001"]');
+                    if (!formContainer) return;
+
+                    const form = formContainer.querySelector('form');
+                    if (!form || form.dataset.ajaxBound === 'true') return;
+                    form.dataset.ajaxBound = 'true';
+
+                    form.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const formData = new FormData(form);
+
+                        // Pass the from-date as form_date context
+                        const fromDate = document.getElementById('swrFromDate').value;
+                        if (fromDate) formData.append('swrFormDate', fromDate);
+
+                        const submitBtn = form.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.textContent;
+
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+
+                        fetch(form.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'X-Requested-With': 'XMLHttpRequest',
+                                'Accept': 'application/json'
+                            }
+                        })
+                        .then(response => response.json())
+                        .then(result => {
+                            if (result.success) {
+                                showToastREG001SM('success', result.message || 'Saved successfully!');
+
+                                const tbody = document.getElementById('swrTableBody');
+                                if (tbody && result.data && result.data.length > 0) {
+                                    tbody.innerHTML = '';
+                                    swrRowCounter = 0;
+                                    result.data.forEach(row => {
+                                        swrRowCounter++;
+                                        const tr = document.createElement('tr');
+                                        tr.innerHTML = buildREG001_SM_RowHTML(row, swrRowCounter);
+                                        tbody.appendChild(tr);
+                                    });
+                                    addEmptyRowREG001_SM();
+                                }
+                            } else {
+                                showToastREG001SM('error', result.message || 'Save failed!');
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showToastREG001SM('error', 'Failed to save data');
+                        })
+                        .finally(() => {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        });
+                    });
+                }
+
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', initSerologyWorkForm);
+                } else {
+                    initSerologyWorkForm();
+                }
+            })();
+
+            function showToastREG001SM(type, message) {
+                const colors = { success: '#28a745', error: '#dc3545', info: '#17a2b8' };
+                const toast = document.createElement('div');
+                toast.style.cssText = `
+                    position:fixed; top:20px; right:20px; z-index:9999;
+                    padding:12px 24px; border-radius:6px; color:#fff; font-size:14px;
+                    box-shadow:0 4px 12px rgba(0,0,0,0.15);
+                    background:${colors[type] || '#17a2b8'};
+                `;
+                toast.textContent = message;
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 3000);
+            }
+        </script>
 
     </x-formTemplete>
 
@@ -389,7 +580,31 @@
         docName="Incoming Material Inspection Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.sm.forms.submit') }}">
+
+        <!-- Hidden form ID for edit mode -->
+        <input type="hidden" id="imi_form_id" name="imi_form_id" value="">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Supplier Name</strong></label>
+                <input type="text" id="imiFilterSupplier" placeholder="Type supplier name"
+                    style="border:1px solid #000; padding:6px 10px; width:250px; display:block; border-radius:4px;">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadImiFom001()"
+                    style="padding:6px 15px; background:#3498db; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearImiFom001()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
         <div style=" padding: 10px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); ">
 
             <!-- Header Section -->
@@ -724,6 +939,165 @@
 
         </div>
 
+    <script>
+    // ── LOAD Incoming Material Inspection ──
+    function loadImiFom001() {
+        const supplierName = document.getElementById('imiFilterSupplier').value.trim();
+        if (!supplierName) {
+            showToastFOM001SM('info', 'Please enter a supplier name to search.');
+            return;
+        }
+
+        fetch(`/newforms/sm/incoming-material-inspection/load?supplier_name=${encodeURIComponent(supplierName)}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(res => {
+            clearImiFom001Fields();
+
+            if (!res.data) {
+                document.getElementById('imi_form_id').value = '';
+                showToastFOM001SM('info', 'No records found. You can fill a new form.');
+                return;
+            }
+
+            document.getElementById('imi_form_id').value = res.data.id;
+
+            // Text / date / textarea fields
+            const textFields = [
+                'supplier_name','po_number','inspector_name',
+                'po_date','inspection_date','invoice_number',
+                'section1_notes','section2_notes','section3_notes',
+                'section4_notes','section5_notes','section6_notes','section7_notes',
+                'additional_notes',
+                'compliance_inspector_name','compliance_signature','compliance_inspection_date',
+                'approver_name','approver_signature','approver_date'
+            ];
+
+            textFields.forEach(field => {
+                const el = document.querySelector('[id="TDPL/SM/FOM-001"] [name="' + field + '"]');
+                if (el && res.data[field] != null) el.value = res.data[field];
+            });
+
+            // Radio buttons (section items)
+            const radioFields = [
+                'section1_item0','section1_item1','section1_item2','section1_item3',
+                'section2_item0','section2_item1','section2_item2',
+                'section3_item0','section3_item1','section3_item2','section3_item3',
+                'section4_item0','section4_item1','section4_item2',
+                'section5_item0','section5_item1','section5_item2',
+                'section6_item0','section6_item1','section6_item2',
+                'section7_item0','section7_item1','section7_item2'
+            ];
+
+            radioFields.forEach(field => {
+                const val = res.data[field];
+                if (!val) return;
+                const radio = document.querySelector('[id="TDPL/SM/FOM-001"] input[name="' + field + '"][value="' + val + '"]');
+                if (radio) radio.checked = true;
+            });
+
+            showToastFOM001SM('success', 'Record loaded successfully.');
+        })
+        .catch(err => {
+            console.error('Load error:', err);
+            showToastFOM001SM('error', 'Failed to load data.');
+        });
+    }
+
+    // ── CLEAR ──
+    function clearImiFom001() {
+        document.getElementById('imiFilterSupplier').value = '';
+        document.getElementById('imi_form_id').value = '';
+        clearImiFom001Fields();
+        showToastFOM001SM('info', 'Form cleared.');
+    }
+
+    function clearImiFom001Fields() {
+        const container = document.querySelector('[id="TDPL/SM/FOM-001"]');
+        if (!container) return;
+        container.querySelectorAll('input, textarea, select').forEach(el => {
+            if (el.id === 'imiFilterSupplier' || el.id === 'imi_form_id' || el.name === 'doc_no') return;
+            if (el.type === 'radio' || el.type === 'checkbox') {
+                el.checked = false;
+            } else {
+                el.value = '';
+            }
+        });
+    }
+
+    // ── AJAX SUBMIT + TOAST ──
+    (function() {
+        function initImiFom001() {
+            const formContainer = document.querySelector('[id="TDPL/SM/FOM-001"]');
+            if (!formContainer) return;
+
+            const form = formContainer.querySelector('form');
+            if (!form || form.dataset.ajaxBoundImi === 'true') return;
+            form.dataset.ajaxBoundImi = 'true';
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const formData = new FormData(form);
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                if (submitBtn) {
+                    submitBtn.textContent = 'Saving...';
+                    submitBtn.disabled = true;
+                }
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        showToastFOM001SM('success', result.message || 'Saved successfully!');
+                        if (result.form_id) {
+                            document.getElementById('imi_form_id').value = result.form_id;
+                        }
+                    } else {
+                        showToastFOM001SM('error', result.message || 'Failed to save.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Submit error:', err);
+                    showToastFOM001SM('error', 'Failed to save. Please try again.');
+                })
+                .finally(() => {
+                    if (submitBtn) {
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initImiFom001);
+        } else {
+            initImiFom001();
+        }
+    })();
+
+    function showToastFOM001SM(type, message) {
+        const colors = { success: '#28a745', error: '#dc3545', info: '#17a2b8' };
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (colors[type] || colors.info);
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+    </script>
+
     </x-formTemplete>
     <x-formTemplete
         id="TDPL/SM/FOM-004"
@@ -731,7 +1105,31 @@
         docName="Supplier Corrective Action Request & Report"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.sm.forms.submit') }}">
+
+        <!-- Hidden form ID for edit mode -->
+        <input type="hidden" id="scar_form_id" name="scar_form_id" value="">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Supplier Name</strong></label>
+                <input type="text" id="scarFilterSupplier" placeholder="Type supplier name"
+                    style="border:1px solid #000; padding:6px 10px; width:250px; display:block; border-radius:4px;">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadScarFom004()"
+                    style="padding:6px 15px; background:#3498db; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearScarFom004()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
         <div style=" padding: 10px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); ">
 
             <!-- Header -->
@@ -881,6 +1279,154 @@
 
         </div>
 
+    <script>
+    // ── LOAD Supplier Corrective Action Request ──
+    function loadScarFom004() {
+        const supplierName = document.getElementById('scarFilterSupplier').value.trim();
+        if (!supplierName) {
+            showToastFOM004SM('info', 'Please enter a supplier name to search.');
+            return;
+        }
+
+        fetch(`/newforms/sm/supplier-corrective-action/load?supplier_name=${encodeURIComponent(supplierName)}`, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        })
+        .then(res => res.json())
+        .then(res => {
+            clearScarFom004Fields();
+
+            if (!res.data) {
+                document.getElementById('scar_form_id').value = '';
+                showToastFOM004SM('info', 'No records found. You can fill a new form.');
+                return;
+            }
+
+            document.getElementById('scar_form_id').value = res.data.id;
+
+            // Text / date / email / textarea fields
+            const textFields = [
+                'supplier_name','attention','phone','email',
+                'nonconformance_description',
+                'po_number','product_number','product_name','quantity_affected',
+                'date_sent','sent_by',
+                'root_cause','corrective_action',
+                'supplier_manager_signature','supplier_signature_date','supplier_name_title',
+                'purchasing_signature','purchasing_date'
+            ];
+
+            textFields.forEach(field => {
+                const el = document.querySelector('[id="TDPL/SM/FOM-004"] [name="' + field + '"]');
+                if (el && res.data[field] != null) el.value = res.data[field];
+            });
+
+            // Radio button: response_accepted
+            const respVal = res.data.response_accepted;
+            if (respVal) {
+                const radio = document.querySelector('[id="TDPL/SM/FOM-004"] input[name="response_accepted"][value="' + respVal + '"]');
+                if (radio) radio.checked = true;
+            }
+
+            showToastFOM004SM('success', 'Record loaded successfully.');
+        })
+        .catch(err => {
+            console.error('Load error:', err);
+            showToastFOM004SM('error', 'Failed to load data.');
+        });
+    }
+
+    // ── CLEAR ──
+    function clearScarFom004() {
+        document.getElementById('scarFilterSupplier').value = '';
+        document.getElementById('scar_form_id').value = '';
+        clearScarFom004Fields();
+        showToastFOM004SM('info', 'Form cleared.');
+    }
+
+    function clearScarFom004Fields() {
+        const container = document.querySelector('[id="TDPL/SM/FOM-004"]');
+        if (!container) return;
+        container.querySelectorAll('input, textarea, select').forEach(el => {
+            if (el.id === 'scarFilterSupplier' || el.id === 'scar_form_id' || el.name === 'doc_no') return;
+            if (el.type === 'radio' || el.type === 'checkbox') {
+                el.checked = false;
+            } else {
+                el.value = '';
+            }
+        });
+    }
+
+    // ── AJAX SUBMIT + TOAST ──
+    (function() {
+        function initScarFom004() {
+            const formContainer = document.querySelector('[id="TDPL/SM/FOM-004"]');
+            if (!formContainer) return;
+
+            const form = formContainer.querySelector('form');
+            if (!form || form.dataset.ajaxBoundScar === 'true') return;
+            form.dataset.ajaxBoundScar = 'true';
+
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const formData = new FormData(form);
+                const submitBtn = form.querySelector('button[type="submit"]');
+                const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                if (submitBtn) {
+                    submitBtn.textContent = 'Saving...';
+                    submitBtn.disabled = true;
+                }
+
+                fetch(form.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        showToastFOM004SM('success', result.message || 'Saved successfully!');
+                        if (result.form_id) {
+                            document.getElementById('scar_form_id').value = result.form_id;
+                        }
+                    } else {
+                        showToastFOM004SM('error', result.message || 'Failed to save.');
+                    }
+                })
+                .catch(err => {
+                    console.error('Submit error:', err);
+                    showToastFOM004SM('error', 'Failed to save. Please try again.');
+                })
+                .finally(() => {
+                    if (submitBtn) {
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                    }
+                });
+            });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initScarFom004);
+        } else {
+            initScarFom004();
+        }
+    })();
+
+    function showToastFOM004SM(type, message) {
+        const colors = { success: '#28a745', error: '#dc3545', info: '#17a2b8' };
+        const toast = document.createElement('div');
+        toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (colors[type] || colors.info);
+        toast.textContent = message;
+        document.body.appendChild(toast);
+        setTimeout(() => toast.remove(), 3000);
+    }
+    </script>
+
     </x-formTemplete>
     <x-formTemplete
         id="TDPL/SM/FOM-008"
@@ -888,19 +1434,54 @@
         docName="Expired Reagent and Consumable Supplies Tracking Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <p style="font-size:14px;">
-            <strong>Month:</strong>
-            <input type="text" name="month" style="border:none; border-bottom:1px solid #000; width:150px;">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <strong>Year:</strong>
-            <input type="text" name="year" style="border:none; border-bottom:1px solid #000; width:150px;">
-        </p>
+        buttonText="Submit"
+        action="{{ route('newforms.sm.forms.submit') }}">
 
+        <!-- Hidden month/year for form submit -->
+        <input type="hidden" id="ertMonth" name="ert_month" value="">
+        <input type="hidden" id="ertYear" name="ert_year" value="">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Month</strong></label>
+                <select id="ertFilterMonth" onchange="loadExpiredReagentTracking()" oninput="loadExpiredReagentTracking()"
+                    style="border:1px solid #000; padding:6px 10px; width:160px; display:block; border-radius:4px;">
+                    <option value="">-- Select --</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            <div>
+                <label><strong>Year</strong></label>
+                <input type="number" id="ertFilterYear" min="2020" max="2099"
+                    onchange="loadExpiredReagentTracking()" oninput="loadExpiredReagentTracking()"
+                    style="border:1px solid #000; padding:6px 10px; width:100px; display:block; border-radius:4px;"
+                    placeholder="2026">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="clearErtFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Table -->
         <table style="width:100%; border-collapse:collapse;" border="1">
             <thead>
                 <tr>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">S. No.</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center; width:50px;">S. No.</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Name of Reagent<br>or Material/Supply</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Lot Number</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Date Manufactured</th>
@@ -910,74 +1491,242 @@
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Removal Date</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @for($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">{{ $i }}</td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][name]"
-                            style="width:100%; border:none; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][lot]"
-                            style="width:100%; border:none; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][manufactured]"
-                            style="width:100%; border:none; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][expiry]"
-                            style="width:100%; border:none; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][unit]"
-                            style="width:100%; border:none; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="number" name="rows[{{ $i }}][quantity]"
-                            style="width:100%; border:none; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][removal]"
-                            style="width:100%; border:none; outline:none;">
-                    </td>
-                    </tr>
-                    @endfor
-            </tbody>
+            <tbody id="ertTableBody"></tbody>
         </table>
 
         <br>
 
+        <!-- Footer: Reported by / Approved by -->
         <p style="font-size:14px;">
             <strong>Reported by:</strong>
-            <input type="text" name="reported_by" style="border:none; border-bottom:1px solid #000; width:200px;">
+            <input type="text" id="ertReportedBy" name="reported_by" style="border:none; border-bottom:1px solid #000; width:200px;">
             &nbsp;&nbsp;&nbsp;
             <strong>Sign:</strong>
-            <input type="text" name="reported_sign" style="border:none; border-bottom:1px solid #000; width:150px;">
+            <input type="text" id="ertReportedSign" name="reported_sign" style="border:none; border-bottom:1px solid #000; width:150px;">
             &nbsp;&nbsp;&nbsp;
             <strong>Date:</strong>
-            <input type="date" name="reported_date" style="border:none; border-bottom:1px solid #000; width:150px;">
+            <input type="date" id="ertReportedDate" name="reported_date" style="border:none; border-bottom:1px solid #000; width:150px;">
         </p>
 
         <p style="font-size:14px;">
             <strong>Approved by:</strong>
-            <input type="text" name="approved_by" style="border:none; border-bottom:1px solid #000; width:200px;">
+            <input type="text" id="ertApprovedBy" name="approved_by" style="border:none; border-bottom:1px solid #000; width:200px;">
             &nbsp;&nbsp;&nbsp;
             <strong>Sign:</strong>
-            <input type="text" name="approved_sign" style="border:none; border-bottom:1px solid #000; width:150px;">
+            <input type="text" id="ertApprovedSign" name="approved_sign" style="border:none; border-bottom:1px solid #000; width:150px;">
             &nbsp;&nbsp;&nbsp;
             <strong>Date:</strong>
-            <input type="date" name="approved_date" style="border:none; border-bottom:1px solid #000; width:150px;">
+            <input type="date" id="ertApprovedDate" name="approved_date" style="border:none; border-bottom:1px solid #000; width:150px;">
         </p>
+
+        <script>
+        var ertRowCounter = 1;
+
+        // ── LOAD ──
+        function loadExpiredReagentTracking() {
+            const month = document.getElementById('ertFilterMonth').value;
+            const year  = document.getElementById('ertFilterYear').value;
+
+            // Sync hidden fields for form submit
+            document.getElementById('ertMonth').value = month;
+            document.getElementById('ertYear').value = year;
+
+            if (!month || !year) return;
+
+            fetch(`/newforms/sm/expired-reagent-tracking/load?month=${month}&year=${year}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.json())
+            .then(res => {
+                const tbody = document.getElementById('ertTableBody');
+                if (!tbody) return;
+
+                tbody.innerHTML = '';
+                ertRowCounter = 0;
+
+                if (!res.data || res.data.length === 0) {
+                    showToastFOM008SM('info', 'No records found. You can add new entries below.');
+                    addEmptyRowERT();
+                    return;
+                }
+
+                showToastFOM008SM('success', res.data.length + ' record(s) loaded.');
+
+                res.data.forEach(row => {
+                    ertRowCounter++;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = buildErtRowHTML(row, ertRowCounter);
+                    tbody.appendChild(tr);
+                });
+
+                // Populate footer from first record
+                const first = res.data[0];
+                document.getElementById('ertReportedBy').value   = first.reported_by || '';
+                document.getElementById('ertReportedSign').value = first.reported_sign || '';
+                document.getElementById('ertReportedDate').value = first.reported_date || '';
+                document.getElementById('ertApprovedBy').value   = first.approved_by || '';
+                document.getElementById('ertApprovedSign').value = first.approved_sign || '';
+                document.getElementById('ertApprovedDate').value = first.approved_date || '';
+
+                // Add one empty row for new entry
+                addEmptyRowERT();
+            })
+            .catch(err => {
+                console.error('Load error:', err);
+                showToastFOM008SM('error', 'Failed to load data.');
+            });
+        }
+
+        function buildErtRowHTML(row, sno) {
+            return `
+                <td style="border:1px solid #000; padding:4px; text-align:center;">
+                    <input type="hidden" name="row_id[]" value="${row.id}">
+                    <strong>${sno}</strong>
+                </td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_reagent_name[]" value="${row.reagent_name || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_lot_number[]" value="${row.lot_number || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date_manufactured[]" value="${row.date_manufactured || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_expiration_date[]" value="${row.expiration_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_unit[]" value="${row.unit_of_measurement || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_quantity[]" value="${row.quantity || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_removal_date[]" value="${row.removal_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+            `;
+        }
+
+        function addEmptyRowERT() {
+            const tbody = document.getElementById('ertTableBody');
+            if (!tbody) return;
+
+            ertRowCounter++;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>${ertRowCounter}</strong></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_reagent_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_lot_number[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date_manufactured[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_expiration_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_unit[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_quantity[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_removal_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+            `;
+            tbody.appendChild(tr);
+
+            // Auto-add next row when user starts typing in this last row
+            tr.addEventListener('input', function handleErtInput() {
+                tr.removeEventListener('input', handleErtInput);
+                addEmptyRowERT();
+            }, { once: true });
+        }
+
+        function clearErtFilters() {
+            document.getElementById('ertFilterMonth').value = '';
+            document.getElementById('ertFilterYear').value = '';
+            document.getElementById('ertMonth').value = '';
+            document.getElementById('ertYear').value = '';
+            document.getElementById('ertReportedBy').value = '';
+            document.getElementById('ertReportedSign').value = '';
+            document.getElementById('ertReportedDate').value = '';
+            document.getElementById('ertApprovedBy').value = '';
+            document.getElementById('ertApprovedSign').value = '';
+            document.getElementById('ertApprovedDate').value = '';
+            const tbody = document.getElementById('ertTableBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+                ertRowCounter = 0;
+                addEmptyRowERT();
+            }
+            showToastFOM008SM('info', 'Form cleared.');
+        }
+
+        // ── AJAX SUBMIT ──
+        (function() {
+            function initErtForm() {
+                const formContainer = document.querySelector('[id="TDPL/SM/FOM-008"]');
+                if (!formContainer) return;
+
+                const form = formContainer.querySelector('form');
+                if (!form || form.dataset.ajaxBoundErt === 'true') return;
+                form.dataset.ajaxBoundErt = 'true';
+
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    // Sync hidden month/year before submit
+                    document.getElementById('ertMonth').value = document.getElementById('ertFilterMonth').value;
+                    document.getElementById('ertYear').value  = document.getElementById('ertFilterYear').value;
+
+                    const formData = new FormData(form);
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                    if (submitBtn) {
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+                    }
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            showToastFOM008SM('success', result.message || 'Saved successfully!');
+
+                            const tbody = document.getElementById('ertTableBody');
+                            if (tbody && result.data && result.data.length > 0) {
+                                tbody.innerHTML = '';
+                                ertRowCounter = 0;
+                                result.data.forEach(row => {
+                                    ertRowCounter++;
+                                    const tr = document.createElement('tr');
+                                    tr.innerHTML = buildErtRowHTML(row, ertRowCounter);
+                                    tbody.appendChild(tr);
+                                });
+                                addEmptyRowERT();
+                            }
+                        } else {
+                            showToastFOM008SM('error', result.message || 'Save failed!');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Submit error:', err);
+                        showToastFOM008SM('error', 'Failed to save. Please try again.');
+                    })
+                    .finally(() => {
+                        if (submitBtn) {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        }
+                    });
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    initErtForm();
+                    addEmptyRowERT();
+                });
+            } else {
+                initErtForm();
+                addEmptyRowERT();
+            }
+        })();
+
+        function showToastFOM008SM(type, message) {
+            const colors = { success: '#28a745', error: '#dc3545', info: '#17a2b8' };
+            const toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (colors[type] || colors.info);
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -986,106 +1735,296 @@
         docName="Reagent & Consumable Supplies Borrowing Tracking Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
-        <p style="font-size:14px;">
-            <strong>Month:</strong>
-            <input type="text" name="month"
-                style="border:none; border-bottom:1px solid #000; width:150px;">
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <strong>Year:</strong>
-            <input type="text" name="year"
-                style="border:none; border-bottom:1px solid #000; width:150px;">
-        </p>
+        buttonText="Submit"
+        action="{{ route('newforms.sm.forms.submit') }}">
 
+        <!-- Hidden month/year for form submit -->
+        <input type="hidden" id="btMonth" name="bt_month" value="">
+        <input type="hidden" id="btYear" name="bt_year" value="">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Month</strong></label>
+                <select id="btFilterMonth" onchange="loadBorrowingTracking()" oninput="loadBorrowingTracking()"
+                    style="border:1px solid #000; padding:6px 10px; width:160px; display:block; border-radius:4px;">
+                    <option value="">-- Select --</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            <div>
+                <label><strong>Year</strong></label>
+                <input type="number" id="btFilterYear" min="2020" max="2099"
+                    onchange="loadBorrowingTracking()" oninput="loadBorrowingTracking()"
+                    style="border:1px solid #000; padding:6px 10px; width:100px; display:block; border-radius:4px;"
+                    placeholder="2026">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="clearBtFilters()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
+        <!-- Data Table -->
         <table style="width:100%; border-collapse:collapse;" border="1">
             <thead>
                 <tr>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">S. No.</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center; width:50px;">S. No.</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Name of Reagent<br>or Material</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Borrowed From</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Lot Number</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Date Manufactured</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Expiration Date</th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">Quantity & Unit of Measurement</th>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">LIMS Ticket Number</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">Quantity & Unit<br>of Measurement</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center;">LIMS Ticket<br>Number</th>
                 </tr>
             </thead>
-
-            <tbody>
-                @for($i = 1; $i <= 15; $i++)
-                    <tr>
-                    <td style="padding:6px; text-align:center;">
-                        {{ $i }}
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][name]"
-                            style="border:none; width:100%; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][borrowed_from]"
-                            style="border:none; width:100%; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][lot]"
-                            style="border:none; width:100%; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][manufactured]"
-                            style="border:none; width:100%; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="date" name="rows[{{ $i }}][expiry]"
-                            style="border:none; width:100%; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][quantity_unit]"
-                            style="border:none; width:100%; outline:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text" name="rows[{{ $i }}][lims_ticket]"
-                            style="border:none; width:100%; outline:none;">
-                    </td>
-                    </tr>
-                    @endfor
-            </tbody>
+            <tbody id="btTableBody"></tbody>
         </table>
 
         <br>
 
+        <!-- Footer: Reported by / Approved by -->
         <p style="font-size:14px;">
             <strong>Reported by:</strong>
-            <input type="text" name="reported_by"
-                style="border:none; border-bottom:1px solid #000; width:250px;">
+            <input type="text" id="btReportedBy" name="reported_by" style="border:none; border-bottom:1px solid #000; width:250px;">
             &nbsp;&nbsp;&nbsp;
             <strong>Sign:</strong>
-            <input type="text" name="reported_sign"
-                style="border:none; border-bottom:1px solid #000; width:150px;">
+            <input type="text" id="btReportedSign" name="reported_sign" style="border:none; border-bottom:1px solid #000; width:150px;">
             &nbsp;&nbsp;&nbsp;
             <strong>Date:</strong>
-            <input type="date" name="reported_date"
-                style="border:none; border-bottom:1px solid #000; width:150px;">
+            <input type="date" id="btReportedDate" name="reported_date" style="border:none; border-bottom:1px solid #000; width:150px;">
         </p>
 
         <p style="font-size:14px;">
             <strong>Approved by:</strong>
-            <input type="text" name="approved_by"
-                style="border:none; border-bottom:1px solid #000; width:250px;">
+            <input type="text" id="btApprovedBy" name="approved_by" style="border:none; border-bottom:1px solid #000; width:250px;">
             &nbsp;&nbsp;&nbsp;
             <strong>Sign:</strong>
-            <input type="text" name="approved_sign"
-                style="border:none; border-bottom:1px solid #000; width:150px;">
+            <input type="text" id="btApprovedSign" name="approved_sign" style="border:none; border-bottom:1px solid #000; width:150px;">
             &nbsp;&nbsp;&nbsp;
             <strong>Date:</strong>
-            <input type="date" name="approved_date"
-                style="border:none; border-bottom:1px solid #000; width:150px;">
+            <input type="date" id="btApprovedDate" name="approved_date" style="border:none; border-bottom:1px solid #000; width:150px;">
         </p>
+
+        <script>
+        var btRowCounter = 0;
+
+        // ── LOAD ──
+        function loadBorrowingTracking() {
+            const month = document.getElementById('btFilterMonth').value;
+            const year  = document.getElementById('btFilterYear').value;
+
+            document.getElementById('btMonth').value = month;
+            document.getElementById('btYear').value = year;
+
+            if (!month || !year) return;
+
+            fetch(`/newforms/sm/borrowing-tracking/load?month=${month}&year=${year}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.json())
+            .then(res => {
+                const tbody = document.getElementById('btTableBody');
+                if (!tbody) return;
+
+                tbody.innerHTML = '';
+                btRowCounter = 0;
+
+                if (!res.data || res.data.length === 0) {
+                    showToastFOM009SM('info', 'No records found. You can add new entries below.');
+                    addEmptyRowBT();
+                    return;
+                }
+
+                showToastFOM009SM('success', res.data.length + ' record(s) loaded.');
+
+                res.data.forEach(row => {
+                    btRowCounter++;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = buildBtRowHTML(row, btRowCounter);
+                    tbody.appendChild(tr);
+                });
+
+                // Populate footer from first record
+                const first = res.data[0];
+                document.getElementById('btReportedBy').value   = first.reported_by || '';
+                document.getElementById('btReportedSign').value = first.reported_sign || '';
+                document.getElementById('btReportedDate').value = first.reported_date || '';
+                document.getElementById('btApprovedBy').value   = first.approved_by || '';
+                document.getElementById('btApprovedSign').value = first.approved_sign || '';
+                document.getElementById('btApprovedDate').value = first.approved_date || '';
+
+                addEmptyRowBT();
+            })
+            .catch(err => {
+                console.error('Load error:', err);
+                showToastFOM009SM('error', 'Failed to load data.');
+            });
+        }
+
+        function buildBtRowHTML(row, sno) {
+            return `
+                <td style="border:1px solid #000; padding:4px; text-align:center;">
+                    <input type="hidden" name="row_id[]" value="${row.id}">
+                    <strong>${sno}</strong>
+                </td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_reagent_name[]" value="${row.reagent_name || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_borrowed_from[]" value="${row.borrowed_from || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_lot_number[]" value="${row.lot_number || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date_manufactured[]" value="${row.date_manufactured || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_expiration_date[]" value="${row.expiration_date || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_quantity_unit[]" value="${row.quantity_unit || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_lims_ticket[]" value="${row.lims_ticket || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+            `;
+        }
+
+        function addEmptyRowBT() {
+            const tbody = document.getElementById('btTableBody');
+            if (!tbody) return;
+
+            btRowCounter++;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>${btRowCounter}</strong></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_reagent_name[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_borrowed_from[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_lot_number[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_date_manufactured[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input type="date" name="row_expiration_date[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_quantity_unit[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="row_lims_ticket[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+            `;
+            tbody.appendChild(tr);
+
+            // Auto-add next row when user starts typing in this last row
+            tr.addEventListener('input', function handleBtInput() {
+                tr.removeEventListener('input', handleBtInput);
+                addEmptyRowBT();
+            }, { once: true });
+        }
+
+        function clearBtFilters() {
+            document.getElementById('btFilterMonth').value = '';
+            document.getElementById('btFilterYear').value = '';
+            document.getElementById('btMonth').value = '';
+            document.getElementById('btYear').value = '';
+            document.getElementById('btReportedBy').value = '';
+            document.getElementById('btReportedSign').value = '';
+            document.getElementById('btReportedDate').value = '';
+            document.getElementById('btApprovedBy').value = '';
+            document.getElementById('btApprovedSign').value = '';
+            document.getElementById('btApprovedDate').value = '';
+            const tbody = document.getElementById('btTableBody');
+            if (tbody) {
+                tbody.innerHTML = '';
+                btRowCounter = 0;
+                addEmptyRowBT();
+            }
+            showToastFOM009SM('info', 'Form cleared.');
+        }
+
+        // ── AJAX SUBMIT ──
+        (function() {
+            function initBtForm() {
+                const formContainer = document.querySelector('[id="TDPL/SM/FOM-009"]');
+                if (!formContainer) return;
+
+                const form = formContainer.querySelector('form');
+                if (!form || form.dataset.ajaxBoundBt === 'true') return;
+                form.dataset.ajaxBoundBt = 'true';
+
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    document.getElementById('btMonth').value = document.getElementById('btFilterMonth').value;
+                    document.getElementById('btYear').value  = document.getElementById('btFilterYear').value;
+
+                    const formData = new FormData(form);
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                    if (submitBtn) {
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+                    }
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            showToastFOM009SM('success', result.message || 'Saved successfully!');
+
+                            const tbody = document.getElementById('btTableBody');
+                            if (tbody && result.data && result.data.length > 0) {
+                                tbody.innerHTML = '';
+                                btRowCounter = 0;
+                                result.data.forEach(row => {
+                                    btRowCounter++;
+                                    const tr = document.createElement('tr');
+                                    tr.innerHTML = buildBtRowHTML(row, btRowCounter);
+                                    tbody.appendChild(tr);
+                                });
+                                addEmptyRowBT();
+                            }
+                        } else {
+                            showToastFOM009SM('error', result.message || 'Save failed!');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Submit error:', err);
+                        showToastFOM009SM('error', 'Failed to save. Please try again.');
+                    })
+                    .finally(() => {
+                        if (submitBtn) {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        }
+                    });
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    initBtForm();
+                    addEmptyRowBT();
+                });
+            } else {
+                initBtForm();
+                addEmptyRowBT();
+            }
+        })();
+
+        function showToastFOM009SM(type, message) {
+            const colors = { success: '#28a745', error: '#dc3545', info: '#17a2b8' };
+            const toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (colors[type] || colors.info);
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        </script>
 
     </x-formTemplete>
     <x-formTemplete
@@ -1094,47 +2033,60 @@
         docName="Reagent-Consumable Recall Tracking Form"
         issueNo="2.0"
         issueDate="01/10/2024"
-        buttonText="Submit">
+        buttonText="Submit"
+        action="{{ route('newforms.sm.forms.submit') }}">
+
+        <!-- Hidden form ID for edit mode -->
+        <input type="hidden" id="recall_form_id" name="recall_form_id" value="">
+
+        <!-- Filter Section -->
+        <div style="margin-bottom:15px; display:flex; gap:15px; align-items:flex-end; flex-wrap:wrap;">
+            <div>
+                <label><strong>Product Name</strong></label>
+                <input type="text" id="recallFilterProduct" placeholder="Type product name"
+                    style="border:1px solid #000; padding:6px 10px; width:250px; display:block; border-radius:4px;">
+            </div>
+            <div style="display:flex; gap:8px; align-items:flex-end;">
+                <button type="button" onclick="loadRecallFom010()"
+                    style="padding:6px 15px; background:#3498db; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Search
+                </button>
+                <button type="button" onclick="clearRecallFom010()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
+            </div>
+        </div>
+
         <p style="font-size:18px; font-weight:bold;">REAGENT/CONSUMABLE RECALL TRACKING FORM</p>
 
+        <!-- Product Information Table -->
         <table style="width:100%; border-collapse:collapse;" border="1">
             <thead>
                 <tr>
-                    <th style="border:1px solid #000; padding:6px; text-align:center;">S. No.</th>
+                    <th style="border:1px solid #000; padding:6px; text-align:center; width:50px;">S. No.</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">DESCRIPTION</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">DETAILS</th>
                 </tr>
             </thead>
-
             <tbody>
-
-
                 @foreach([
-                'Product Category',
-                'Product Name',
-                'Manufacturer',
-                'Supplier',
-                'Lot Number',
-                'Batch Number',
-                'Date of Manufacture',
-                'Expiry Date',
-                'Quantity available on Hand',
-                ] as $index => $label)
+                    ['label' => 'Product Category', 'name' => 'product_category', 'type' => 'text'],
+                    ['label' => 'Product Name', 'name' => 'product_name', 'type' => 'text'],
+                    ['label' => 'Manufacturer', 'name' => 'manufacturer', 'type' => 'text'],
+                    ['label' => 'Supplier', 'name' => 'supplier', 'type' => 'text'],
+                    ['label' => 'Lot Number', 'name' => 'lot_number', 'type' => 'text'],
+                    ['label' => 'Batch Number', 'name' => 'batch_number', 'type' => 'text'],
+                    ['label' => 'Date of Manufacture', 'name' => 'date_of_manufacture', 'type' => 'date'],
+                    ['label' => 'Expiry Date', 'name' => 'expiry_date', 'type' => 'date'],
+                    ['label' => 'Quantity available on Hand', 'name' => 'quantity_on_hand', 'type' => 'text'],
+                ] as $index => $field)
                 <tr>
-                    <td style="padding:6px; text-align:center;">
-                        <strong>{{ $index + 1 }}</strong>
-                    </td>
-                    <td style="padding:6px;">{{ $label }}</td>
+                    <td style="padding:6px; text-align:center;"><strong>{{ $index + 1 }}</strong></td>
+                    <td style="padding:6px;">{{ $field['label'] }}</td>
                     <td style="padding:6px;">
-                        @if($label === 'Date of Manufacture' || $label === 'Expiry Date')
-                        <input type="date"
-                            name="details[{{ $index + 1 }}]"
-                            style="border:none; width:100%; outline:none;">
-                        @else
-                        <input type="text"
-                            name="details[{{ $index + 1 }}]"
-                            style="border:none; width:100%; outline:none;">
-                        @endif
+                        <input type="{{ $field['type'] }}" name="{{ $field['name'] }}"
+                            style="width:100%; border:none; outline:none; padding:4px;">
                     </td>
                 </tr>
                 @endforeach
@@ -1143,36 +2095,27 @@
 
         <br><br>
 
+        <!-- Reason For Recall -->
         <table style="width:100%;">
             <tbody>
-                <tr>
-                    <td><strong>Reason For Recall:</strong></td>
-                </tr>
-
+                <tr><td><strong>Reason For Recall:</strong></td></tr>
                 <tr>
                     <td style="padding:8px;">
                         <label style="margin-right:40px;">
-                            <input type="checkbox" name="reason[]" value="Patient Complaint">
-                            Patient Complaint
+                            <input type="checkbox" name="reason[]" value="Patient Complaint"> Patient Complaint
                         </label>
-
                         <label style="margin-right:40px;">
-                            <input type="checkbox" name="reason[]" value="Supplier Recall">
-                            Supplier Recall
+                            <input type="checkbox" name="reason[]" value="Supplier Recall"> Supplier Recall
                         </label>
-
                         <label>
-                            <input type="checkbox" name="reason[]" value="Self Inspection">
-                            Self Inspection
+                            <input type="checkbox" name="reason[]" value="Self Inspection"> Self Inspection
                         </label>
                     </td>
                 </tr>
-
                 <tr>
                     <td>
                         <span>Additional Notes: (Provide & Attach Supplier Recall Notice details)</span><br>
-                        <textarea name="additional_notes"
-                            style="width:100%; height:80px; border:1px solid #ccc;"></textarea>
+                        <textarea name="additional_notes" style="width:100%; height:80px; border:1px solid #ccc; padding:8px; border-radius:4px;"></textarea>
                     </td>
                 </tr>
             </tbody>
@@ -1180,48 +2123,27 @@
 
         <br>
 
+        <!-- Disposal Plan -->
         <table style="width:100%; border-collapse:collapse;" border="1">
             <tbody>
                 <tr>
-                    <td colspan="6" style="padding:6px;">
-                        <strong>Disposal Plan:</strong>
+                    <td colspan="3" style="padding:6px;"><strong>Disposal Plan:</strong></td>
+                </tr>
+                <tr>
+                    <td style="padding:8px;">
+                        <label><input type="checkbox" name="disposal[]" value="Return to Supplier/Manufacturer"> Return to Supplier/Manufacturer</label>
+                    </td>
+                    <td style="padding:8px;">
+                        <label><input type="checkbox" name="disposal[]" value="Destroy & Dispose"> Destroy & Dispose</label>
+                    </td>
+                    <td style="padding:8px;">
+                        <label><input type="checkbox" name="disposal[]" value="Autoclave and Send to Biomedical Waste"> Autoclave and Send to Biomedical Waste</label>
                     </td>
                 </tr>
-
                 <tr>
-                    <td style="padding:6px;">
-                        <label>
-                            <input type="checkbox" name="disposal[]" value="Return to Supplier/Manufacturer">
-                            Return to Supplier/Manufacturer
-                        </label>
-                    </td>
-
-                    <td></td>
-
-                    <td style="padding:6px;">
-                        <label>
-                            <input type="checkbox" name="disposal[]" value="Destroy & Dispose">
-                            Destroy & Dispose
-                        </label>
-                    </td>
-
-                    <td></td>
-
-                    <td style="padding:6px;">
-                        <label>
-                            <input type="checkbox" name="disposal[]" value="Autoclave and Send to Biomedical Waste">
-                            Autoclave and Send to Biomedical Waste
-                        </label>
-                    </td>
-
-                    <td></td>
-                </tr>
-
-                <tr>
-                    <td colspan="6" style="padding:6px;">
+                    <td colspan="3" style="padding:6px;">
                         Details of disposal method:
-                        <textarea name="disposal_details"
-                            style="width:100%; height:80px; border:1px solid #ccc;"></textarea>
+                        <textarea name="disposal_details" style="width:100%; height:80px; border:1px solid #ccc; padding:8px; border-radius:4px;"></textarea>
                     </td>
                 </tr>
             </tbody>
@@ -1229,46 +2151,19 @@
 
         <br>
 
+        <!-- Locations Sub-table -->
         <p><strong>Quantities available in different locations.</strong></p>
-
         <table style="width:100%; border-collapse:collapse;" border="1">
             <thead>
                 <tr>
+                    <th style="border:1px solid #000; padding:6px; text-align:center; width:50px;">S. No.</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Name of the Stores/Department</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Quantity & UOM</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Action Taken</th>
                     <th style="border:1px solid #000; padding:6px; text-align:center;">Signature of Dept In-charge</th>
                 </tr>
             </thead>
-            <tbody>
-                @for($i = 1; $i <= 12; $i++)
-                    <tr>
-                    <td style="padding:6px;">
-                        <input type="text"
-                            name="locations[{{ $i }}][department]"
-                            style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text"
-                            name="locations[{{ $i }}][quantity]"
-                            style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text"
-                            name="locations[{{ $i }}][action]"
-                            style="width:100%; border:none;">
-                    </td>
-
-                    <td style="padding:6px;">
-                        <input type="text"
-                            name="locations[{{ $i }}][signature]"
-                            style="width:100%; border:none;">
-                    </td>
-                    </tr>
-                    @endfor
-            </tbody>
+            <tbody id="recallLocBody"></tbody>
         </table>
 
         <br><br>
@@ -1280,24 +2175,230 @@
         <br>
 
         <p><strong>Name of the Store Executive/Manager:</strong><br>
-            <input type="text" name="store_manager"
-                style="border:none; border-bottom:1px solid #000; width:60%;">
+            <input type="text" name="store_manager" style="border:none; border-bottom:1px solid #000; width:60%; padding:4px;">
         </p>
-
         <p><strong>Designation:</strong><br>
-            <input type="text" name="designation"
-                style="border:none; border-bottom:1px solid #000; width:60%;">
+            <input type="text" name="designation" style="border:none; border-bottom:1px solid #000; width:60%; padding:4px;">
         </p>
-
         <p><strong>Date:</strong><br>
-            <input type="date" name="store_date"
-                style="border:none; border-bottom:1px solid #000; width:30%;">
+            <input type="date" name="store_date" style="border:none; border-bottom:1px solid #000; width:30%; padding:4px;">
+        </p>
+        <p><strong>Signature:</strong><br>
+            <input type="text" name="store_signature" style="border:none; border-bottom:1px solid #000; width:40%; padding:4px;">
         </p>
 
-        <p><strong>Signature:</strong><br>
-            <input type="text" name="store_signature"
-                style="border:none; border-bottom:1px solid #000; width:40%;">
-        </p>
+        <script>
+        var recallLocCounter = 0;
+
+        // ── LOAD ──
+        function loadRecallFom010() {
+            const productName = document.getElementById('recallFilterProduct').value.trim();
+            if (!productName) {
+                showToastFOM010SM('info', 'Please enter a product name to search.');
+                return;
+            }
+
+            fetch(`/newforms/sm/recall-tracking/load?product_name=${encodeURIComponent(productName)}`, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.json())
+            .then(res => {
+                clearRecallFom010Fields();
+
+                if (!res.data) {
+                    document.getElementById('recall_form_id').value = '';
+                    showToastFOM010SM('info', 'No records found. You can fill a new form.');
+                    return;
+                }
+
+                document.getElementById('recall_form_id').value = res.data.id;
+                const container = document.querySelector('[id="TDPL/SM/FOM-010"]');
+
+                // Text / date fields
+                const textFields = [
+                    'product_category','product_name','manufacturer','supplier',
+                    'lot_number','batch_number','date_of_manufacture','expiry_date',
+                    'quantity_on_hand','additional_notes','disposal_details',
+                    'store_manager','designation','store_date','store_signature'
+                ];
+                textFields.forEach(field => {
+                    const el = container.querySelector('[name="' + field + '"]');
+                    if (el && res.data[field] != null) el.value = res.data[field];
+                });
+
+                // Checkboxes: reason[]
+                if (Array.isArray(res.data.reason)) {
+                    res.data.reason.forEach(val => {
+                        const cb = container.querySelector('input[name="reason[]"][value="' + val + '"]');
+                        if (cb) cb.checked = true;
+                    });
+                }
+
+                // Checkboxes: disposal[]
+                if (Array.isArray(res.data.disposal)) {
+                    res.data.disposal.forEach(val => {
+                        const cb = container.querySelector('input[name="disposal[]"][value="' + val + '"]');
+                        if (cb) cb.checked = true;
+                    });
+                }
+
+                // Locations sub-table
+                const locBody = document.getElementById('recallLocBody');
+                locBody.innerHTML = '';
+                recallLocCounter = 0;
+
+                if (Array.isArray(res.data.locations) && res.data.locations.length > 0) {
+                    res.data.locations.forEach(loc => {
+                        recallLocCounter++;
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = buildRecallLocRow(loc, recallLocCounter);
+                        locBody.appendChild(tr);
+                    });
+                }
+                addEmptyRecallLoc();
+
+                showToastFOM010SM('success', 'Record loaded successfully.');
+            })
+            .catch(err => {
+                console.error('Load error:', err);
+                showToastFOM010SM('error', 'Failed to load data.');
+            });
+        }
+
+        function buildRecallLocRow(loc, sno) {
+            return `
+                <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>${sno}</strong></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="loc_department[]" value="${loc.department || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="loc_quantity[]" value="${loc.quantity || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="loc_action[]" value="${loc.action || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="loc_signature[]" value="${loc.signature || ''}" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+            `;
+        }
+
+        function addEmptyRecallLoc() {
+            const tbody = document.getElementById('recallLocBody');
+            if (!tbody) return;
+
+            recallLocCounter++;
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td style="border:1px solid #000; padding:4px; text-align:center;"><strong>${recallLocCounter}</strong></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="loc_department[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="loc_quantity[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="loc_action[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+                <td style="border:1px solid #000; padding:4px;"><input name="loc_signature[]" style="width:100%; border:1px solid #ccc; padding:4px;"></td>
+            `;
+            tbody.appendChild(tr);
+
+            tr.addEventListener('input', function handleLocInput() {
+                tr.removeEventListener('input', handleLocInput);
+                addEmptyRecallLoc();
+            }, { once: true });
+        }
+
+        // ── CLEAR ──
+        function clearRecallFom010() {
+            document.getElementById('recallFilterProduct').value = '';
+            document.getElementById('recall_form_id').value = '';
+            clearRecallFom010Fields();
+            showToastFOM010SM('info', 'Form cleared.');
+        }
+
+        function clearRecallFom010Fields() {
+            const container = document.querySelector('[id="TDPL/SM/FOM-010"]');
+            if (!container) return;
+            container.querySelectorAll('input, textarea, select').forEach(el => {
+                if (el.id === 'recallFilterProduct' || el.id === 'recall_form_id' || el.name === 'doc_no') return;
+                if (el.type === 'checkbox' || el.type === 'radio') {
+                    el.checked = false;
+                } else {
+                    el.value = '';
+                }
+            });
+            // Reset locations sub-table
+            const locBody = document.getElementById('recallLocBody');
+            if (locBody) {
+                locBody.innerHTML = '';
+                recallLocCounter = 0;
+                addEmptyRecallLoc();
+            }
+        }
+
+        // ── AJAX SUBMIT ──
+        (function() {
+            function initRecallForm() {
+                const formContainer = document.querySelector('[id="TDPL/SM/FOM-010"]');
+                if (!formContainer) return;
+
+                const form = formContainer.querySelector('form');
+                if (!form || form.dataset.ajaxBoundRecall === 'true') return;
+                form.dataset.ajaxBoundRecall = 'true';
+
+                form.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+
+                    const formData = new FormData(form);
+                    const submitBtn = form.querySelector('button[type="submit"]');
+                    const originalText = submitBtn ? submitBtn.textContent : 'Submit';
+
+                    if (submitBtn) {
+                        submitBtn.textContent = 'Saving...';
+                        submitBtn.disabled = true;
+                    }
+
+                    fetch(form.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.success) {
+                            showToastFOM010SM('success', result.message || 'Saved successfully!');
+                            if (result.form_id) {
+                                document.getElementById('recall_form_id').value = result.form_id;
+                            }
+                        } else {
+                            showToastFOM010SM('error', result.message || 'Failed to save.');
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Submit error:', err);
+                        showToastFOM010SM('error', 'Failed to save. Please try again.');
+                    })
+                    .finally(() => {
+                        if (submitBtn) {
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                        }
+                    });
+                });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    initRecallForm();
+                    addEmptyRecallLoc();
+                });
+            } else {
+                initRecallForm();
+                addEmptyRecallLoc();
+            }
+        })();
+
+        function showToastFOM010SM(type, message) {
+            const colors = { success: '#28a745', error: '#dc3545', info: '#17a2b8' };
+            const toast = document.createElement('div');
+            toast.style.cssText = 'position:fixed;top:20px;right:20px;z-index:9999;padding:12px 24px;border-radius:6px;color:#fff;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,0.15);background:' + (colors[type] || colors.info);
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        </script>
 
     </x-formTemplete>
 </body>
