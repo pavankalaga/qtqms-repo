@@ -272,71 +272,66 @@
         <x-formTemplete id="TDPL/AS/FOM-001" docNo="TDPL/AS/FOM-001" docName="Sample Volume Check Form" issueNo="2.0"
             issueDate="01/10/2024" buttonText="Submit" action="{{ route('newforms.as.forms.submit') }}">
 
-            {{-- FORM BODY GOES HERE --}}
-
-            <div class="row mb-3">
-                <div class="col-md-4">
+            <!-- Header Section -->
+            <div style="margin-bottom:15px; display:flex; gap:20px; align-items:center; flex-wrap:wrap;">
+                <div>
                     <strong>Month & Year:</strong>
-                    <input type="month" name="month_year" id="monthYear" onchange="onMonthYearChange(this.value)"
-                        class="form-control">
-
-
+                    <input type="month" name="month_year" id="svc_month_year"
+                        style="border:1px solid #000; padding:5px;"
+                        onchange="loadSampleVolumeCheck()">
                 </div>
-                <div class="col-md-4">
-                    <label><strong>Location</strong></label>
-                    <select name="location" id="locationSelect" class="form-control">
-                        <option value="">Select Location</option>
-                        <option value="Hyderabad">Hyderabad</option>
-                        <option value="Bangalore">Bangalore</option>
-                        <option value="Chennai">Chennai</option>
-                        <option value="Mumbai">Mumbai</option>
-                        <option value="Delhi">Delhi</option>
-                    </select>
+                <div>
+                    <strong>Location:</strong>
+                    <input type="text" name="location" id="svc_location" list="svcLocationList"
+                        style="border:1px solid #000; padding:5px; width:180px;" placeholder="All"
+                        onchange="loadSampleVolumeCheck()" onblur="loadSampleVolumeCheck()">
+                    <datalist id="svcLocationList">
+                        <option value="Hyderabad">
+                        <option value="Bangalore">
+                        <option value="Chennai">
+                        <option value="Mumbai">
+                        <option value="Delhi">
+                    </datalist>
                 </div>
-
-                <div class="col-md-4">
-                    <label><strong>Department</strong></label>
-                    <select name="department" id="departmentSelect" class="form-control">
-                        <option value="">Select Department</option>
-                        <option value="Pathology">Pathology</option>
-                        <option value="Clinical Laboratory">Clinical Laboratory</option>
-                        <option value="Biochemistry">Biochemistry</option>
-                        <option value="Hematology">Hematology</option>
-                        <option value="Microbiology">Microbiology</option>
-                        <option value="Sample Collection">Sample Collection</option>
-                        <option value="Diagnostics">Diagnostics</option>
-                        <option value="Lab Operations">Lab Operations</option>
-                    </select>
+                <div>
+                    <strong>Department:</strong>
+                    <input type="text" name="department" id="svc_department" list="svcDeptList"
+                        style="border:1px solid #000; padding:5px; width:200px;" placeholder="All"
+                        onchange="loadSampleVolumeCheck()" onblur="loadSampleVolumeCheck()">
+                    <datalist id="svcDeptList">
+                        <option value="Pathology">
+                        <option value="Clinical Laboratory">
+                        <option value="Biochemistry">
+                        <option value="Hematology">
+                        <option value="Microbiology">
+                        <option value="Sample Collection">
+                        <option value="Diagnostics">
+                        <option value="Lab Operations">
+                    </datalist>
                 </div>
-
-
-
+                <button type="button" onclick="clearSampleVolumeCheck()"
+                    style="padding:6px 15px; background:#dc3545; color:#fff; border:none; border-radius:4px; cursor:pointer;">
+                    Clear
+                </button>
             </div>
 
-            <table class="table table-bordered w-100">
+            <input type="hidden" name="form_id" id="svc_form_id">
+
+            <!-- Table -->
+            <table style="width:100%; border-collapse:collapse;" border="1">
                 <tbody>
                     <tr>
-                        <td rowspan="2"><strong>Type of Container</strong></td>
-                        <td rowspan="2"><strong>Required Sample Quantity (ml)</strong></td>
-                        <td colspan="12"><strong>Date of Sample Volume Review</strong></td>
+                        <th rowspan="2" style="border:1px solid #000; padding:4px; text-align:center;">Type of Container</th>
+                        <th rowspan="2" style="border:1px solid #000; padding:4px; text-align:center;">Required Sample Quantity (ml)</th>
+                        <th colspan="12" style="border:1px solid #000; padding:4px; text-align:center;">Date of Sample Volume Review</th>
                     </tr>
 
                     <tr>
-                        <td><strong>Jul</strong></td>
-                        <td><strong>Aug</strong></td>
-                        <td><strong>Sep</strong></td>
-                        <td><strong>Oct</strong></td>
-                        <td><strong>Nov</strong></td>
-                        <td><strong>Dec</strong></td>
-                        <td><strong>Jan</strong></td>
-                        <td><strong>Feb</strong></td>
-                        <td><strong>Mar</strong></td>
-                        <td><strong>Apr</strong></td>
-                        <td><strong>May</strong></td>
-                        <td><strong>Jun</strong></td>
+                        @foreach (['Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'] as $m)
+                            <th style="border:1px solid #000; padding:4px; text-align:center;">{{ $m }}</th>
+                        @endforeach
                     </tr>
 
-                    {{-- Repeatable Row Template --}}
                     @php
                         $containers = [
                             'SST Gel Vial (Yellow Top)',
@@ -346,42 +341,44 @@
                             'Sodium Citrate Vial (Blue Top)',
                             'Sodium Heparin Vial (Green Top)',
                         ];
+                        $months = ['jul', 'aug', 'sep', 'oct', 'nov', 'dec', 'jan', 'feb', 'mar', 'apr', 'may', 'jun'];
                     @endphp
+
                     @foreach ($containers as $key => $item)
                         <tr>
-                            <td>
+                            <td style="border:1px solid #000; padding:4px;">
                                 <strong>{{ $item }}</strong>
                                 <input type="hidden" name="containers[{{ $key }}][container_type]"
                                     value="{{ $item }}">
                             </td>
-
-                            <td>
-                                <input type="number" name="containers[{{ $key }}][required_qty]"
-                                    class="form-control">
+                            <td style="border:1px solid #000; padding:4px; text-align:center;">
+                                <input type="number" id="svc_required_qty_{{ $key }}"
+                                    name="containers[{{ $key }}][required_qty]"
+                                    style="width:80px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                             </td>
-
-                            @foreach (['jul', 'aug', 'sep', 'oct', 'nov', 'dec', 'jan', 'feb', 'mar', 'apr', 'may', 'jun'] as $month)
-                                <td>
-                                    <input type="number"
+                            @foreach ($months as $month)
+                                <td style="border:1px solid #000; padding:4px; text-align:center;">
+                                    <input type="number" id="svc_actual_qty_{{ $key }}_{{ $month }}"
                                         name="containers[{{ $key }}][actual_qty][{{ $month }}]"
-                                        data-month="{{ $month }}" class="form-control">
-
+                                        style="width:70px; padding:4px; border:1px solid #aaa; border-radius:4px;">
                                 </td>
                             @endforeach
                         </tr>
                     @endforeach
 
                     <tr>
-                        <td><strong>Done By</strong></td>
-                        <td colspan="13">
-                            <input type="text" name="done_by" id="doneByInput" class="form-control">
+                        <td style="border:1px solid #000; padding:4px;"><strong>Done By</strong></td>
+                        <td colspan="13" style="border:1px solid #000; padding:4px;">
+                            <input type="text" name="done_by" id="svc_done_by"
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     </tr>
 
                     <tr>
-                        <td><strong>Reviewed By</strong></td>
-                        <td colspan="13">
-                            <input type="text" name="reviewed_by" id="reviewedByInput" class="form-control">
+                        <td style="border:1px solid #000; padding:4px;"><strong>Reviewed By</strong></td>
+                        <td colspan="13" style="border:1px solid #000; padding:4px;">
+                            <input type="text" name="reviewed_by" id="svc_reviewed_by"
+                                style="width:100%; padding:4px; border:1px solid #aaa; border-radius:4px;">
                         </td>
                     </tr>
 
@@ -394,7 +391,102 @@
             </p>
 
             <script>
-                // AJAX Submit for FOM-001
+                function loadSampleVolumeCheck() {
+                    const monthYear = document.getElementById('svc_month_year').value;
+                    if (!monthYear) return;
+
+                    const location = document.getElementById('svc_location').value;
+                    const department = document.getElementById('svc_department').value;
+
+                    const params = new URLSearchParams();
+                    params.append('month_year', monthYear);
+                    if (location) params.append('location', location);
+                    if (department) params.append('department', department);
+
+                    fetch(`/newforms/as/sample-volume-check/load?${params.toString()}`, {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(res => res.json())
+                    .then(res => {
+                        // Clear all inputs first
+                        clearSampleVolumeCheckInputs();
+
+                        if (!res.data) {
+                            document.getElementById('svc_form_id').value = '';
+                            return;
+                        }
+
+                        // Set form ID for update
+                        document.getElementById('svc_form_id').value = res.data.id;
+
+                        // Populate header fields
+                        if (res.data.location) {
+                            document.getElementById('svc_location').value = res.data.location;
+                        }
+                        if (res.data.department) {
+                            document.getElementById('svc_department').value = res.data.department;
+                        }
+                        if (res.data.done_by) {
+                            document.getElementById('svc_done_by').value = res.data.done_by;
+                        }
+                        if (res.data.reviewed_by) {
+                            document.getElementById('svc_reviewed_by').value = res.data.reviewed_by;
+                        }
+
+                        // Populate container rows
+                        if (res.data.containers) {
+                            const containerNames = [
+                                'SST Gel Vial (Yellow Top)',
+                                'Plain Vial (Red Top)',
+                                'EDTA Vial (Lavender Top)',
+                                'Sodium Fluoride Vial (Gray Top)',
+                                'Sodium Citrate Vial (Blue Top)',
+                                'Sodium Heparin Vial (Green Top)',
+                            ];
+                            const months = ['jul','aug','sep','oct','nov','dec','jan','feb','mar','apr','may','jun'];
+
+                            containerNames.forEach((name, key) => {
+                                if (!res.data.containers[name]) return;
+                                const data = res.data.containers[name];
+
+                                // Required qty
+                                const reqEl = document.getElementById(`svc_required_qty_${key}`);
+                                if (reqEl && data.required_qty) reqEl.value = data.required_qty;
+
+                                // Month values
+                                months.forEach(m => {
+                                    const el = document.getElementById(`svc_actual_qty_${key}_${m}`);
+                                    if (el && data[m]) el.value = data[m];
+                                });
+                            });
+                        }
+                    })
+                    .catch(err => console.error('Load error:', err));
+                }
+
+                function clearSampleVolumeCheckInputs() {
+                    const months = ['jul','aug','sep','oct','nov','dec','jan','feb','mar','apr','may','jun'];
+                    for (let k = 0; k < 6; k++) {
+                        const reqEl = document.getElementById(`svc_required_qty_${k}`);
+                        if (reqEl) reqEl.value = '';
+                        months.forEach(m => {
+                            const el = document.getElementById(`svc_actual_qty_${k}_${m}`);
+                            if (el) el.value = '';
+                        });
+                    }
+                    document.getElementById('svc_location').value = '';
+                    document.getElementById('svc_department').value = '';
+                    document.getElementById('svc_done_by').value = '';
+                    document.getElementById('svc_reviewed_by').value = '';
+                    document.getElementById('svc_form_id').value = '';
+                }
+
+                function clearSampleVolumeCheck() {
+                    document.getElementById('svc_month_year').value = '';
+                    clearSampleVolumeCheckInputs();
+                }
+
+                // AJAX Submit for Sample Volume Check
                 (function() {
                     function initSampleVolumeCheckForm() {
                         const formContainer = document.querySelector('[id="TDPL/AS/FOM-001"]');
@@ -410,10 +502,12 @@
 
                             const formData = new FormData(form);
                             const submitBtn = form.querySelector('button[type="submit"]');
-                            const originalText = submitBtn.textContent;
+                            const originalText = submitBtn ? submitBtn.textContent : 'Submit';
 
-                            submitBtn.textContent = 'Saving...';
-                            submitBtn.disabled = true;
+                            if (submitBtn) {
+                                submitBtn.textContent = 'Saving...';
+                                submitBtn.disabled = true;
+                            }
 
                             fetch(form.action, {
                                 method: 'POST',
@@ -426,23 +520,29 @@
                             .then(response => response.json())
                             .then(result => {
                                 if (result.success) {
-                                    showToastFOM001('success', result.message || 'Saved successfully!');
+                                    showToastSVC('success', result.message || 'Saved successfully!');
+                                    // Update form_id if returned
+                                    if (result.form_id) {
+                                        document.getElementById('svc_form_id').value = result.form_id;
+                                    }
                                 } else {
-                                    showToastFOM001('error', result.message || 'Save failed!');
+                                    showToastSVC('error', result.message || 'Failed to save');
                                 }
                             })
                             .catch(error => {
                                 console.error('Error:', error);
-                                showToastFOM001('error', 'Failed to save data');
+                                showToastSVC('error', 'Failed to save. Please try again.');
                             })
                             .finally(() => {
-                                submitBtn.textContent = originalText;
-                                submitBtn.disabled = false;
+                                if (submitBtn) {
+                                    submitBtn.textContent = originalText;
+                                    submitBtn.disabled = false;
+                                }
                             });
                         });
                     }
 
-                    function showToastFOM001(type, message) {
+                    function showToastSVC(type, message) {
                         const toast = document.createElement('div');
                         toast.style.cssText = `
                             position:fixed; top:20px; right:20px; z-index:9999;
@@ -1681,135 +1781,7 @@
             return selector.replace(/([!\"#$%&'()*+,\-./:;<=>?@[\\\]^`{|}~])/g, '\\$1');
     }
 
-    // Submit form function
-
-    /**
-     * ✅ EVENT DELEGATION
-     * Works even if form is shown later
-     */
-    document.addEventListener('change', function(e) {
-        // Only react to Month & Year input
-        if (e.target && e.target.id === 'monthYear') {
-
-            const monthYear = e.target.value;
-            if (!monthYear) return;
-
-            fetch(`/newforms/as/sample-volume-check/load?month_year=${monthYear}`)
-                .then(res => res.json())
-                .then(res => {
-
-                    // Clear month cells
-                    document.querySelectorAll('input[data-month]').forEach(i => i.value = '');
-
-                    // Clear required qty
-                    document.querySelectorAll('input[name*="[required_qty]"]').forEach(i => i.value = '');
-
-                    if (!res.data) return;
-
-                    Object.keys(res.data).forEach(containerType => {
-
-                        const row = [...document.querySelectorAll('tr')]
-                            .find(tr => tr.textContent.includes(containerType));
-
-                        if (!row) return;
-
-                        // Required qty
-                        const reqInput = row.querySelector('input[name*="[required_qty]"]');
-                        if (reqInput && res.data[containerType].required_qty) {
-                            reqInput.value = res.data[containerType].required_qty;
-                        }
-
-                        // Month value
-                        Object.keys(res.data[containerType]).forEach(monthKey => {
-
-                            if (monthKey === 'required_qty') return;
-
-                            const cell = row.querySelector(
-                                `input[data-month="${monthKey}"]`
-                            );
-
-                            if (cell) {
-                                cell.value = res.data[containerType][monthKey];
-                            }
-                        });
-                    });
-                })
-                .catch(err => console.error(err));
-        }
-    });
-
-    function onMonthYearChange(monthYear) {
-
-        if (!monthYear) return;
-
-        fetch(`/newforms/as/sample-volume-check/load?month_year=${monthYear}`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('HTTP error ' + response.status);
-                }
-                return response.json();
-            })
-            .then(res => {
-                // ✅ Location
-                if (res.location !== null) {
-                    document.getElementById('locationSelect').value = res.location;
-                }
-
-                // ✅ Department
-                if (res.department !== null) {
-                    document.getElementById('departmentSelect').value = res.department;
-                }
-
-                // ✅ Done By
-                if (res.done_by !== null) {
-                    document.getElementById('doneByInput').value = res.done_by;
-                }
-
-                // ✅ Reviewed By
-                if (res.reviewed_by !== null) {
-                    document.getElementById('reviewedByInput').value = res.reviewed_by;
-                }
-
-                // Clear old values
-                document.querySelectorAll('input[data-month]').forEach(i => i.value = '');
-                document.querySelectorAll('input[name*="[required_qty]"]').forEach(i => i.value = '');
-
-                if (!res.data || Object.keys(res.data).length === 0) return;
-
-                // Fill container rows
-                Object.keys(res.data).forEach(containerType => {
-
-                    const row = [...document.querySelectorAll('tr')]
-                        .find(tr => tr.textContent.includes(containerType));
-
-                    if (!row) return;
-
-                    // Required qty
-                    const reqInput = row.querySelector('input[name*="[required_qty]"]');
-                    if (reqInput && res.data[containerType].required_qty) {
-                        reqInput.value = res.data[containerType].required_qty;
-                    }
-
-                    // Month values
-                    Object.keys(res.data[containerType]).forEach(monthKey => {
-
-                        if (monthKey === 'required_qty') return;
-
-                        const cell = row.querySelector(
-                            `input[data-month="${monthKey}"]`
-                        );
-
-                        if (cell) {
-                            cell.value = res.data[containerType][monthKey];
-                        }
-                    });
-                });
-            })
-            .catch(err => {
-                console.error('Load failed:', err);
-                alert('Load failed');
-            });
-    }
+    // (Sample Volume Check load/clear functions moved into form template script)
 
 
 

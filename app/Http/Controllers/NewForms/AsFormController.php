@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\NewForms;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\SampleVolumeCheck;
-use App\Models\SampleVolumeCheckItem;
 use App\Models\SampleReceivingRegister;
 use App\Models\SampleDeliveryRegister;
 use App\Models\IceGelPackRegister;
@@ -48,142 +46,66 @@ class AsFormController extends Controller
      */
     protected function storeSampleVolumeCheck(Request $request)
     {
-        // ✅ BASIC VALIDATION
+        $isAjax = $request->ajax() || $request->wantsJson();
+
         $request->validate([
-            'month_year' => 'required',      // e.g. 2026-03
-            'containers' => 'required|array',
+            'month_year' => [
+                'required',
+                'regex:/^\d{4}-(0[1-9]|1[0-2])$/'
+            ],
+        ], [
+            'month_year.regex' => 'Month & Year format must be YYYY-MM'
         ]);
 
-        // month_year = 2026-03
-        [$year, $month] = explode('-', $request->month_year);
-        $month = (int) $month;
-        $year  = (int) $year;
-
-        // numeric month → short key
-        $monthMap = [
-            1 => 'jan',
-            2 => 'feb',
-            3 => 'mar',
-            4 => 'apr',
-            5 => 'may',
-            6 => 'jun',
-            7 => 'jul',
-            8 => 'aug',
-            9 => 'sep',
-            10 => 'oct',
-            11 => 'nov',
-            12 => 'dec',
-        ];
-
-        $formMonthKey = $monthMap[$month];
-
-        DB::transaction(function () use ($request, $month, $year, $formMonthKey) {
-
-            /**
-             * =========================
-             * 1️⃣ PARENT TABLE
-             * =========================
-             * One row per Month & Year
-             */
-            $form = SampleVolumeCheck::updateOrCreate(
-                [
-                    'month' => $month,
-                    'year'  => $year,
-                ],
-                [
-                    'location'    => $request->location,
-                    'department'  => $request->department,
-                    'done_by'     => $request->done_by,
-                    'reviewed_by' => $request->reviewed_by,
-                    'status'      => 'submitted',
-                ]
-            );
-
-            /**
-             * =========================
-             * 2️⃣ CLEAR OLD ITEMS
-             * =========================
-             * For re-submit / edit case
-             */
-            $form->items()->delete();
-
-            /**
-             * =========================
-             * 3️⃣ CHILD TABLE
-             * =========================
-             * DEFAULT LOGIC:
-             * Month columns fill చేయకపోయినా
-             * Required Qty → selected month actual_qty
-             */
+        // Build containers JSON from form data
+        $containersData = [];
+        if (is_array($request->containers)) {
             foreach ($request->containers as $row) {
+                $containerType = $row['container_type'] ?? null;
+                if (!$containerType) continue;
 
-                $requiredQty = $row['required_qty'] ?? null;
-
-                // Skip empty rows completely
-                if ($requiredQty === null || $requiredQty === '') {
-                    continue;
+                $entry = [];
+                if (isset($row['required_qty']) && $row['required_qty'] !== '') {
+                    $entry['required_qty'] = $row['required_qty'];
                 }
-
-                /**
-                 * CASE 1️⃣
-                 * User filled month columns manually (advanced case)
-                 */
                 if (isset($row['actual_qty']) && is_array($row['actual_qty'])) {
-
-                    $savedAnyMonth = false;
-
                     foreach ($row['actual_qty'] as $monthKey => $qty) {
-
-                        if ($qty === null || $qty === '') {
-                            continue;
+                        if ($qty !== null && $qty !== '') {
+                            $entry[$monthKey] = $qty;
                         }
-
-                        SampleVolumeCheckItem::create([
-                            'sample_volume_check_id' => $form->id,
-                            'container_type'         => $row['container_type'],
-                            'required_qty'           => $requiredQty,
-                            'actual_qty'             => $qty,
-                            'month'                  => $monthKey, // jul, aug, mar...
-                            'remarks'                => null,
-                        ]);
-
-                        $savedAnyMonth = true;
-                    }
-
-                    // If month columns exist but selected month not filled
-                    if (!$savedAnyMonth) {
-                        SampleVolumeCheckItem::create([
-                            'sample_volume_check_id' => $form->id,
-                            'container_type'         => $row['container_type'],
-                            'required_qty'           => $requiredQty,
-                            'actual_qty'             => $requiredQty,
-                            'month'                  => $formMonthKey,
-                            'remarks'                => null,
-                        ]);
                     }
                 }
-                /**
-                 * CASE 2️⃣
-                 * User did NOT touch month columns at all (MOST COMMON)
-                 */
-                else {
-
-                    SampleVolumeCheckItem::create([
-                        'sample_volume_check_id' => $form->id,
-                        'container_type'         => $row['container_type'],
-                        'required_qty'           => $requiredQty,
-                        'actual_qty'             => $requiredQty,
-                        'month'                  => $formMonthKey,
-                        'remarks'                => null,
-                    ]);
+                if (!empty($entry)) {
+                    $containersData[$containerType] = $entry;
                 }
             }
-        });
+        }
 
-        if ($request->ajax() || $request->wantsJson()) {
+        $payload = [
+            'month_year'  => $request->month_year,
+            'location'    => $request->location,
+            'department'  => $request->department,
+            'done_by'     => $request->done_by,
+            'reviewed_by' => $request->reviewed_by,
+            'containers'  => $containersData,
+            'doc_no'      => $request->doc_no,
+            'issue_no'    => $request->issue_no,
+            'issue_date'  => $request->issue_date,
+        ];
+
+        if ($request->filled('form_id')) {
+            SampleVolumeCheck::where('id', $request->form_id)->update($payload);
+            $formId = $request->form_id;
+        } else {
+            $form = SampleVolumeCheck::create($payload);
+            $formId = $form->id;
+        }
+
+        if ($isAjax) {
             return response()->json([
                 'success' => true,
                 'message' => 'Sample Volume Check saved successfully',
+                'form_id' => $formId,
             ]);
         }
 
@@ -193,39 +115,27 @@ class AsFormController extends Controller
     public function loadSampleVolumeCheck(Request $request)
     {
         $request->validate([
-            'month_year' => 'required',
+            'month_year' => [
+                'required',
+                'regex:/^\d{4}-(0[1-9]|1[0-2])$/'
+            ],
+            'location'   => 'nullable|string|max:100',
+            'department' => 'nullable|string|max:100',
         ]);
 
-        [$year, $month] = explode('-', $request->month_year);
-
-        $form = SampleVolumeCheck::where([
-            'month' => (int) $month,
-            'year'  => (int) $year,
-        ])->with('items')->first();
-
-        if (!$form) {
-            return response()->json([
-                'location'    => null,
-                'department'  => null,
-                'done_by'     => null,
-                'reviewed_by' => null,
-                'data'        => [],
-            ]);
-        }
-
-        $result = [];
-
-        foreach ($form->items as $item) {
-            $result[$item->container_type]['required_qty'] = $item->required_qty;
-            $result[$item->container_type][$item->month]  = $item->actual_qty;
-        }
+        $form = SampleVolumeCheck::where('month_year', $request->month_year)
+            ->when(
+                $request->filled('location'),
+                fn($q) => $q->where('location', $request->location)
+            )
+            ->when(
+                $request->filled('department'),
+                fn($q) => $q->where('department', $request->department)
+            )
+            ->first();
 
         return response()->json([
-            'location'    => $form->location,
-            'department'  => $form->department,
-            'done_by'     => $form->done_by,
-            'reviewed_by' => $form->reviewed_by,
-            'data'        => $result,
+            'data' => $form
         ]);
     }
 
