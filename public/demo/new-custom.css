@@ -1,0 +1,477 @@
+/* view edit delete link */
+.dash-container .dash-content .view-link{
+  background: rgb(12 175 96);
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+.dash-container .dash-content .edit-link{
+  background: rgb(62 201 214);
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+.dash-container .dash-content .delete-link{
+  background: rgb(255 58 110);
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 6px;
+    border-radius: 4px;
+}
+
+/* leadgeneration remark styles {
+  background-color: #0caf60;
+  color: #fff;
+  border: 0;
+  padding: 10px 15px;
+  border-radius: 8px;
+  box-shadow: 0 0 0 0;
+  font-size: 16px;
+  height: auto;
+} */
+/* view edit delete link */
+/* modal design */
+.dash-container .dash-content .modal .modal-header button{
+  width: 8% !important;
+  font-size: 10px !important;
+  padding: 13px 10px !important;
+}
+.dash-container .dash-content .modal .modal-header button:hover{
+  opacity: 1 !important;
+}
+
+/* modal design */
+
+
+/* login-page styles start */
+.login-custom form .form-signin-heading {
+  font-size:30px;
+  color:#0caf60;
+}
+.login-custom form .form-signin-text {
+  font-size:16px;
+  color:#000;
+}
+.login-custom form .left-addon{
+  position:relative;
+}
+.login-custom form .left-addon i{
+  position: absolute;
+  color: #333;
+  left: 0;
+  top: 38px;
+  padding: 14px 30px 14px 20px;
+  background-color: rgba(0, 0, 0, 0.05);
+  pointer-events: none;
+  border-right: 1px solid rgba(0, 0, 0, 0.1);
+}
+.login-custom form .left-addon .toggle-password i{
+  position: absolute;
+  color: #333;
+  left: 90%;
+  top: 38px;
+  padding:14px 0;
+  background-color: transparent;
+  pointer-events: none;
+  border-right: transparent;
+}
+.login-custom form .left-addon input {
+  margin-bottom: 5px;
+    height: 44px;
+    font-size: 16px;
+    padding-left: 75px;
+}
+.login-custom form button{
+  width: 90%;
+    margin: 15px 0;
+    background: #0caf60 !important;
+    border: 0;
+}
+
+/* login-page  styles start */
+
+/* dashboard sidebar styles start */
+nav.dash-sidebar.light-sidebar
+{
+background: #010046;
+top: 90px !important;
+left: 0 !important;
+border-radius: 0 !important;
+}
+.dash-container
+{
+top:0 !important;
+}
+.dash-sidebar .simplebar-content .dash-navbar li a
+{
+text-decoration:none;
+color:#fff;
+}
+.dash-sidebar .dash-micon i {
+    font-size: 15px !important;
+}
+
+li.dash-item.dash-hasmenu.log-out {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+}
+
+/* dashboard sidebar styles end */
+
+.dash-content .card ::-webkit-scrollbar {
+    width: 2px;
+      height:3px;
+  }
+.dash-content .sales-calls .col-md-12 ::-webkit-scrollbar {
+    width: 2px;
+      height:3px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #888; 
+  }
+  .dataTables_wrapper .row:first-child {
+    padding: 10px !important;
+  }
+  .dataTables_wrapper .row:nth-child(2) {
+    padding:15px 0 !important;
+  }
+  .dataTables_wrapper .row:nth-child(3){
+    padding:15px  !important;
+  }
+  .dataTables_wrapper .row:first-child .dataTables_length label {
+    display: flex; /* Use flexbox for the label */
+    align-items: center; /* Center items vertically */
+}
+  .dataTables_wrapper .row:first-child .dataTables_length label select {
+    width: 80px;
+}
+  .dataTables_wrapper .row:first-child .dataTables_filter label input {
+    width: 300px;
+}
+  .dataTables_wrapper .row:first-child .dataTables_filter label {
+    display: flex; /* Use flexbox for the label */
+    align-items: center; /* Center items vertically */
+}
+
+.dataTables_wrapper .row:nth-child(3) .dataTables_paginate .pagination{
+    justify-content: flex-end;
+  }
+
+
+
+
+
+
+/* leads styles start */
+.button-lead {
+    align-items: center;
+    appearance: none;
+    background-color: #FCFCFD;
+    border-radius: 4px;
+    border-width: 0;
+    box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
+    box-sizing: border-box;
+    color: #36395A;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: "JetBrains Mono",monospace;
+    height: 40px;
+    justify-content: center;
+    line-height: 1;
+    list-style: none;
+    overflow: hidden;
+    padding-left: 16px;
+    padding-right: 16px;
+    position: relative;
+    text-align: left;
+    text-decoration: none;
+    transition: box-shadow .15s,transform .15s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    will-change: box-shadow,transform;
+    font-size: 18px;
+  }
+  
+  .button-lead:focus {
+    box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+  }
+  
+  .button-lead:hover {
+    box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+    transform: translateY(-2px);
+  }
+  
+  .button-lead:active {
+    box-shadow: #D6D6E7 0 3px 7px inset;
+    transform: translateY(2px);
+  }
+
+  .dash-container .dash-content .lead-editor form button{
+    background-color: #0caf60;
+    color: #fff;
+    border: 0;
+    padding: 5px 15px;
+    border-radius: 8px;
+}
+  .dash-container .dash-content .lead-editor .lead-edit-card .deal-card button{
+    background-color: #0caf60;
+    color: #fff;
+    border: 0;
+    padding: 5px 15px;
+    border-radius: 8px;
+    font-size: 15px;
+    margin: 5px 0;
+  }
+  .dash-container .dash-content .lead-editor{
+
+  }
+/* leads styles end */
+
+
+
+
+
+
+
+/* leadstagging styles start */
+
+.lead-tag button, .dash-container .dash-content .opportunity .col-9 table button, .business table button,.sales table button {
+  background-color: #0caf60;
+  border-radius: 12px;
+  color: #fff;
+  cursor: pointer;
+  font-weight: bold;
+  padding: 6px 10px;
+  text-align: center;
+  transition: 200ms;
+  width: 100%;
+  box-sizing: border-box;
+  border: 0;
+  font-size: 15px;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.lead-tag button:not(:disabled):hover,
+.lead-tag button:not(:disabled):focus {
+  outline: 0;
+  background: #0caf60;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);
+}
+
+
+.lead-tag button:disabled, .dash-container .dash-content .opportunity button:disabled, .business table button:disabled,.sales table button:disabled, .lead-profile .lead-profile-btn:disabled {
+  filter: saturate(0.2) opacity(0.5);
+  -webkit-filter: saturate(0.2) opacity(0.5);
+  cursor: not-allowed;
+}
+.lead-tag .lead-tagging-modal .modal-header button:hover {
+  opacity: 1;
+}
+.lead-tag .lead-tagging-modal .modal-header button {
+  width: 8%;
+  font-size: 10px;
+  padding: 13px 10px;
+ }
+.lead-tag .lead-tagging-modal form button {
+  width: 30%;
+  float: right;
+ }
+/* leadstagging styles end */
+
+
+/* opportunity styles start */
+.dash-container .dash-content .opportunity button:not(:disabled):hover,
+.dash-container .dash-content .opportunity button:not(:disabled):focus {
+  outline: 0;
+  background: #0caf60;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);
+}
+.dash-container .dash-content .opportunity .col-9 #calllog button {
+    background-color: #0caf60;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 6px 10px;
+    text-align: center;
+    transition: 200ms;
+    box-sizing: border-box;
+    border: 0;
+    font-size: 15px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+/* opportunity styles end */
+
+/* business styles start */
+.business table button:not(:disabled):hover,
+.business table button:not(:disabled):focus {
+  outline: 0;
+  background: #0caf60;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);
+}
+/* business styles end */
+
+/* sales styles start */
+
+.sales table button:not(:disabled):hover,
+.sales table button:not(:disabled):focus {
+  outline: 0;
+  background: #0caf60;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);
+}
+.sales  #calllog button {
+    background-color: #0caf60;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 6px 10px;
+    text-align: center;
+    transition: 200ms;
+    box-sizing: border-box;
+    border: 0;
+    font-size: 15px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  .dash-container .dash-content .sales .sales-calls .deal-card button{
+    background-color: #0caf60;
+    color: #fff;
+    border: 0;
+    padding: 5px 15px;
+    border-radius: 8px;
+    font-size: 15px;
+    margin: 5px 0;
+  }
+/* sales styles end */
+
+/* leadprofile styles start */
+
+.lead-profile .lead-profile-btn:not(:disabled):hover,
+.lead-profile .lead-profile-btn:not(:disabled):focus {
+  outline: 0;
+  background: #0caf60;
+  box-shadow: 0 0 0 2px rgba(0,0,0,.2), 0 3px 8px 0 rgba(0,0,0,.15);
+}
+.lead-profile .lead-profile-btn {
+    background-color: #0caf60;
+    border-radius: 12px;
+    color: #fff;
+    cursor: pointer;
+    font-weight: bold;
+    padding: 6px 10px;
+    text-align: center;
+    transition: 200ms;
+    box-sizing: border-box;
+    border: 0;
+    font-size: 15px;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+    .leads-profile-form button{
+      background-color: #0caf60;
+    color: #fff;
+    border: 0;
+    padding: 5px 15px;
+    border-radius: 8px;
+    font-size: 15px;
+    margin: 5px 0;
+    }
+/* leadprofile styles end */
+
+/* business-statistics styles start */
+.dash-container .dash-content .deal-card.view-business-statistic {
+  background: transparent;
+    box-shadow: none;
+    border: 0;
+}
+.dash-container .dash-content .deal-card .business-statistics {
+  padding: 25px;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, .125);
+  border-radius: .25rem;
+  margin-bottom: 25px;
+
+}
+.dash-container .dash-content .business-statistics h1 {
+  font-size: 25px;
+}
+/* business-statistics styles end */
+
+/* sales-calls styles start */
+.dash-container .dash-content .sales-calls {
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, .125);
+  border-radius: .25rem;
+  margin-bottom: 25px;
+}
+.dash-container .sales_calls_contact form{
+  padding: 15px;
+}
+.dash-container .sales_calls_contact form .d-flex.justify-end.mt-4{
+  flex-direction: row;
+  justify-content: space-between;
+}
+/* sales-calls styles end */
+
+/* oppprtunity styles start */
+.dash-container .dash-content .oppprtunity-card {
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, .125);
+  border-radius: .25rem;
+  margin-bottom: 25px;
+}
+.dash-container .dash-content .oppprtunity-card .opportunity-card-real .date-info{
+display: flex;
+flex-direction: column;
+
+}
+.dash-container .dash-content .oppprtunity-card .opportunity-card-real{
+  width: 48%;
+padding: 15px;
+}
+.dash-container .dash-content .oppprtunity-card .opportunity-card-real{}
+.dash-container .opportunity-modal form{
+  padding: 15px;
+}
+.dash-container .opportunity-modal form .d-flex.justify-end.mt-4{
+  flex-direction: row;
+  justify-content: space-between;
+}
+/* oppprtunity styles end */
+
+/* Leads styles start */
+.dash-container #users-products{
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, .125);
+  border-radius: .25rem;
+  margin-bottom: 25px;
+}
+/* Leads styles end */
+/* sales-headquarters styles start */
+.dash-container .dash-content .sales-headquarters button {
+  background-color: #0caf60;
+    color: #fff;
+    border: 0;
+    padding: 5px 15px;
+    border-radius: 8px;
+    font-size: 15px;
+    margin: 5px 0;
+}
+.dash-container .dash-content .sales-headquarters {}
+/* sales-headquarters styles end */
