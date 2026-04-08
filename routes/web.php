@@ -877,3 +877,1831 @@ Route::get('/get-examination-numerator-details', [QualityController::class, 'get
   Route::post('/save-permissions', [DocumentController::class, 'savePermissions'])->name('save.permissions');
 
 });
+Route::prefix('newforms')->name('newforms.')->middleware(['auth', 'timezone', 'block.edit'])->group(function () {
+    Route::prefix('as')->name('as.')->group(function () {
+        Route::post('/forms/submit', [AsFormController::class, 'store'])
+            ->name('forms.submit');
+        Route::get('/sample-volume-check/load', [AsFormController::class, 'loadSampleVolumeCheck'])
+            ->name('sample-volume-check.load');
+        Route::post('/sample-volume-check/delete', [AsFormController::class, 'deleteSampleVolumeCheck'])
+            ->name('sample-volume-check.delete');
+        Route::get(
+            '/sample-receiving-register/load',
+            [AsFormController::class, 'loadSampleReceivingRegister']
+        )->name('sample-receiving-register.load');
+
+        Route::get(
+            '/sample-delivery-register/load',
+            [AsFormController::class, 'loadSampleDeliveryRegister']
+        )->name('sample-delivery-register.load');
+
+
+        Route::get(
+            '/ice-gel-register/load',
+            [AsFormController::class, 'loadIceGelRegister']
+        )->name('ice-gel-register.load');
+
+        Route::get(
+            '/sample-outsource-register/load',
+            [AsFormController::class, 'loadSampleOutsourceRegister']
+        )->name('sample-outsource-register.load');
+
+        Route::post(
+            '/sample-receiving-register/delete',
+            [AsFormController::class, 'deleteSampleReceivingRegister']
+        )->name('sample-receiving-register.delete');
+
+        Route::post(
+            '/sample-delivery-register/delete',
+            [AsFormController::class, 'deleteSampleDeliveryRegister']
+        )->name('sample-delivery-register.delete');
+
+        Route::post(
+            '/ice-gel-register/delete',
+            [AsFormController::class, 'deleteIceGelRegister']
+        )->name('ice-gel-register.delete');
+
+        Route::post(
+            '/sample-outsource-register/delete',
+            [AsFormController::class, 'deleteSampleOutsourceRegister']
+        )->name('sample-outsource-register.delete');
+    });
+
+    Route::prefix('be')
+        ->name('be.')
+        ->group(function () {
+
+            Route::post('/forms/submit', [BEFormsController::class, 'store'])
+                ->name('forms.submit');
+
+            Route::get('/hot-plate-qc/load', [BEFormsController::class, 'loadHotPlateQc'])
+                ->name('hotplateqc.load');
+
+            Route::post('/hot-plate-qc/delete', [BEFormsController::class, 'deleteHotPlateQc'])
+                ->name('hotplateqc.delete');
+
+            Route::post('/forms/inline', [BEFormsController::class, 'inlineSave'])
+                ->name('forms.inline');
+
+
+            Route::get('/bsc/load', [BEFormsController::class, 'loadBioSafetyCabinet'])
+                ->name('bsc.load');
+
+            Route::post('/bsc/delete', [BEFormsController::class, 'deleteBioSafetyCabinet'])
+                ->name('bsc.delete');
+
+            Route::get('/hot-air-oven/load', [BEFormsController::class, 'loadHotAirOven'])
+                ->name('hot-air-oven.load');
+
+            Route::post('/hot-air-oven/delete', [BEFormsController::class, 'deleteHotAirOven'])
+                ->name('hot-air-oven.delete');
+
+
+            Route::get('/incubator/load', [BEFormsController::class, 'loadIncubator'])
+                ->name('incubator.load');
+
+            Route::post('/incubator/delete', [BEFormsController::class, 'deleteIncubator'])
+                ->name('incubator.delete');
+
+            Route::get('/laf/load', [BEFormsController::class, 'loadLaminarAirFlow'])
+                ->name('laf.load');
+
+            Route::post('/laf/delete', [BEFormsController::class, 'deleteLaminarAirFlow'])
+                ->name('laf.delete');
+
+            Route::get('/autoclave/load', [BEFormsController::class, 'loadAutoclave'])
+                ->name('autoclave.load');
+
+            Route::post('/autoclave/delete', [BEFormsController::class, 'deleteAutoclave'])
+                ->name('autoclave.delete');
+
+            Route::get('/hao-maintenance/load', [BEFormsController::class, 'loadHaoMaintenance'])
+                ->name('hao.maintenance.load');
+
+            Route::post('/hao-maintenance/delete', [BEFormsController::class, 'deleteHaoMaintenance'])
+                ->name('hao.maintenance.delete');
+
+            Route::get(
+                '/incubator-maintenance/load',
+                [BEFormsController::class, 'loadIncubatorMaintenance']
+            )->name('incubator.maintenance.load');
+
+            Route::post(
+                '/incubator-maintenance/delete',
+                [BEFormsController::class, 'deleteIncubatorMaintenance']
+            )->name('incubator.maintenance.delete');
+
+            Route::get('/centrifuge/load', [BEFormsController::class, 'loadCentrifuge'])
+                ->name('centrifuge.load');
+
+            Route::post('/centrifuge/delete', [BEFormsController::class, 'deleteCentrifuge'])
+                ->name('centrifuge.delete');
+
+            Route::get('/dxc/load', [BEFormsController::class, 'loadDxcForm'])
+                ->name('dxc.load');
+
+            Route::post('/dxc/delete', [BEFormsController::class, 'deleteDxcForm'])
+                ->name('dxc.delete');
+
+            Route::get('/dxi800/load', [BEFormsController::class, 'loadDxiMaintenance'])
+                ->name('dxi800.load');
+
+            Route::post('/dxi800/delete', [BEFormsController::class, 'deleteDxiMaintenance'])
+                ->name('dxi800.delete');
+
+            Route::get('/st200/load', [BEFormsController::class, 'loadSt200'])
+                ->name('st200.load');
+
+            Route::post('/st200/delete', [BEFormsController::class, 'deleteSt200'])
+                ->name('st200.delete');
+
+            Route::get('/h550/load', [BEFormsController::class, 'loadH550'])
+                ->name('h550.load');
+
+            Route::post('/h550/delete', [BEFormsController::class, 'deleteH550'])
+                ->name('h550.delete');
+
+            Route::get('/d10/load', [BEFormsController::class, 'loadD10'])
+                ->name('d10.load');
+
+            Route::post('/d10/delete', [BEFormsController::class, 'deleteD10'])
+                ->name('d10.delete');
+
+            Route::get(
+                '/atp/load',
+                [BEFormsController::class, 'loadAutomaticTissueProcessor']
+            )->name('atp.load');
+
+            Route::post(
+                '/atp/delete',
+                [BEFormsController::class, 'deleteAutomaticTissueProcessor']
+            )->name('atp.delete');
+
+            Route::get(
+                '/tec/load',
+                [BEFormsController::class, 'loadTec']
+            )->name('be.tec.load');
+
+            Route::post(
+                '/tec/delete',
+                [BEFormsController::class, 'deleteTec']
+            )->name('be.tec.delete');
+
+            Route::get(
+                '/ba/load',
+                [BEFormsController::class, 'loadBactAlert']
+            )->name('ba.load');
+
+            Route::post(
+                '/ba/delete',
+                [BEFormsController::class, 'deleteBactAlert']
+            )->name('ba.delete');
+
+            Route::get(
+                '/elisa/load',
+                [BEFormsController::class, 'loadElisa']
+            )->name('elisa.load');
+
+            Route::post(
+                '/elisa/delete',
+                [BEFormsController::class, 'deleteElisa']
+            )->name('elisa.delete');
+
+            Route::get(
+                '/rtpcr/load',
+                [BEFormsController::class, 'loadRtpcr']
+            )->name('rtpcr.load');
+
+            Route::post(
+                '/rtpcr/delete',
+                [BEFormsController::class, 'deleteRtpcr']
+            )->name('rtpcr.delete');
+
+            Route::get(
+                '/cc/load',
+                [BEFormsController::class, 'loadCoolingCentrifuge']
+            )->name('cc.load');
+
+            Route::post(
+                '/cc/delete',
+                [BEFormsController::class, 'deleteCoolingCentrifuge']
+            )->name('cc.delete');
+
+            Route::get(
+                '/mic/load',
+                [BEFormsController::class, 'loadMic']
+            )->name('mic.load');
+
+            Route::post(
+                '/mic/delete',
+                [BEFormsController::class, 'deleteMic']
+            )->name('mic.delete');
+
+            Route::get(
+                '/lauram/load',
+                [BEFormsController::class, 'loadLauram']
+            )->name('lauram.load');
+
+            Route::post(
+                '/lauram/delete',
+                [BEFormsController::class, 'deleteLauram']
+            )->name('lauram.delete');
+
+            Route::get(
+                '/microtome/load',
+                [BEFormsController::class, 'loadMicrotome']
+            )->name('microtome.load');
+
+            Route::post(
+                '/microtome/delete',
+                [BEFormsController::class, 'deleteMicrotome']
+            )->name('microtome.delete');
+
+            Route::get(
+                '/fb/load',
+                [BEFormsController::class, 'loadFlotationBath']
+            )->name('fb.load');
+
+            Route::post(
+                '/fb/delete',
+                [BEFormsController::class, 'deleteFlotationBath']
+            )->name('fb.delete');
+
+            Route::get(
+                '/gs/load',
+                [BEFormsController::class, 'loadGrossingStation']
+            )->name('gs.load');
+
+            Route::post(
+                '/gs/delete',
+                [BEFormsController::class, 'deleteGrossingStation']
+            )->name('gs.delete');
+
+            Route::get(
+                '/maternal-marker/load',
+                [BEFormsController::class, 'loadMaternalMarker']
+            )->name('maternal-marker.load');
+
+            Route::get(
+                '/tosoh/load',
+                [BEFormsController::class, 'loadTosohForm']
+            )->name('tosoh.load');
+
+            Route::post(
+                '/tosoh/delete',
+                [BEFormsController::class, 'deleteTosohForm']
+            )->name('tosoh.delete');
+
+            Route::get(
+                '/dxh560/load',
+                [BEFormsController::class, 'loadDxh560']
+            );
+            Route::post(
+                '/dxh560/delete',
+                [BEFormsController::class, 'deleteDxh560']
+            )->name('dxh560.delete');
+            Route::get(
+                '/vitek/load',
+                [BEFormsController::class, 'loadVitekForm']
+            )->name('vitek.load');
+
+            Route::post(
+                '/vitek/delete',
+                [BEFormsController::class, 'deleteVitek']
+            )->name('vitek.delete');
+
+            Route::get(
+                '/equipment-breakdown/load',
+                [BEFormsController::class, 'loadEquipmentBreakdownRegister']
+            );
+
+            Route::post(
+                '/equipment-breakdown/delete',
+                [BEFormsController::class, 'deleteEquipmentBreakdownRow']
+            )->name('equipment-breakdown.delete');
+        });
+
+    Route::prefix('cg')
+        ->name('cg.')
+        ->group(function () {
+            Route::post('/forms/submit', [CGFormsController::class, 'store'])
+                ->name('forms.submit');
+            Route::get('/cytogenetics-trf/load', [CGFormsController::class, 'loadCytogeneticsTrf'])
+                ->name('cytogenetics-trf.load');
+            Route::get('/cytogenetics-consent/load', [CGFormsController::class, 'loadCytogeneticsConsent'])
+                ->name('cytogenetics-consent.load');
+        });
+
+    Route::prefix('cp')
+        ->name('cp.')
+        ->group(function () {
+            Route::post('/forms/submit', [CPFormsController::class, 'store'])
+                ->name('forms.submit');
+
+            Route::get('/urine-qc/load', [CPFormsController::class, 'loadDailyUrineQc'])
+                ->name('cp.urine-qc.load');
+            Route::post('/urine-qc/delete', [CPFormsController::class, 'deleteDailyUrineQc'])
+                ->name('cp.urine-qc.delete');
+            Route::get(
+                '/manual-cue/load',
+                [CPFormsController::class, 'loadManualCue']
+            )->name('cp.manual.cue.load');
+
+            Route::post('/manual-cue/delete', [CPFormsController::class, 'deleteManualCue'])
+                ->name('cp.manual.cue.delete');
+
+            Route::get('/stool-register/load', [
+                CPFormsController::class,
+                'loadStoolRegister'
+            ])->name('cp.stool-register.load');
+
+            Route::post('/stool-register/delete', [CPFormsController::class, 'deleteStoolRegister'])
+                ->name('cp.stool-register.delete');
+
+            Route::get('/urine-register/load', [CPFormsController::class, 'loadUrineRegister'])
+                ->name('cp.urine-register.load');
+
+            Route::post('/urine-register/delete', [CPFormsController::class, 'deleteUrineRegister'])
+                ->name('cp.urine-register.delete');
+        });
+
+    Route::prefix('cy')
+        ->name('cy.')
+        ->group(function () {
+
+            /**
+             * ===============================
+             * CY / CS COMMON SUBMIT
+             * (SAME AS AS / BE / CP)
+             * ===============================
+             */
+            Route::post(
+                '/forms/submit',
+                [CY_CSFormsController::class, 'store']
+            )->name('forms.submit');
+
+            Route::get('/customer-feedback/load', [CY_CSFormsController::class, 'loadCustomerPatientFeedback'])
+                ->name('customer-feedback.load');
+
+            Route::get('/cytopathology-requisition/load', [CY_CSFormsController::class, 'loadCytopathologyRequisition'])
+                ->name('cytopathology-requisition.load');
+
+            Route::get('/fnac-consent/load', [CY_CSFormsController::class, 'loadFnacConsent'])
+                ->name('fnac-consent.load');
+        });
+
+    Route::prefix('ge')
+        ->name('ge.')
+        ->group(function () {
+
+            /**
+             * ===============================
+             * GE FORMS SUBMIT
+             * ===============================
+             */
+            Route::post(
+                '/forms/submit',
+                [GEFormsController::class, 'store']
+            )->name('forms.submit');
+
+            /**
+             * ===============================
+             * GE FORMS LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/first-aid-kit/load',
+                [GEFormsController::class, 'loadFirstAidKitMonitoring']
+            )->name('first-aid-kit.load');
+
+            Route::post(
+                '/first-aid-kit/delete',
+                [GEFormsController::class, 'deleteFirstAidKitMonitoring']
+            )->name('first-aid-kit.delete');
+
+            Route::get(
+                '/needle-stick-injury/load',
+                [GEFormsController::class, 'loadNeedleStickInjuryLog']
+            )->name('needle-stick-injury.load');
+
+            Route::get(
+                '/laboratory-incident/load',
+                [GEFormsController::class, 'loadLaboratoryIncidentForm']
+            )->name('laboratory-incident.load');
+
+            Route::get(
+                '/employee-suggestion/load',
+                [GEFormsController::class, 'loadEmployeeSuggestionForm']
+            )->name('employee-suggestion.load');
+
+            Route::get(
+                '/meeting-agenda/load',
+                [GEFormsController::class, 'loadMeetingAgendaForm']
+            )->name('meeting-agenda.load');
+
+            /**
+             * ===============================
+             * GE FILTER OPTIONS (DATALIST)
+             * ===============================
+             */
+            Route::get(
+                '/filter-options',
+                [GEFormsController::class, 'getFilterOptions']
+            )->name('filter-options');
+
+            /**
+             * ===============================
+             * GE SAMPLE REJECTION LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/sample-rejection/load',
+                [GEFormsController::class, 'loadSampleRejectionForm']
+            )->name('sample-rejection.load');
+
+            Route::post(
+                '/sample-rejection/delete',
+                [GEFormsController::class, 'deleteSampleRejectionForm']
+            )->name('sample-rejection.delete');
+
+            /**
+             * ===============================
+             * GE ACCIDENT REPORTING LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/accident-reporting/load',
+                [GEFormsController::class, 'loadAccidentReportingForm']
+            )->name('accident-reporting.load');
+
+            /**
+             * ===============================
+             * GE ACCIDENT REPORTING DELETE
+             * ===============================
+             */
+            Route::delete(
+                '/accident-reporting/delete/{id}',
+                [GEFormsController::class, 'deleteAccidentReportingForm']
+            )->name('accident-reporting.delete');
+
+            /**
+             * ===============================
+             * GE ANALYTE CALIBRATION LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/analyte-calibration/load',
+                [GEFormsController::class, 'loadAnalyteCalibrationForm']
+            )->name('analyte-calibration.load');
+
+            Route::post(
+                '/analyte-calibration/delete/{id}',
+                [GEFormsController::class, 'deleteAnalyteCalibrationForm']
+            )->name('analyte-calibration.delete');
+
+            /**
+             * ===============================
+             * GE BIOMEDICAL WASTE DISPOSAL LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/biomedical-waste/load',
+                [GEFormsController::class, 'loadBiomedicalWasteDisposalForm']
+            )->name('biomedical-waste.load');
+
+            Route::post(
+                '/biomedical-waste/delete',
+                [GEFormsController::class, 'deleteBiomedicalWasteDisposalForm']
+            )->name('biomedical-waste.delete');
+
+            /**
+             * ===============================
+             * GE PHYSICIAN FEEDBACK LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/physician-feedback/load',
+                [GEFormsController::class, 'loadPhysicianFeedbackForm']
+            )->name('physician-feedback.load');
+
+            /**
+             * ===============================
+             * GE PHYSICIAN FEEDBACK DELETE (AJAX)
+             * ===============================
+             */
+            Route::post(
+                '/physician-feedback/delete',
+                [GEFormsController::class, 'deletePhysicianFeedbackForm']
+            )->name('physician-feedback.delete');
+
+            /**
+             * ===============================
+             * GE CRITICAL CALL-OUT LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/critical-callout/load',
+                [GEFormsController::class, 'loadCriticalCallOutForm']
+            )->name('critical-callout.load');
+
+            /**
+             * ===============================
+             * GE CRITICAL CALL-OUT DELETE (AJAX)
+             * ===============================
+             */
+            Route::post(
+                '/critical-callout/delete',
+                [GEFormsController::class, 'deleteCriticalCallOutForm']
+            )->name('critical-callout.delete');
+
+            /**
+             * ===============================
+             * GE EQAS SAMPLE PROCESSING LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/eqas-sample-processing/load',
+                [GEFormsController::class, 'loadEqasSampleProcessingForm']
+            )->name('eqas-sample-processing.load');
+
+            /**
+             * ===============================
+             * GE DAILY CLEANING CHECKLIST LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/daily-cleaning-checklist/load',
+                [GEFormsController::class, 'loadDailyCleaningChecklistForm']
+            )->name('daily-cleaning-checklist.load');
+
+            /**
+             * ===============================
+             * GE DAILY CLEANING CHECKLIST DELETE (AJAX)
+             * ===============================
+             */
+            Route::post(
+                '/daily-cleaning-checklist/delete',
+                [GEFormsController::class, 'deleteDailyCleaningChecklistForm']
+            )->name('daily-cleaning-checklist.delete');
+
+            /**
+             * ===============================
+             * GE DAILY CLEANLINESS LOG (REST ROOM) LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/daily-cleanliness-log/load',
+                [GEFormsController::class, 'loadDailyCleanlinessLogForm']
+            )->name('daily-cleanliness-log.load');
+
+            Route::post(
+                '/daily-cleanliness-log/delete',
+                [GEFormsController::class, 'deleteDailyCleanlinessLogForm']
+            )->name('daily-cleanliness-log.delete');
+
+            /**
+             * ===============================
+             * GE DAILY IQC DATA MONITORING LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/daily-iqc-monitoring/load',
+                [GEFormsController::class, 'loadDailyIqcDataMonitoringForm']
+            )->name('daily-iqc-monitoring.load');
+
+            Route::post(
+                '/daily-iqc-monitoring/delete',
+                [GEFormsController::class, 'deleteDailyIqcDataMonitoringForm']
+            )->name('daily-iqc-monitoring.delete');
+
+            /**
+             * ===============================
+             * GE APPROVED REFERRAL LAB LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/approved-referral-lab/load',
+                [GEFormsController::class, 'loadApprovedReferralLabForm']
+            )->name('approved-referral-lab.load');
+
+            Route::post(
+                '/approved-referral-lab/delete',
+                [GEFormsController::class, 'deleteApprovedReferralLabForm']
+            )->name('approved-referral-lab.delete');
+
+            /**
+             * ===============================
+             * GE DISTILLED WATER PLANT CHECKLIST LOAD (AJAX) - Returns list
+             * ===============================
+             */
+            Route::get(
+                '/distilled-water-plant/load',
+                [GEFormsController::class, 'loadDistilledWaterPlantChecklistForm']
+            )->name('distilled-water-plant.load');
+
+            /**
+             * ===============================
+             * GE DISTILLED WATER PLANT CHECKLIST LOAD BY ID (AJAX) - Returns exact record
+             * ===============================
+             */
+            Route::get(
+                '/distilled-water-plant/load/{id}',
+                [GEFormsController::class, 'loadDistilledWaterPlantChecklistFormById']
+            )->name('distilled-water-plant.load-by-id');
+
+            /**
+             * ===============================
+             * GE DISTILLED WATER PLANT CHECKLIST DELETE (AJAX)
+             * ===============================
+             */
+            Route::post(
+                '/distilled-water-plant/delete',
+                [GEFormsController::class, 'deleteDistilledWaterPlantChecklistForm']
+            )->name('distilled-water-plant.delete');
+
+            /**
+             * ===============================
+             * GE EQUIPMENT STARTUP SHUTDOWN LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/equipment-startup-shutdown/load',
+                [GEFormsController::class, 'loadEquipmentStartupShutdownForm']
+            )->name('equipment-startup-shutdown.load');
+
+            Route::post(
+                '/equipment-startup-shutdown/delete',
+                [GEFormsController::class, 'deleteEquipmentStartupShutdownForm']
+            )->name('equipment-startup-shutdown.delete');
+
+            /**
+             * ===============================
+             * GE EYE WASH MONITORING LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/eye-wash-monitoring/load',
+                [GEFormsController::class, 'loadEyeWashMonitoringForm']
+            )->name('eye-wash-monitoring.load');
+
+            /**
+             * ===============================
+             * GE EYE WASH MONITORING DELETE
+             * ===============================
+             */
+            Route::post(
+                '/eye-wash-monitoring/delete',
+                [GEFormsController::class, 'deleteEyeWashMonitoringForm']
+            )->name('eye-wash-monitoring.delete');
+
+            /**
+             * ===============================
+             * GE INTER-LABORATORY COMPARISON LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/inter-lab-comparison/load',
+                [GEFormsController::class, 'loadInterLaboratoryComparisonForm']
+            )->name('inter-lab-comparison.load');
+
+            /**
+             * ===============================
+             * GE INTER-LABORATORY COMPARISON DELETE
+             * ===============================
+             */
+            Route::post(
+                '/inter-lab-comparison/delete',
+                [GEFormsController::class, 'deleteInterLaboratoryComparisonForm']
+            )->name('inter-lab-comparison.delete');
+
+            /**
+             * ===============================
+             * GE NEW REAGENT LOT VERIFICATION LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/new-reagent-lot-verification/load',
+                [GEFormsController::class, 'loadNewReagentLotVerificationForm']
+            )->name('new-reagent-lot-verification.load');
+
+            /**
+             * ===============================
+             * GE NEW REAGENT LOT VERIFICATION DELETE
+             * ===============================
+             */
+            Route::post(
+                '/new-reagent-lot-verification/delete',
+                [GEFormsController::class, 'deleteNewReagentLotVerificationForm']
+            )->name('new-reagent-lot-verification.delete');
+
+            /**
+             * ===============================
+             * GE NON-CONFORMITY & CORRECTIVE ACTION LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/non-conformity-corrective-action/load',
+                [GEFormsController::class, 'loadNonConformityCorrectiveActionForm']
+            )->name('non-conformity-corrective-action.load');
+
+            Route::post(
+                '/non-conformity-corrective-action/delete',
+                [GEFormsController::class, 'deleteNonConformityCorrectiveActionForm']
+            )->name('non-conformity-corrective-action.delete');
+
+            /**
+             * ===============================
+             * GE REFRIGERATOR TEMPERATURE FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/refrigerator-temperature/load',
+                [GEFormsController::class, 'loadRefrigeratorTemperatureForm']
+            )->name('refrigerator-temperature.load');
+
+            Route::post(
+                '/refrigerator-temperature/delete',
+                [GEFormsController::class, 'deleteRefrigeratorTemperatureForm']
+            )->name('refrigerator-temperature.delete');
+
+            /**
+             * ===============================
+             * GE REPEAT TEST FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/repeat-test/load',
+                [GEFormsController::class, 'loadRepeatTestForm']
+            )->name('repeat-test.load');
+
+            Route::post(
+                '/repeat-test/delete',
+                [GEFormsController::class, 'deleteRepeatTestForm']
+            )->name('repeat-test.delete');
+
+            /**
+             * ===============================
+             * GE NIU-TRANSCRIPTION CHECK FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/niu-transcription-check/load',
+                [GEFormsController::class, 'loadNiuTranscriptionCheckForm']
+            )->name('niu-transcription-check.load');
+
+            Route::post(
+                '/niu-transcription-check/delete',
+                [GEFormsController::class, 'deleteNiuTranscriptionCheckForm']
+            )->name('niu-transcription-check.delete');
+
+            /**
+             * ===============================
+             * GE ROOM TEMPERATURE HUMIDITY FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/room-temperature-humidity/load',
+                [GEFormsController::class, 'loadRoomTemperatureHumidityForm']
+            )->name('room-temperature-humidity.load');
+
+            Route::post(
+                '/room-temperature-humidity/delete',
+                [GEFormsController::class, 'deleteRoomTemperatureHumidityForm']
+            )->name('room-temperature-humidity.delete');
+
+            /**
+             * ===============================
+             * GE AMENDMENT REPORT MONITORING FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/amendment-report-monitoring/load',
+                [GEFormsController::class, 'loadAmendmentReportMonitoringForm']
+            )->name('amendment-report-monitoring.load');
+
+            Route::post(
+                '/amendment-report-monitoring/delete',
+                [GEFormsController::class, 'deleteAmendmentReportMonitoringForm']
+            )->name('amendment-report-monitoring.delete');
+
+            /**
+             * ===============================
+             * GE SODIUM HYPOCHLORITE PREPARATION FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/sodium-hypochlorite-preparation/load',
+                [GEFormsController::class, 'loadSodiumHypochloritePreparationForm']
+            )->name('sodium-hypochlorite-preparation.load');
+
+            Route::post(
+                '/sodium-hypochlorite-preparation/delete',
+                [GEFormsController::class, 'deleteSodiumHypochloritePreparationForm']
+            )->name('sodium-hypochlorite-preparation.delete');
+
+            /**
+             * ===============================
+             * GE DEEP FREEZER TEMPERATURE MONITORING FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/deep-freezer-temperature/load',
+                [GEFormsController::class, 'loadDeepFreezerTemperatureMonitoringForm']
+            )->name('deep-freezer-temperature.load');
+
+            Route::post(
+                '/deep-freezer-temperature/delete',
+                [GEFormsController::class, 'deleteDeepFreezerTemperatureMonitoringForm']
+            )->name('deep-freezer-temperature.delete');
+
+            /**
+             * ===============================
+             * GE EQAS CAPA OUTLIER FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/eqas-capa-outlier/load',
+                [GEFormsController::class, 'loadEqasCapaOutlierForm']
+            )->name('eqas-capa-outlier.load');
+
+            /**
+             * ===============================
+             * GE DAILY IQC OUTLIER NCPA FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/daily-iqc-outlier-ncpa/load',
+                [GEFormsController::class, 'loadDailyIqcOutlierNcpaForm']
+            )->name('daily-iqc-outlier-ncpa.load');
+
+            Route::post(
+                '/daily-iqc-outlier-ncpa/delete',
+                [GEFormsController::class, 'deleteDailyIqcOutlierNcpaForm']
+            )->name('daily-iqc-outlier-ncpa.delete');
+
+            /**
+             * ===============================
+             * GE AUTHORIZED SOFTWARE PERSONS FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/authorized-software-persons/load',
+                [GEFormsController::class, 'loadAuthorizedSoftwarePersonsForm']
+            )->name('authorized-software-persons.load');
+
+            Route::post(
+                '/authorized-software-persons/delete',
+                [GEFormsController::class, 'deleteAuthorizedSoftwarePersonsForm']
+            )->name('authorized-software-persons.delete');
+
+            /**
+             * ===============================
+             * GE AUTHORIZED INSTRUMENT PERSONNEL FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/authorized-instrument-personnel/load',
+                [GEFormsController::class, 'loadAuthorizedInstrumentPersonnelForm']
+            )->name('authorized-instrument-personnel.load');
+
+            Route::post(
+                '/authorized-instrument-personnel/delete',
+                [GEFormsController::class, 'deleteAuthorizedInstrumentPersonnelForm']
+            )->name('authorized-instrument-personnel.delete');
+
+            /**
+             * ===============================
+             * GE MINUTES OF MEETING FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/minutes-of-meeting/load',
+                [GEFormsController::class, 'loadMinutesOfMeetingForm']
+            )->name('minutes-of-meeting.load');
+
+            /**
+             * ===============================
+             * GE TEST REQUISITION FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/test-requisition/load',
+                [GEFormsController::class, 'loadTestRequisitionForm']
+            )->name('test-requisition.load');
+
+            /**
+             * ===============================
+             * GE SPLIT SAMPLE ANALYSIS FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/split-sample-analysis/load',
+                [GEFormsController::class, 'loadSplitSampleAnalysisForm']
+            )->name('split-sample-analysis.load');
+
+            Route::post(
+                '/split-sample-analysis/delete',
+                [GEFormsController::class, 'deleteSplitSampleAnalysisForm']
+            )->name('split-sample-analysis.delete');
+
+            /**
+             * ===============================
+             * GE REAGENT CONSUMABLES CONSUMPTION FORM LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/reagent-consumables-consumption/load',
+                [GEFormsController::class, 'loadReagentConsumablesConsumptionForm']
+            )->name('reagent-consumables-consumption.load');
+
+            Route::post(
+                '/reagent-consumables-consumption/delete',
+                [GEFormsController::class, 'deleteReagentConsumablesConsumptionForm']
+            )->name('reagent-consumables-consumption.delete');
+
+            /**
+             * ===============================
+             * GE SHIFT HANDOVER REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/shift-handover-register/load',
+                [GEFormsController::class, 'loadShiftHandoverRegister']
+            )->name('shift-handover-register.load');
+
+            Route::post(
+                '/shift-handover-register/delete',
+                [GEFormsController::class, 'deleteShiftHandoverRegister']
+            )->name('shift-handover-register.delete');
+
+            /**
+             * ===============================
+             * GE DEPARTMENT SAMPLE STORAGE REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/department-sample-storage/load',
+                [GEFormsController::class, 'loadDepartmentSampleStorageRegister']
+            )->name('department-sample-storage.load');
+
+            Route::post(
+                '/department-sample-storage/delete',
+                [GEFormsController::class, 'deleteDepartmentSampleStorageRegister']
+            )->name('department-sample-storage.delete');
+
+            /**
+             * ===============================
+             * GE SAMPLE INTEGRITY REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/sample-integrity-register/load',
+                [GEFormsController::class, 'loadSampleIntegrityRegister']
+            )->name('sample-integrity-register.load');
+
+            Route::post(
+                '/sample-integrity-register/delete',
+                [GEFormsController::class, 'deleteSampleIntegrityRegister']
+            )->name('sample-integrity-register.delete');
+
+            /**
+             * ===============================
+             * GE INTER-DEPARTMENT SAMPLE TRANSFER REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/inter-department-sample-transfer/load',
+                [GEFormsController::class, 'loadInterDepartmentSampleTransferRegister']
+            )->name('inter-department-sample-transfer.load');
+
+            Route::post(
+                '/inter-department-sample-transfer/delete',
+                [GEFormsController::class, 'deleteInterDepartmentSampleTransferRegister']
+            )->name('inter-department-sample-transfer.delete');
+        });
+
+    /**
+     * ===============================
+     * HM FORMS ROUTES (HEMATOLOGY)
+     * ===============================
+     */
+    Route::prefix('hm')
+        ->name('hm.')
+        ->group(function () {
+
+            /**
+             * HM FORMS SUBMIT
+             */
+            Route::post(
+                '/forms/submit',
+                [HMFormsController::class, 'submit']
+            )->name('forms.submit');
+
+            Route::get(
+                '/bone-marrow-examination/load',
+                [HMFormsController::class, 'loadBoneMarrowExaminationForm']
+            )->name('bone-marrow-examination.load');
+
+            Route::get(
+                '/coagulation-requisition/load',
+                [HMFormsController::class, 'loadCoagulationRequisitionForm']
+            )->name('coagulation-requisition.load');
+
+            /**
+             * COAGULATION MNPT FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/coagulation-mnpt/load',
+                [HMFormsController::class, 'loadCoagulationMnptForm']
+            )->name('coagulation-mnpt.load');
+
+            Route::post(
+                '/coagulation-mnpt/delete',
+                [HMFormsController::class, 'deleteCoagulationMnptForm']
+            )->name('coagulation-mnpt.delete');
+
+            /**
+             * ABO & RH TYPING QC FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/abo-rh-typing-qc/load',
+                [HMFormsController::class, 'loadAboRhTypingQcForm']
+            )->name('abo-rh-typing-qc.load');
+
+            Route::post(
+                '/abo-rh-typing-qc/delete',
+                [HMFormsController::class, 'deleteAboRhTypingQcForm']
+            )->name('abo-rh-typing-qc.delete');
+
+            /**
+             * TITRATION ANTIBODY REAGENT FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/titration-antibody-reagent/load',
+                [HMFormsController::class, 'loadTitrationAntibodyReagentForm']
+            )->name('titration-antibody-reagent.load');
+
+            Route::post(
+                '/titration-antibody-reagent/delete',
+                [HMFormsController::class, 'deleteTitrationAntibodyReagentForm']
+            )->name('titration-antibody-reagent.delete');
+
+            /**
+             * AVIDITY ANTIBODY REAGENT FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/avidity-antibody-reagent/load',
+                [HMFormsController::class, 'loadAvidityAntibodyReagentForm']
+            )->name('avidity-antibody-reagent.load');
+
+            Route::post(
+                '/avidity-antibody-reagent/delete',
+                [HMFormsController::class, 'deleteAvidityAntibodyReagentForm']
+            )->name('avidity-antibody-reagent.delete');
+
+            /**
+             * PT APTT RESULTS REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/pt-aptt-results/load',
+                [HMFormsController::class, 'loadPtApttResultsRegister']
+            )->name('pt-aptt-results.load');
+
+            Route::post(
+                '/pt-aptt-results/delete',
+                [HMFormsController::class, 'deletePtApttResultsRegister']
+            )->name('pt-aptt-results.delete');
+
+            /**
+             * LEISHMAN STAIN QC REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/leishman-stain-qc/load',
+                [HMFormsController::class, 'loadLeishmanStainQcRegister']
+            )->name('leishman-stain-qc.load');
+
+            Route::post(
+                '/leishman-stain-qc/delete',
+                [HMFormsController::class, 'deleteLeishmanStainQcRegister']
+            )->name('leishman-stain-qc.delete');
+
+            /**
+             * ABO & RH TYPING RESULT REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/abo-rh-typing-result/load',
+                [HMFormsController::class, 'loadAboRhTypingResultRegister']
+            )->name('abo-rh-typing-result.load');
+
+            Route::post(
+                '/abo-rh-typing-result/delete',
+                [HMFormsController::class, 'deleteAboRhTypingResultRegister']
+            )->name('abo-rh-typing-result.delete');
+
+            /**
+             * ICT DCT MALARIA RESULT REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/ict-dct-malaria-result/load',
+                [HMFormsController::class, 'loadIctDctMalariaResultRegister']
+            )->name('ict-dct-malaria-result.load');
+
+            Route::post(
+                '/ict-dct-malaria-result/delete',
+                [HMFormsController::class, 'deleteIctDctMalariaResultRegister']
+            )->name('ict-dct-malaria-result.delete');
+
+            /**
+             * ESR RESULTS REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/esr-results/load',
+                [HMFormsController::class, 'loadEsrResultsRegister']
+            )->name('esr-results.load');
+
+            Route::post(
+                '/esr-results/delete',
+                [HMFormsController::class, 'deleteEsrResultsRegister']
+            )->name('esr-results.delete');
+
+            /**
+             * BODY FLUIDS EXAMINATION RESULT REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/body-fluids-examination-result/load',
+                [HMFormsController::class, 'loadBodyFluidsExaminationResultRegister']
+            )->name('body-fluids-examination-result.load');
+
+            Route::post(
+                '/body-fluids-examination-result/delete',
+                [HMFormsController::class, 'deleteBodyFluidsExaminationResultRegister']
+            )->name('body-fluids-examination-result.delete');
+        });
+
+    /**
+     * ===============================
+     * HP FORMS ROUTES (HISTOPATHOLOGY)
+     * ===============================
+     */
+    Route::prefix('hp')
+        ->name('hp.')
+        ->group(function () {
+
+            /**
+             * HP FORMS SUBMIT
+             */
+            Route::post(
+                '/forms/submit',
+                [HPFormsController::class, 'store']
+            )->name('forms.submit');
+
+            /**
+             * ===============================
+             * HP QUALITY HANDLING H&E STAIN LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/quality-handling-he-stain/load',
+                [HPFormsController::class, 'loadQualityHandlingHeStainForm']
+            )->name('quality-handling-he-stain.load');
+
+            Route::post(
+                '/quality-handling-he-stain/delete',
+                [HPFormsController::class, 'deleteQualityHandlingHeStainForm']
+            )->name('quality-handling-he-stain.delete');
+
+            /**
+             * ===============================
+             * HP RECORD OF HISTO SAMPLE DISCARD LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/record-histo-sample-discard/load',
+                [HPFormsController::class, 'loadRecordHistoSampleDiscardForm']
+            )->name('record-histo-sample-discard.load');
+
+            Route::post(
+                '/record-histo-sample-discard/delete',
+                [HPFormsController::class, 'deleteRecordHistoSampleDiscardForm']
+            )->name('record-histo-sample-discard.delete');
+
+            /**
+             * ===============================
+             * HP IQC-HISTOPATHOLOGY LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/iqc-histopathology/load',
+                [HPFormsController::class, 'loadIqcHistopathologyForm']
+            )->name('iqc-histopathology.load');
+
+            Route::post(
+                '/iqc-histopathology/delete',
+                [HPFormsController::class, 'deleteIqcHistopathologyForm']
+            )->name('iqc-histopathology.delete');
+
+            /**
+             * ===============================
+             * HP TISSUE PROCESSOR REAGENT CHANGE LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/tissue-processor-reagent/load',
+                [HPFormsController::class, 'loadTissueProcessorReagentForm']
+            )->name('tissue-processor-reagent.load');
+
+            Route::post(
+                '/tissue-processor-reagent/delete',
+                [HPFormsController::class, 'deleteTissueProcessorReagentForm']
+            )->name('tissue-processor-reagent.delete');
+
+            /**
+             * ===============================
+             * HP USED REAGENTS DISCARD LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/used-reagents-discard/load',
+                [HPFormsController::class, 'loadUsedReagentsDiscardForm']
+            )->name('used-reagents-discard.load');
+
+            Route::post(
+                '/used-reagents-discard/delete',
+                [HPFormsController::class, 'deleteUsedReagentsDiscardForm']
+            )->name('used-reagents-discard.delete');
+
+            /**
+             * ===============================
+             * HP FORMALIN PREPARATION LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/formalin-preparation/load',
+                [HPFormsController::class, 'loadFormalinPreparationForm']
+            )->name('formalin-preparation.load');
+
+            Route::post(
+                '/formalin-preparation/delete',
+                [HPFormsController::class, 'deleteFormalinPreparationForm']
+            )->name('formalin-preparation.delete');
+
+            /**
+             * ===============================
+             * HP FORMALIN & TVOC MONITORING LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/formalin-tvoc-monitoring/load',
+                [HPFormsController::class, 'loadFormalinTvocMonitoringForm']
+            )->name('formalin-tvoc-monitoring.load');
+
+            Route::post(
+                '/formalin-tvoc-monitoring/delete',
+                [HPFormsController::class, 'deleteFormalinTvocMonitoringForm']
+            )->name('formalin-tvoc-monitoring.delete');
+
+            /**
+             * ===============================
+             * HP HISTOPATHOLOGY WORK REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/histopathology-work-register/load',
+                [HPFormsController::class, 'loadHistopathologyWorkRegister']
+            )->name('histopathology-work-register.load');
+
+            Route::post(
+                '/histopathology-work-register/delete',
+                [HPFormsController::class, 'deleteHistopathologyWorkRegister']
+            )->name('histopathology-work-register.delete');
+
+            /**
+             * ===============================
+             * HP CLINICAL CORRELATION REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/hp-clinical-correlation-register/load',
+                [HPFormsController::class, 'loadHpClinicalCorrelationRegister']
+            )->name('hp-clinical-correlation-register.load');
+
+            Route::post(
+                '/hp-clinical-correlation-register/delete',
+                [HPFormsController::class, 'deleteHpClinicalCorrelationRegister']
+            )->name('hp-clinical-correlation-register.delete');
+
+            /**
+             * ===============================
+             * HP SLIDES AND BLOCKS RETURN REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/slides-blocks-return-register/load',
+                [HPFormsController::class, 'loadSlidesBlocksReturnRegister']
+            )->name('slides-blocks-return-register.load');
+
+            Route::post(
+                '/slides-blocks-return-register/delete',
+                [HPFormsController::class, 'deleteSlidesBlocksReturnRegister']
+            )->name('slides-blocks-return-register.delete');
+
+            /**
+             * ===============================
+             * HP SAMPLE LABELLING ERRORS REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/sample-labelling-errors-register/load',
+                [HPFormsController::class, 'loadSampleLabellingErrorsRegister']
+            )->name('sample-labelling-errors-register.load');
+
+            Route::post(
+                '/sample-labelling-errors-register/delete',
+                [HPFormsController::class, 'deleteSampleLabellingErrorsRegister']
+            )->name('sample-labelling-errors-register.delete');
+
+            /**
+             * ===============================
+             * HP DECALCIFICATION REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/decalcification-register/load',
+                [HPFormsController::class, 'loadDecalcificationRegister']
+            )->name('decalcification-register.load');
+
+            Route::post(
+                '/decalcification-register/delete',
+                [HPFormsController::class, 'deleteDecalcificationRegister']
+            )->name('decalcification-register.delete');
+
+            /**
+             * ===============================
+             * HP SLIDES STORAGE REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/slides-storage-register/load',
+                [HPFormsController::class, 'loadSlidesStorageRegister']
+            )->name('slides-storage-register.load');
+
+            Route::post(
+                '/slides-storage-register/delete',
+                [HPFormsController::class, 'deleteSlidesStorageRegister']
+            )->name('slides-storage-register.delete');
+
+            /**
+             * ===============================
+             * HP BLOCKS STORAGE REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/blocks-storage-register/load',
+                [HPFormsController::class, 'loadBlocksStorageRegister']
+            )->name('blocks-storage-register.load');
+
+            Route::post(
+                '/blocks-storage-register/delete',
+                [HPFormsController::class, 'deleteBlocksStorageRegister']
+            )->name('blocks-storage-register.delete');
+
+            /**
+             * ===============================
+             * HP GROSSING REGISTER LOAD (AJAX)
+             * ===============================
+             */
+            Route::get(
+                '/hp-grossing-register/load',
+                [HPFormsController::class, 'loadHpGrossingRegister']
+            )->name('hp-grossing-register.load');
+
+            Route::post(
+                '/hp-grossing-register/delete',
+                [HPFormsController::class, 'deleteHpGrossingRegister']
+            )->name('hp-grossing-register.delete');
+        });
+
+    /**
+     * ===============================
+     * IT FORMS ROUTES
+     * ===============================
+     */
+    Route::prefix('it')
+        ->name('it.')
+        ->group(function () {
+
+            /**
+             * IT FORMS SUBMIT
+             */
+            Route::post(
+                '/forms/submit',
+                [ITFormsController::class, 'store']
+            )->name('forms.submit');
+
+            Route::get(
+                '/lis-interface-validation/load',
+                [ITFormsController::class, 'loadLisInterfaceValidationForm']
+            )->name('lis-interface-validation.load');
+
+            Route::get(
+                '/lis-user-login/load',
+                [ITFormsController::class, 'loadLisUserLoginCreationForm']
+            )->name('lis-user-login.load');
+
+            /**
+             * IT AUTO APPROVAL AUTHORIZATION LOAD/DELETE (AJAX)
+             */
+            Route::get(
+                '/auto-approval-authorization/load',
+                [ITFormsController::class, 'loadAutoApprovalAuthorizationForm']
+            )->name('auto-approval-authorization.load');
+
+            Route::post(
+                '/auto-approval-authorization/delete',
+                [ITFormsController::class, 'deleteAutoApprovalAuthorizationForm']
+            )->name('auto-approval-authorization.delete');
+        });
+
+    /**
+     * ===============================
+     * LO FORMS ROUTES (LOGISTICS)
+     * ===============================
+     */
+    Route::prefix('lo')
+        ->name('lo.')
+        ->group(function () {
+
+            /**
+             * LO FORMS SUBMIT
+             */
+            Route::post(
+                '/forms/submit',
+                [LOFormsController::class, 'store']
+            )->name('forms.submit');
+
+            /**
+             * CSR SAMPLE TRACKING SHEET LOAD (AJAX)
+             */
+            Route::get(
+                '/csr-sample-tracking/load',
+                [LOFormsController::class, 'loadCsrSampleTrackingSheet']
+            )->name('csr-sample-tracking.load');
+
+            /**
+             * CSR SAMPLE TRACKING SHEET DELETE (AJAX)
+             */
+            Route::post(
+                '/csr-sample-tracking/delete',
+                [LOFormsController::class, 'deleteCsrSampleTrackingSheet']
+            )->name('csr-sample-tracking.delete');
+
+            /**
+             * CSR SAMPLE TRACKING OUTLIERS LOAD (AJAX)
+             */
+            Route::get(
+                '/csr-sample-tracking-outliers/load',
+                [LOFormsController::class, 'loadCsrSampleTrackingOutliers']
+            )->name('csr-sample-tracking-outliers.load');
+
+            /**
+             * CSR SAMPLE TRACKING OUTLIERS DELETE (AJAX)
+             */
+            Route::post(
+                '/csr-sample-tracking-outliers/delete',
+                [LOFormsController::class, 'deleteCsrSampleTrackingOutliers']
+            )->name('csr-sample-tracking-outliers.delete');
+        });
+
+    /**
+     * ===============================
+     * MB FORMS ROUTES (MOLECULAR BIOLOGY)
+     * ===============================
+     */
+    Route::prefix('mb')
+        ->name('mb.')
+        ->group(function () {
+
+            /**
+             * MB FORMS SUBMIT
+             */
+            Route::post(
+                '/forms/submit',
+                [MBFormsController::class, 'store']
+            )->name('forms.submit');
+
+            /**
+             * MB WORK REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/mb-work-register/load',
+                [MBFormsController::class, 'loadMbWorkRegister']
+            )->name('mb-work-register.load');
+
+            /**
+             * MASTER MIX PREPARATION REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/master-mix-preparation/load',
+                [MBFormsController::class, 'loadMasterMixPreparation']
+            )->name('master-mix-preparation.load');
+
+            /**
+             * NUCLEIC ACID EXTRACTION REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/nucleic-acid-extraction/load',
+                [MBFormsController::class, 'loadNucleicAcidExtraction']
+            )->name('nucleic-acid-extraction.load');
+
+            Route::post('/mb-work-register/delete', [MBFormsController::class, 'deleteMbWorkRegister'])->name('mb-work-register.delete');
+            Route::post('/master-mix-preparation/delete', [MBFormsController::class, 'deleteMasterMixPreparation'])->name('master-mix-preparation.delete');
+            Route::post('/nucleic-acid-extraction/delete', [MBFormsController::class, 'deleteNucleicAcidExtraction'])->name('nucleic-acid-extraction.delete');
+        });
+
+    /*
+|--------------------------------------------------------------------------
+| MG – Management Group Forms
+|--------------------------------------------------------------------------
+*/
+    Route::prefix('mg')
+        ->name('mg.')
+        ->group(function () {
+
+            /**
+             * MG FORMS SUBMIT
+             */
+            Route::post(
+                '/forms/submit',
+                [MGFormsController::class, 'store']
+            )->name('forms.submit');
+
+            /**
+             * MRM AGENDA FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/mrm-agenda/load',
+                [MGFormsController::class, 'loadMrmAgenda']
+            )->name('mrm-agenda.load');
+
+            /**
+             * MRM ATTENDANCE FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/mrm-attendance/load',
+                [MGFormsController::class, 'loadMrmAttendance']
+            )->name('mrm-attendance.load');
+
+            /**
+             * MINUTES OF MRM LOAD (AJAX)
+             */
+            Route::get(
+                '/minutes-of-mrm/load',
+                [MGFormsController::class, 'loadMinutesOfMrm']
+            )->name('minutes-of-mrm.load');
+
+            /**
+             * MRM TASK COMPLETION & COMPLIANCE LOAD (AJAX)
+             */
+            Route::get(
+                '/mrm-task-compliance/load',
+                [MGFormsController::class, 'loadMrmTaskCompliance']
+            )->name('mrm-task-compliance.load');
+
+            /**
+             * MASTER LIST EXTERNAL DOCUMENTS LOAD/DELETE (AJAX)
+             */
+            Route::get(
+                '/master-list-external-documents/load',
+                [MGFormsController::class, 'loadMasterListExternalDocument']
+            )->name('master-list-external-documents.load');
+
+            Route::post(
+                '/master-list-external-documents/delete',
+                [MGFormsController::class, 'deleteMasterListExternalDocument']
+            )->name('master-list-external-documents.delete');
+        });
+
+    /*
+|--------------------------------------------------------------------------
+| MI – Microbiology Forms
+|--------------------------------------------------------------------------
+*/
+    Route::prefix('mi')
+        ->name('mi.')
+        ->group(function () {
+
+            /**
+             * MI FORMS SUBMIT
+             */
+            Route::post(
+                '/forms/submit',
+                [MIFormsController::class, 'store']
+            )->name('forms.submit');
+
+            /**
+             * HIV CONSENT FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/hiv-consent/load',
+                [MIFormsController::class, 'loadHivConsent']
+            )->name('hiv-consent.load');
+
+            /**
+             * STAIN QC AFB GRAM FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/stain-qc-afb-gram/load',
+                [MIFormsController::class, 'loadStainQcAfbGram']
+            )->name('stain-qc-afb-gram.load');
+
+            /**
+             * BIOCHEMICAL MEDIA QC FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/biochemical-media-qc/load',
+                [MIFormsController::class, 'loadBiochemicalMediaQc']
+            )->name('biochemical-media-qc.load');
+
+            /**
+             * ATCC STRAIN QC FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/atcc-strain-qc/load',
+                [MIFormsController::class, 'loadAtccStrainQc']
+            )->name('atcc-strain-qc.load');
+
+            /**
+             * MEDIA QC FORM LOAD (AJAX)
+             */
+            Route::get(
+                '/media-qc/load',
+                [MIFormsController::class, 'loadMediaQc']
+            )->name('media-qc.load');
+
+            /**
+             * MICROBIOLOGY WORK REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/microbiology-work-register/load',
+                [MIFormsController::class, 'loadMicrobiologyWorkRegister']
+            )->name('microbiology-work-register.load');
+
+            /**
+             * MEDIA PREPARATION REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/media-preparation-register/load',
+                [MIFormsController::class, 'loadMediaPreparationRegister']
+            )->name('media-preparation-register.load');
+
+            /**
+             * MEDIA STERILITY CHECK REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/media-sterility-check-register/load',
+                [MIFormsController::class, 'loadMediaSterilityCheckRegister']
+            )->name('media-sterility-check-register.load');
+
+            /**
+             * VITEK 2 SALINE QC REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/vitek2-saline-qc-register/load',
+                [MIFormsController::class, 'loadVitek2SalineQcRegister']
+            )->name('vitek2-saline-qc-register.load');
+
+            /**
+             * LOOP MAINTENANCE REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/loop-maintenance-register/load',
+                [MIFormsController::class, 'loadLoopMaintenanceRegister']
+            )->name('loop-maintenance-register.load');
+
+            /**
+             * BACT ALERT QC REGISTER LOAD (AJAX)
+             */
+            Route::get(
+                '/bact-alert-qc-register/load',
+                [MIFormsController::class, 'loadBactAlertQcRegister']
+            )->name('bact-alert-qc-register.load');
+
+            /**
+             * DELETE ROUTES (AJAX)
+             */
+            Route::post('/stain-qc-afb-gram/delete', [MIFormsController::class, 'deleteStainQcAfbGram'])->name('stain-qc-afb-gram.delete');
+            Route::post('/biochemical-media-qc/delete', [MIFormsController::class, 'deleteBiochemicalMediaQc'])->name('biochemical-media-qc.delete');
+            Route::post('/atcc-strain-qc/delete', [MIFormsController::class, 'deleteAtccStrainQc'])->name('atcc-strain-qc.delete');
+            Route::post('/media-qc/delete', [MIFormsController::class, 'deleteMediaQc'])->name('media-qc.delete');
+            Route::post('/microbiology-work-register/delete', [MIFormsController::class, 'deleteMicrobiologyWorkRegister'])->name('microbiology-work-register.delete');
+            Route::post('/media-preparation-register/delete', [MIFormsController::class, 'deleteMediaPreparationRegister'])->name('media-preparation-register.delete');
+            Route::post('/media-sterility-check-register/delete', [MIFormsController::class, 'deleteMediaSterilityCheckRegister'])->name('media-sterility-check-register.delete');
+            Route::post('/vitek2-saline-qc-register/delete', [MIFormsController::class, 'deleteVitek2SalineQcRegister'])->name('vitek2-saline-qc-register.delete');
+            Route::post('/loop-maintenance-register/delete', [MIFormsController::class, 'deleteLoopMaintenanceRegister'])->name('loop-maintenance-register.delete');
+            Route::post('/bact-alert-qc-register/delete', [MIFormsController::class, 'deleteBactAlertQcRegister'])->name('bact-alert-qc-register.delete');
+        });
+
+    /**
+     * ========================================
+     * PR FORMS (TDPL_PR)
+     * ========================================
+     */
+    Route::prefix('pr')->name('pr.')->group(function () {
+        Route::post('/forms/submit', [PRFormsController::class, 'store'])
+            ->name('forms.submit');
+
+        Route::get('/chemical-waste/load', [PRFormsController::class, 'loadChemicalWaste'])
+            ->name('chemical-waste.load');
+        Route::post('/chemical-waste/delete', [PRFormsController::class, 'deleteChemicalWaste'])
+            ->name('chemical-waste.delete');
+
+        Route::get('/new-supplier/load', [PRFormsController::class, 'loadNewSupplier'])
+            ->name('new-supplier.load');
+
+        Route::get('/supplier-evaluation/load', [PRFormsController::class, 'loadSupplierEvaluation'])
+            ->name('supplier-evaluation.load');
+
+        Route::get('/approved-service-providers/load', [PRFormsController::class, 'loadApprovedServiceProviders'])
+            ->name('approved-service-providers.load');
+
+        Route::get('/approved-product-providers/load', [PRFormsController::class, 'loadApprovedProductProviders'])
+            ->name('approved-product-providers.load');
+
+        Route::get('/annual-supplier-evaluation/load', [PRFormsController::class, 'loadAnnualSupplierEvaluation'])
+            ->name('annual-supplier-evaluation.load');
+    });
+
+    /**
+     * ========================================
+     * QA FORMS (TDPL_QA)
+     * ========================================
+     */
+    Route::prefix('qa')->name('qa.')->group(function () {
+        Route::post('/forms/submit', [QAFormsController::class, 'store'])
+            ->name('forms.submit');
+
+        Route::get('/dcr/load', [QAFormsController::class, 'loadDcr'])
+            ->name('dcr.load');
+
+        Route::get('/internal-auditors/load', [QAFormsController::class, 'loadInternalAuditors'])
+            ->name('internal-auditors.load');
+
+        Route::get('/annual-audit-plan/load', [QAFormsController::class, 'loadAnnualAuditPlan'])
+            ->name('annual-audit-plan.load');
+        Route::post('/annual-audit-plan/delete', [QAFormsController::class, 'deleteAnnualAuditPlan'])
+            ->name('annual-audit-plan.delete');
+
+        Route::get('/authorized-signatures/load', [QAFormsController::class, 'loadAuthorizedSignatures'])
+            ->name('authorized-signatures.load');
+        Route::post('/authorized-signatures/delete', [QAFormsController::class, 'deleteAuthorizedSignature'])
+            ->name('authorized-signatures.delete');
+
+        Route::get('/authorized-signatory-list/load', [QAFormsController::class, 'loadAuthorizedSignatoryList'])
+            ->name('authorized-signatory-list.load');
+
+        Route::get('/vaccination-procurement/load', [QAFormsController::class, 'loadVaccinationProcurement'])
+            ->name('vaccination-procurement.load');
+        Route::post('/vaccination-procurement/delete', [QAFormsController::class, 'deleteVaccinationProcurement'])
+            ->name('vaccination-procurement.delete');
+
+        Route::get('/employee-vaccination-records/load', [QAFormsController::class, 'loadEmployeeVaccinationRecords'])
+            ->name('employee-vaccination-records.load');
+        Route::post('/employee-vaccination-records/delete', [QAFormsController::class, 'deleteEmployeeVaccinationRecord'])
+            ->name('employee-vaccination-records.delete');
+    });
+
+    /*
+     * ========================================
+     * SM FORMS (TDPL_SM)
+     * ========================================
+     */
+    Route::prefix('sm')->name('sm.')->group(function () {
+        Route::post('/forms/submit', [SMFormsController::class, 'store'])
+            ->name('forms.submit');
+
+        Route::get('/serology-work-register/load', [SMFormsController::class, 'loadSerologyWorkRegister'])
+            ->name('serology-work-register.load');
+        Route::post('/serology-work-register/delete', [SMFormsController::class, 'deleteSerologyWorkRegister'])
+            ->name('serology-work-register.delete');
+
+        Route::get('/incoming-material-inspection/load', [SMFormsController::class, 'loadIncomingMaterialInspection'])
+            ->name('incoming-material-inspection.load');
+
+        Route::get('/supplier-corrective-action/load', [SMFormsController::class, 'loadSupplierCorrectiveAction'])
+            ->name('supplier-corrective-action.load');
+
+        Route::get('/expired-reagent-tracking/load', [SMFormsController::class, 'loadExpiredReagentTracking'])
+            ->name('expired-reagent-tracking.load');
+        Route::post('/expired-reagent-tracking/delete', [SMFormsController::class, 'deleteExpiredReagentTracking'])
+            ->name('expired-reagent-tracking.delete');
+
+        Route::get('/borrowing-tracking/load', [SMFormsController::class, 'loadBorrowingTracking'])
+            ->name('borrowing-tracking.load');
+        Route::post('/borrowing-tracking/delete', [SMFormsController::class, 'deleteBorrowingTracking'])
+            ->name('borrowing-tracking.delete');
+
+        Route::get('/recall-tracking/load', [SMFormsController::class, 'loadRecallTracking'])
+            ->name('recall-tracking.load');
+    });
+
+ });
